@@ -1,0 +1,32 @@
+reactions TABLE creation
+
+DROP TABLE reactions;
+CREATE TABLE reactions (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  userID int(11) NOT NULL,
+  messageID int(11) NOT NULL,
+  reactionOptionID int(11) NOT NULL,
+  PRIMARY KEY ( id ),
+  UNIQUE ( userID, messageID ))
+
+
+
+
+  INSERT INTO reactions (`userID`, `messageID`, `reactionOptionID`) VALUES (2, 45, 5)  ON DUPLICATE KEY UPDATE `reactionOptionID` = 3;
+SELECT `id`, `userID`, `messageID`, `reactionOptionID` FROM `reactions` WHERE `messageID` = 45 AND `userID`= 5;
+
+
+
+username = doadmin
+password = kQgjsVuVm1utReXt hide
+host = db-mysql-fra1-01134-do-user-10818218-0.b.db.ondigitalocean.com
+port = 25060
+database = defaultdb
+sslmode = REQUIRED
+
+username = doadmin
+password = kQgjsVuVm1utReXt
+host = db-mysql-fra1-01134-do-user-10818218-0.b.db.ondigitalocean.com
+port = 25060
+database = defaultdb
+sslmode = REQUIRED

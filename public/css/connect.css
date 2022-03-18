@@ -1,0 +1,168 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+html,
+body {
+  font-family: "Roboto", sans-serif;
+  padding: 0;
+  margin: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.message-failure {
+  border-radius: 3px;
+  margin: 8px;
+  padding: 8px;
+  background-color: #ffa7a7;
+  color: #777;
+}
+
+.message-success {
+  border-radius: 3px;
+  margin: 8px;
+  padding: 8px;
+  background-color: #88ffa5;
+  color: #777;
+}
+
+.content-active {
+  display: block !important;
+  border-radius: 8px;
+}
+
+.wrapper {
+  width: 100%;
+  height: 100vh;
+  color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: relative;
+  z-index: 999;
+  -webkit-transition: all 0.5s 0s ease;
+  transition: all 0.5s 0s ease;
+}
+
+.wrapper .login-register {
+  width: 600px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  border-radius: 20px;
+  background: rgba(238, 238, 238, 0.5);
+  overflow: hidden;
+  -webkit-box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.5);
+          box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.5);
+  padding: 1rem;
+  -webkit-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+.wrapper .login-register .form-tab {
+  border-radius: 2.5rem;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.wrapper .login-register .form-tab:hover {
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.wrapper .login-register .content {
+  color: #777;
+  width: 100%;
+  background: white;
+  display: none;
+}
+
+.wrapper .login-register .content .form-group {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.wrapper .login-register .content label, .wrapper .login-register .content input {
+  margin: .5rem;
+  padding: 2px;
+}
+
+.wrapper .login-register .content label:focus, .wrapper .login-register .content input:focus {
+  border-bottom: 2px solid #003366;
+}
+
+.wrapper .login-register .content input {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  padding: 8px;
+  outline: none;
+  border: none;
+  border-radius: 3px;
+  background-color: #EBF0F6;
+}
+
+.wrapper .login-register .content .submit-btn {
+  color: #eee;
+  background-color: #004992;
+  cursor: pointer;
+  width: 150px;
+  border-radius: 50px;
+}
+
+.wrapper .login-register .content .submit-btn:hover {
+  background-color: #003366;
+}
+
+.wrapper .login-register ul {
+  width: 100%;
+  padding: 0rem 0;
+  margin: 0;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  background-color: #eee;
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+.wrapper .login-register ul li {
+  list-style: none;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  padding: 10px;
+  background-color: transparent;
+  color: #777;
+}
+
+.wrapper .login-register ul .active {
+  color: #eee;
+  display: block;
+  background-color: #003061;
+  -webkit-box-flex: 5;
+      -ms-flex: 5;
+          flex: 5;
+  width: 100px;
+  border-radius: 8px;
+}
+
+.wrapper .login-register ul .active:hover {
+  background-color: #003366;
+  border-radius: 8px;
+}
+/*# sourceMappingURL=connect.css.map */

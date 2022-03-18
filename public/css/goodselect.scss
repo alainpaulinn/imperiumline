@@ -1,0 +1,79 @@
+$sidepanel-bg: rgb(245, 249, 253);
+$sidepanel: rgb(235, 240, 246);
+$body: rgb(128, 132, 136);
+$notification: rgb(0, 48, 97);
+//$notification: rgb(31, 141, 251);
+//$notification: rgba(7, 39, 71, 0.801);
+$c-chats: rgb(255, 255, 255);
+:root{
+    --color-accent: #003061;
+    --background-color: #f8f7fa;
+    --foreground-color: #ffffff;
+    --text-color: #19181a;
+    --highlight-text-color: var(--text-color);
+    --active-text-color: #f8f7fa;
+    --inactive-text-color: #a5a5a5;
+    --btn-bg: #f8f7fa;
+    --box-shadow: #efefef;
+  
+    --border-width: 1px;
+    --border-radius: 15px;
+    --spacing: 18px;
+}
+.goodselect {
+    color: $body;
+    display: inline-block;
+    position: relative;
+    border-radius: 15px;
+    transition: .5s;
+    
+
+    .selected-value {
+        width: 100px;
+        cursor: pointer;
+        padding: 1rem;
+        border-radius: 15px;
+        background-color: $sidepanel;
+    }
+
+    .selected-value:after {
+        content: "";
+        border: 8px solid transparent;
+        border-top-color: $body;
+
+        position: absolute;
+        //margin: 1rem;
+        right: 17px;
+        top: 17px;
+    }
+
+    .list {
+        //border: 1px solid rgba(0, 0, 0, 0.24);
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        transition: 0.5s;
+
+        display: none;
+        border-radius: 15px;
+
+        position: absolute;
+        z-index: 1;
+        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+    }
+
+    .is-visible {
+        display: block;
+    }
+
+    .list-option {
+        cursor: pointer;
+        padding: .8rem .5rem;
+        background-color: $sidepanel;
+
+    }
+
+    .list-option:hover {
+        background-color: rgb(209, 214, 219);
+    }
+}

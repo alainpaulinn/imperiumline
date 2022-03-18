@@ -1,0 +1,326 @@
+<div class="call-container">
+
+    <div class="call-main" id="call-main">
+        <!--
+        <div class="callScreenHeader">
+            <div class="connection-status"> 
+                <video width="300px" height="170px" id="remoteVideo" autoplay playsinline></video>
+            </div>
+            <div class="my-video"> 
+                my video
+                <video width="300px" height="170px" id="localVideo" autoplay muted playsinline></video>
+            </div>
+        </div> -->
+        <div class="callScreenHeader">
+            <div class="universalCallButtons">
+                <button><i class='bx bx-chevron-left' onclick="showCallHistory()"></i></button>
+            </div>
+            <h1>On Call with</h1>
+        </div>
+        <div class="video-call-wrapper">
+            <video class="primaryVideo" id="largeVideo" autoplay playsinline></video>
+            <div class="secondaryVideos" id="secondaryVideosDiv">
+
+            </div>
+            <div class="name" id="largeVideoName">Alain Paulin Niyonkuru</div>
+        </div>
+        <!--
+        <div class="video-call-wrapper">
+            <div class="video-participant">
+                <img src="https://images.unsplash.com/photo-1566821582776-92b13ab46bb4?ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
+                    alt="participant">
+                <div class="participant-actions">
+                    <button class="btn-mute"></button>
+                    <button class="btn-camera"></button>
+                </div>
+                <a href="#" class="name-tag">Andy Will</a>
+                
+            </div>
+            <div class="video-participant">
+                <img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"
+                    alt="participant">
+                <div class="participant-actions">
+                    <button class="btn-mute"></button>
+                    <button class="btn-camera"></button>
+                </div>
+                <a href="#" class="name-tag">Emmy Lou</a>
+                
+            </div>
+            <div class="video-participant">
+                <img src="https://images.unsplash.com/photo-1576110397661-64a019d88a98?ixlib=rb-1.2.1&auto=format&fit=crop&w=1234&q=80"
+                    alt="participant">
+                <div class="participant-actions">
+                    <button class="btn-mute"></button>
+                    <button class="btn-camera"></button>
+                </div>
+                <a href="#" class="name-tag">Tim Russel</a>
+                
+            </div>
+            <div class="video-participant">
+                <img src="https://images.unsplash.com/photo-1600207438283-a5de6d9df13e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1234&q=80"
+                    alt="participant">
+                <div class="participant-actions">
+                    <button class="btn-mute"></button>
+                    <button class="btn-camera"></button>
+                </div>
+                <a href="#" class="name-tag">Jessica Bell</a>
+                
+            </div>
+            <div class="video-participant">
+                <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80"
+                    alt="participant">
+                <div class="participant-actions">
+                    <button class="btn-mute"></button>
+                    <button class="btn-camera"></button>
+                </div>
+                <a href="#" class="name-tag">Ryan Patrick</a>
+                
+            </div>
+            <div class="video-participant">
+                <img src="https://images.unsplash.com/photo-1542596594-649edbc13630?ixlib=rb-1.2.1&auto=format&fit=crop&w=1234&q=80"
+                    alt="participant">
+                <div class="participant-actions">
+                    <button class="btn-mute"></button>
+                    <button class="btn-camera"></button>
+                </div>
+                <a href="#" class="name-tag">Tina Cate</a>
+                
+            </div>
+        </div> -->
+        <div class="video-call-actions ">
+            <!--
+            <button class="video-action-button"><i class='bx bxs-camera'></i></button>
+
+            <div class="video-action-button">
+                <div id="AudioOutDevicesPopup" tabindex="0" class="devicesPopup">
+
+                </div>
+                <button class="" onclick=""><i class='bx bxs-volume-mute' ></i></button>
+                <button id="AudioOutDevicesPop" class=""><i class='bx bx-chevron-up'></i></button>
+            </div>
+
+            <div class="video-action-button">
+                <div id="videoDevicesPopup" tabindex="0" class="devicesPopup">
+
+                </div>
+                <button class="" onclick="toggleVideo()"><i class='bx bxs-video-off'></i></button>
+                <button id="videoDevicesPop" class=""><i class='bx bx-chevron-up'></i></button>
+            </div>
+
+            <button class="red-bg video-action-button">
+                <h1 class="white" onclick="leaveCall()">Leave</h1><i class='bx bxs-phone bx-rotate-180 white'></i>
+            </button>
+
+            <div class="video-action-button">
+                <div id="audioInDevicesPopup" tabindex="0" class="devicesPopup">
+
+                    <div>ALINNNNN</div>
+                    <div>ALINNNNN</div>
+                    <div>ALINNNNN</div>
+                    <div>ALINNNNN</div>
+
+                </div>
+                <button class="" onclick="toggleAudioIn()"><i class='bx bxs-microphone-off'></i></button>
+                <button id="audioInDevicesPop" class=""><i class='bx bx-chevron-up'></i></button>
+            </div>
+            <button class="video-action-button" id="toggleScreenSharing" onclick="toggleScreenSharing()"><i
+                    class='bx bx-desktop'></i></button>
+
+            -->
+            <button class="video-action-button" id="gotoFullscreen" class="" onclick="toggleFullscreen()">
+                <i class='bx bx-fullscreen'></i>
+            </button>
+            <button class="video-action-button" id="videoDevicesPop" class="" onclick="removeVideo()">
+                <i class='bx bxs-video-off'></i>
+            </button>
+            <button class="red-bg video-action-button">
+                <h1 class="white" onclick="leaveCall()">Leave</h1>
+                <i class='bx bxs-phone bx-rotate-180 white'></i>
+            </button>
+            <button class="video-action-button" id="audioInDevicesPop" class="" onclick="removeAudio()">
+                <i class='bx bxs-microphone-off'></i>
+            </button>
+            <button class="video-action-button" id="toggleScreenSharing" onclick="toggleScreenSharing()">
+                <i class='bx bx-desktop'></i>
+            </button>
+        </div>
+    </div>
+    <!--
+    <div class="right-side">
+        <div class="participants">
+            <div class="profile-picture">
+                <img src="https://images.unsplash.com/photo-1576110397661-64a019d88a98?ixlib=rb-1.2.1&auto=format&fit=crop&w=1234&q=80"
+                    alt="pp">
+            </div>
+            <div class="profile-picture">
+                <img src="https://images.unsplash.com/photo-1566821582776-92b13ab46bb4?ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
+                    alt="pp">
+            </div>
+            <div class="profile-picture">
+                <img src="https://images.unsplash.com/photo-1600207438283-a5de6d9df13e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1234&q=80"
+                    alt="pp">
+            </div>
+            <div class="profile-picture">
+                <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80"
+                    alt="pp">
+            </div>
+            <div class="participant-more">2+</div>
+        </div>
+        <button class="btn-close-right">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="feather feather-x-circle"
+                viewBox="0 0 24 24">
+                <defs></defs>
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M15 9l-6 6M9 9l6 6"></path>
+            </svg>
+        </button>
+        <div class="chat-container">
+            <div class="chat-header">
+                <h1>Call Chat</h1>
+            </div>
+            <div class="chat-area" id="in-call-chatArea">
+                <div class="message-wrapper">
+                    <div class="profile-picture">
+                        <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80"
+                            alt="pp">
+                    </div>
+                    <div class="message-content">
+                        <p class="name">Ryan Patrick</p>
+                        <div class="message">Helloo team!😍</div>
+                    </div>
+                </div>
+                <div class="message-wrapper">
+                    <div class="profile-picture">
+                        <img src="https://images.unsplash.com/photo-1566821582776-92b13ab46bb4?ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
+                            alt="pp">
+                    </div>
+                    <div class="message-content">
+                        <p class="name">Andy Will</p>
+                        <div class="message">Hello! Can you hear me?🤯 <a class="mention">@ryanpatrick</a></div>
+                    </div>
+                </div>
+                <div class="message-wrapper">
+                    <div class="profile-picture">
+                        <img src="https://images.unsplash.com/photo-1600207438283-a5de6d9df13e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1234&q=80"
+                            alt="pp">
+                    </div>
+                    <div class="message-content">
+                        <p class="name">Jessica Bell</p>
+                        <div class="message">Hi team! Let's get started it.</div>
+                    </div>
+                </div>
+                <div class="message-wrapper reverse">
+                    <div class="profile-picture">
+                        <img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"
+                            alt="pp">
+                    </div>
+                    <div class="message-content">
+                        <p class="name">Emmy Lou</p>
+                        <div class="message">Good morning!🌈</div>
+                    </div>
+                </div>
+                <div class="message-wrapper">
+                    <div class="profile-picture">
+                        <img src="https://images.unsplash.com/photo-1576110397661-64a019d88a98?ixlib=rb-1.2.1&auto=format&fit=crop&w=1234&q=80"
+                            alt="pp">
+                    </div>
+                    <div class="message-content">
+                        <p class="name">Tim Russel</p>
+                        <div class="message">New design document⬇️</div>
+                    </div>
+                </div>
+                <div class="message-wrapper">
+                    <div class="profile-picture">
+                        <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80"
+                            alt="pp">
+                    </div>
+                    <div class="message-content">
+                        <p class="name">Ryan Patrick</p>
+                        <div class="message">Hi team!❤️</div>
+                        <div class="message">I downloaded the file <a class="mention">@timrussel</a></div>
+                    </div>
+                </div>
+                <div class="message-wrapper reverse">
+                    <div class="profile-picture">
+                        <img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"
+                            alt="pp">
+                    </div>
+                    <div class="message-content">
+                        <p class="name">Emmy Lou</p>
+                        <div class="message">Woooww! Awesome❤️</div>
+                    </div>
+                </div>
+                <div class="message-wrapper">
+                    <div class="profile-picture">
+                        <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80"
+                            alt="pp">
+                    </div>
+                    <div class="message-content">
+                        <p class="name">Ryan Patrick</p>
+                        <div class="message">Hi team!❤️</div>
+                        <div class="message">I downloaded the file <a class="mention">@timrussel</a></div>
+                    </div>
+                </div>
+                <div class="message-wrapper reverse">
+                    <div class="profile-picture">
+                        <img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"
+                            alt="pp">
+                    </div>
+                    <div class="message-content">
+                        <p class="name">Emmy Lou</p>
+                        <div class="message">Woooww! Awesome❤️</div>
+                    </div>
+                </div>
+                <div class="message-wrapper">
+                    <div class="profile-picture">
+                        <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80"
+                            alt="pp">
+                    </div>
+                    <div class="message-content">
+                        <p class="name">Ryan Patrick</p>
+                        <div class="message">Hi team!❤️</div>
+                        <div class="message">I downloaded the file <a class="mention">@timrussel</a></div>
+                    </div>
+                </div>
+                <div class="message-wrapper reverse">
+                    <div class="profile-picture">
+                        <img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"
+                            alt="pp">
+                    </div>
+                    <div class="message-content">
+                        <p class="name">Emmy Lou</p>
+                        <div class="message">Woooww! Awesome❤️</div>
+                    </div>
+                </div>
+            </div>
+            <div class="typingBox">
+                <button class='c-sidepanel__nav__chat-options padding-bottom-12px' href='' title=''><i
+                        class='bx bxs-smile'></i></i></button>
+
+                <div id="w-input-container" onclick="setFocus()">
+                    <div class="w-input-text-group">
+                        <div id="w-input-text" class="w-input-text" contenteditable></div>
+                        <div class="w-placeholder">Type a message</div>
+                    </div>
+                </div>
+                <button class='c-sidepanel__nav__chat-options padding-bottom-12px' href='' title=''><i
+                        class='bx bxs-microphone'></i></button>
+                <button id='call-message-sendButton'
+                    class='c-sidepanel__nav__chat-options padding-bottom-12px sendButton' href='' title=''><i
+                        class='bx bxs-send'></i></button>
+            </div>
+        </div>
+
+    </div>
+    
+    <button class="expand-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="feather feather-message-circle">
+            <path
+                d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+        </svg>
+    </button>
+    -->
+</div>

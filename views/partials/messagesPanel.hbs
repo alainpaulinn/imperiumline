@@ -1,0 +1,29 @@
+<div class='c-chats' id='chats_panel'>
+    <div class='c-chats__header' style='transition: all 0.8s ease-in-out;'>
+        <div id="chatSearch" class="chatSearch displayed">
+            <label aria-label='Search your active chats.'><i data-feather='search'></i></label>
+            <input type='text' placeholder='Search conversations'>
+        </div>
+        <button id="newChat"><i class='bx bxs-message-square-add'></i></button>
+        <div class="newChatTitle unDisplayed" id="newChatTitle">
+            <label aria-label='Search contacts.'><i data-feather='search'></i></label>
+            <input id='searchField' type='text' placeholder='Search people'>
+        </div>
+    </div>
+    <div class="chat-search-content">
+        <ul id='place_for_chats' class='place_for_chats'>
+
+        </ul>
+        <ul id='searchResults' class='searchResults'>
+
+        </ul>
+    </div>
+
+</div>
+<div class='c-openchat' id='chatContent_panel'>
+    <div class="c-openchat__selectConversation">
+        <img src="/images/createChat.jpeg" alt="">
+        <h3>Select <i class='bx bx-pointer'></i> or Create <i class='bx bx-plus-circle'></i> a chat. </br> Your
+            messages will appear here ...</h3>
+    </div>
+</div>
