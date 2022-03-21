@@ -773,7 +773,7 @@ function openChat(openChatInfo) {
   });
 
   //initialise all icons because there are new icons added in the open chat section
-  feather.replace();
+  
 }
 function reactionTo(messageId, reaction) {
   console.log(messageId, reaction);
@@ -1094,7 +1094,7 @@ socket.on('searchPerson', (searchPeople) => {
     })
   })
   //console.log(searchChatbuttons)
-  feather.replace();
+  
   //console.log(searchPerson)
 })
 

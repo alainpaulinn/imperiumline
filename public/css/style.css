@@ -3988,16 +3988,9 @@ body {
 .schedule-container .selectionPanel .card [class$="-day"] {
   width: 40px;
   height: 40px;
-  color: var(--text-color);
   text-align: center;
   line-height: 40px;
-  font-weight: 500;
   font-size: 1rem;
-}
-
-.schedule-container .selectionPanel .card .weekday-name {
-  color: var(--highlight-text-color);
-  font-weight: 700;
 }
 
 .schedule-container .selectionPanel .card .current-day {
@@ -4349,6 +4342,7 @@ body {
   -ms-flex: 1;
       flex: 1;
   color: #808488;
+  border-radius: 0 0 15px 15px;
 }
 
 .schedule-container .scheduleDetailsSection .scheduleBody .ongoing,

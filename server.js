@@ -91,8 +91,14 @@ io.on('connection', (socket) => {
         });
 
       })
-      //send call log tho the connected user
+      //send call log to the connected user
       socket.emit('updateCallLog', await getCallLog(id))
+
+      //sendCalendarEvents to the connected user
+      let today = new Date()
+      let lastYear = today.setFullYear(today.getFullYear() - 1)
+      let nextYear = today.setFullYear(today.getFullYear() + 1)
+      socket.emit('updateCalendar', await getEvents(id, lastYear, nextYear))
 
     })
     socket.on('requestChatContent', async (chatIdentification) => {
@@ -443,8 +449,8 @@ io.on('connection', (socket) => {
             //send to all other connected users an incoming call
             socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id) });
             socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id) });
-            socket.join(callUniqueId + '');          
-            
+            socket.join(callUniqueId + '');
+
             return;
           }
           switch (chatPresentation) {
@@ -452,7 +458,7 @@ io.on('connection', (socket) => {
             case 0:
               let groupMembersToCall = await getParticipantArray(callTo)
 
-              groupMembersToCall.forEach(callParticipant =>{
+              groupMembersToCall.forEach(callParticipant => {
                 insertCallParticipant(callUniqueId, insertedCallId, callParticipant.userID, id)
               })
 
@@ -463,7 +469,7 @@ io.on('connection', (socket) => {
 
               for (let i = 0; i < groupMembersToCall.length; i++) {
                 console.log("groupMembersToCall", groupMembersToCall[i].userID)
-                
+
                 for (let j = 0; j < connectedUsers.length; j++) {
                   console.log("connectedUsers", connectedUsers[j].id)
                   if (groupMembersToCall[i].userID == connectedUsers[j].id && groupMembersToCall[i].userID != id) { //&& groupMembersToCall[i].userID != id will eliminate my other onnected computers from reciving my call
@@ -474,21 +480,21 @@ io.on('connection', (socket) => {
                   if (groupMembersToCall[i].userID == connectedUsers[j].id) {
                     socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id));
                   }
-                  
+
                 }
               }
               //send to all other connected users an incoming call
               socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id) });
               socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id) });
               socket.join(callUniqueId + '');
-              
+
               break;
 
             case 1:
               //call from callogs
               let existingCallParticipants = await getCallParticipants(previousCallId)
 
-              existingCallParticipants.forEach(callParticipant =>{
+              existingCallParticipants.forEach(callParticipant => {
                 insertCallParticipant(callUniqueId, insertedCallId, callParticipant.userID, id)
               })
 
@@ -500,7 +506,7 @@ io.on('connection', (socket) => {
                 console.log("groupMembersToCall", existingCallParticipants[i].userID)
                 for (let j = 0; j < connectedUsers.length; j++) {
                   console.log("connectedUsers", connectedUsers[j].id)
-                  
+
                   if (existingCallParticipants[i].userID == connectedUsers[j].id && existingCallParticipants[i].userID != id) { //&& existingCallParticipants[i].userID != id will eliminate my other onnected computers from reciving my call
                     console.log("--->connectedUser identified", connectedUsers[j].id)
                     groupMembersToCall_fullInfo.push(
@@ -520,7 +526,7 @@ io.on('connection', (socket) => {
               socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id) });
               socket.join(callUniqueId + '');
 
-              
+
 
               break;
             default:
@@ -537,7 +543,7 @@ io.on('connection', (socket) => {
       let thisCallparticipants = await getCallParticipants(data.callUniqueId)
       for (let i = 0; i < connectedUsers.length; i++) {
         for (let j = 0; j < thisCallparticipants.length; j++) {
-          if(connectedUsers[i].id == thisCallparticipants[j].userID){
+          if (connectedUsers[i].id == thisCallparticipants[j].userID) {
             connectedUsers[i].socket.emit
             socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
           }
@@ -550,16 +556,16 @@ io.on('connection', (socket) => {
       socket.to(data.callUniqueId + '-allAnswered-sockets').emit('user-disconnected', data.myPeerId);
       setUserCallStatus(id, data.callUniqueId, 'offCall')
 
-      try{
+      try {
         socket.leave(data.callUniqueId + '-allAnswered-sockets');
-      }catch(e){
-        console.log('[error]','leave room :', e);
+      } catch (e) {
+        console.log('[error]', 'leave room :', e);
       }
-      
+
       let thisCallparticipants = await getCallParticipants(data.callUniqueId)
       for (let i = 0; i < connectedUsers.length; i++) {
         for (let j = 0; j < thisCallparticipants.length; j++) {
-          if(connectedUsers[i].id == thisCallparticipants[j].userID){
+          if (connectedUsers[i].id == thisCallparticipants[j].userID) {
             connectedUsers[i].socket.emit
             socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
           }
@@ -574,7 +580,7 @@ io.on('connection', (socket) => {
 
     ////////////////Meeting/schedule planning/////////////////
     socket.on('scheduleInviteSearch', inviteId => {
-      
+
       db.query("SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `company_id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 10", ['%' + inviteId + '%', '%' + inviteId + '%', '%' + inviteId + '%'], async (err, userSearchResult) => {
         let foundUsersusers = userSearchResult.map(searchPerson => {
           return {
@@ -595,14 +601,36 @@ io.on('connection', (socket) => {
       })
     })
     ///////////New Event/schedule/meeting plan////////////////////////////////
-    socket.on('newEventPlan', (newEventCreation)=>{
+    socket.on('newEventPlan', (newEventCreation) => {
       console.log(newEventCreation)
-      let {inviteList, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate } = newEventCreation;
-      db.query("INSERT INTO `events`(`ownerId`, `title`, `eventLocation`, `context`, `activityLink`, `details`, `startTime`, `endTime`, `occurrence`, `recurrenceType`, `startRecurrenceDate`, `endRecurrenceDate:`, `type`, `oneTimeDate`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-       [id, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate ], 
-       async (err, EventInsertResult) => {
-         console.log(err)
-       })
+      let { inviteList, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate } = newEventCreation;
+      db.query("INSERT INTO `events`(`ownerId`, `title`, `eventLocation`, `context`, `activityLink`, `details`, `startTime`, `endTime`, `occurrence`, `recurrenceType`, `startRecurrenceDate`, `endRecurrenceDate`, `type`, `oneTimeDate`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        [id, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate],
+        async (err, EventInsertResult) => {
+          if (err) return console.log(err);
+          if (inviteList) {
+            inviteList.forEach(invite => {
+              insertEventParticipant(EventInsertResult.insertId, invite)
+            })
+          }
+          insertEventParticipant(EventInsertResult.insertId, id)
+
+
+          let today = new Date()
+          let lastYear = today.setFullYear(today.getFullYear() - 1)
+          let nextYear = today.setFullYear(today.getFullYear() + 1)
+          let eventsToSend = await getEvents(id, lastYear, nextYear);
+          socket.emit('updateCalendar', eventsToSend)
+          for (let i = 0; i < inviteList.length; i++) {
+            const invite = inviteList[i];
+            for (let j = 0; j < connectedUsers.length; j++) {
+              const connectedUser = connectedUsers[j];
+              if (connectedUser.id == invite) {
+                socket.to(connectedUser.socket.id).emit('updateCalendar', await getEvents(id, lastYear, nextYear));
+              }
+            }
+          }
+        })
     })
 
     ///////////////
@@ -621,6 +649,213 @@ io.on('connection', (socket) => {
   }
 
 });
+
+function getEvents(userId, initalDate, endDate) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `eventId`, `participantId`, `attending` FROM `eventparticipants` WHERE `participantId` = ?',
+      [userId], async (err, _myEvents) => {
+        if (err) return console.log(err);
+        if (_myEvents.length < 1) return console.log("no participated events found for this user")
+        console.log("my Events", _myEvents)
+        //create an object with properties which represent all of the dates between thos intervals
+        let eventDates = {};
+        let currentDate = initalDate
+        while (currentDate <= endDate) {
+          eventDates[currentDate.toISOString().slice(0, 10)] = [];
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+        //console.log(eventDates)
+        for (let eventNumber = 0; eventNumber < _myEvents.length; eventNumber++) {
+          /**
+           * {
+            eventId: 3,
+            owner: {
+              userID: 9,
+              name: 'Test9Name',
+              surname: 'test9Surname',
+              profilePicture: null
+            },
+            title: 'One more test',
+            eventLocation: 'Imperium Line',
+            context: 'the exchange',
+            activityLink: 'no link',
+            details: 'now some details',
+            startTime: '12:00:00',
+            endTime: '18:00:00',
+            occurrence: 2,
+            recurrenceType: 2,
+            startRecurrenceDate: '2022-03-11',
+            endRecurrenceDate: '2022-03-05',
+            type: 1,
+            oneTimeDate: null,
+            Participants: [
+              {
+                userID: 1,
+                name: 'Test1Name',
+                surname: 'Test1Surname',
+                profilePicture: '/images/profiles/user-128.png'
+              },
+              {
+                userID: 2,
+                name: 'Test2Name',
+                surname: 'Test2Surname',
+                profilePicture: '/images/profiles/user-129.png'
+              },
+              {
+                userID: 3,
+                name: 'Test3Name',
+                surname: 'Test3Surname',
+                profilePicture: null
+              },
+              {
+                userID: 4,
+                name: 'test4Name',
+                surname: 'test4Surname',
+                profilePicture: null
+              }
+            ]
+          }
+           */
+          let eventdetails = await getEventDetails(_myEvents[eventNumber].eventId);
+          console.log("eventdetails", eventdetails)
+          if (eventdetails.occurrence == 1) {
+            eventDates[eventdetails.oneTimeDate].push(eventdetails)
+          }
+
+          else if (eventdetails.occurrence == 2) {
+            // { id: 1, name: "Every Day" },
+            // { id: 2, name: "Every Week" },
+            // { id: 3, name: "Monday - Friday" },
+            // { id: 4, name: "Weekend" }
+
+            let checkStartDate = new Date(eventdetails.startRecurrenceDate);
+            let checkEndDate = new Date(eventdetails.endRecurrenceDate);
+            let operationDate = checkStartDate;
+
+            //number of difference in days
+            let dayDifference = dayDif(checkStartDate, checkEndDate) + 1;
+            console.log(checkStartDate, checkEndDate)
+            console.log(dayDifference)
+
+
+            //everyday
+            if (eventdetails.recurrenceType == 1) {
+
+              for (let i = 0; i < dayDifference; i++) {
+                console.log("day loop running", i)
+                let operationDateString = operationDate.toISOString().slice(0, 10)
+                if (eventDates[operationDateString]) eventDates[operationDateString].push(eventdetails);
+                operationDate.setDate(operationDate.getDate() + 1)
+              }
+            }
+
+            //everyWeek
+            if (eventdetails.recurrenceType == 2) {
+
+              for (let i = 0; i < dayDifference; i++) {
+                console.log("week loop running", i)
+                let operationDateString = operationDate.toISOString().slice(0, 10)
+                if (eventDates[operationDateString]) eventDates[operationDateString].push(eventdetails);
+                operationDate.setDate(operationDate.getDate() + 7)
+              }
+            }
+
+            //monday-friday
+            if (eventdetails.recurrenceType == 3) {
+              for (let i = 0; i < dayDifference; i++) {
+                console.log("monday-friday loop running", i)
+                let operationDateString = operationDate.toISOString().slice(0, 10)
+                //get Day(), 0 for Sunday, 1 for Monday, 2 for Tuesday, and so on
+                if ((operationDate.getDay() == 1 || operationDate.getDay() == 2 || operationDate.getDay() == 3 || operationDate.getDay() == 4 || operationDate.getDay() == 5) && eventDates[operationDateString]) {
+                  eventDates[operationDateString].push(eventdetails);
+                }
+                operationDate.setDate(operationDate.getDate() + 1)
+              }
+            }
+
+            //weekend
+            if (eventdetails.recurrenceType == 4) {
+
+              for (let i = 0; i < dayDifference; i++) {
+                console.log("weekend loop running", i)
+                let operationDateString = operationDate.toISOString().slice(0, 10)
+                //get Day(), 0 for Sunday, 1 for Monday, 2 for Tuesday, and so on
+
+                if ((operationDate.getDay() == 0 || operationDate.getDay() == 6) && eventDates[operationDateString]) {
+                  eventDates[operationDateString].push(eventdetails);
+                }
+                operationDate.setDate(operationDate.getDate() + 1)
+              }
+            }
+          }
+          else { console.log("Incorrect occurrence type for event ID:", eventdetails.eventId) }
+        }
+        resolve(eventDates)
+      })
+  })
+}
+
+const dayDif = (date1, date2) => Math.ceil(Math.abs(date1.getTime() - date2.getTime()) / 86400000)
+
+
+
+function getEventDetails(givenEventId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `eventId`, `ownerId`, `title`, `eventLocation`, `context`, `activityLink`, `details`, `startTime`, `endTime`, `occurrence`, `recurrenceType`, `startRecurrenceDate`, `endRecurrenceDate`, `type`, `oneTimeDate` FROM `events` WHERE `eventId` = ? LIMIT 1',
+      [givenEventId], async (err, myEventResults) => {
+        if (err) return console.log(err);
+        if (myEventResults.length != 1) return console.log("no event found with that Id");
+        let { eventId, ownerId, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate } = myEventResults[0];
+
+        var _myEventResults = {
+          eventId,
+          owner: await getUserInfo(ownerId),
+          title,
+          eventLocation,
+          context,
+          activityLink,
+          details,
+          startTime,
+          endTime,
+          occurrence,
+          recurrenceType,
+          startRecurrenceDate,
+          endRecurrenceDate,
+          type,
+          oneTimeDate,
+          Participants: await getEventParticipants(givenEventId)
+        }
+
+        resolve(_myEventResults)
+      })
+  })
+}
+//getEventDetails(3).then(console.log)
+getEvents(9, new Date("2022-03-15"), new Date("2022-03-23")).then(console.log)
+
+const insertEventParticipant = (eventId, participantId) => {
+  /**
+   * 0: not attending
+   * 1: maybe
+   * 2: attending
+   */
+  db.query("INSERT INTO `eventparticipants`(`eventId`, `participantId`, `attending`) VALUES (?,?,?)",
+    [eventId, participantId, 1], async (err, addedParticipantResult) => {
+      if (err) return console.log(err);
+    });
+}
+
+function getEventParticipants(givenEventId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `eventId`, `participantId`, `attending` FROM `eventparticipants` WHERE `eventId` = ?', [givenEventId], async (err, eventParticipants) => {
+      if (err) return console.log(err)
+      let _eventParticipants = eventParticipants.map(async participant => {
+        return await getUserInfo(participant.participantId)
+      })
+      resolve(Promise.all(_eventParticipants))
+    })
+  })
+}
 
 const insertCallParticipant = (callUniqueId, callId, ParticipantId, initiatorId) => {
   db.query("INSERT INTO `callparticipants`( `callUniqueId`, `callId`, `participantId`, `stillParticipating`, `initiatorId`) VALUES (?,?,?,?,?)  ON DUPLICATE KEY UPDATE `participantId` = ? ",
@@ -642,7 +877,7 @@ function getCallLog(userId) {
     })
   })
 }
-getCallLog(1).then(console.log)
+//getCallLog(1).then(console.log)
 //function getCallParticipants
 
 function getCallParticipants(callUniqueId) {

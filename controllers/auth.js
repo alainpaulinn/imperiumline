@@ -50,7 +50,7 @@ exports.register = (req, res) => {
         //just for testing purposes
         console.log(hashed_salted_password);
         //now register the user in the DB
-        db.query("INSERT INTO user SET ?", {name: name, surname: surname, email: email, password: hashed_salted_password}, (err, result) => {
+        db.query("INSERT INTO user SET ?", {name: name, surname: surname, email: email, password: hashed_salted_password, company_id: 0}, (err, result) => {
             //if we get some errors while registering the user
             if (err) {
                 console.log(err);

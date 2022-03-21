@@ -11,6 +11,11 @@ var newEventBtn = document.getElementById("CreateNewEvent")
 var prevMonthBtn = document.getElementById("prevMonthBtn")
 var nextMonthBtn = document.getElementById("nextMonthBtn")
 
+var scheduleDetailsSectionDiv = document.getElementById("scheduleDetailsSectionDiv")
+var newScheduleDetailsSection = document.getElementById("newScheduleDetailsSection")
+
+
+
 currentMonth.textContent = date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
 console.log(currentMonth.textContent)
 today.setHours(0, 0, 0, 0);
@@ -92,6 +97,10 @@ hidecalendarBtn.addEventListener("click", function (e) {
 
 newEventBtn.addEventListener("click", function (e) {
     console.log("New Event")
+
+    scheduleDetailsSectionDiv.classList.add("hidden")
+    newScheduleDetailsSection.classList.remove("hidden")
+
 })
 
 let scheduleTypeChoiceElement = document.getElementById("scheduleTypeGoodSelectJs")
@@ -100,7 +109,7 @@ goodselect(scheduleTypeChoiceElement, {
     placeHolder: "Type",
     //selectedOptionId: 1,
     onOptionChange: (option) => {
-        !option? scheduleTypeChoiceElement.classList.add("negativegoodselect") : scheduleTypeChoiceElement.classList.remove("negativegoodselect")
+        !option ? scheduleTypeChoiceElement.classList.add("negativegoodselect") : scheduleTypeChoiceElement.classList.remove("negativegoodselect")
         newEventCreation.type = option.id;
     }
 });
@@ -111,7 +120,7 @@ goodselect(recurrenceGoodSelectJs, {
     selectorWidth: '120px',
     marginRight: '1rem',
     onOptionChange: (option) => {
-        !option? recurrenceGoodSelectJs.classList.add("negativegoodselect"):recurrenceGoodSelectJs.classList.remove("negativegoodselect")
+        !option ? recurrenceGoodSelectJs.classList.add("negativegoodselect") : recurrenceGoodSelectJs.classList.remove("negativegoodselect")
 
         newEventCreation.occurrence = option.id;
         let recurrenceDivCheck = document.getElementById("recurrenceTypeDiv")
@@ -138,7 +147,7 @@ goodselect(recurrenceGoodSelectJs, {
                 selectorWidth: "150px",
                 marginRight: '1rem',
                 onOptionChange: (option) => {
-                    !option? recurrenceTypeDiv.classList.add("negativegoodselect"):recurrenceTypeDiv.classList.remove("negativegoodselect")
+                    !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
                     newEventCreation.recurrenceType = option.id;
                 }
             })
@@ -159,7 +168,7 @@ goodselect(recurrenceGoodSelectJs, {
                 dateFormat: "Y-m-d",
                 //defaultDate: "13:30",
                 onChange: function (selectedDates, dateStr, instance) {
-                    !dateStr? startRecurrenceTypeDiv.classList.add("negativeDate"):startRecurrenceTypeDiv.classList.remove("negativeDate")
+                    !dateStr ? startRecurrenceTypeDiv.classList.add("negativeDate") : startRecurrenceTypeDiv.classList.remove("negativeDate")
                     newEventCreation.startRecurrenceDate = dateStr;
                 }
             });
@@ -178,7 +187,7 @@ goodselect(recurrenceGoodSelectJs, {
                 dateFormat: "Y-m-d",
                 //defaultDate: "13:30",
                 onChange: function (selectedDates, dateStr, instance) {
-                    !dateStr? endRecurrenceTypeDiv.classList.add("negativeDate"):endRecurrenceTypeDiv.classList.remove("negativeDate")
+                    !dateStr ? endRecurrenceTypeDiv.classList.add("negativeDate") : endRecurrenceTypeDiv.classList.remove("negativeDate")
                     newEventCreation.endRecurrenceDate = dateStr;
                 }
             });
@@ -214,7 +223,7 @@ goodselect(recurrenceGoodSelectJs, {
                 dateFormat: "Y-m-d",
                 //defaultDate: "13:30",
                 onChange: function (selectedDates, dateStr, instance) {
-                    !dateStr? oneTimeTypeDiv.classList.add("negativeDate"):oneTimeTypeDiv.classList.remove("negativeDate")
+                    !dateStr ? oneTimeTypeDiv.classList.add("negativeDate") : oneTimeTypeDiv.classList.remove("negativeDate")
                     newEventCreation.oneTimeDate = dateStr;
                 }
             });
@@ -234,7 +243,7 @@ flatpickr("#planMeetingStart", {
     //maxTime: "22:00",
     //defaultDate: "13:30",
     onChange: function (selectedDates, dateStr, instance) {
-        !dateStr? chosenEventStart.classList.add("negativeDate"):chosenEventStart.classList.remove("negativeDate")
+        !dateStr ? chosenEventStart.classList.add("negativeDate") : chosenEventStart.classList.remove("negativeDate")
         newEventCreation.startTime = dateStr + ":00";
     }
 });
@@ -247,7 +256,7 @@ flatpickr("#planMeetingEnd", {
     //maxTime: "22:00",
     //defaultDate: "13:30",
     onChange: function (selectedDates, dateStr, instance) {
-        !dateStr? chosenEventEnd.classList.add("negativeDate"):chosenEventEnd.classList.remove("negativeDate")
+        !dateStr ? chosenEventEnd.classList.add("negativeDate") : chosenEventEnd.classList.remove("negativeDate")
         newEventCreation.endTime = dateStr + ":00";
 
     }
@@ -263,17 +272,27 @@ let linkField = document.getElementById("linkField")
 let detailsField = document.getElementById("detailsField")
 //addBlurFlagEvent(createEventTitle)
 
-function addBlurFlagEvent(element){
-    element.addEventListener("blur", function (){
-        if(checkIfEmpty(element)) flagIncorrectFied(element, "dateSelect")
+function addBlurFlagEvent(element) {
+    element.addEventListener("blur", function () {
+        if (checkIfEmpty(element)) flagIncorrectFied(element, "dateSelect")
         else unflagIncorrectFied(element, "dateSelect")
     })
 }
 
-function checkIfEmpty(element){
-    if(element.value.trim() == "") return true;
+function checkIfEmpty(element) {
+    if (element.value.trim() == "") return true;
     else return false;
 }
+
+var discardNewScheduleCreation = document.getElementById("discardNewScheduleCreation")
+discardNewScheduleCreation.addEventListener("click", () => {
+    if (confirm('Are you sure you want to discard this action?')) {
+        scheduleDetailsSectionDiv.classList.remove("hidden")
+        newScheduleDetailsSection.classList.add("hidden")
+    } else {
+        
+    }
+})
 
 let submitEventButton = document.getElementById("submitEventButton")
 submitEventButton.addEventListener("click", () => {
@@ -282,8 +301,8 @@ submitEventButton.addEventListener("click", () => {
     newEventCreation.context = contextField.value;
     newEventCreation.activityLink = linkField.value;
     newEventCreation.details = detailsField.value;
-    
-    
+
+
     console.log(newEventCreation)
 
     /*
@@ -309,45 +328,45 @@ submitEventButton.addEventListener("click", () => {
     }*/
 
     //Check Title
-    if(checkIfEmpty(createEventTitle) || !newEventCreation.title) return flagIncorrectFied(createEventTitle, "dateSelect")
+    if (checkIfEmpty(createEventTitle) || !newEventCreation.title) return flagIncorrectFied(createEventTitle, "dateSelect")
 
     //check Start
-    if(checkIfEmpty(chosenEventStart) || !newEventCreation.startTime) return flagIncorrectFied(chosenEventStart, "dateSelect")
-    
+    if (checkIfEmpty(chosenEventStart) || !newEventCreation.startTime) return flagIncorrectFied(chosenEventStart, "dateSelect")
+
     //check End
-    if(checkIfEmpty(chosenEventEnd) || !newEventCreation.endTime) return flagIncorrectFied(chosenEventEnd, "dateSelect")
-    
+    if (checkIfEmpty(chosenEventEnd) || !newEventCreation.endTime) return flagIncorrectFied(chosenEventEnd, "dateSelect")
+
     //check Type
-    if(!newEventCreation.type) return flagIncorrectFied(scheduleTypeChoiceElement, "goodSelect")
-    
+    if (!newEventCreation.type) return flagIncorrectFied(scheduleTypeChoiceElement, "goodSelect")
+
     //check Occurence
-    if(!newEventCreation.occurrence) return flagIncorrectFied(recurrenceGoodSelectJs, "goodSelect")
+    if (!newEventCreation.occurrence) return flagIncorrectFied(recurrenceGoodSelectJs, "goodSelect")
 
     //check onetime date
-    if(newEventCreation.occurrence == 1){
+    if (newEventCreation.occurrence == 1) {
         let oneTimeTypeDateDiv = document.getElementById("oneTimeTypeDiv")
-        if(!newEventCreation.oneTimeDate || newEventCreation.oneTimeDate == "") return flagIncorrectFied(oneTimeTypeDateDiv, "dateSelect");
+        if (!newEventCreation.oneTimeDate || newEventCreation.oneTimeDate == "") return flagIncorrectFied(oneTimeTypeDateDiv, "dateSelect");
     }
 
-    if(newEventCreation.occurrence == 2){
+    if (newEventCreation.occurrence == 2) {
         //check recurrence type
         let _recurrenceTypeDiv = document.getElementById("recurrenceTypeDiv")
-        if(!newEventCreation.recurrenceType) return flagIncorrectFied(_recurrenceTypeDiv, "goodSelect")
+        if (!newEventCreation.recurrenceType) return flagIncorrectFied(_recurrenceTypeDiv, "goodSelect")
 
         //check recurrence start date
         let _startRecurrenceTypeDiv = document.getElementById("startRecurrenceTypeDiv")
-        if(checkIfEmpty(_startRecurrenceTypeDiv) || !newEventCreation.startRecurrenceDate) return flagIncorrectFied(_startRecurrenceTypeDiv, "dateSelect")
+        if (checkIfEmpty(_startRecurrenceTypeDiv) || !newEventCreation.startRecurrenceDate) return flagIncorrectFied(_startRecurrenceTypeDiv, "dateSelect")
 
         //check recurrence End date
         let _endRecurrenceTypeDiv = document.getElementById("endRecurrenceTypeDiv")
-        if(checkIfEmpty(_endRecurrenceTypeDiv) || !newEventCreation.endRecurrenceDate) return flagIncorrectFied(_endRecurrenceTypeDiv, "dateSelect")
+        if (checkIfEmpty(_endRecurrenceTypeDiv) || !newEventCreation.endRecurrenceDate) return flagIncorrectFied(_endRecurrenceTypeDiv, "dateSelect")
     }
 
     //Check Location
-    if(checkIfEmpty(eventLocation) || !newEventCreation.eventLocation) return flagIncorrectFied(eventLocation, "dateSelect")
-    
+    if (checkIfEmpty(eventLocation) || !newEventCreation.eventLocation) return flagIncorrectFied(eventLocation, "dateSelect")
+
     //Check Context
-    if(checkIfEmpty(contextField) || !newEventCreation.eventLocation) return flagIncorrectFied(contextField, "dateSelect")
+    if (checkIfEmpty(contextField) || !newEventCreation.eventLocation) return flagIncorrectFied(contextField, "dateSelect")
 
     // check linkField is not mandatory
 
@@ -356,26 +375,26 @@ submitEventButton.addEventListener("click", () => {
     // check detailsField is not mandatory
 
     socket.emit("newEventPlan", newEventCreation)
-    
+
 })
 
-function flagIncorrectFied(element, elementType){
-    if(elementType == "goodSelect"){
+function flagIncorrectFied(element, elementType) {
+    if (elementType == "goodSelect") {
         element.classList.add("negativegoodselect")
     }
-    if(elementType == "dateSelect"){
+    if (elementType == "dateSelect") {
         element.classList.add("negativeDate")
     }
-    
+
 }
-function unflagIncorrectFied(element, elementType){
-    if(elementType == "goodSelect"){
+function unflagIncorrectFied(element, elementType) {
+    if (elementType == "goodSelect") {
         element.classList.remove("negativegoodselect")
     }
-    if(elementType == "dateSelect"){
+    if (elementType == "dateSelect") {
         element.classList.remove("negativeDate")
     }
-    
+
 }
 
 //insert Invittees
@@ -406,7 +425,7 @@ socket.on('scheduleInviteResults', (peopleResults) => {
 
     if (peopleResults.length < 1) return invitedMembersDiv.innerHtml = "<i class='bx bxs-binoculars' ></i>" + "No such user in yout Organization";
     peopleResults.forEach(person => {
-        if(newEventCreation.inviteList.includes(person.id)) return;
+        if (newEventCreation.inviteList.includes(person.id)) return;
 
 
         let avatarElement;
