@@ -1,7 +1,7 @@
 
 
 let calendarObject;
-let selectedDate = new Date().toISOString().slice(0, 10)
+let selectedDate = new Date().toISOString().slice(0, 10);
 let newEventCreation = {}
 
 socket.on('updateCalendar', function (calendar) {
@@ -67,6 +67,8 @@ function renderCalendar() {
                 clickedDate.setDate(day)
                 console.log('day clicked', clickedDate)
                 displayDayEvents(clickedDate.toISOString().slice(0, 10))
+                //console.log(calendarObject[clickedDate.toISOString().slice(0, 10)])
+                //console.log(clickedDate.toISOString().slice(0, 10))
             })
 
         } else {
@@ -571,19 +573,23 @@ socket.on('scheduleInviteResults', (peopleResults) => {
 function displayDayEvents(givenDate) {
     let scheduleTitle = document.getElementById("scheduleTitle")
     let selectedScheduledItemsDiv = document.getElementById("selectedScheduledItemsDiv")
+
     //remove all ecxisting data from the Div
-    while (selectedScheduledItemsDiv.firstChild) {
-        selectedScheduledItemsDiv.removeChild(selectedScheduledItemsDiv.firstChild);
-    }
+    removeAllChildren(selectedScheduledItemsDiv)
+
     let indicatedDate = new Date(givenDate)
+    //remove spinner
+    removeAllChildren(scheduleTitle)
     scheduleTitle.textContent = "Planned for "+ indicatedDate.toString().substring(0, 15)
+    
 
     if (!calendarObject[givenDate]) return console.warn("an error while getting the events for this date")
 
     calendarObject[givenDate].forEach(scheduleItem => {
 
         let _plannedEventItem = document.createElement("div")
-        meetingData.classList.add("plannedItem")
+        _plannedEventItem.classList.add("plannedItem")
+        selectedScheduledItemsDiv.append(_plannedEventItem)
 
         let _resultItemBundle = document.createElement("div")
         _resultItemBundle.classList.add("resultItemBundle")
@@ -602,26 +608,46 @@ function displayDayEvents(givenDate) {
         _resultItemBundle.append(_meetingData)
 
         let _nameScopeTime = document.createElement("div")
-        _nameScopeTime.classList.add("_nameScopeTime")
+        _nameScopeTime.classList.add("nameScopeTime")
         _meetingData.append(_nameScopeTime)
 
-        let _meetingname = document.createElement("div")
+        let _meetingname = document.createElement("p")
         _meetingname.classList.add("meetingName")
         _meetingname.textContent = scheduleItem.title;
         _nameScopeTime.append(_meetingname)
 
-        let _scope = document.createElement("div")
+        let _scope = document.createElement("p")
         _scope.classList.add("scope")
         _scope.textContent = scheduleItem.context;
         _nameScopeTime.append(_scope)
 
-        let _time = document.createElement("div")
+        let _time = document.createElement("p")
         _time.classList.add("time")
-        _time.textContent = scheduleItem.context;
+        _time.textContent = scheduleItem.startTime + " - " + scheduleItem.endTime;
         _nameScopeTime.append(_time)
 
+        //buttons
+        let morebuttonSection = document.createElement("div")
+        morebuttonSection.classList.add("universalCallButtons")
+        _meetingData.append(morebuttonSection)
+
+        let _morebtn = document.createElement("button")
+        _morebtn.classList.add("searchVideoButton")
+        morebuttonSection.append(_morebtn)
+
+        let __icon = document.createElement("i")
+        __icon.classList.add("bx","bx-chevron-right")
+        _morebtn.appendChild(__icon)
         
-        selectedScheduledItemsDiv.append(_plannedEventItem)
+        _plannedEventItem.addEventListener("click", () =>{
+
+        })
     })
 
+}
+
+function removeAllChildren(element) {
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
+    }
 }
