@@ -1,4 +1,14 @@
+
+
+let calendarObject;
+let selectedDate = new Date().toISOString().slice(0, 10)
 let newEventCreation = {}
+
+socket.on('updateCalendar', function (calendar) {
+    calendarObject = calendar;
+    displayDayEvents(selectedDate)
+    console.log("calendar", calendar)
+});
 
 var currentMonth = document.querySelector(".current-month");
 var calendarDays = document.querySelector(".calendar-days");
@@ -25,7 +35,7 @@ function renderCalendar() {
     console.log(date)
     const prevLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
     const totalMonthDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-    const startWeekDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+    const startWeekDay = new Date(date.getFullYear(), date.getMonth(), 0).getDay();
 
     calendarDays.innerHTML = "";
 
@@ -35,17 +45,36 @@ function renderCalendar() {
 
         if (i <= startWeekDay) {
             // adding previous month days
-            calendarDays.innerHTML += `<div class='padding-day'>${prevLastDay - i}</div>`;
+            let dayDiv = document.createElement("div")
+            dayDiv.textContent = prevLastDay - i;
+            dayDiv.classList.add("padding-day");
+            calendarDays.append(dayDiv);
+
         } else if (i <= startWeekDay + totalMonthDay) {
             // adding this month days
+
             date.setDate(day);
             date.setHours(0, 0, 0, 0);
 
             let dayClass = date.getTime() === today.getTime() ? 'current-day' : 'month-day';
-            calendarDays.innerHTML += `<div class='${dayClass}'>${day}</div>`;
+            let dayDiv = document.createElement("div");
+            dayDiv.textContent = day;
+            dayDiv.classList.add(dayClass)
+            calendarDays.append(dayDiv)
+
+            dayDiv.addEventListener("click", () => {
+                let clickedDate = date;
+                clickedDate.setDate(day)
+                console.log('day clicked', clickedDate)
+                displayDayEvents(clickedDate.toISOString().slice(0, 10))
+            })
+
         } else {
             // adding next month days
-            calendarDays.innerHTML += `<div class='padding-day'>${day - totalMonthDay}</div>`;
+            let dayDiv = document.createElement('div')
+            dayDiv.textContent = (day - totalMonthDay) + "";
+            dayDiv.classList.add('padding-day')
+            calendarDays.append(dayDiv)
         }
     }
 }
@@ -290,7 +319,7 @@ discardNewScheduleCreation.addEventListener("click", () => {
         scheduleDetailsSectionDiv.classList.remove("hidden")
         newScheduleDetailsSection.classList.add("hidden")
     } else {
-        
+
     }
 })
 
@@ -538,3 +567,61 @@ socket.on('scheduleInviteResults', (peopleResults) => {
 
 
 })
+
+function displayDayEvents(givenDate) {
+    let scheduleTitle = document.getElementById("scheduleTitle")
+    let selectedScheduledItemsDiv = document.getElementById("selectedScheduledItemsDiv")
+    //remove all ecxisting data from the Div
+    while (selectedScheduledItemsDiv.firstChild) {
+        selectedScheduledItemsDiv.removeChild(selectedScheduledItemsDiv.firstChild);
+    }
+    let indicatedDate = new Date(givenDate)
+    scheduleTitle.textContent = "Planned for "+ indicatedDate.toString().substring(0, 15)
+
+    if (!calendarObject[givenDate]) return console.warn("an error while getting the events for this date")
+
+    calendarObject[givenDate].forEach(scheduleItem => {
+
+        let _plannedEventItem = document.createElement("div")
+        meetingData.classList.add("plannedItem")
+
+        let _resultItemBundle = document.createElement("div")
+        _resultItemBundle.classList.add("resultItemBundle")
+        _plannedEventItem.append(_resultItemBundle)
+
+        let _containerImage = document.createElement("div")
+        _containerImage.classList.add("containerImage")
+        _resultItemBundle.append(_containerImage)
+
+        let container = document.createElement("div")
+        container.textContent = scheduleItem.title.charAt(0);
+        _containerImage.append(container)
+
+        let _meetingData = document.createElement("div")
+        _meetingData.classList.add("meeting-data")
+        _resultItemBundle.append(_meetingData)
+
+        let _nameScopeTime = document.createElement("div")
+        _nameScopeTime.classList.add("_nameScopeTime")
+        _meetingData.append(_nameScopeTime)
+
+        let _meetingname = document.createElement("div")
+        _meetingname.classList.add("meetingName")
+        _meetingname.textContent = scheduleItem.title;
+        _nameScopeTime.append(_meetingname)
+
+        let _scope = document.createElement("div")
+        _scope.classList.add("scope")
+        _scope.textContent = scheduleItem.context;
+        _nameScopeTime.append(_scope)
+
+        let _time = document.createElement("div")
+        _time.classList.add("time")
+        _time.textContent = scheduleItem.context;
+        _nameScopeTime.append(_time)
+
+        
+        selectedScheduledItemsDiv.append(_plannedEventItem)
+    })
+
+}

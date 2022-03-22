@@ -96,8 +96,10 @@ io.on('connection', (socket) => {
 
       //sendCalendarEvents to the connected user
       let today = new Date()
-      let lastYear = today.setFullYear(today.getFullYear() - 1)
-      let nextYear = today.setFullYear(today.getFullYear() + 1)
+      let lastYear = new Date()
+      lastYear.setFullYear(today.getFullYear() - 1)
+      let nextYear = new Date()
+      nextYear.setFullYear(today.getFullYear() + 1)
       socket.emit('updateCalendar', await getEvents(id, lastYear, nextYear))
 
     })
@@ -660,6 +662,7 @@ function getEvents(userId, initalDate, endDate) {
         //create an object with properties which represent all of the dates between thos intervals
         let eventDates = {};
         let currentDate = initalDate
+        //console.log("currentDate", currentDate, initalDate)
         while (currentDate <= endDate) {
           eventDates[currentDate.toISOString().slice(0, 10)] = [];
           currentDate.setDate(currentDate.getDate() + 1);
