@@ -675,7 +675,7 @@ function displayDayEvents(givenDate) {
             let occurrenceText;
             if (scheduleItem.occurrence == 1 && scheduleItem.oneTimeDate) {
                 let thisdate = new Date(scheduleItem.oneTimeDate)
-                occurrenceText = scheduleItem.startTime + " - " + scheduleItem.endTime + " " + thisdate.toString()
+                occurrenceText = scheduleItem.startTime + " - " + scheduleItem.endTime + " " + thisdate.toString('YYYY-MM-dd').substring(0, 16)
             }
             else if (scheduleItem.occurrence == 2 && scheduleItem.recurrenceType) {
                 occurrenceText;
@@ -686,24 +686,24 @@ function displayDayEvents(givenDate) {
                     // { id: 4, name: "Weekend" }
                     case 1:
                         occurrenceText = 'Occurs every day at ' + scheduleItem.startTime + " - " + scheduleItem.endTime 
-                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
-                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
+                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;
                     case 2:
                         let dayName = new Date(scheduleItem.startRecurrenceDate).toLocaleDateString('en-US', { weekday: 'long' })
                         occurrenceText = 'Occurs every '+dayName+' at ' + scheduleItem.startTime + " - " + scheduleItem.endTime 
-                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
-                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
+                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;
                     case 3:
                         occurrenceText = 'Occurs in business days (Monday - Friday) at ' + scheduleItem.startTime + " - " + scheduleItem.endTime 
-                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
-                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
+                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;
                     case 4:
                         occurrenceText = 'Occurs in weekends (Saturday - Sunday) days at ' + scheduleItem.startTime + " - " + scheduleItem.endTime 
-                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
-                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
+                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;
 
                     default:
