@@ -1,12 +1,13 @@
 
 
-let calendarObject;
+let calendarObject = {}
 let selectedDate = new Date().toISOString().slice(0, 10);
 let newEventCreation = {}
 
 socket.on('updateCalendar', function (calendar) {
     calendarObject = calendar;
     displayDayEvents(selectedDate)
+    renderCalendar()
     console.log("calendar", calendar)
 });
 
@@ -36,7 +37,7 @@ function renderCalendar() {
     const prevLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
     const totalMonthDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
     const startWeekDay = new Date(date.getFullYear(), date.getMonth(), 0).getDay();
-
+    console.log("start weeeek day", startWeekDay)
     calendarDays.innerHTML = "";
 
     let totalCalendarDay = 6 * 7;
@@ -57,16 +58,31 @@ function renderCalendar() {
             date.setHours(0, 0, 0, 0);
 
             let dayClass = date.getTime() === today.getTime() ? 'current-day' : 'month-day';
+
+            //let clickedDate = date;
+            //clickedDate.setDate(day)
+
+            let dateYYYYMMDD_ISO = date.toISOString().slice(0, 10)
+            let dateYYYYMM__ = dateYYYYMMDD_ISO.substring(0, dateYYYYMMDD_ISO.length - 2);
+            let __MM = ((parseInt(dateYYYYMMDD_ISO.slice(-2)) + 1) + "").length > 1 ? "" + (parseInt(dateYYYYMMDD_ISO.slice(-2)) + 1) : "0" + (parseInt(dateYYYYMMDD_ISO.slice(-2)) + 1)
+            let dateYYYYMMDD = dateYYYYMM__ + __MM
+
+            let contentClass = 'noMeaning';
+            if (calendarObject[dateYYYYMMDD]) {
+                contentClass = calendarObject[dateYYYYMMDD].length > 0 ? 'contentDay' : 'noMeaning';
+            }
+
             let dayDiv = document.createElement("div");
             dayDiv.textContent = day;
+            dayDiv.classList.add(contentClass)
             dayDiv.classList.add(dayClass)
+
             calendarDays.append(dayDiv)
 
             dayDiv.addEventListener("click", () => {
-                let clickedDate = date;
-                clickedDate.setDate(day)
-                console.log('day clicked', clickedDate)
-                displayDayEvents(clickedDate.toISOString().slice(0, 10))
+
+                console.log('day clicked', date)
+                displayDayEvents(dateYYYYMMDD)
                 //console.log(calendarObject[clickedDate.toISOString().slice(0, 10)])
                 //console.log(clickedDate.toISOString().slice(0, 10))
             })
@@ -580,8 +596,8 @@ function displayDayEvents(givenDate) {
     let indicatedDate = new Date(givenDate)
     //remove spinner
     removeAllChildren(scheduleTitle)
-    scheduleTitle.textContent = "Planned for "+ indicatedDate.toString().substring(0, 15)
-    
+    scheduleTitle.textContent = "Planned for " + indicatedDate.toString().substring(0, 15)
+
 
     if (!calendarObject[givenDate]) return console.warn("an error while getting the events for this date")
 
@@ -636,11 +652,80 @@ function displayDayEvents(givenDate) {
         morebuttonSection.append(_morebtn)
 
         let __icon = document.createElement("i")
-        __icon.classList.add("bx","bx-chevron-right")
+        __icon.classList.add("bx", "bx-chevron-right")
         _morebtn.appendChild(__icon)
-        
-        _plannedEventItem.addEventListener("click", () =>{
 
+        _plannedEventItem.addEventListener("click", () => {
+
+            let eventTitle, eventOcurence, eventTypediv, eventOwner, eventlocationDiv, eventContextDiv,
+                eventLinkName, eventLinkLink, eventDetailsDiv;
+
+            eventTitle = document.getElementById("eventTitle")
+            eventOcurence = document.getElementById("eventOcurence")
+            eventTypediv = document.getElementById("eventTypediv")
+            eventOwner = document.getElementById("eventOwner")
+            eventlocationDiv = document.getElementById("eventlocationDiv")
+            eventContextDiv = document.getElementById("eventContextDiv")
+            eventLinkName = document.getElementById("eventLinkName")
+            eventLinkLink = document.getElementById("eventLinkLink")
+            eventDetailsDiv = document.getElementById("eventDetailsDiv")
+
+            eventTitle.textContent = scheduleItem.title
+
+            let occurrenceText;
+            if (scheduleItem.occurrence == 1 && scheduleItem.oneTimeDate) {
+                let thisdate = new Date(scheduleItem.oneTimeDate)
+                occurrenceText = scheduleItem.startTime + " - " + scheduleItem.endTime + " " + thisdate.toString()
+            }
+            else if (scheduleItem.occurrence == 2 && scheduleItem.recurrenceType) {
+                occurrenceText;
+                switch (scheduleItem.recurrenceType) {
+                    // { id: 1, name: "Every Day" },
+                    // { id: 2, name: "Every Week" },
+                    // { id: 3, name: "Monday - Friday" },
+                    // { id: 4, name: "Weekend" }
+                    case 1:
+                        occurrenceText = 'Occurs every day at ' + scheduleItem.startTime + " - " + scheduleItem.endTime 
+                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
+                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
+                        break;
+                    case 2:
+                        let dayName = new Date(scheduleItem.startRecurrenceDate).toLocaleDateString('en-US', { weekday: 'long' })
+                        occurrenceText = 'Occurs every '+dayName+' at ' + scheduleItem.startTime + " - " + scheduleItem.endTime 
+                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
+                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
+                        break;
+                    case 3:
+                        occurrenceText = 'Occurs in business days (Monday - Friday) at ' + scheduleItem.startTime + " - " + scheduleItem.endTime 
+                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
+                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
+                        break;
+                    case 4:
+                        occurrenceText = 'Occurs in weekends (Saturday - Sunday) days at ' + scheduleItem.startTime + " - " + scheduleItem.endTime 
+                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
+                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 24)
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            else {
+
+            }
+            eventOcurence.textContent = occurrenceText;
+
+            let scheduleType_temp;
+            if (scheduleItem.type == 2) scheduleType_temp = 'Meeting'
+            else scheduleType_temp = 'Task'
+
+            eventTypediv.textContent = scheduleType_temp
+            eventOwner.textContent = scheduleItem.owner.name + " " + scheduleItem.owner.surname
+            eventlocationDiv.textContent = scheduleItem.eventLocation
+            eventContextDiv.textContent = scheduleItem.context
+            eventLinkName.textContent = scheduleItem.activityLink
+            eventLinkLink.textContent = scheduleItem.activityLink
+            eventDetailsDiv.textContent = scheduleItem.details
         })
     })
 

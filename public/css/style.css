@@ -3975,6 +3975,32 @@ body {
   padding-inline: var(--spacing);
 }
 
+.schedule-container .selectionPanel .card .contentDay {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+  text-align: center;
+  line-height: 40px;
+}
+
+.schedule-container .selectionPanel .card .contentDay:after {
+  content: "";
+  position: absolute;
+  bottom: 8px;
+  width: 5px;
+  height: 2px;
+  border-radius: 15px;
+  background-color: #003061;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  left: 50%;
+}
+
+.schedule-container .selectionPanel .card .current-day, .schedule-container .selectionPanel .card .current-day:after {
+  background-color: white;
+}
+
 .schedule-container .selectionPanel .card .weekdays {
   padding-top: 12px;
 }

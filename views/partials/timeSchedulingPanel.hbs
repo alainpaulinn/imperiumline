@@ -267,15 +267,14 @@
     <div class="scheduleDetailsSection" id="scheduleDetailsSectionDiv">
         <div class="header">
             <div class="rightPart">
-                <div class="title"> <i class='bx bxs-calendar-event'></i> Title: Team meeting</div>
-                <div class="duration"><i class='bx bxs-time'></i> Next Occurence: Thu 22 March 2021 11h40 - Thu 22 March
-                    2021 11h40</div>
+                <div class="title"> <i class='bx bxs-calendar-event'></i>Title: <h1 id="eventTitle">Team meeting</h1></div>
+                <div class="duration"><i class='bx bxs-time'></i><p id="eventOcurence">eventOccurence</p></div>
             </div>
             <div class="leftPart">
-                <div class="meetingType">Meeting</div>
-                <div class="universalCallButtons">
+                <div class="meetingType" id="eventTypediv">Meeting</div>
+                {{!-- <div class="universalCallButtons">
                     <button><i class='bx bx-dots-vertical-rounded'></i></button>
-                </div>
+                </div> --}}
             </div>
         </div>
         <div class="scheduleBody">
@@ -285,29 +284,25 @@
                 <button class="joinMeeting">Join Meeting</button>
             </div>
             -->
-            <div class="detailSection remTop alignItems">
-                <i class='bx bx-sync'></i>
-                <p><strong>Recurrence:</strong> Every Tuesdays</p>
-            </div>
-            <div class="detailSection alignItems">
+            <div class="detailSection alignItems remTop">
                 <i class='bx bx-user-circle'></i>
-                <p><strong>Organizator:</strong> Alain Paulin Niyonkuru</p>
+                <p><strong>Organizator:</strong> <p id="eventOwner"></p></p>
             </div>
             <div class="detailSection alignItems">
                 <i class='bx bxs-map-pin'></i>
-                <p> <strong>Location:</strong> Room B</p>
+                <p> <strong>Location:</strong> <p id="eventlocationDiv">Room B</p></p>
             </div>
             <div class="detailSection alignItems">
                 <i class='bx bxs-tag-alt'></i>
-                <p> <strong>Context:</strong> SCRUM</p>
+                <p> <strong>Context:</strong> <p id="eventContextDiv">SCRUM</p></p>
             </div>
             <div class="detailSection alignItems">
                 <i class='bx bx-link'></i>
-                <p><a class='link' href="#">Zoom Meeting<i class='bx bx-link-external'></i></a></p>
+                <p><a class='link' id="eventLinkLink" href="#"><p id="eventLinkName"></p><i class='bx bx-link-external'></i></a></p>
             </div>
             <div class="detailSection">
                 <i class='bx bx-detail'></i>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem, eius. Adipisci maiores iste deserunt ex
+                <p id="eventDetailsDiv">Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem, eius. Adipisci maiores iste deserunt ex
                     libero doloribus accusamus quae commodi temporibus molestias, ipsam consequuntur quas tenetur ab
                     illo perspiciatis non saepe, doloremque quidem rem. Incidunt, expedita sint temporibus non natus cum
                     animi nisi aperiam voluptate assumenda voluptas laudantium ea, omnis cupiditate nulla fugit amet

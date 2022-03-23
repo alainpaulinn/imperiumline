@@ -99,6 +99,7 @@ io.on('connection', (socket) => {
       let lastYear = new Date()
       lastYear.setFullYear(today.getFullYear() - 1)
       let nextYear = new Date()
+      console.log("Lasttttttttttttttttt Yearr", lastYear)
       nextYear.setFullYear(today.getFullYear() + 1)
       socket.emit('updateCalendar', await getEvents(id, lastYear, nextYear))
 
@@ -619,9 +620,15 @@ io.on('connection', (socket) => {
 
 
           let today = new Date()
-          let lastYear = today.setFullYear(today.getFullYear() - 1)
-          let nextYear = today.setFullYear(today.getFullYear() + 1)
+
+          let lastYear = new Date()
+          lastYear.setFullYear(today.getFullYear() - 1)
+
+          let nextYear = new Date()
+          nextYear.setFullYear(today.getFullYear() + 1)
+
           let eventsToSend = await getEvents(id, lastYear, nextYear);
+          
           socket.emit('updateCalendar', eventsToSend)
           for (let i = 0; i < inviteList.length; i++) {
             const invite = inviteList[i];
@@ -657,13 +664,14 @@ function getEvents(userId, initalDate, endDate) {
     db.query('SELECT `id`, `eventId`, `participantId`, `attending` FROM `eventparticipants` WHERE `participantId` = ?',
       [userId], async (err, _myEvents) => {
         if (err) return console.log(err);
-        if (_myEvents.length < 1) return console.log("no participated events found for this user")
+        //if (_myEvents.length < 1) return console.log("no participated events found for this user")
         console.log("my Events", _myEvents)
         //create an object with properties which represent all of the dates between thos intervals
         let eventDates = {};
         let currentDate = initalDate
         //console.log("currentDate", currentDate, initalDate)
         while (currentDate <= endDate) {
+          console.log("cuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurrentDate", currentDate)
           eventDates[currentDate.toISOString().slice(0, 10)] = [];
           currentDate.setDate(currentDate.getDate() + 1);
         }

@@ -3524,6 +3524,30 @@ body {
         padding-inline: var(--spacing);
       }
 
+      .contentDay{
+        position: relative;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+        text-align: center;
+        line-height: 40px;
+        &:after{
+          content: "";
+          position: absolute;
+          bottom: 8px;
+          width: 5px;
+          height: 2px;
+          border-radius: 15px;
+          background-color: $notification;
+          transform: translateX(-50%);
+          left: 50%;
+        }
+        
+      }
+      .current-day,.current-day:after{
+        background-color: white;
+      }
+
       .weekdays {
         padding-top: 12px;
       }
