@@ -671,10 +671,11 @@ function getEvents(userId, initalDate, endDate) {
         let currentDate = initalDate
         //console.log("currentDate", currentDate, initalDate)
         while (currentDate <= endDate) {
-          console.log("cuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurrentDate", currentDate)
+          console.log("curr", currentDate)
           eventDates[currentDate.toISOString().slice(0, 10)] = [];
           currentDate.setDate(currentDate.getDate() + 1);
         }
+        console.log("Event Dates", eventDates);
         //console.log(eventDates)
         for (let eventNumber = 0; eventNumber < _myEvents.length; eventNumber++) {
           /**
@@ -732,7 +733,6 @@ function getEvents(userId, initalDate, endDate) {
           if (eventdetails.occurrence == 1) {
             eventDates[eventdetails.oneTimeDate].push(eventdetails)
           }
-
           else if (eventdetails.occurrence == 2) {
             // { id: 1, name: "Every Day" },
             // { id: 2, name: "Every Week" },
@@ -748,10 +748,8 @@ function getEvents(userId, initalDate, endDate) {
             console.log(checkStartDate, checkEndDate)
             console.log(dayDifference)
 
-
             //everyday
             if (eventdetails.recurrenceType == 1) {
-
               for (let i = 0; i < dayDifference; i++) {
                 console.log("day loop running", i)
                 let operationDateString = operationDate.toISOString().slice(0, 10)
@@ -761,18 +759,18 @@ function getEvents(userId, initalDate, endDate) {
             }
 
             //everyWeek
-            if (eventdetails.recurrenceType == 2) {
+            else if (eventdetails.recurrenceType == 2) {
 
-              for (let i = 0; i < dayDifference; i++) {
+              for (let i = 0; i < dayDifference/7; i++) {
                 console.log("week loop running", i)
                 let operationDateString = operationDate.toISOString().slice(0, 10)
-                if (eventDates[operationDateString]) eventDates[operationDateString].push(eventdetails);
+                if (eventDates[operationDateString]) eventDates[operationDateString].push(eventdetails); console.log("week loop found ->", operationDateString)
                 operationDate.setDate(operationDate.getDate() + 7)
               }
             }
 
             //monday-friday
-            if (eventdetails.recurrenceType == 3) {
+            else if (eventdetails.recurrenceType == 3) {
               for (let i = 0; i < dayDifference; i++) {
                 console.log("monday-friday loop running", i)
                 let operationDateString = operationDate.toISOString().slice(0, 10)
@@ -785,7 +783,7 @@ function getEvents(userId, initalDate, endDate) {
             }
 
             //weekend
-            if (eventdetails.recurrenceType == 4) {
+            else if (eventdetails.recurrenceType == 4) {
 
               for (let i = 0; i < dayDifference; i++) {
                 console.log("weekend loop running", i)
@@ -794,6 +792,7 @@ function getEvents(userId, initalDate, endDate) {
 
                 if ((operationDate.getDay() == 0 || operationDate.getDay() == 6) && eventDates[operationDateString]) {
                   eventDates[operationDateString].push(eventdetails);
+                  console.log("weekend Found ->", operationDateString)
                 }
                 operationDate.setDate(operationDate.getDate() + 1)
               }

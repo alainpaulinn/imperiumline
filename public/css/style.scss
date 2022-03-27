@@ -3534,9 +3534,9 @@ body {
         &:after{
           content: "";
           position: absolute;
-          bottom: 8px;
+          bottom: 5px;
           width: 5px;
-          height: 2px;
+          height: 5px;
           border-radius: 15px;
           background-color: $notification;
           transform: translateX(-50%);
@@ -3777,7 +3777,7 @@ body {
       border-bottom: 1px solid #f1f4f6;
 
       .rightPart {
-        .title {
+        .title, .title>* {
           font-weight: bold;
           font-size: 20px;
           padding: 1rem 0;
@@ -3808,10 +3808,11 @@ body {
 
         .meetingType {
           background-color: white;
-          color: red;
+          color: $notification;
           border-radius: $borderRadius;
           padding: 1rem;
           font-weight: bold;
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
         }
 
         button {
@@ -3902,11 +3903,11 @@ body {
         p>a {
           display: flex;
           align-items: center;
-          color: blue;
+          color: $notification;
           //aspect-ratio: 1;
           font-size: 13px;
           padding: .8rem;
-          background-color: rgb(196, 196, 255);
+          background-color: rgb(218, 218, 248);
           text-decoration: none;
           border-radius: 15px;
 

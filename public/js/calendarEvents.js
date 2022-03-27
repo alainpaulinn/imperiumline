@@ -33,43 +33,47 @@ today.setHours(0, 0, 0, 0);
 renderCalendar();
 
 function renderCalendar() {
-    console.log(date)
+    console.log(date.toISOString())
     const prevLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
     const totalMonthDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
     const startWeekDay = new Date(date.getFullYear(), date.getMonth(), 0).getDay();
-    console.log("start weeeek day", startWeekDay)
+    console.log("start weeeek day", startWeekDay, "prevLastDay", prevLastDay, "totalMonthDay", totalMonthDay)
     calendarDays.innerHTML = "";
 
     let totalCalendarDay = 6 * 7;
     for (let i = 0; i < totalCalendarDay; i++) {
         let day = i - startWeekDay;
 
+        console.log("testingggg", startWeekDay, totalMonthDay, startWeekDay + totalMonthDay)
+
         if (i <= startWeekDay) {
             // adding previous month days
             let dayDiv = document.createElement("div")
-            dayDiv.textContent = prevLastDay - i;
+            dayDiv.textContent = prevLastDay + i - startWeekDay;
             dayDiv.classList.add("padding-day");
             calendarDays.append(dayDiv);
 
         } else if (i <= startWeekDay + totalMonthDay) {
             // adding this month days
 
-            date.setDate(day);
+            date.setDate(day); console.log("day:", day, 'loop:', i)
             date.setHours(0, 0, 0, 0);
 
             let dayClass = date.getTime() === today.getTime() ? 'current-day' : 'month-day';
 
-            //let clickedDate = date;
-            //clickedDate.setDate(day)
-
+            /*
             let dateYYYYMMDD_ISO = date.toISOString().slice(0, 10)
             let dateYYYYMM__ = dateYYYYMMDD_ISO.substring(0, dateYYYYMMDD_ISO.length - 2);
             let __MM = ((parseInt(dateYYYYMMDD_ISO.slice(-2)) + 1) + "").length > 1 ? "" + (parseInt(dateYYYYMMDD_ISO.slice(-2)) + 1) : "0" + (parseInt(dateYYYYMMDD_ISO.slice(-2)) + 1)
             let dateYYYYMMDD = dateYYYYMM__ + __MM
+            console.log(dateYYYYMMDD_ISO)*/
+
+            let dateYYYYMMDD_ISO = formatDate(date)
 
             let contentClass = 'noMeaning';
-            if (calendarObject[dateYYYYMMDD]) {
-                contentClass = calendarObject[dateYYYYMMDD].length > 0 ? 'contentDay' : 'noMeaning';
+            if (calendarObject[dateYYYYMMDD_ISO]) {
+                contentClass = calendarObject[dateYYYYMMDD_ISO].length > 0 ? 'contentDay' : 'noMeaning';
+                //console.log("Yes")
             }
 
             let dayDiv = document.createElement("div");
@@ -80,9 +84,10 @@ function renderCalendar() {
             calendarDays.append(dayDiv)
 
             dayDiv.addEventListener("click", () => {
-
-                console.log('day clicked', date)
-                displayDayEvents(dateYYYYMMDD)
+                let ckickDateCheck = date;
+                ckickDateCheck.setDate(day)
+                console.log('day date clicked', ckickDateCheck, day, formatDate(ckickDateCheck))
+                displayDayEvents(formatDate(ckickDateCheck))
                 //console.log(calendarObject[clickedDate.toISOString().slice(0, 10)])
                 //console.log(clickedDate.toISOString().slice(0, 10))
             })
@@ -587,6 +592,7 @@ socket.on('scheduleInviteResults', (peopleResults) => {
 })
 
 function displayDayEvents(givenDate) {
+    console.log(givenDate, new Date(givenDate), new Date(givenDate).toISOString())
     let scheduleTitle = document.getElementById("scheduleTitle")
     let selectedScheduledItemsDiv = document.getElementById("selectedScheduledItemsDiv")
 
@@ -594,6 +600,7 @@ function displayDayEvents(givenDate) {
     removeAllChildren(selectedScheduledItemsDiv)
 
     let indicatedDate = new Date(givenDate)
+    //console.log(givenDate,indicatedDate)
     //remove spinner
     removeAllChildren(scheduleTitle)
     scheduleTitle.textContent = "Planned for " + indicatedDate.toString().substring(0, 15)
@@ -666,9 +673,14 @@ function displayDayEvents(givenDate) {
             eventOwner = document.getElementById("eventOwner")
             eventlocationDiv = document.getElementById("eventlocationDiv")
             eventContextDiv = document.getElementById("eventContextDiv")
-            eventLinkName = document.getElementById("eventLinkName")
+            //eventLinkName = document.getElementById("eventLinkName")
             eventLinkLink = document.getElementById("eventLinkLink")
             eventDetailsDiv = document.getElementById("eventDetailsDiv")
+
+            if (scheduleItem.activityLink == "" || scheduleItem.activityLink == null) eventLinkLink.parentElement.parentElement.style.display = "none";
+            else eventLinkLink.parentElement.parentElement.style.display = "flex";
+            if (scheduleItem.details == "" || scheduleItem.details == null) eventDetailsDiv.parentElement.style.display = "none";
+            else eventDetailsDiv.parentElement.style.display = "flex";
 
             eventTitle.textContent = scheduleItem.title
 
@@ -685,25 +697,25 @@ function displayDayEvents(givenDate) {
                     // { id: 3, name: "Monday - Friday" },
                     // { id: 4, name: "Weekend" }
                     case 1:
-                        occurrenceText = 'Occurs every day at ' + scheduleItem.startTime + " - " + scheduleItem.endTime 
-                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
-                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                        occurrenceText = 'Occurs every day at ' + scheduleItem.startTime + " - " + scheduleItem.endTime
+                            + " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                            + " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;
                     case 2:
                         let dayName = new Date(scheduleItem.startRecurrenceDate).toLocaleDateString('en-US', { weekday: 'long' })
-                        occurrenceText = 'Occurs every '+dayName+' at ' + scheduleItem.startTime + " - " + scheduleItem.endTime 
-                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
-                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                        occurrenceText = 'Occurs every ' + dayName + ' at ' + scheduleItem.startTime + " - " + scheduleItem.endTime
+                            + " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                            + " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;
                     case 3:
-                        occurrenceText = 'Occurs in business days (Monday - Friday) at ' + scheduleItem.startTime + " - " + scheduleItem.endTime 
-                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
-                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                        occurrenceText = 'Occurs in business days (Monday - Friday) at ' + scheduleItem.startTime + " - " + scheduleItem.endTime
+                            + " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                            + " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;
                     case 4:
-                        occurrenceText = 'Occurs in weekends (Saturday - Sunday) days at ' + scheduleItem.startTime + " - " + scheduleItem.endTime 
-                        +" Since " +new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
-                        +" Until " +new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                        occurrenceText = 'Occurs in weekends (Saturday - Sunday) days at ' + scheduleItem.startTime + " - " + scheduleItem.endTime
+                            + " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                            + " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;
 
                     default:
@@ -713,6 +725,7 @@ function displayDayEvents(givenDate) {
             else {
 
             }
+
             eventOcurence.textContent = occurrenceText;
 
             let scheduleType_temp;
@@ -723,9 +736,13 @@ function displayDayEvents(givenDate) {
             eventOwner.textContent = scheduleItem.owner.name + " " + scheduleItem.owner.surname
             eventlocationDiv.textContent = scheduleItem.eventLocation
             eventContextDiv.textContent = scheduleItem.context
-            eventLinkName.textContent = scheduleItem.activityLink
+            //eventLinkName.textContent = scheduleItem.activityLink
             eventLinkLink.textContent = scheduleItem.activityLink
             eventDetailsDiv.textContent = scheduleItem.details
+
+            let outIcon = document.createElement("i")
+            outIcon.classList.add("bx", "bx-link-external")
+            eventLinkLink.appendChild(outIcon)
         })
     })
 
@@ -735,4 +752,18 @@ function removeAllChildren(element) {
     while (element.firstChild) {
         element.removeChild(element.firstChild);
     }
+}
+
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    return [year, month, day].join('-');
 }

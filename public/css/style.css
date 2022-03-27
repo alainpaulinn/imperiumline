@@ -3987,9 +3987,9 @@ body {
 .schedule-container .selectionPanel .card .contentDay:after {
   content: "";
   position: absolute;
-  bottom: 8px;
+  bottom: 5px;
   width: 5px;
-  height: 2px;
+  height: 5px;
   border-radius: 15px;
   background-color: #003061;
   -webkit-transform: translateX(-50%);
@@ -4266,8 +4266,9 @@ body {
   border-bottom: 1px solid #f1f4f6;
 }
 
-.schedule-container .scheduleDetailsSection .header .rightPart .title,
-.schedule-container .newScheduleDetailsSection .header .rightPart .title {
+.schedule-container .scheduleDetailsSection .header .rightPart .title, .schedule-container .scheduleDetailsSection .header .rightPart .title > *,
+.schedule-container .newScheduleDetailsSection .header .rightPart .title,
+.schedule-container .newScheduleDetailsSection .header .rightPart .title > * {
   font-weight: bold;
   font-size: 20px;
   padding: 1rem 0;
@@ -4279,8 +4280,9 @@ body {
           align-items: center;
 }
 
-.schedule-container .scheduleDetailsSection .header .rightPart .title i,
-.schedule-container .newScheduleDetailsSection .header .rightPart .title i {
+.schedule-container .scheduleDetailsSection .header .rightPart .title i, .schedule-container .scheduleDetailsSection .header .rightPart .title > * i,
+.schedule-container .newScheduleDetailsSection .header .rightPart .title i,
+.schedule-container .newScheduleDetailsSection .header .rightPart .title > * i {
   font-size: 20px;
   margin-right: 1rem;
 }
@@ -4313,10 +4315,12 @@ body {
 .schedule-container .scheduleDetailsSection .header .leftPart .meetingType,
 .schedule-container .newScheduleDetailsSection .header .leftPart .meetingType {
   background-color: white;
-  color: red;
+  color: #003061;
   border-radius: 15px;
   padding: 1rem;
   font-weight: bold;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
 }
 
 .schedule-container .scheduleDetailsSection .header .leftPart button,
@@ -4443,10 +4447,10 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  color: blue;
+  color: #003061;
   font-size: 13px;
   padding: .8rem;
-  background-color: #c4c4ff;
+  background-color: #dadaf8;
   text-decoration: none;
   border-radius: 15px;
 }
