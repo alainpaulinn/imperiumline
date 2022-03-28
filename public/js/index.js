@@ -731,11 +731,18 @@ function openChat(openChatInfo) {
     if (e.key == 'Enter' && !e.shiftKey) {
       // prevent default behavior
       e.preventDefault();
+      let unfDate = new Date();
+      let fDate = [(unfDate.getMonth()+1).padLeft(),
+        unfDate.getDate().padLeft(),
+        unfDate.getFullYear()].join('-') +' ' +
+       [unfDate.getHours().padLeft(),
+        unfDate.getMinutes().padLeft(),
+        unfDate.getSeconds().padLeft()].join(':');
       let message =
       {
         toRoom: selectedChatId,
         message: messageContent.innerText.trim(),
-        timeStamp: new Date().toISOString(),
+        timeStamp: fDate,
         taggedMessages: taggedMessages
       };
       console.log(message)
