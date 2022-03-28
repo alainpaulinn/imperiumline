@@ -123,12 +123,12 @@ io.on('connection', (socket) => {
       let expectedUser = roomUsersInfo.users.find(user => user.userID == id)
 
       let unfDate = new Date();
-      let fDate = [(unfDate.getMonth()+1).padLeft(),
-        unfDate.getDate().padLeft(),
+      let fDate = [(unfDate.getMonth()+1).padStart(2,"0"),
+        unfDate.getDate().padStart(2,"0"),
         unfDate.getFullYear()].join('-') +' ' +
-       [unfDate.getHours().padLeft(),
-        unfDate.getMinutes().padLeft(),
-        unfDate.getSeconds().padLeft()].join(':');
+       [unfDate.getHours().padStart(2,"0"),
+        unfDate.getMinutes().padStart(2,"0"),
+        unfDate.getSeconds().padStart(2,"0")].join(':');
 
       if (expectedUser && message.message != "") {
         db.query('INSERT INTO `message`(`message`, `roomID`, `userID`, `timeStamp`) VALUES (?,?,?,?)', [message.message, message.toRoom, id, fDate || message.timeStamp], async (err, participantResult) => {
