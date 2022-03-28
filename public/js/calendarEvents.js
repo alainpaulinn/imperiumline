@@ -475,7 +475,7 @@ socket.on('scheduleInviteResults', (peopleResults) => {
     console.log(peopleResults)
     invitedMembersDiv.innerHTML = '';
 
-    if (peopleResults.length < 1) return invitedMembersDiv.innerHtml = "<i class='bx bxs-binoculars' ></i>" + "No such user in yout Organization";
+    if (peopleResults.length < 1) return invitedMembersDiv.append //invitedMembersDiv.innerHtml = "<i class='bx bxs-binoculars' ></i>" + "No such user in yout Organization";
     peopleResults.forEach(person => {
         if (newEventCreation.inviteList.includes(person.id)) return;
 
@@ -664,18 +664,23 @@ function displayDayEvents(givenDate) {
 
         _plannedEventItem.addEventListener("click", () => {
 
-            let eventTitle, eventOcurence, eventTypediv, eventOwner, eventlocationDiv, eventContextDiv,
-                eventLinkName, eventLinkLink, eventDetailsDiv;
+            let eventTitle, eventOcurence, eventTypediv, eventOwner, eventParticipantsDivResult, eventlocationDiv, eventContextDiv,
+                eventLinkName, eventLinkLink, eventDetailsDiv, attendingAnswer, attendingChoices;
 
             eventTitle = document.getElementById("eventTitle")
             eventOcurence = document.getElementById("eventOcurence")
             eventTypediv = document.getElementById("eventTypediv")
             eventOwner = document.getElementById("eventOwner")
+            eventParticipantsDivResult = document.getElementById("eventParticipantsDivResult")
             eventlocationDiv = document.getElementById("eventlocationDiv")
             eventContextDiv = document.getElementById("eventContextDiv")
             //eventLinkName = document.getElementById("eventLinkName")
             eventLinkLink = document.getElementById("eventLinkLink")
             eventDetailsDiv = document.getElementById("eventDetailsDiv")
+
+            attendingAnswer = document.getElementById("attendingAnswer");
+            attendingChoices = document.getElementById("attendingChoices")
+
 
             if (scheduleItem.activityLink == "" || scheduleItem.activityLink == null) eventLinkLink.parentElement.parentElement.style.display = "none";
             else eventLinkLink.parentElement.parentElement.style.display = "flex";
@@ -729,11 +734,135 @@ function displayDayEvents(givenDate) {
             eventOcurence.textContent = occurrenceText;
 
             let scheduleType_temp;
-            if (scheduleItem.type == 2) scheduleType_temp = 'Meeting'
-            else scheduleType_temp = 'Task'
+            let scheduleIcon = document.createElement('i')
+            if (scheduleItem.type == 2) {
+                scheduleType_temp = 'Meeting'; scheduleIcon.classList.add("bx", "bx-group");
+            }
+            else scheduleType_temp = 'Task'; scheduleIcon.classList.add("bx", "bx-task");
 
             eventTypediv.textContent = scheduleType_temp
-            eventOwner.textContent = scheduleItem.owner.name + " " + scheduleItem.owner.surname
+            eventTypediv.append(scheduleIcon)
+            eventOwner.textContent = scheduleItem.owner.name + " " + scheduleItem.owner.surname;
+
+            removeAllChildren(eventParticipantsDivResult)//remove all children
+            /*
+            [
+                {
+                    "userInfo": {
+                        "userID": 7,
+                        "name": "Test",
+                        "surname": "User7",
+                        "profilePicture": null
+                    },
+                    "attending": 1
+                },
+                {
+                    "userInfo": {
+                        "userID": 8,
+                        "name": "5Mugisha",
+                        "surname": "Jean",
+                        "profilePicture": null
+                    },
+                    "attending": 1
+                },
+                {
+                    "userInfo": {
+                        "userID": 6,
+                        "name": "test6Name",
+                        "surname": "test6Surame",
+                        "profilePicture": null
+                    },
+                    "attending": 1
+                },
+                {
+                    "userInfo": {
+                        "userID": 2,
+                        "name": "Test2Name",
+                        "surname": "Test2Surname",
+                        "profilePicture": "/images/profiles/user-129.png"
+                    },
+                    "attending": 1
+                }
+            ]
+            */
+            if (scheduleItem.Participants) {
+                scheduleItem.Participants.forEach(function (participant) {
+                    let { userInfo, attending } = participant;
+                    let { userID, name, surname, profilePicture } = userInfo;
+
+                    //fromm
+                    let avatarElement;
+                    if (profilePicture == null) {
+                        avatarElement = document.createElement("div")
+                        avatarElement.textContent = name.charAt(0) + " " + surname.charAt(0)
+                    }
+                    else {
+                        avatarElement = document.createElement("img")
+                        avatarElement.src = profilePicture
+                    }
+
+                    let invitedMemberDiv = document.createElement("div");
+                    invitedMemberDiv.id = "invited" + userID;
+                    invitedMemberDiv.className = "invitedMemberDiv"
+
+
+                    let resultItemBundle = document.createElement("div");
+                    resultItemBundle.className = "resultItemBundle";
+                    resultItemBundle.title = name + " " + surname;
+
+                    let containerImage = document.createElement("div");
+                    containerImage.className = "containerImage";
+
+                    let meeting_data = document.createElement("div");
+                    meeting_data.className = "meeting-data"
+
+                    let nameScopeTime = document.createElement("div");
+                    nameScopeTime.className = "nameScopeTime";
+
+                    let meetingName = document.createElement("p");
+                    meetingName.className = "meetingName";
+                    meetingName.textContent = name + " " + surname;
+
+                    let scope = document.createElement("p")
+                    scope.className = "scope";
+                    /**
+                     * 0: not attending
+                     * 1: maybe
+                     * 2: attending: default
+                     */
+                    switch (attending) {
+                        case 0:
+                            scope.textContent = "Not Attending"
+                            break;
+                        case 1:
+                            scope.textContent = "Attendance Not Sure"
+                            break;
+                        case 2:
+                            scope.textContent = "Attending"
+                            break;
+                        default:
+                            scope.textContent = "Not Known"
+                            break;
+                    }
+
+
+                    invitedMemberDiv.appendChild(resultItemBundle)
+                    resultItemBundle.append(containerImage, meeting_data)
+                    containerImage.appendChild(avatarElement)
+                    meeting_data.appendChild(nameScopeTime)
+                    nameScopeTime.append(meetingName, scope)
+
+                    eventParticipantsDivResult.appendChild(invitedMemberDiv)
+
+                    invitedMemberDiv.addEventListener("click", function () {
+                        if (userID == mySavedID) return;
+                        showMessagesPanel()
+                        socket.emit('makeChat', userID)
+                    })
+
+                })
+            }
+
             eventlocationDiv.textContent = scheduleItem.eventLocation
             eventContextDiv.textContent = scheduleItem.context
             //eventLinkName.textContent = scheduleItem.activityLink
@@ -743,6 +872,88 @@ function displayDayEvents(givenDate) {
             let outIcon = document.createElement("i")
             outIcon.classList.add("bx", "bx-link-external")
             eventLinkLink.appendChild(outIcon)
+
+
+            //attendingChoices
+            let myAttendance = scheduleItem.Participants.find(obj => obj.userInfo.userID == mySavedID);
+            if (!myAttendance) return;
+            switch (myAttendance.attending) {
+                case 0:
+                    removeAllChildren(attendingChoices)
+                    attendingAnswer.textContent = " No"
+
+                    let yesButtonResponse = createMyElement("button", ["positive"], "Yes")
+                    attendingChoices.append(yesButtonResponse)
+                    addResponseEventListener(yesButtonResponse, 2)
+                    // yesButtonResponse.addEventListener("click", function (){
+                    //     sendEventAttendanceResponse(scheduleItem.eventId, 2)
+                    //     console.log(scheduleItem.eventId, 2)
+                    // })
+
+                    let notSureButtonResponse = createMyElement("button", ["certain"], "Not Sure")
+                    attendingChoices.append(notSureButtonResponse)
+                    addResponseEventListener(notSureButtonResponse, 1)
+                    // notSureButtonResponse.addEventListener("click", function (){
+                    //     sendEventAttendanceResponse(scheduleItem.eventId, 1)
+                    //     console.log(scheduleItem.eventId, 1)
+                    // })
+
+                    break;
+                case 1:
+                    removeAllChildren(attendingChoices)
+                    attendingAnswer.textContent = " Not Sure"
+
+                    let _yesButtonResponse = createMyElement("button", ["positive"], "Yes")
+                    attendingChoices.append(_yesButtonResponse)
+                    addResponseEventListener(_yesButtonResponse, 2)
+                    // _yesButtonResponse.addEventListener("click", function (){
+                    //     sendEventAttendanceResponse(scheduleItem.eventId, 2)
+                    //     console.log(scheduleItem.eventId, 2)
+                    // })
+
+                    let _noButtonResponse = createMyElement("button", ["negative"], "No")
+                    attendingChoices.append(_noButtonResponse)
+                    addResponseEventListener(_noButtonResponse, 0)
+                    // _noButtonResponse.addEventListener("click", function (){
+                    //     sendEventAttendanceResponse(scheduleItem.eventId, 0)
+                    //     console.log(scheduleItem.eventId, 0)
+                    // })
+                    break;
+                case 2:
+                    removeAllChildren(attendingChoices)
+                    attendingAnswer.textContent = " Yes"
+
+                    let __notSureButtonResponse = createMyElement("button", ["certain"], "Not Sure")
+                    attendingChoices.append(__notSureButtonResponse)
+                    addResponseEventListener(__notSureButtonResponse, 1)
+                    // __notSureButtonResponse.addEventListener("click", function (){
+                    //     sendEventAttendanceResponse(scheduleItem.eventId, 1)
+                    //     console.log(scheduleItem.eventId, 1)
+                    // })
+
+                    let __noButtonResponse = createMyElement("button", ["negative"], "No")
+                    attendingChoices.append(__noButtonResponse)
+                    addResponseEventListener(__noButtonResponse, 0)
+                    // __noButtonResponse.addEventListener("click", function (){
+                    //     sendEventAttendanceResponse(scheduleItem.eventId, 0)
+                    //     console.log(scheduleItem.eventId, 0)
+                    // })
+                    break;
+                default:
+                    break;
+            }
+
+            
+            function addResponseEventListener(element, response){
+                element.addEventListener("click", function (){
+                    sendEventAttendanceResponse(scheduleItem.eventId, response)
+                    console.log(scheduleItem.eventId, response)
+                })
+            }
+            function sendEventAttendanceResponse(eventId, resp){
+                socket.emit("updateEventAttendance", {eventId, resp})
+            }
+            
         })
     })
 
@@ -766,4 +977,15 @@ function formatDate(date) {
         day = '0' + day;
 
     return [year, month, day].join('-');
+}
+
+function createMyElement(elementType, classList, textContent){
+    //elementType: string, classList: array of strings, textContent: string
+    let newElem = document.createElement(elementType+"")
+    newElem.textContent = textContent
+    classList.forEach( classString => {
+        newElem.classList.add(classString)
+    })
+
+    return newElem;
 }

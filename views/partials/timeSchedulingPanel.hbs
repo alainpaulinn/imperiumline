@@ -267,7 +267,7 @@
     <div class="scheduleDetailsSection" id="scheduleDetailsSectionDiv">
         <div class="header">
             <div class="rightPart">
-                <div class="title"> <i class='bx bxs-calendar-event'></i><h1 id="eventTitle">Team meeting</h1></div>
+                <div class="title"> <i class='bx bxs-calendar-event'></i><h1 id="eventTitle"></h1></div>
                 <div class="duration"><i class='bx bxs-time'></i><p id="eventOcurence"></p></div>
             </div>
             <div class="leftPart">
@@ -286,15 +286,19 @@
             -->
             <div class="detailSection alignItems remTop">
                 <i class='bx bx-user-circle'></i>
-                <p><strong>Created by: </strong> <p id="eventOwner"></p></p>
+                <p><strong>Created by:&nbsp;</strong> <p id="eventOwner"></p></p>
+            </div>
+            <div class="detailSection alignItems remTop">
+                <i class='bx bxs-user-account' ></i>
+                <p id="eventParticipantsDivResult"></p>
             </div>
             <div class="detailSection alignItems">
                 <i class='bx bxs-map-pin'></i>
-                <p> <strong>Location: </strong> <p id="eventlocationDiv"></p></p>
+                <p> <strong>Location:&nbsp;</strong> <p id="eventlocationDiv"></p></p>
             </div>
             <div class="detailSection alignItems">
                 <i class='bx bxs-tag-alt'></i>
-                <p> <strong>Context: </strong> <p id="eventContextDiv"></p></p>
+                <p> <strong>Context:&nbsp;</strong> <p id="eventContextDiv"></p></p>
             </div>
             <div class="detailSection alignItems">
                 <i class='bx bx-link'></i>
@@ -317,10 +321,10 @@
             </div>
 
             <div class="attending">
-                <div class="attendingTitle">Are you attending? Yes</div>
-                <div class="attendingResponse">
+                <div class="attendingTitle">Are you attending? &nbsp;<p id="attendingAnswer"></p></div>
+                <div class="attendingResponse" id="attendingChoices">
                     <button class="positive">Yes</button>
-                    <button class="certain">Maybe</button>
+                    <button class="certain">Not Sure</button>
                     <button class="negative">No</button>
                 </div>
             </div>

@@ -188,6 +188,7 @@ io.on('connection', (socket) => {
       })
     })
     socket.on('makeChat', (makeChat) => {
+      if(makeChat == id) return console.log(`user with ID ${id} wanted to create a chat with himself and was dismissed`)
       let memberRooms = [];
       let commonChat = { exists: false, id: null };
 
@@ -847,10 +848,10 @@ const insertEventParticipant = (eventId, participantId) => {
   /**
    * 0: not attending
    * 1: maybe
-   * 2: attending
+   * 2: attending: default
    */
   db.query("INSERT INTO `eventparticipants`(`eventId`, `participantId`, `attending`) VALUES (?,?,?)",
-    [eventId, participantId, 1], async (err, addedParticipantResult) => {
+    [eventId, participantId, 2], async (err, addedParticipantResult) => {
       if (err) return console.log(err);
     });
 }
@@ -860,7 +861,11 @@ function getEventParticipants(givenEventId) {
     db.query('SELECT `id`, `eventId`, `participantId`, `attending` FROM `eventparticipants` WHERE `eventId` = ?', [givenEventId], async (err, eventParticipants) => {
       if (err) return console.log(err)
       let _eventParticipants = eventParticipants.map(async participant => {
-        return await getUserInfo(participant.participantId)
+        let attending = participant.attending;
+        return {
+          userInfo: await getUserInfo(participant.participantId),
+          attending: attending
+        }
       })
       resolve(Promise.all(_eventParticipants))
     })

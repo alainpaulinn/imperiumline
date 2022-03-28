@@ -316,38 +316,6 @@ body {
         height: 0;  */
 }
 
-.c-sidepanel__nav__chat-options {
-  text-decoration: none;
-  outline: none;
-  border: none;
-  color: #808488;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -ms-flex-item-align: end;
-      align-self: flex-end;
-  background-color: transparent;
-}
-
-.c-sidepanel__nav__chat-options svg,
-.c-sidepanel__nav__chat-options i {
-  margin-right: 5px;
-  margin-left: 10px;
-  font-size: 18px;
-}
-
-.c-sidepanel__nav__chat-options:hover {
-  color: #003061;
-}
-
-.c-sidepanel__nav__chat-options:hover svg,
-.c-sidepanel__nav__chat-options:hover i {
-  color: #003061;
-}
-
 .c-sidepanel__nav .sendButton {
   font-size: 24px;
 }
@@ -1800,6 +1768,37 @@ body {
   background-color: white;
   -webkit-box-shadow: 3px -3px 10px -2px rgba(204, 197, 197, 0.5);
           box-shadow: 3px -3px 10px -2px rgba(204, 197, 197, 0.5);
+}
+
+.typingBox .chat-options {
+  text-decoration: none;
+  outline: none;
+  border: none;
+  color: #808488;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-flex-item-align: end;
+      align-self: flex-end;
+  background-color: transparent;
+  padding: 1rem 0.5rem;
+}
+
+.typingBox .chat-options svg,
+.typingBox .chat-options i {
+  font-size: 18px;
+}
+
+.typingBox .chat-options:hover {
+  color: #003061;
+}
+
+.typingBox .chat-options:hover svg,
+.typingBox .chat-options:hover i {
+  color: #003061;
 }
 
 /** This is the css of the input **/
@@ -4110,6 +4109,7 @@ body {
 
 .schedule-container .selectionPanel .pannedItems .planneditemsContent .plannedItem {
   background-color: transparent;
+  cursor: pointer;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -4314,13 +4314,29 @@ body {
 
 .schedule-container .scheduleDetailsSection .header .leftPart .meetingType,
 .schedule-container .newScheduleDetailsSection .header .leftPart .meetingType {
-  background-color: white;
-  color: #003061;
+  width: 6rem;
+  background-color: #003061;
+  color: white;
   border-radius: 15px;
   padding: 1rem;
   font-weight: bold;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.schedule-container .scheduleDetailsSection .header .leftPart .meetingType i,
+.schedule-container .newScheduleDetailsSection .header .leftPart .meetingType i {
+  font-size: 30px;
 }
 
 .schedule-container .scheduleDetailsSection .header .leftPart button,
@@ -4684,6 +4700,13 @@ body {
   background-color: white;
 }
 
+.schedule-container .scheduleDetailsSection .attending .attendingTitle,
+.schedule-container .newScheduleDetailsSection .attending .attendingTitle {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
 .schedule-container .scheduleDetailsSection .attending .attendingResponse *,
 .schedule-container .newScheduleDetailsSection .attending .attendingResponse * {
   font-weight: bold;
@@ -4695,6 +4718,7 @@ body {
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
   cursor: pointer;
+  margin: 0 .2rem;
 }
 
 .schedule-container .scheduleDetailsSection .attending .attendingResponse .positive,

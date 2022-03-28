@@ -510,16 +510,16 @@ function openChat(openChatInfo) {
 
     </div>
     <div class="typingBox">
-      <button class='c-sidepanel__nav__chat-options padding-bottom-12px' href='' title=''><i class='bx bxs-smile' ></i></i></button>
-      <button class='c-sidepanel__nav__chat-options padding-bottom-12px' href='' title=''><i class='bx bx-paperclip' ></i></button>
+      <button class='chat-options' href='' title=''><i class='bx bxs-smile' ></i></i></button>
+      <button class='chat-options' href='' title=''><i class='bx bx-paperclip' ></i></button>
       <div id="w-input-container" onclick="setFocus()">
         <div class="w-input-text-group">
           <div id="w-input-text" class="w-input-text" contenteditable></div>
           <div class="w-placeholder">Type a message</div>
         </div>
       </div>
-      <button class='c-sidepanel__nav__chat-options padding-bottom-12px' href='' title=''><i class='bx bxs-microphone' ></i></button>
-      <button id='sendButton' class='c-sidepanel__nav__chat-options padding-bottom-12px' href='' title=''><i class='bx bxs-send' ></i></button>
+      <button class='chat-options' href='' title=''><i class='bx bxs-microphone' ></i></button>
+      <button id='sendButton' class='chat-options' href='' title=''><i class='bx bxs-send' ></i></button>
     </div>
   
   
@@ -2010,6 +2010,15 @@ function showCallHistory() {
   ongoingCallPage.style.display = "none";
 
   document_title.innerText = "Calls";
+}
+function showMessagesPanel() {
+  time_scheduling_option.style.display = "none"
+  messages_panel.style.display = "flex";
+  calls_panel.style.display = "none";
+  callHistoryPage.style.display = "none";
+  ongoingCallPage.style.display = "none";
+
+  document_title.innerText = "Messages";
 }
 
 //functional buttons//////////////////
