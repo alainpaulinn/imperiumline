@@ -122,8 +122,16 @@ io.on('connection', (socket) => {
       let roomUsersInfo = await getRoomInfo(message.toRoom, id)
       let expectedUser = roomUsersInfo.users.find(user => user.userID == id)
 
+      let unfDate = new Date();
+      let fDate = [(unfDate.getMonth()+1).padLeft(),
+        unfDate.getDate().padLeft(),
+        unfDate.getFullYear()].join('-') +' ' +
+       [unfDate.getHours().padLeft(),
+        unfDate.getMinutes().padLeft(),
+        unfDate.getSeconds().padLeft()].join(':');
+
       if (expectedUser && message.message != "") {
-        db.query('INSERT INTO `message`(`message`, `roomID`, `userID`, `timeStamp`) VALUES (?,?,?,?)', [message.message, message.toRoom, id, message.timeStamp], async (err, participantResult) => {
+        db.query('INSERT INTO `message`(`message`, `roomID`, `userID`, `timeStamp`) VALUES (?,?,?,?)', [message.message, message.toRoom, id, fDate || message.timeStamp], async (err, participantResult) => {
           if(err) return console.log(err)
           db.query('UPDATE `room` SET `lastActionDate` = ? WHERE `room`.`chatID` = ?;', [message.timeStamp, message.toRoom], async (err, updateLastAction) => {
             if(err) return console.log(err)
