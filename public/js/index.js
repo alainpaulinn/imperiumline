@@ -732,12 +732,12 @@ function openChat(openChatInfo) {
       // prevent default behavior
       e.preventDefault();
       let unfDate = new Date();
-      let fDate = [(unfDate.getMonth()+1).padLeft(),
-        unfDate.getDate().padLeft(),
-        unfDate.getFullYear()].join('-') +' ' +
-       [unfDate.getHours().padLeft(),
-        unfDate.getMinutes().padLeft(),
-        unfDate.getSeconds().padLeft()].join(':');
+      let fDate = [((unfDate.getMonth()+1)+'').padStart(2,"0"),
+        (unfDate.getDate()+'').padStart(2,"0"),
+        (unfDate.getFullYear()+'')].join('-') +' ' +
+       [(unfDate.getHours()+'').padStart(2,"0"),
+        (unfDate.getMinutes()+'').padStart(2,"0"),
+        (unfDate.getSeconds()+'').padStart(2,"0")].join(':');
       let message =
       {
         toRoom: selectedChatId,
