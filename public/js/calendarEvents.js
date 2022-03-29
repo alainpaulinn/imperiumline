@@ -885,19 +885,10 @@ function displayDayEvents(givenDate) {
                     let yesButtonResponse = createMyElement("button", ["positive"], "Yes")
                     attendingChoices.append(yesButtonResponse)
                     addResponseEventListener(yesButtonResponse, 2)
-                    // yesButtonResponse.addEventListener("click", function (){
-                    //     sendEventAttendanceResponse(scheduleItem.eventId, 2)
-                    //     console.log(scheduleItem.eventId, 2)
-                    // })
 
                     let notSureButtonResponse = createMyElement("button", ["certain"], "Not Sure")
                     attendingChoices.append(notSureButtonResponse)
                     addResponseEventListener(notSureButtonResponse, 1)
-                    // notSureButtonResponse.addEventListener("click", function (){
-                    //     sendEventAttendanceResponse(scheduleItem.eventId, 1)
-                    //     console.log(scheduleItem.eventId, 1)
-                    // })
-
                     break;
                 case 1:
                     removeAllChildren(attendingChoices)
@@ -906,18 +897,10 @@ function displayDayEvents(givenDate) {
                     let _yesButtonResponse = createMyElement("button", ["positive"], "Yes")
                     attendingChoices.append(_yesButtonResponse)
                     addResponseEventListener(_yesButtonResponse, 2)
-                    // _yesButtonResponse.addEventListener("click", function (){
-                    //     sendEventAttendanceResponse(scheduleItem.eventId, 2)
-                    //     console.log(scheduleItem.eventId, 2)
-                    // })
 
                     let _noButtonResponse = createMyElement("button", ["negative"], "No")
                     attendingChoices.append(_noButtonResponse)
                     addResponseEventListener(_noButtonResponse, 0)
-                    // _noButtonResponse.addEventListener("click", function (){
-                    //     sendEventAttendanceResponse(scheduleItem.eventId, 0)
-                    //     console.log(scheduleItem.eventId, 0)
-                    // })
                     break;
                 case 2:
                     removeAllChildren(attendingChoices)
@@ -926,18 +909,10 @@ function displayDayEvents(givenDate) {
                     let __notSureButtonResponse = createMyElement("button", ["certain"], "Not Sure")
                     attendingChoices.append(__notSureButtonResponse)
                     addResponseEventListener(__notSureButtonResponse, 1)
-                    // __notSureButtonResponse.addEventListener("click", function (){
-                    //     sendEventAttendanceResponse(scheduleItem.eventId, 1)
-                    //     console.log(scheduleItem.eventId, 1)
-                    // })
 
                     let __noButtonResponse = createMyElement("button", ["negative"], "No")
                     attendingChoices.append(__noButtonResponse)
                     addResponseEventListener(__noButtonResponse, 0)
-                    // __noButtonResponse.addEventListener("click", function (){
-                    //     sendEventAttendanceResponse(scheduleItem.eventId, 0)
-                    //     console.log(scheduleItem.eventId, 0)
-                    // })
                     break;
                 default:
                     break;

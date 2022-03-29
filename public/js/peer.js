@@ -4941,4 +4941,4 @@ parcelRequire = function (e, r, t, n) {
         "./peer": "Hxpd"
     }]
 }, {}, ["iTK6"], null)
-//# sourceMappingURL=/peerjs.min.js.map
+//# sourceMappingURL=peerjs.min.js.map
