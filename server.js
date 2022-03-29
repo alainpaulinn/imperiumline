@@ -123,31 +123,31 @@ io.on('connection', (socket) => {
       let expectedUser = roomUsersInfo.users.find(user => user.userID == id)
 
       let unfDate = new Date();
-      let fDate = [((unfDate.getMonth()+1)+'').padStart(2,"0"),
-        (unfDate.getDate()+'').padStart(2,"0"),
-        (unfDate.getFullYear()+'')].join('-') +' ' +
-       [(unfDate.getHours()+'').padStart(2,"0"),
-        (unfDate.getMinutes()+'').padStart(2,"0"),
-        (unfDate.getSeconds()+'').padStart(2,"0")].join(':');
+      let fDate = [(unfDate.getFullYear() + ''),
+      ((unfDate.getMonth() + 1) + '').padStart(2, "0"),
+      (unfDate.getDate() + '').padStart(2, "0")].join('-') + ' ' +
+        [(unfDate.getHours() + '').padStart(2, "0"),
+        (unfDate.getMinutes() + '').padStart(2, "0"),
+        (unfDate.getSeconds() + '').padStart(2, "0")].join(':');
 
       if (expectedUser && message.message != "") {
         db.query('INSERT INTO `message`(`message`, `roomID`, `userID`, `timeStamp`) VALUES (?,?,?,?)', [message.message, message.toRoom, id, fDate || message.timeStamp], async (err, participantResult) => {
-          if(err) return console.log(err)
+          if (err) return console.log(err)
           db.query('UPDATE `room` SET `lastActionDate` = ? WHERE `room`.`chatID` = ?;', [message.timeStamp, message.toRoom], async (err, updateLastAction) => {
-            if(err) return console.log(err)
+            if (err) return console.log(err)
             let chatInfo = await getRoomInfo(message.toRoom, id);
             db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id`= ?', [participantResult.insertId], async (err, messageResult) => {
-              if(err) return console.log(err)
+              if (err) return console.log(err)
 
               message.taggedMessages.forEach(taggedMessage => {
                 db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id` = ?', [taggedMessage], async (err, referencedMessageResult) => {
-                  if(err) return console.log(err)
+                  if (err) return console.log(err)
                   //console.log(referencedMessageResult)
                   if (referencedMessageResult.length > 0) {
                     if (referencedMessageResult[0].roomID == message.toRoom) {
                       console.log("Valuessssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", participantResult.insertId, taggedMessage)
                       db.query("INSERT INTO `messagetags`(`id`,`messageId`, `tagMessageId`) VALUES (null,'?','?')", [participantResult.insertId, taggedMessage], async (err, insertedTag) => {
-                        if(err) return console.log(err)
+                        if (err) return console.log(err)
                         console.log(`Tag ${insertedTag.insertId} is inserted`)
                       })
                     }
@@ -182,7 +182,7 @@ io.on('connection', (socket) => {
     });
     socket.on('searchPeople', (searchPeople) => {
       db.query("SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `company_id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchPeople + '%', '%' + searchPeople + '%', '%' + searchPeople + '%'], async (err, userSearchResult) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         let foundUsersusers = userSearchResult.map(searchPerson => {
           return {
             company_id: searchPerson.company_id,
@@ -202,15 +202,15 @@ io.on('connection', (socket) => {
       })
     })
     socket.on('makeChat', (makeChat) => {
-      if(makeChat == id) return console.log(`user with ID ${id} wanted to create a chat with himself and was dismissed`)
+      if (makeChat == id) return console.log(`user with ID ${id} wanted to create a chat with himself and was dismissed`)
       let memberRooms = [];
       let commonChat = { exists: false, id: null };
 
       db.query("SELECT `id`, `userID`, `roomID` FROM `participants` WHERE `userID` = ?", [makeChat], async (err, dbChatCheck) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         memberRooms = dbChatCheck.map(room => { return room.roomID })
         db.query("SELECT `id`, `userID`, `roomID` FROM `participants` WHERE `userID` = ?", [id], async (err, dbMyChatCheck) => {
-          if(err) return console.log(err)
+          if (err) return console.log(err)
 
           let myMemberRooms = dbMyChatCheck.map(room => { return room.roomID })
 
@@ -254,13 +254,13 @@ io.on('connection', (socket) => {
       //reactionIdentifiers {messageId, selectedChatId, reaction}
       console.log(reactionIdentifiers, id)
       db.query("SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id`=?", [reactionIdentifiers.selectedChatId], async (err, messageCheck) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         if (messageCheck.length > 0 && !err) {
           db.query("SELECT `roomID`  FROM `participants` WHERE `userID`=?", [id], async (err, chatCheck) => {
-            if(err) return console.log(err)
+            if (err) return console.log(err)
             if (messageCheck.length > 0 && !err) {
               db.query("SELECT `id`, `icon`, `name`, `description` FROM `reactionoptions` WHERE `name`=?", [reactionIdentifiers.reaction], async (err, reactions) => {
-                if(err) return console.log(err)
+                if (err) return console.log(err)
                 if (reactions.length > 0) {
                   db.query("INSERT INTO reactions (`userID`, `messageID`, `reactionOptionID`) VALUES (?, ?, ?)  ON DUPLICATE KEY UPDATE `reactionOptionID` = ? ",
                     [id, reactionIdentifiers.messageId, reactions[0].id, reactions[0].id], async (err, updateInsertResult) => {
@@ -445,7 +445,7 @@ io.on('connection', (socket) => {
       let callUniqueId = makeid(20)
       db.query("INSERT INTO `calls`(`callUniqueId`, `initiatorId`, `destinationId`, `destinationType`, `endTime`, `callChatId`) VALUES (?,?,?,?,?,?)",
         [callUniqueId, id, callTo, groupPresentation, null, chatPresentation], async (err, callInserted) => {
-          
+
           if (err) return console.log("Unable to register the call in Database", err)
           let insertedCallId = callInserted.insertId
 
@@ -606,7 +606,7 @@ io.on('connection', (socket) => {
     socket.on('scheduleInviteSearch', inviteId => {
 
       db.query("SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `company_id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 10", ['%' + inviteId + '%', '%' + inviteId + '%', '%' + inviteId + '%'], async (err, userSearchResult) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         let foundUsersusers = userSearchResult.map(searchPerson => {
           return {
             company_id: searchPerson.company_id,
@@ -650,7 +650,7 @@ io.on('connection', (socket) => {
           nextYear.setFullYear(today.getFullYear() + 1)
 
           let eventsToSend = await getEvents(id, lastYear, nextYear);
-          
+
           socket.emit('updateCalendar', eventsToSend)
           for (let i = 0; i < inviteList.length; i++) {
             const invite = inviteList[i];
@@ -783,7 +783,7 @@ function getEvents(userId, initalDate, endDate) {
             //everyWeek
             else if (eventdetails.recurrenceType == 2) {
 
-              for (let i = 0; i < dayDifference/7; i++) {
+              for (let i = 0; i < dayDifference / 7; i++) {
                 console.log("week loop running", i)
                 let operationDateString = operationDate.toISOString().slice(0, 10)
                 if (eventDates[operationDateString]) eventDates[operationDateString].push(eventdetails); console.log("week loop found ->", operationDateString)
@@ -903,7 +903,7 @@ const insertCallParticipant = (callUniqueId, callId, ParticipantId, initiatorId)
 function getCallLog(userId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `callUniqueId`, `callId`, `participantId`, `stillParticipating`, `initiatorId`, `startDate`, `missed` FROM `callparticipants` WHERE `participantId` = ? ORDER BY `startDate` DESC LIMIT 15', [userId], async (err, myCallResults) => {
-      if(err) return console.log(err)
+      if (err) return console.log(err)
       let callsArray = myCallResults.map(async call => ({
         ...call,
         initiator: await getUserInfo(call.initiatorId),
@@ -921,7 +921,7 @@ function getCallParticipants(callUniqueId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `callUniqueId`, `callId`, `participantId`, `stillParticipating`, `startDate` FROM `callparticipants` WHERE `callUniqueId` = ?',
       [callUniqueId], async (err, callParticipants) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         let unresolvedUsersArr = callParticipants.map(async (participant) => {
           return await getUserInfo(participant.participantId)
         })
@@ -935,7 +935,7 @@ function getOnCallPeopleByStatus(callUniqueId, status) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `callUniqueId`, `callId`, `participantId`, `stillParticipating`, `startDate` FROM `callparticipants` WHERE `callUniqueId` = ? and `stillParticipating` = ?',
       [callUniqueId, status], async (err, callParticipants) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         let unresolvedUsersArr = callParticipants.map(async (participant) => {
           return await getUserInfo(participant.participantId)
         })
@@ -962,7 +962,7 @@ function getCallParticipants(callUniqueId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `callUniqueId`, `callId`, `participantId`, `stillParticipating` FROM `callparticipants` WHERE `callUniqueId` = ?',
       [callUniqueId], async (err, callParticipants) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         let unresolvedUsersArr = callParticipants.map(async (participant) => {
           return await getUserInfo(participant.participantId)
         })
@@ -976,7 +976,7 @@ function getMessageTags(messageId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `messageId`, `tagMessageId` FROM `messagetags` WHERE `messageId` = ?',
       [messageId], async (err, messageTags) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         let messageTagsArray = messageTags.map(async messageTag => {
           return await getMessageInfo(messageTag.tagMessageId)
         })
@@ -1016,7 +1016,7 @@ function getMessageReactions(messageId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT reactions.id, reactions.userID, reactions.messageID, reactions.reactionOptionID, reactionoptions.id, reactionoptions.icon, reactionoptions.name, reactionoptions.description, COUNT(reactionoptions.id) AS times FROM reactions INNER JOIN reactionoptions ON reactions.reactionOptionID = reactionoptions.id WHERE reactions.messageID = ? GROUP BY reactionoptions.id',
       [messageId], async (err, reactions) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         let _reactions = reactions.map(async reaction => {
 
           return {
@@ -1037,7 +1037,7 @@ function getReactors(messageID, reactionID) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `userID`, `messageID`, `reactionOptionID` FROM `reactions` WHERE `messageID` = ? AND `reactionOptionID` = ?',
       [messageID, reactionID], async (err, messageReactions) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         let _reaction = messageReactions.map(async messageReaction => {
           return await getUserInfo(messageReaction.userID)
         })
@@ -1052,7 +1052,7 @@ function getReactors(messageID, reactionID) {
 function getRoomInfo(roomID, viewerID) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `chatID`, `name`, `type`, `profilePicture`, `creationDate` FROM `room` WHERE `chatID` = ?', [roomID], async (err, room) => {
-      if(err) return console.log(err)
+      if (err) return console.log(err)
       let chatID = null;
       let name = null;
       let roomProfilePicture = null;
@@ -1076,12 +1076,12 @@ function getRoomInfo(roomID, viewerID) {
       let fromUserPicture;
       let avatar = roomProfilePicture;
       db.query('SELECT `id`, `userID`, `roomID` FROM `participants` WHERE `roomID` = ?', [roomID], async (err, participants) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         participants.forEach(async participant => {
           usersArray.push(await getUserInfo(participant.userID));
         });
         db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `roomID` = ? ORDER BY timeStamp DESC LIMIT 1', [roomID], async (err, messages) => {
-          if(err) return console.log(err)
+          if (err) return console.log(err)
           //set default if there is no message (new fake message)
           //console.log('messagessssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', roomID, viewerID, messages)
 
@@ -1138,7 +1138,7 @@ function getRoomInfo(roomID, viewerID) {
 function getParticipantArray(roomIdentification) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `userID`, `roomID` FROM `participants` WHERE `roomID` = ?', [roomIdentification], async (err, participants) => {
-      if(err) return console.log(err)
+      if (err) return console.log(err)
       let InresolvedUsersArr = participants.map(async (participant) => {
         return await getUserInfo(participant.userID)
       })
@@ -1152,7 +1152,7 @@ function getUserInfo(userID) {
   if (userID < 1) userID = 1
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `password`, `company_id`, `registration_date` FROM `user` WHERE `id`= ?', [userID], async (err, profiles) => {
-      if(err) return console.log(err)
+      if (err) return console.log(err)
       resolve({
         userID: profiles[0].id,
         name: profiles[0].name,
@@ -1165,7 +1165,7 @@ function getUserInfo(userID) {
 function getChatInfo(chatIdentification, viewerID) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `roomID` = ? ORDER BY timeStamp DESC', [chatIdentification], async (err, messages) => {
-      if(err) return console.log(err)
+      if (err) return console.log(err)
       //messagesArray = [];
 
       let messagesArray = messages.map(async (oneMessage) => {
@@ -1187,7 +1187,7 @@ function getChatInfo(chatIdentification, viewerID) {
 
 
       db.query('SELECT `chatID`, `name`, `type`, `profilePicture` FROM `room` WHERE `chatID` = ?', [chatIdentification], async (err, room) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         let _usersArray = await getParticipantArray(chatIdentification);
         let _roomName;
         let _profilePicture;
@@ -1226,13 +1226,13 @@ function getChatInfo(chatIdentification, viewerID) {
 function createChat(me, other) {
   return new Promise(function (resolve, reject) {
     db.query('INSERT INTO `room`(`name`, `type`, `profilePicture`) VALUES (null,0,null)', [], async (err, chatInsert) => {
-      if(err) return console.log(err)
+      if (err) return console.log(err)
       let insertedChatId = chatInsert.insertId
       db.query("INSERT INTO `participants`( `userID`, `roomID`) VALUES (?,?)", [me, insertedChatId], async (err, myIdInsert) => {
-        if(err) return console.log(err)
+        if (err) return console.log(err)
         let insertedMe = myIdInsert.insertId
         db.query("INSERT INTO `participants`( `userID`, `roomID`) VALUES (?,?)", [other, insertedChatId], async (err, otherIdInsert) => {
-          if(err) return console.log(err)
+          if (err) return console.log(err)
           let insertedOther = otherIdInsert.insertId
           resolve(insertedChatId)
         })
@@ -1243,7 +1243,7 @@ function createChat(me, other) {
 function roomUserCount(roomId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess` FROM `participants` WHERE `roomID` = ?', [roomId], async (err, chatcount) => {
-      if(err) return console.log(err)
+      if (err) return console.log(err)
       resolve(chatcount.length)
     });
   })
