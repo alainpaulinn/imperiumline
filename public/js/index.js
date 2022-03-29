@@ -732,12 +732,14 @@ function openChat(openChatInfo) {
       // prevent default behavior
       e.preventDefault();
       let unfDate = new Date();
-      let fDate = [((unfDate.getMonth()+1)+'').padStart(2,"0"),
-        (unfDate.getDate()+'').padStart(2,"0"),
-        (unfDate.getFullYear()+'')].join('-') +' ' +
-       [(unfDate.getHours()+'').padStart(2,"0"),
-        (unfDate.getMinutes()+'').padStart(2,"0"),
-        (unfDate.getSeconds()+'').padStart(2,"0")].join(':');
+      let fDate = [
+        (unfDate.getFullYear() + ''),
+        ((unfDate.getMonth() + 1) + '').padStart(2, "0"),
+        (unfDate.getDate() + '').padStart(2, "0")].join('-')
+        + ' ' +
+        [(unfDate.getHours() + '').padStart(2, "0"),
+        (unfDate.getMinutes() + '').padStart(2, "0"),
+        (unfDate.getSeconds() + '').padStart(2, "0")].join(':');
       let message =
       {
         toRoom: selectedChatId,
@@ -760,11 +762,20 @@ function openChat(openChatInfo) {
   sendButton.addEventListener('click', function (e) {
 
     if (messageContent.innerText.trim() != '') {
+      let unfDate = new Date();
+      let fDate = [
+        (unfDate.getFullYear() + ''),
+        ((unfDate.getMonth() + 1) + '').padStart(2, "0"),
+        (unfDate.getDate() + '').padStart(2, "0")].join('-')
+        + ' ' +
+        [(unfDate.getHours() + '').padStart(2, "0"),
+        (unfDate.getMinutes() + '').padStart(2, "0"),
+        (unfDate.getSeconds() + '').padStart(2, "0")].join(':');
       let message =
       {
         toRoom: selectedChatId,
         message: messageContent.innerText,
-        timeStamp: new Date().toISOString(),
+        timeStamp: fDate,
         taggedMessages: taggedMessages
       };
       console.log('message', message)
@@ -780,7 +791,7 @@ function openChat(openChatInfo) {
   });
 
   //initialise all icons because there are new icons added in the open chat section
-  
+
 }
 function reactionTo(messageId, reaction) {
   console.log(messageId, reaction);
@@ -1101,7 +1112,7 @@ socket.on('searchPerson', (searchPeople) => {
     })
   })
   //console.log(searchChatbuttons)
-  
+
   //console.log(searchPerson)
 })
 
