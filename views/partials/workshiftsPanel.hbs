@@ -1,46 +1,114 @@
 <div class="shiftsContainer">
-    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quasi minus animi nulla, voluptatem culpa quo inventore
-    eos, ad adipisci veritatis laborum cupiditate magnam aspernatur nostrum corrupti assumenda maxime illum blanditiis
-    officiis numquam quidem sit! Nam quasi nemo similique, vel nobis dolorum. Optio, provident libero eaque voluptas
-    eveniet, velit illo qui quas voluptates hic commodi, maiores aliquam dolores nostrum ducimus quaerat sint. Officiis
-    tenetur repudiandae debitis itaque veritatis maxime ipsam quidem obcaecati facere vero dolores hic iure corporis,
-    expedita deserunt eius modi asperiores sapiente. Ipsum error accusamus quisquam! Minima odio illo rerum a alias
-    repellat officiis et inventore. Ad, incidunt numquam eum in porro, aut aspernatur libero quae fuga minus, repellat
-    maxime nam quaerat corrupti reprehenderit delectus sunt magnam. Rem voluptate quae natus cumque placeat quod? Animi
-    ipsum, quidem vitae sunt nisi a id autem magnam impedit! Ea nemo ex perferendis vero repellat repudiandae quas et
-    in, officiis eveniet velit voluptatum nesciunt tenetur iste cumque! Aspernatur accusamus consequatur, cumque culpa,
-    iste inventore rerum corporis aliquid repudiandae expedita laborum ea ad. Enim expedita voluptatem harum eveniet
-    nihil blanditiis ab explicabo similique fugit quis, necessitatibus magnam eos qui? Illum eos, voluptatum quae
-    similique quas nostrum saepe, perferendis culpa ipsam placeat dolore. Aperiam dolor ipsum iste architecto nostrum
-    quae laudantium qui alias sapiente? Libero vero voluptate fuga, hic, pariatur illo earum beatae quam quidem voluptas
-    temporibus omnis cum corporis, praesentium perspiciatis unde id. Saepe minus ipsam voluptate corrupti
-    exercitationem! Architecto saepe repellendus laborum. Dolor, assumenda esse asperiores quae dicta rem possimus
-    reiciendis dolorem ullam sit maiores est commodi soluta obcaecati cumque voluptates consequuntur neque eum
-    laudantium adipisci nulla! Corrupti iste impedit quam nesciunt adipisci voluptates eveniet ipsum, aliquid deserunt
-    officia numquam. Fuga sed, assumenda repellendus ratione qui voluptas! Tenetur non, voluptatem natus veniam debitis
-    eveniet temporibus, veritatis aliquid quas possimus quaerat, reiciendis illum! Accusamus alias quia fugit quis
-    commodi distinctio quaerat necessitatibus quos, quae omnis, eos quidem maiores adipisci? Corrupti incidunt magnam
-    iusto, molestias assumenda laboriosam temporibus saepe sunt pariatur reprehenderit culpa natus a quas maiores
-    ratione labore atque quod vitae aspernatur nostrum. Impedit mollitia iure unde quod quia cupiditate laboriosam,
-    accusantium minus rerum, ipsum blanditiis ducimus exercitationem alias nam veritatis optio error dicta, assumenda
-    eius itaque vel sapiente nesciunt minima! Beatae, repellat error quas culpa quaerat debitis suscipit, nisi adipisci
-    itaque sed aut fugiat consequuntur, consectetur temporibus praesentium ad sapiente necessitatibus. Eius deserunt
-    aperiam optio, a cupiditate itaque perferendis, expedita explicabo placeat molestias sit tempore harum facilis
-    tempora sed! Quo quam excepturi dolorum aut ipsum. Facilis fugit distinctio neque consectetur aperiam perspiciatis
-    minus eum, deserunt harum fugiat. Eaque ea repudiandae esse tenetur, autem quibusdam excepturi, unde deleniti
-    repellat quo repellendus consectetur ullam asperiores impedit! Repellat tempore ratione sapiente tempora. Corporis,
-    accusantium laudantium! Fuga, rem quisquam porro ipsa nostrum dolor neque veritatis soluta accusantium nemo ipsum
-    earum corrupti in ea aut doloremque quaerat esse iusto dolores deleniti iure. Pariatur veritatis sed officiis
-    repudiandae, beatae magnam, provident est asperiores animi eum non modi! Dolorum repellat voluptatibus expedita illo
-    ducimus quis neque aliquid, esse tempora numquam.
+    <html lang="en">
+
+    <body>
+        <div id="vueApp">
+            <table class="dayparts table">
+                <thead>
+                    <tr>
+                        <td class="cell-label presets-label"></td>
+                        <td colspan="24"><span class="cell-label presetsSubtitle-label"></span>
+                            <select v-model="selected" @change='clearAll();selectedFunc()'>
+                                <option value="">Select a Preset</option>
+                                <option value="0">None</option>
+                                <option value="1">Afternoons</option>
+                                <option value="2">Evenings</option>
+                                <option value="3">Mornings</option>
+                                <option value="4">Weekdays</option>
+                                <option value="5">Weekends</option>
+                                <option value="6">Weekends including Friday</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2"></td>
+                        <td class="cell-label am-label" colspan="12">AM</td>
+                        <td class="cell-label pm-label" colspan="12">PM</td>
+                    </tr>
+                    <tr class="hour-row">
+                        <td class="hour" v-for="hour in times" v-bind:value="hour.hour" v-on:click='setTime'>
+                            {{hour.hour}}</td>
+                    </tr>
+                </thead>
+                <tbody @mousedown='mouseDown' @mouseup='mouseUp' @mousemove='mouseMove'>
+                    <tr class="day" v-for="day in days">
+                        <td class="cell-label day-label" v-bind:value="day.dayNumber" v-bind:day-value="day.dayNumber"
+                            v-on:click='activateDay'>{{day.dayName}}</td>
+                        <td class='dayparts-cell' v-bind:value="hour.hour" data='day'
+                            v-bind:class="{active: hour.isActive, preactive: hour.isPreActive}"
+                            v-for='hour in day.times'></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <script src="main.js"></script>
+    </body>
+
+    </html>
 </div>
 
 <style>
     .work_shifts_Panel {
         display: none;
+        display flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
     }
 
     .shiftsContainer {
-        background-color: red;
+        {{!-- background-color: red; --}}
+    }
+
+    .dayparts-cell {
+        transition: .3s;
+        background-color: #d3dcde;
+        width: 30px;
+        height: 30px;
+        margin: 0;
+        padding: 0;
+        border: 1px solid #ededed;
+        cursor: pointer;
+    }
+
+    .active {
+        transition: .3s;
+        background-color: #003061 !important;
+    }
+
+    .day-label,
+    .hour {
+        cursor: pointer;
+    }
+
+    option {
+        font-family: 'Open Sans'
+    }
+
+    .day-label {
+        text-align: right;
+        padding: 5px;
+        transition: .3s;
+    }
+
+    .hour {
+        transition: .3s;
+    }
+
+    .day-label:hover,
+    .hour:hover {
+        color: #BDE130;
+    }
+
+    .dayparts-cell:hover {
+        background: #dff460;
+    }
+
+    .active:hover {
+        background: #617c84 !important;
+    }
+
+    .preactive {
+        color: #BDE130;
     }
 </style>
