@@ -1339,27 +1339,27 @@ let functionalityOptionsArray = [
   {
     functionalityId: 2,
     panel: work_shift_panel,
-    triggerButton:work_shifts_button,
+    triggerButton: work_shifts_button,
     title: "Work Shifts"
   },
   {
     functionalityId: 3,
     panel: messages_panel,
-    triggerButton:message_button,
+    triggerButton: message_button,
     title: "Messages"
   },
   {
     functionalityId: 4,
     panel: calls_panel,
-    triggerButton:calls_button,
+    triggerButton: calls_button,
     title: "Calls"
   },
 ]
 
-setSidepanelEventlisteners (functionalityOptionsArray)
+setSidepanelEventlisteners(functionalityOptionsArray)
 
 
-function setSidepanelEventlisteners (optionsArray){
+function setSidepanelEventlisteners(optionsArray) {
   // let optionsArray = [{
   //  functionalityId: 1,
   //   panel: "objectPanel",
@@ -1367,9 +1367,9 @@ function setSidepanelEventlisteners (optionsArray){
   //   title: "title"
   // }]
   optionsArray.forEach((option) => {
-    option.triggerButton.addEventListener("click", ()=>{
+    option.triggerButton.addEventListener("click", () => {
       for (let i = 0; i < optionsArray.length; i++) {
-        if(optionsArray[i].functionalityId != option.functionalityId){
+        if (optionsArray[i].functionalityId != option.functionalityId) {
           optionsArray[i].panel.style.display = "none";
         }
         option.panel.style.display = "flex";
@@ -1843,11 +1843,12 @@ socket.on('updateCallLog', (initialCallLog) => {
 
 let secondaryVideosDiv = document.getElementById('secondaryVideosDiv')
 const myPeer = new Peer(undefined,
-  /*{
-  host: '/',
-  port: '3001'
-}
-*/)
+  {
+    //host: '/',
+    //port: '3001'
+    secure: true
+  }
+)
 let myPeerId;
 const myVideo = document.createElement('video')
 
