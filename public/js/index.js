@@ -25,12 +25,14 @@ menu_list.forEach((item) =>
   item.addEventListener('click', activelink));
 
 let timeScheduling_btn = document.getElementById("timeScheduling-btn")
+let workShifts_btn = document.getElementById("workShifts-btn")
 let messaging_btn = document.getElementById("messaging-btn")
 let calls_btn = document.getElementById("calls-btn")
 let preferences_btn = document.getElementById("preferences-btn")
 let profile_btn = document.getElementById("profile-btn")
 
 let timeScheduling_div = document.getElementById("timeScheduling-div")
+let workShifts_div = document.getElementById("workShifts-div")
 let messaging_div = document.getElementById("messaging-div")
 let calls_div = document.getElementById("calls-div")
 let preferences_div = document.getElementById("preferences-div")
@@ -39,6 +41,10 @@ let profile_div = document.getElementById("profile-div")
 document.getElementById("timeScheduling-btn").addEventListener('click', () => {
   timeScheduling_div.classList.toggle("undropped-down")
   timeScheduling_btn.firstChild.classList.toggle("rotate180")
+})
+document.getElementById("workShifts-btn").addEventListener('click', () => {
+  workShifts_div.classList.toggle("undropped-down")
+  workShifts_btn.firstChild.classList.toggle("rotate180")
 })
 document.getElementById("messaging-btn").addEventListener('click', () => {
   messaging_div.classList.toggle("undropped-down")
@@ -1305,13 +1311,15 @@ function buildTags(tagContentArray) {
 
 
 /////////////////////SIDEPANEL SWITCH///////////////////////////
-let time_scheduling_option = document.getElementById("time-scheduling_panel")
+let time_scheduling_panel = document.getElementById("time-scheduling_panel")
+let work_shift_panel = document.getElementById("work_shifts_Panel")
 let messages_panel = document.getElementById("messages_panel")
 let calls_panel = document.getElementById("calls_panel")
 
 let document_title = document.getElementsByTagName("title")[0]
 
 let time_scheduling_button = document.getElementById("time_scheduling-option")
+let work_shifts_button = document.getElementById("work_shifts-option")
 let message_button = document.getElementById("messages-option")
 let calls_button = document.getElementById("calls-option")
 
@@ -1321,29 +1329,56 @@ let ongoingCallPage = document.getElementById("ongoingCallPage")
 
 let incomingNameDiv = document.getElementById("incomingCallname")
 
-time_scheduling_button.addEventListener('click', (e) => {
-  time_scheduling_option.style.display = "flex"
-  messages_panel.style.display = "none";
-  calls_panel.style.display = "none";
+let functionalityOptionsArray = [
+  {
+    functionalityId: 1,
+    panel: time_scheduling_panel,
+    triggerButton: time_scheduling_button,
+    title: "Calendar"
+  },
+  {
+    functionalityId: 2,
+    panel: work_shift_panel,
+    triggerButton:work_shifts_button,
+    title: "Work Shifts"
+  },
+  {
+    functionalityId: 3,
+    panel: messages_panel,
+    triggerButton:message_button,
+    title: "Messages"
+  },
+  {
+    functionalityId: 4,
+    panel: calls_panel,
+    triggerButton:calls_button,
+    title: "Calls"
+  },
+]
 
-  document_title.innerText = "Time Scheduling"
-})
+setSidepanelEventlisteners (functionalityOptionsArray)
 
-message_button.addEventListener('click', (e) => {
-  time_scheduling_option.style.display = "none"
-  messages_panel.style.display = "flex";
-  calls_panel.style.display = "none";
 
-  document_title.innerText = "Messaging"
-})
+function setSidepanelEventlisteners (optionsArray){
+  // let optionsArray = [{
+  //  functionalityId: 1,
+  //   panel: "objectPanel",
+  //   triggerButton: "objectTrigger",
+  //   title: "title"
+  // }]
+  optionsArray.forEach((option) => {
+    option.triggerButton.addEventListener("click", ()=>{
+      for (let i = 0; i < optionsArray.length; i++) {
+        if(optionsArray[i].functionalityId != option.functionalityId){
+          optionsArray[i].panel.style.display = "none";
+        }
+        option.panel.style.display = "flex";
+        document_title.innerText = option.title;
+      }
+    })
+  })
 
-calls_button.addEventListener('click', (e) => {
-  time_scheduling_option.style.display = "none"
-  messages_panel.style.display = "none";
-  calls_panel.style.display = "flex";
-
-  document_title.innerText = "Calls";
-})
+}
 
 
 
@@ -1401,7 +1436,7 @@ waitingTone.addEventListener('ended', function () {
 }, false);
 
 function call(callTo, audio, video, group, fromChat) {
-  time_scheduling_option.style.display = "none"
+  time_scheduling_panel.style.display = "none"
   messages_panel.style.display = "none";
   calls_panel.style.display = "flex";
   callHistoryPage.style.display = "none";
@@ -1656,7 +1691,7 @@ function answer(currentCallInfo) {
   ringtone.pause();
   ringtone.currentTime = 0;
 
-  time_scheduling_option.style.display = "none"
+  time_scheduling_panel.style.display = "none"
   messages_panel.style.display = "none";
   calls_panel.style.display = "flex";
   callHistoryPage.style.display = "none";
@@ -2012,7 +2047,7 @@ function hideIncomingCallPopup() {
   callPopupElement.style.display = "none";
 }
 function showOngoingCallSection() {
-  time_scheduling_option.style.display = "none"
+  time_scheduling_panel.style.display = "none"
   messages_panel.style.display = "none";
   calls_panel.style.display = "flex";
   callHistoryPage.style.display = "none";
@@ -2021,7 +2056,7 @@ function showOngoingCallSection() {
   document_title.innerText = "Calls";
 }
 function showCallHistory() {
-  time_scheduling_option.style.display = "none"
+  time_scheduling_panel.style.display = "none"
   messages_panel.style.display = "none";
   calls_panel.style.display = "flex";
   callHistoryPage.style.display = "flex";
@@ -2030,7 +2065,7 @@ function showCallHistory() {
   document_title.innerText = "Calls";
 }
 function showMessagesPanel() {
-  time_scheduling_option.style.display = "none"
+  time_scheduling_panel.style.display = "none"
   messages_panel.style.display = "flex";
   calls_panel.style.display = "none";
   callHistoryPage.style.display = "none";

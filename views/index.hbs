@@ -1,104 +1,21 @@
 <main class='c-app'>
-  <!--
-      <div class='c-titleBar'>
-        <div class='c-openchat__header'>
-          <h1>Multixx</h1>
-          <div class="controls">
-            <div class="navigation">
-              <ul>
-                <li class="menu_list">
-                  <a href="#">
-                    <span class="icon">
-                      <i data-feather="activity"></i>
-                    </span>
-                    <span class="text">Activity</span>
-                  </a>
-                </li>
-                <li class="menu_list">
-                  <a href="#">
-                    <span class="icon">
-                      <i data-feather="users"></i>
-                    </span>
-                    <span class="text">Profile</span>
-                  </a>
-                </li>
-                <li class="menu_list active">
-                  <a href="#">
-                    <span class="icon">
-                      <i data-feather="message-square"></i>
-                    </span>
-                    <span class="text">Messages</span>
-                  </a>
-                </li>
-                <li class="menu_list">
-                  <a href="#">
-                    <span class="icon">
-                      <i data-feather="clock"></i>
-                    </span>
-                    <span class="text">Shifts</span>
-                  </a>
-                </li>
-                <li class="menu_list">
-                  <a href="#">
-                    <span class="icon">
-                      <i data-feather="settings"></i>
-                    </span>
-                    <span class="text">Settings</span>
-                  </a>
-                </li>
-                <div class="indicator"></div>
-              </ul>
-            </div>
-          </div>
-          <!-
-          <ul id="menuSlideUp" class="mobile_controller MenuSlideUp">
-            <li class='c-openchat__li'><a class='c-openchat__link c-openchat__link--active' href='messaging' title='Messaging'><i data-feather="message-circle" class="mobile-icon"></i><p class='c-openchat__link'>Messaging</p></a></li>
-            <li class='c-openchat__li'><a class='c-openchat__link' href='timePlanning' title='Time Planning'><i data-feather="clock"class="mobile-icon"></i><p class='c-openchat__link'>Time Planning</p></a></li>
-            
-            <button class='mobile-only-element smooth-button c-openchat__li c-openchat__link' id='' onclick=''><i data-feather="sidebar"class="mobile-icon"></i><p class='c-openchat__link'>Options</p></button>
-            <button class='mobile-only-element smooth-button c-openchat__li c-openchat__link' id='' onclick=''><i data-feather="briefcase"class="mobile-icon"></i><p class='c-openchat__link'>My Organization</p></button>
-            <button class='mobile-only-element smooth-button c-openchat__li c-openchat__link' id='' onclick=''><i data-feather="help-circle"class="mobile-icon"></i><p class='c-openchat__link'>Coming Functionality</p></button>
-            <button class='mobile-only-element smooth-button c-openchat__li c-openchat__link' id='' onclick=''><i data-feather="help-circle"class="mobile-icon"></i><p class='c-openchat__link'>Coming Functionality</p></button>
-            <button class='mobile-only-element smooth-button c-openchat__li c-openchat__link' id='' onclick=''><i data-feather="help-circle"class="mobile-icon"></i><p class='c-openchat__link'>Coming Functionality</p></button>
-            <button class='mobile-only-element smooth-button c-openchat__li c-openchat__link' id='' onclick=''><i data-feather="help-circle"class="mobile-icon"></i><p class='c-openchat__link'>Coming Functionality</p></button>
 
-            <button class='c-openchat__li' id='toggleProfile' onclick='toggleProfile()'><img src='https://randomuser.me/api/portraits/med/men/50.jpg' alt=''></button>
-            <div class="profile-logout" id="toggleProfile_content">
-              <div class="pic-name">
-                <img src='https://randomuser.me/api/portraits/med/men/50.jpg' alt=''>
-                  <h3>Alain Paulin Niyonkuru</h3>
-                  <p>Senior Software Engineer</p>
-              </div>
-              <ul>
-                <li><button class="button-option"><i data-feather="user"></i>My Profile</button></li>
-                <li><button class="button-option"><i data-feather="briefcase"></i>My Organization</button></li>
-                <li><button class="button-option"><i data-feather="settings"></i>Settings</button></li>
-                <li><button class="button-option"><i data-feather="help-circle"></i>help</button></li>
-                <li>
-                  <form action="/auth/logout" method="post">
-                      <button type="submit" class="button-option"><i data-feather="log-out"></i>Logout</button>
-                  </form>
-                </li>
-              </ul>
-            </div>
-          </ul> ->
-        </div>
-      </div> -->
   <div class='c-application'>
     <aside class='c-sidepanel expanded'>
       {{> sidePanel}}
     </aside>
-    
-
     <section id="messages_panel" class="c-messages_panel">
       {{> messagesPanel}}
     </section>
-    
+
     <section class="c-calls_panel" id="calls_panel">
       {{> callsPanel}}
     </section>
     <section class="c-time-scheduling_panel" id="time-scheduling_panel">
       {{> timeSchedulingPanel}}
+    </section>
+    <section class="work_shifts_Panel" id="work_shifts_Panel">
+      {{> workshiftsPanel}}
     </section>
   </div>
 
