@@ -1,7 +1,5 @@
 <div class="shiftsContainer">
-    <html lang="en">
-
-    <body>
+    <div>
         <div id="vueApp">
             <table class="dayparts table">
                 <thead>
@@ -41,22 +39,57 @@
                 </tbody>
             </table>
         </div>
-        <script src="main.js"></script>
-    </body>
+    </div>
+</div>
+<div class="workshiftMatrix" id="workshiftmatrix">
+    <p>Secondary matrix for test</p>
+    <div class="workshiftMatrixCanvas" id="workshiftMatrixCanvas">
 
-    </html>
+    </div>
 </div>
 
 <style>
+    .dayparts-cell-test{
+        transition: .3s;
+        background-color: #EBF0F6;
+        width: 30px;
+        height: 30px;
+        margin: 0;
+        padding: 0;
+        border: 1px solid #ededed;
+        cursor: pointer;
+        
+    }
+    .day-test{
+        display: flex;
+        flex-direction: row;
+        gap: 2px;
+    }
+    .dayparts-cell-test:hover{
+        background-color: #b1d1f8;
+    }
+
+    .workshiftMatrixCanvas{
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        user-select: none;
+    }
+    .dayName-test{
+        width: 6rem;
+    }
+    /* --------------------------------------------------- */ 
     .work_shifts_Panel {
         display: none;
         display flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         flex: 1;
     }
 
     .shiftsContainer {
+        display: none;
         {{!-- background-color: red; --}}
     }
 
