@@ -3996,7 +3996,8 @@ body {
   left: 50%;
 }
 
-.schedule-container .selectionPanel .card .current-day, .schedule-container .selectionPanel .card .current-day:after {
+.schedule-container .selectionPanel .card .current-day,
+.schedule-container .selectionPanel .card .current-day:after {
   background-color: white;
 }
 
@@ -4266,7 +4267,8 @@ body {
   border-bottom: 1px solid #f1f4f6;
 }
 
-.schedule-container .scheduleDetailsSection .header .rightPart .title, .schedule-container .scheduleDetailsSection .header .rightPart .title > *,
+.schedule-container .scheduleDetailsSection .header .rightPart .title,
+.schedule-container .scheduleDetailsSection .header .rightPart .title > *,
 .schedule-container .newScheduleDetailsSection .header .rightPart .title,
 .schedule-container .newScheduleDetailsSection .header .rightPart .title > * {
   font-weight: bold;
@@ -4280,7 +4282,8 @@ body {
           align-items: center;
 }
 
-.schedule-container .scheduleDetailsSection .header .rightPart .title i, .schedule-container .scheduleDetailsSection .header .rightPart .title > * i,
+.schedule-container .scheduleDetailsSection .header .rightPart .title i,
+.schedule-container .scheduleDetailsSection .header .rightPart .title > * i,
 .schedule-container .newScheduleDetailsSection .header .rightPart .title i,
 .schedule-container .newScheduleDetailsSection .header .rightPart .title > * i {
   font-size: 20px;
@@ -4810,4 +4813,149 @@ body {
     --box-shadow: #111111;
   }
 }*/
+.work_shifts_Panel {
+  display: none;
+  /* --------------------------------------------------- */
+}
+
+.work_shifts_Panel .dayparts-cell-test {
+  -webkit-transition: .3s;
+  transition: .3s;
+  background-color: #EBF0F6;
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ededed;
+  cursor: pointer;
+}
+
+.work_shifts_Panel .dayparts-cell-test.active-test {
+  background: #003061;
+  color: white;
+}
+
+.work_shifts_Panel .dayparts-cell-test.active-test-last {
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+.work_shifts_Panel .dayparts-cell-test.active-test-first {
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+}
+
+.work_shifts_Panel .day-test {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  gap: 2px;
+}
+
+.work_shifts_Panel .dayparts-cell-test:hover {
+  background-color: #b1d1f8;
+}
+
+.work_shifts_Panel .workshiftMatrixCanvas {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 2px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.work_shifts_Panel .dayName-test {
+  width: 6rem;
+}
+
+.work_shifts_Panel .work_shifts_Panel {
+  display: none;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+.work_shifts_Panel .shiftsContainer {
+  display: none;
+}
+
+.work_shifts_Panel .dayparts-cell {
+  -webkit-transition: .3s;
+  transition: .3s;
+  background-color: #EBF0F6;
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ededed;
+  cursor: pointer;
+}
+
+.work_shifts_Panel .active {
+  -webkit-transition: .3s;
+  transition: .3s;
+  background-color: #003061 !important;
+}
+
+.work_shifts_Panel .day-label,
+.work_shifts_Panel .hour {
+  cursor: pointer;
+}
+
+.work_shifts_Panel option {
+  font-family: 'Open Sans';
+}
+
+.work_shifts_Panel .day-label {
+  text-align: right;
+  padding: 5px;
+  -webkit-transition: .3s;
+  transition: .3s;
+}
+
+.work_shifts_Panel .hour {
+  -webkit-transition: .3s;
+  transition: .3s;
+}
+
+.work_shifts_Panel .day-label:hover,
+.work_shifts_Panel .hour:hover {
+  color: #BDE130;
+}
+
+.work_shifts_Panel .dayparts-cell:hover {
+  background: ORANGE;
+}
+
+.work_shifts_Panel .active:hover {
+  background: #617c84 !important;
+}
+
+.work_shifts_Panel .preactive {
+  color: #85b1be;
+}
 /*# sourceMappingURL=style.css.map */

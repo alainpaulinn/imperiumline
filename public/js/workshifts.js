@@ -822,27 +822,27 @@ let daysOfWeek = [
         dayName: "Monday",
     },
     {
-        dayId: 1,
+        dayId: 2,
         dayName: "Tuesday"
     },
     {
-        dayId: 1,
+        dayId: 3,
         dayName: "Wednesday"
     },
     {
-        dayId: 1,
+        dayId: 4,
         dayName: "Thursday"
     },
     {
-        dayId: 1,
+        dayId: 5,
         dayName: "Friday"
     },
     {
-        dayId: 1,
+        dayId: 6,
         dayName: "Saturday"
     },
     {
-        dayId: 1,
+        dayId: 7,
         dayName: "Sunday"
     },
 ]
@@ -854,6 +854,106 @@ let earliestStartTime = '00:00:00';
 let latestFinishTime = '23:59:59';
 
 let workshiftMatrixCanvas = document.getElementById('workshiftMatrixCanvas')
+
+let isSelecting = false;
+let isDeselecting = false;
+
+
+
+let startSelectionDay;
+let startSelectionTime;
+let endSelectionDay;
+let endSelectionTime;
+
+//let active_test = event.target.classList.contains("active-test")
+
+workshiftMatrixCanvas.addEventListener('mousedown', function (event){
+    let onDay = event.target.getAttribute("data-day")
+    let onTime = event.target.getAttribute("data-time")
+    console.log('data-day',onDay,'data-time',onTime)
+    if(!onDay || !onTime) return;
+
+
+    if(event.target.classList.contains("active-test")){
+        isDeselecting = true;
+        isSelecting = false;
+    }
+    else{
+        isDeselecting = false;
+        isSelecting = true;
+    }
+    
+    startSelectionDay = parseInt(onDay)
+    startSelectionTime = parseInt(onTime)
+
+
+})
+
+workshiftMatrixCanvas.addEventListener('mousemove', function (event){
+    if(isSelecting == false && isDeselecting == false) return;
+
+    let onDay = event.target.getAttribute("data-day")
+    let onTime = event.target.getAttribute("data-time")
+    if(!onDay || !onTime) return;
+    
+    endSelectionDay = parseInt(onDay)
+    endSelectionTime = parseInt(onTime)
+
+    let smallestTime = findSmallest([startSelectionTime,endSelectionTime])
+    let greatestTime = findGreatest([startSelectionTime,endSelectionTime])
+
+    let smallestDay = findSmallest([startSelectionDay,endSelectionDay])
+    let greatestDay = findGreatest([startSelectionDay,endSelectionDay])
+
+    for (let d = smallestDay; d <= greatestDay; d++) {
+        for (let t = smallestTime; t <= greatestTime; t++) {
+            let byPassedElement = document.getElementById(Math.abs(d)+""+Math.abs(t)+"ScheduleDay")
+            if(!byPassedElement) return;
+
+            let previousSibling = byPassedElement.previousSibling
+            let nextSibling = byPassedElement.nextSibling
+
+            //if(previousSibling || nextSibling)
+            let prevActiveElement = false;
+            let nextActiveElement = false;
+            
+            if(previousSibling) prevActiveElement = previousSibling.classList.contains("active-test")
+            if(nextSibling) nextActiveElement = nextSibling.classList.contains("active-test")
+
+            
+
+            if(isSelecting == true) {
+                byPassedElement.classList.add("active-test")
+                if(prevActiveElement != false) byPassedElement.classList.add("active-test-last")
+                if(nextActiveElement != false) byPassedElement.classList.add("active-test-first")
+                if(nextActiveElement != false && prevActiveElement != false){
+                    byPassedElement.classList.remove("active-test-first")
+                    byPassedElement.classList.remove("active-test-last")
+                } 
+                
+            }
+            if(isDeselecting == true) {
+                byPassedElement.classList.remove("active-test")
+                //if(!prevActiveElement) byPassedElement.classList.remove("active-test-first")
+                //if(!nextActiveElement) byPassedElement.classList.remove("active-test-last")
+            }
+
+        }
+    }
+})
+
+function findSmallest(numberArray){
+    return Math.min(...numberArray)
+}
+function findGreatest(numberArray){
+    return Math.max(...numberArray)
+}
+
+
+workshiftMatrixCanvas.addEventListener('mouseup', function (event){
+    isSelecting = false;
+    isDeselecting = false;
+})
 
 for (let j = 0; j < daysOfWeek.length; j++) {
     let oneDay = document.createElement('div')
@@ -867,10 +967,20 @@ for (let j = 0; j < daysOfWeek.length; j++) {
     oneDay.append(dayNameDiv)
 
     for (let d = 0; d < sectionsInADay; d++) {
-        let dayLine = document.createElement("div")
-        dayLine.classList.add("dayparts-cell-test")
-        oneDay.append(dayLine)
-        //dayLine.textContent = j;
+        let shortestTimeUnit = document.createElement("div")
+        shortestTimeUnit.classList.add("dayparts-cell-test")
+        shortestTimeUnit.id = daysOfWeek[j].dayId + "" + (d) + "ScheduleDay";
+        shortestTimeUnit.setAttribute("data-day", daysOfWeek[j].dayId)
+        shortestTimeUnit.setAttribute("data-time", (d))// + "-" + (smallestTimeUnit-1))
+        oneDay.append(shortestTimeUnit)
+
+        shortestTimeUnit.addEventListener("click", function (){
+            console.log('day: ', daysOfWeek[j].dayName, daysOfWeek[j].dayId)
+            console.log('smallest Time Unit: ', (d+1))
+            shortestTimeUnit.classList.toggle("active-test")
+            shortestTimeUnit.classList.toggle("active-test-last")
+            //console.log('sequence: ')
+        })
     }
     
 }

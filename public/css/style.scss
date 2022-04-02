@@ -293,7 +293,7 @@ body {
       }
     }
 
-    
+
 
     .sendButton {
       font-size: 24px;
@@ -1564,6 +1564,7 @@ body {
   //background-color: #EBF0F6;
   background-color: white;
   box-shadow: 3px -3px 10px -2px rgba(204, 197, 197, 0.5);
+
   //box-shadow: 3px 5px 10px -2px rgba(204, 197, 197, 0.5);
   .chat-options {
     text-decoration: none;
@@ -1574,7 +1575,9 @@ body {
     align-items: center;
     align-self: flex-end;
     background-color: transparent;
-    padding: 1rem 0.5rem;;
+    padding: 1rem 0.5rem;
+    ;
+
     svg,
     i {
       //margin-right: 5px;
@@ -3524,14 +3527,15 @@ body {
         padding-inline: var(--spacing);
       }
 
-      .contentDay{
+      .contentDay {
         position: relative;
         width: 40px;
         height: 40px;
         font-size: 1rem;
         text-align: center;
         line-height: 40px;
-        &:after{
+
+        &:after {
           content: "";
           position: absolute;
           bottom: 5px;
@@ -3542,9 +3546,11 @@ body {
           transform: translateX(-50%);
           left: 50%;
         }
-        
+
       }
-      .current-day,.current-day:after{
+
+      .current-day,
+      .current-day:after {
         background-color: white;
       }
 
@@ -3778,7 +3784,9 @@ body {
       border-bottom: 1px solid #f1f4f6;
 
       .rightPart {
-        .title, .title>* {
+
+        .title,
+        .title>* {
           font-weight: bold;
           font-size: 20px;
           padding: 1rem 0;
@@ -3818,7 +3826,8 @@ body {
           display: flex;
           flex-direction: column;
           align-items: center;
-          i{
+
+          i {
             font-size: 30px;
           }
         }
@@ -4088,7 +4097,7 @@ body {
       border-radius: 0 0 $borderRadius $borderRadius;
       background-color: white;
 
-      .attendingTitle{
+      .attendingTitle {
         display: flex;
       }
 
@@ -4151,10 +4160,12 @@ body {
   .negativeDate {
     background-color: $warning-bg;
   }
+
   .negativegoodselect {
     transition: all 0.4s;
+
     .goodselect {
-      
+
       .selected-value {
         background-color: $warning-bg;
       }
@@ -4191,3 +4202,155 @@ body {
     --box-shadow: #111111;
   }
 }*/
+
+////////WorkShifts
+.work_shifts_Panel {
+  display: none;
+
+  .dayparts-cell-test {
+    transition: .3s;
+    background-color: #EBF0F6;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #ededed;
+    cursor: pointer;
+
+    // &.active-test {
+    //   background: #003061;
+    //   //color: white;
+    // }
+
+    // &.active-test:first-child,
+    // &:not(.active-test)+.active-test {
+    //   border-top-left-radius: 15px;
+    //   border-bottom-left-radius: 15px;
+    // }
+
+    // &.active-test:last-child {
+    //   border-top-right-radius: 15px;
+    //   border-bottom-right-radius: 15px;
+    // }
+
+    ////
+    &.active-test {
+      background: #003061;
+      color: white;
+      //padding-top: 30px;
+      //margin-bottom: -20px;
+    }
+
+    // &.active-test+ :not(.active-test) {
+    //   //margin-top: 20px;
+    //   //background: yellow;
+    // }
+
+    // &:not(.active-test)+.active-test {
+    //   //padding-top: 10px;
+    //   background: yellow;
+    // }
+    &.active-test-last{
+      border-top-right-radius: 15px;
+      border-bottom-right-radius: 15px;
+    }
+    &.active-test-first{
+      border-top-left-radius: 15px;
+      border-bottom-left-radius: 15px;
+    }
+  }
+
+  // .active-test {
+  //   background-color: #003061; //!important;
+  // }
+
+  .day-test {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+
+
+  }
+
+  .dayparts-cell-test:hover {
+    background-color: #b1d1f8;
+  }
+
+  .workshiftMatrixCanvas {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    user-select: none;
+  }
+
+  .dayName-test {
+    width: 6rem;
+  }
+
+  /* --------------------------------------------------- */
+  .work_shifts_Panel {
+    display: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+  }
+
+  .shiftsContainer {
+    display: none;
+    //background-color: red;
+  }
+
+  .dayparts-cell {
+    transition: .3s;
+    background-color: #EBF0F6;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #ededed;
+    cursor: pointer;
+  }
+
+  .active {
+    transition: .3s;
+    background-color: #003061 !important;
+  }
+
+  .day-label,
+  .hour {
+    cursor: pointer;
+  }
+
+  option {
+    font-family: 'Open Sans'
+  }
+
+  .day-label {
+    text-align: right;
+    padding: 5px;
+    transition: .3s;
+  }
+
+  .hour {
+    transition: .3s;
+  }
+
+  .day-label:hover,
+  .hour:hover {
+    color: #BDE130;
+  }
+
+  .dayparts-cell:hover {
+    background: ORANGE;
+  }
+
+  .active:hover {
+    background: #617c84 !important;
+  }
+
+  .preactive {
+    color: #85b1be;
+  }
+}
