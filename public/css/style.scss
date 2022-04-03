@@ -4220,7 +4220,7 @@ body {
     .slotNameRow {
       display: flex;
       align-items: center;
-      gap: 2px;
+      gap: 3px;
 
       .slotNameCell {
         width: 30px;
@@ -4265,7 +4265,7 @@ body {
     .day-test {
       display: flex;
       flex-direction: row;
-      gap: 2px;
+      gap: 3px;
 
 
     }
@@ -4278,7 +4278,7 @@ body {
     .workshiftMatrixCanvas {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
       user-select: none;
 
       overflow-x: auto;

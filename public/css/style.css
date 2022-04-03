@@ -4839,7 +4839,7 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  gap: 2px;
+  gap: 3px;
 }
 
 .work_shifts_Panel .workshiftMatrix .slotNameRow .slotNameCell {
@@ -4895,7 +4895,7 @@ body {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
-  gap: 2px;
+  gap: 3px;
 }
 
 .work_shifts_Panel .workshiftMatrix .dayparts-cell-test:hover {
@@ -4910,7 +4910,7 @@ body {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
