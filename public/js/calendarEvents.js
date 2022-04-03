@@ -1,5 +1,3 @@
-
-
 let calendarObject = {}
 let selectedDate = new Date().toISOString().slice(0, 10);
 let newEventCreation = {}
@@ -27,7 +25,10 @@ var newScheduleDetailsSection = document.getElementById("newScheduleDetailsSecti
 
 
 
-currentMonth.textContent = date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
+currentMonth.textContent = date.toLocaleDateString("en-US", {
+    month: 'long',
+    year: 'numeric'
+});
 console.log(currentMonth.textContent)
 today.setHours(0, 0, 0, 0);
 renderCalendar();
@@ -56,7 +57,8 @@ function renderCalendar() {
         } else if (i <= startWeekDay + totalMonthDay) {
             // adding this month days
 
-            date.setDate(day); console.log("day:", day, 'loop:', i)
+            date.setDate(day);
+            console.log("day:", day, 'loop:', i)
             date.setHours(0, 0, 0, 0);
 
             let dayClass = date.getTime() === today.getTime() ? 'current-day' : 'month-day';
@@ -106,7 +108,10 @@ function renderCalendar() {
 prevMonthBtn.addEventListener("click", function () {
     date.setDate(1)
     date.setMonth(date.getMonth() - 1);
-    currentMonth.textContent = date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
+    currentMonth.textContent = date.toLocaleDateString("en-US", {
+        month: 'long',
+        year: 'numeric'
+    });
     renderCalendar();
     console.log(date.getMonth())
 });
@@ -114,7 +119,10 @@ nextMonthBtn.addEventListener("click", function () {
     //date = new Date(currentMonth.textContent);
     date.setDate(1)
     date.setMonth(date.getMonth() + 1);
-    currentMonth.textContent = date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
+    currentMonth.textContent = date.toLocaleDateString("en-US", {
+        month: 'long',
+        year: 'numeric'
+    });
     renderCalendar();
     console.log(date.getMonth())
 });
@@ -133,7 +141,10 @@ document.querySelectorAll(".btn").forEach(function (element) {
         else
             date = new Date(date.getFullYear() + 1, 0, 1);
 
-        currentMonth.textContent = date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
+        currentMonth.textContent = date.toLocaleDateString("en-US", {
+            month: 'long',
+            year: 'numeric'
+        });
         renderCalendar();
 
     });
@@ -157,7 +168,13 @@ newEventBtn.addEventListener("click", function (e) {
 
 let scheduleTypeChoiceElement = document.getElementById("scheduleTypeGoodSelectJs")
 goodselect(scheduleTypeChoiceElement, {
-    availableOptions: [{ id: 1, name: "Meeting" }, { id: 2, name: "Task" }],
+    availableOptions: [{
+        id: 1,
+        name: "Meeting"
+    }, {
+        id: 2,
+        name: "Task"
+    }],
     placeHolder: "Type",
     //selectedOptionId: 1,
     onOptionChange: (option) => {
@@ -167,7 +184,13 @@ goodselect(scheduleTypeChoiceElement, {
 });
 let recurrenceGoodSelectJs = document.getElementById("recurrenceGoodSelectJs");
 goodselect(recurrenceGoodSelectJs, {
-    availableOptions: [{ id: 1, name: "One Time" }, { id: 2, name: "Repetitive" }],
+    availableOptions: [{
+        id: 1,
+        name: "One Time"
+    }, {
+        id: 2,
+        name: "Repetitive"
+    }],
     placeHolder: "Ocurrence",
     selectorWidth: '120px',
     marginRight: '1rem',
@@ -189,11 +212,22 @@ goodselect(recurrenceGoodSelectJs, {
             let recurrenceTypeDiv = document.createElement("div");
             recurrenceTypeDiv.id = "recurrenceTypeDiv";
             goodselect(recurrenceTypeDiv, {
-                availableOptions: [
-                    { id: 1, name: "Every Day" },
-                    { id: 2, name: "Every Week" },
-                    { id: 3, name: "Monday - Friday" },
-                    { id: 4, name: "Weekend" },
+                availableOptions: [{
+                        id: 1,
+                        name: "Every Day"
+                    },
+                    {
+                        id: 2,
+                        name: "Every Week"
+                    },
+                    {
+                        id: 3,
+                        name: "Monday - Friday"
+                    },
+                    {
+                        id: 4,
+                        name: "Weekend"
+                    },
                 ],
                 placeHolder: "Recurrence",
                 selectorWidth: "150px",
@@ -244,8 +278,7 @@ goodselect(recurrenceGoodSelectJs, {
                 }
             });
 
-        }
-        else {
+        } else {
             let oneTimeTypeDivCheck = document.getElementById("oneTimeTypeDiv")
             if (oneTimeTypeDivCheck) return;
 
@@ -439,6 +472,7 @@ function flagIncorrectFied(element, elementType) {
     }
 
 }
+
 function unflagIncorrectFied(element, elementType) {
     if (elementType == "goodSelect") {
         element.classList.remove("negativegoodselect")
@@ -485,8 +519,7 @@ socket.on('scheduleInviteResults', (peopleResults) => {
             avatarElement = document.createElement("div")
             avatarElement.textContent = person.name.charAt(0) + " " + person.surname.charAt(0)
             //avatarElement = `<div>${person.name.charAt(0).toUpperCase()} ${person.surname.charAt(0).toUpperCase()}</div>`;
-        }
-        else {
+        } else {
             avatarElement = document.createElement("img")
             avatarElement.src = person.profilePicture
             //avatarElement = `<img src="${person.profilePicture}" alt="">`
@@ -693,8 +726,7 @@ function displayDayEvents(givenDate) {
             if (scheduleItem.occurrence == 1 && scheduleItem.oneTimeDate) {
                 let thisdate = new Date(scheduleItem.oneTimeDate)
                 occurrenceText = scheduleItem.startTime + " - " + scheduleItem.endTime + " " + thisdate.toString('YYYY-MM-dd').substring(0, 16)
-            }
-            else if (scheduleItem.occurrence == 2 && scheduleItem.recurrenceType) {
+            } else if (scheduleItem.occurrence == 2 && scheduleItem.recurrenceType) {
                 occurrenceText;
                 switch (scheduleItem.recurrenceType) {
                     // { id: 1, name: "Every Day" },
@@ -702,32 +734,33 @@ function displayDayEvents(givenDate) {
                     // { id: 3, name: "Monday - Friday" },
                     // { id: 4, name: "Weekend" }
                     case 1:
-                        occurrenceText = 'Occurs every day at ' + scheduleItem.startTime + " - " + scheduleItem.endTime
-                            + " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
-                            + " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                        occurrenceText = 'Occurs every day at ' + scheduleItem.startTime + " - " + scheduleItem.endTime +
+                            " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) +
+                            " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;
                     case 2:
-                        let dayName = new Date(scheduleItem.startRecurrenceDate).toLocaleDateString('en-US', { weekday: 'long' })
-                        occurrenceText = 'Occurs every ' + dayName + ' at ' + scheduleItem.startTime + " - " + scheduleItem.endTime
-                            + " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
-                            + " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                        let dayName = new Date(scheduleItem.startRecurrenceDate).toLocaleDateString('en-US', {
+                            weekday: 'long'
+                        })
+                        occurrenceText = 'Occurs every ' + dayName + ' at ' + scheduleItem.startTime + " - " + scheduleItem.endTime +
+                            " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) +
+                            " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;
                     case 3:
-                        occurrenceText = 'Occurs in business days (Monday - Friday) at ' + scheduleItem.startTime + " - " + scheduleItem.endTime
-                            + " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
-                            + " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                        occurrenceText = 'Occurs in business days (Monday - Friday) at ' + scheduleItem.startTime + " - " + scheduleItem.endTime +
+                            " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) +
+                            " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;
                     case 4:
-                        occurrenceText = 'Occurs in weekends (Saturday - Sunday) days at ' + scheduleItem.startTime + " - " + scheduleItem.endTime
-                            + " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
-                            + " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                        occurrenceText = 'Occurs in weekends (Saturday - Sunday) days at ' + scheduleItem.startTime + " - " + scheduleItem.endTime +
+                            " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) +
+                            " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;
 
                     default:
                         break;
                 }
-            }
-            else {
+            } else {
 
             }
 
@@ -736,15 +769,16 @@ function displayDayEvents(givenDate) {
             let scheduleType_temp;
             let scheduleIcon = document.createElement('i')
             if (scheduleItem.type == 2) {
-                scheduleType_temp = 'Meeting'; scheduleIcon.classList.add("bx", "bx-group");
-            }
-            else scheduleType_temp = 'Task'; scheduleIcon.classList.add("bx", "bx-task");
+                scheduleType_temp = 'Meeting';
+                scheduleIcon.classList.add("bx", "bx-group");
+            } else scheduleType_temp = 'Task';
+            scheduleIcon.classList.add("bx", "bx-task");
 
             eventTypediv.textContent = scheduleType_temp
             eventTypediv.append(scheduleIcon)
             eventOwner.textContent = scheduleItem.owner.name + " " + scheduleItem.owner.surname;
 
-            removeAllChildren(eventParticipantsDivResult)//remove all children
+            removeAllChildren(eventParticipantsDivResult) //remove all children
             /*
             [
                 {
@@ -787,16 +821,23 @@ function displayDayEvents(givenDate) {
             */
             if (scheduleItem.Participants) {
                 scheduleItem.Participants.forEach(function (participant) {
-                    let { userInfo, attending } = participant;
-                    let { userID, name, surname, profilePicture } = userInfo;
+                    let {
+                        userInfo,
+                        attending
+                    } = participant;
+                    let {
+                        userID,
+                        name,
+                        surname,
+                        profilePicture
+                    } = userInfo;
 
                     //fromm
                     let avatarElement;
                     if (profilePicture == null) {
                         avatarElement = document.createElement("div")
                         avatarElement.textContent = name.charAt(0) + " " + surname.charAt(0)
-                    }
-                    else {
+                    } else {
                         avatarElement = document.createElement("img")
                         avatarElement.src = profilePicture
                     }
@@ -918,17 +959,21 @@ function displayDayEvents(givenDate) {
                     break;
             }
 
-            
-            function addResponseEventListener(element, response){
-                element.addEventListener("click", function (){
+
+            function addResponseEventListener(element, response) {
+                element.addEventListener("click", function () {
                     sendEventAttendanceResponse(scheduleItem.eventId, response)
                     console.log(scheduleItem.eventId, response)
                 })
             }
-            function sendEventAttendanceResponse(eventId, resp){
-                socket.emit("updateEventAttendance", {eventId, resp})
+
+            function sendEventAttendanceResponse(eventId, resp) {
+                socket.emit("updateEventAttendance", {
+                    eventId,
+                    resp
+                })
             }
-            
+
         })
     })
 
@@ -954,11 +999,11 @@ function formatDate(date) {
     return [year, month, day].join('-');
 }
 
-function createMyElement(elementType, classList, textContent){
+function createMyElement(elementType, classList, textContent) {
     //elementType: string, classList: array of strings, textContent: string
-    let newElem = document.createElement(elementType+"")
+    let newElem = document.createElement(elementType + "")
     newElem.textContent = textContent
-    classList.forEach( classString => {
+    classList.forEach(classString => {
         newElem.classList.add(classString)
     })
 

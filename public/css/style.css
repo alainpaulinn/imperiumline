@@ -4866,13 +4866,11 @@ body {
 }
 
 .work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftCommandBar .commandButton {
-  padding: 1rem;
   background: white;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
   border-radius: 15px;
   border: none;
-  margin: .5rem;
   cursor: pointer;
 }
 
@@ -4888,14 +4886,12 @@ body {
 }
 
 .work_shifts_Panel .workshiftMatrix .subTitleBar .navigateWeeks .commandButton {
-  padding: 1rem;
   background: #003061;
   color: white;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
   border-radius: 15px;
   border: none;
-  margin: .5rem;
   cursor: pointer;
 }
 
@@ -4937,7 +4933,7 @@ body {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  border-right: 1px solid #cccfd1;
+  border-left: 1px solid #cccfd1;
   -webkit-writing-mode: vertical-rl;
       -ms-writing-mode: tb-rl;
           writing-mode: vertical-rl;
@@ -4998,5 +4994,13 @@ body {
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: flex-end;
+}
+
+.halfRemMargin {
+  margin: .5rem;
+}
+
+.oneRemPadding {
+  padding: 1rem;
 }
 /*# sourceMappingURL=style.css.map */

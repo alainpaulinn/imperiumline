@@ -1,3 +1,5 @@
+
+
 let daysInAWeek = 7;
 let daysOfWeek = [
     {
@@ -170,10 +172,16 @@ function getWeekNumber(date_){
 }
 
 
-workshiftMatrixCanvas.addEventListener('mouseup', function (event) {
+// workshiftMatrixCanvas.addEventListener('mouseup', function (event) {
+//     isSelecting = false;
+//     isDeselecting = false;
+// })
+
+document.addEventListener("mouseup", function(){
     isSelecting = false;
     isDeselecting = false;
-})
+});
+
 
 let slotNameRow = document.createElement("div")
 slotNameRow.classList.add("slotNameRow")
@@ -239,3 +247,41 @@ for (let j = 0; j < daysOfWeek.length; j++) {
     }
 
 }
+
+//week controls
+let previousWeekShiftsbtn
+let nextWeekShiftsbtn
+
+let jumpToAnotherWeekShifts = document.getElementById("jumpToAnotherWeekShifts")
+
+goodselect(jumpToAnotherWeekShifts, {
+    availableOptions: [{
+        id: 1,
+        name: "Meeting"
+    }, {
+        id: 2,
+        name: "Task"
+    }],
+    placeHolder: "Jump to",
+    //selectedOptionId: 1,
+    onOptionChange: (option) => {
+        !option ? scheduleTypeChoiceElement.classList.add("negativegoodselect") : scheduleTypeChoiceElement.classList.remove("negativegoodselect")
+        newEventCreation.type = option.id;
+    }
+});
+
+goodselect(jumpToAnotherWeekShifts, {
+    availableOptions: [{
+        id: 1,
+        name: "Meeting"
+    }, {
+        id: 2,
+        name: "Task"
+    }],
+    placeHolder: "Jump to",
+    //selectedOptionId: 1,
+    onOptionChange: (option) => {
+        !option ? scheduleTypeChoiceElement.classList.add("negativegoodselect") : scheduleTypeChoiceElement.classList.remove("negativegoodselect")
+        newEventCreation.type = option.id;
+    }
+});
