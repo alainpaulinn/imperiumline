@@ -754,6 +754,7 @@ function getEvents(userId, initalDate, endDate) {
            */
           let eventdetails = await getEventDetails(_myEvents[eventNumber].eventId);
           console.log("eventdetails", eventdetails)
+          console.log("eventDates", eventDates)
           if (eventdetails.occurrence == 1) {
             eventDates[eventdetails.oneTimeDate].push(eventdetails)
           }

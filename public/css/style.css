@@ -4827,7 +4827,12 @@ body {
   color: #808488;
 }
 
-.work_shifts_Panel .slotNameRow {
+.work_shifts_Panel .workshiftMatrix {
+  width: 100%;
+  background: white;
+}
+
+.work_shifts_Panel .workshiftMatrix .slotNameRow {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -4837,7 +4842,7 @@ body {
   gap: 2px;
 }
 
-.work_shifts_Panel .slotNameRow .slotNameCell {
+.work_shifts_Panel .workshiftMatrix .slotNameRow .slotNameCell {
   width: 30px;
   min-width: 30px;
   display: -webkit-box;
@@ -4856,7 +4861,7 @@ body {
   text-orientation: mixed;
 }
 
-.work_shifts_Panel .dayparts-cell-test {
+.work_shifts_Panel .workshiftMatrix .dayparts-cell-test {
   -webkit-transition: .3s;
   transition: .3s;
   background-color: #EBF0F6;
@@ -4869,21 +4874,21 @@ body {
   cursor: pointer;
 }
 
-.work_shifts_Panel .dayparts-cell-test.active-test {
+.work_shifts_Panel .workshiftMatrix .dayparts-cell-test.active-test {
   background: #003061;
 }
 
-.work_shifts_Panel .dayparts-cell-test.active-test-last {
+.work_shifts_Panel .workshiftMatrix .dayparts-cell-test.active-test-last {
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
 }
 
-.work_shifts_Panel .dayparts-cell-test.active-test-first {
+.work_shifts_Panel .workshiftMatrix .dayparts-cell-test.active-test-first {
   border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;
 }
 
-.work_shifts_Panel .day-test {
+.work_shifts_Panel .workshiftMatrix .day-test {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -4894,16 +4899,11 @@ body {
   gap: 2px;
 }
 
-.work_shifts_Panel .dayparts-cell-test:hover {
+.work_shifts_Panel .workshiftMatrix .dayparts-cell-test:hover {
   background-color: #b1d1f8;
 }
 
-.work_shifts_Panel .workshiftMatrix {
-  width: 100%;
-  background: white;
-}
-
-.work_shifts_Panel .workshiftMatrixCanvas {
+.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -4919,7 +4919,7 @@ body {
   overflow-x: auto;
 }
 
-.work_shifts_Panel .dayName-test {
+.work_shifts_Panel .workshiftMatrix .dayName-test {
   width: 6rem;
   min-width: 6rem;
   display: -webkit-box;
