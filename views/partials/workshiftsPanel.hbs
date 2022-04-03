@@ -1,45 +1,5 @@
-<div class="shiftsContainer">
-    <div>
-        <div id="vueApp">
-            <table class="dayparts table">
-                <thead>
-                    <tr>
-                        <td class="cell-label presets-label"></td>
-                        <td colspan="24"><span class="cell-label presetsSubtitle-label"></span>
-                            <select v-model="selected" @change='clearAll();selectedFunc()'>
-                                <option value="">Select a Preset</option>
-                                <option value="0">None</option>
-                                <option value="1">Afternoons</option>
-                                <option value="2">Evenings</option>
-                                <option value="3">Mornings</option>
-                                <option value="4">Weekdays</option>
-                                <option value="5">Weekends</option>
-                                <option value="6">Weekends including Friday</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td rowspan="2"></td>
-                        <td class="cell-label am-label" colspan="12">AM</td>
-                        <td class="cell-label pm-label" colspan="12">PM</td>
-                    </tr>
-                    <tr class="hour-row">
-                        <td class="hour" v-for="hour in times" v-bind:value="hour.hour" v-on:click='setTime'>
-                            {{hour.hour}}</td>
-                    </tr>
-                </thead>
-                <tbody @mousedown='mouseDown' @mouseup='mouseUp' @mousemove='mouseMove'>
-                    <tr class="day" v-for="day in days">
-                        <td class="cell-label day-label" v-bind:value="day.dayNumber" v-bind:day-value="day.dayNumber"
-                            v-on:click='activateDay'>{{day.dayName}}</td>
-                        <td class='dayparts-cell' v-bind:value="hour.hour" data='day'
-                            v-bind:class="{active: hour.isActive, preactive: hour.isPreActive}"
-                            v-for='hour in day.times'></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+<div id="workShiftTitleBar" class="workShiftTitleBar">
+    <h1>Work Shifts</h1>
 </div>
 <div class="workshiftMatrix" id="workshiftmatrix">
     <p>Secondary matrix for test</p>

@@ -4801,21 +4801,59 @@ body {
   --spacing: 18px;
 }
 
-/*
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-color: #19181a;
-    --foreground-color: #282729;
-    --text-color: #c9c8cc;
-    --highlight-text-color: #f8f7fa;
-    --inactive-text-color: #68676a;
-    --btn-bg: #313133;
-    --box-shadow: #111111;
-  }
-}*/
 .work_shifts_Panel {
   display: none;
-  /* --------------------------------------------------- */
+  width: 250px;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding: 1rem;
+}
+
+.work_shifts_Panel .workShiftTitleBar {
+  padding: 1rem;
+  background: white;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.16);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.16);
+  border-radius: 15px;
+}
+
+.work_shifts_Panel .workShiftTitleBar h1 {
+  font-size: 18px;
+  color: #808488;
+}
+
+.work_shifts_Panel .slotNameRow {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 2px;
+}
+
+.work_shifts_Panel .slotNameRow .slotNameCell {
+  width: 30px;
+  min-width: 30px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  border-right: 1px solid #cccfd1;
+  -webkit-writing-mode: vertical-rl;
+      -ms-writing-mode: tb-rl;
+          writing-mode: vertical-rl;
+  text-orientation: mixed;
 }
 
 .work_shifts_Panel .dayparts-cell-test {
@@ -4823,6 +4861,7 @@ body {
   transition: .3s;
   background-color: #EBF0F6;
   width: 30px;
+  min-width: 30px;
   height: 30px;
   margin: 0;
   padding: 0;
@@ -4832,7 +4871,6 @@ body {
 
 .work_shifts_Panel .dayparts-cell-test.active-test {
   background: #003061;
-  color: white;
 }
 
 .work_shifts_Panel .dayparts-cell-test.active-test-last {
@@ -4860,6 +4898,11 @@ body {
   background-color: #b1d1f8;
 }
 
+.work_shifts_Panel .workshiftMatrix {
+  width: 100%;
+  background: white;
+}
+
 .work_shifts_Panel .workshiftMatrixCanvas {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -4873,89 +4916,20 @@ body {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
+  overflow-x: auto;
 }
 
 .work_shifts_Panel .dayName-test {
   width: 6rem;
-}
-
-.work_shifts_Panel .work_shifts_Panel {
-  display: none;
+  min-width: 6rem;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
-}
-
-.work_shifts_Panel .shiftsContainer {
-  display: none;
-}
-
-.work_shifts_Panel .dayparts-cell {
-  -webkit-transition: .3s;
-  transition: .3s;
-  background-color: #EBF0F6;
-  width: 30px;
-  height: 30px;
-  margin: 0;
-  padding: 0;
-  border: 1px solid #ededed;
-  cursor: pointer;
-}
-
-.work_shifts_Panel .active {
-  -webkit-transition: .3s;
-  transition: .3s;
-  background-color: #003061 !important;
-}
-
-.work_shifts_Panel .day-label,
-.work_shifts_Panel .hour {
-  cursor: pointer;
-}
-
-.work_shifts_Panel option {
-  font-family: 'Open Sans';
-}
-
-.work_shifts_Panel .day-label {
-  text-align: right;
-  padding: 5px;
-  -webkit-transition: .3s;
-  transition: .3s;
-}
-
-.work_shifts_Panel .hour {
-  -webkit-transition: .3s;
-  transition: .3s;
-}
-
-.work_shifts_Panel .day-label:hover,
-.work_shifts_Panel .hour:hover {
-  color: #BDE130;
-}
-
-.work_shifts_Panel .dayparts-cell:hover {
-  background: ORANGE;
-}
-
-.work_shifts_Panel .active:hover {
-  background: #617c84 !important;
-}
-
-.work_shifts_Panel .preactive {
-  color: #85b1be;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
 }
 /*# sourceMappingURL=style.css.map */
