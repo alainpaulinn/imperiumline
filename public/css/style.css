@@ -4032,9 +4032,9 @@ body {
 .schedule-container .selectionPanel .card .padding-day {
   color: var(--inactive-text-color);
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+       user-select: none;
 }
 
 .schedule-container .selectionPanel .card .calendar-toolbar > [class$="month-btn"]:hover,
@@ -4807,6 +4807,7 @@ body {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
+  color: #808488;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
@@ -4828,11 +4829,93 @@ body {
 }
 
 .work_shifts_Panel .workshiftMatrix {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
   width: 100%;
   background: white;
+  border-radius: 15px;
+  margin-top: 1rem;
+  padding: 1rem;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.16);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.16);
 }
 
-.work_shifts_Panel .workshiftMatrix .slotNameRow {
+.work_shifts_Panel .workshiftMatrix .subTitleBar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftCommandBar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftCommandBar .commandButton {
+  padding: 1rem;
+  background: white;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
+  border-radius: 15px;
+  border: none;
+  margin: .5rem;
+  cursor: pointer;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .navigateWeeks {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .navigateWeeks .commandButton {
+  padding: 1rem;
+  background: #003061;
+  color: white;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
+  border-radius: 15px;
+  border: none;
+  margin: .5rem;
+  cursor: pointer;
+}
+
+.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 3px;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+       user-select: none;
+  overflow-x: auto;
+}
+
+.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .slotNameRow {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -4842,7 +4925,7 @@ body {
   gap: 3px;
 }
 
-.work_shifts_Panel .workshiftMatrix .slotNameRow .slotNameCell {
+.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .slotNameRow .slotNameCell {
   width: 30px;
   min-width: 30px;
   display: -webkit-box;
@@ -4858,10 +4941,11 @@ body {
   -webkit-writing-mode: vertical-rl;
       -ms-writing-mode: tb-rl;
           writing-mode: vertical-rl;
+  -webkit-text-orientation: mixed;
   text-orientation: mixed;
 }
 
-.work_shifts_Panel .workshiftMatrix .dayparts-cell-test {
+.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayparts-cell-test {
   -webkit-transition: .3s;
   transition: .3s;
   background-color: #EBF0F6;
@@ -4873,21 +4957,21 @@ body {
   cursor: pointer;
 }
 
-.work_shifts_Panel .workshiftMatrix .dayparts-cell-test.active-test {
+.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayparts-cell-test.active-test {
   background: #003061;
 }
 
-.work_shifts_Panel .workshiftMatrix .dayparts-cell-test.active-test-last {
+.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayparts-cell-test.active-test-last {
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
 }
 
-.work_shifts_Panel .workshiftMatrix .dayparts-cell-test.active-test-first {
+.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayparts-cell-test.active-test-first {
   border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;
 }
 
-.work_shifts_Panel .workshiftMatrix .day-test {
+.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .day-test {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -4898,27 +4982,11 @@ body {
   gap: 3px;
 }
 
-.work_shifts_Panel .workshiftMatrix .dayparts-cell-test:hover {
+.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayparts-cell-test:hover {
   background-color: #b1d1f8;
 }
 
-.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  gap: 3px;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  overflow-x: auto;
-}
-
-.work_shifts_Panel .workshiftMatrix .dayName-test {
+.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayName-test {
   width: 6rem;
   min-width: 6rem;
   display: -webkit-box;

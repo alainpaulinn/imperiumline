@@ -31,7 +31,7 @@ let daysOfWeek = [
 ]
 let hoursInADay = 24;
 let minutesInADay = hoursInADay * 60;
-let smallestTimeUnit = 60; //counted in minutes
+let smallestTimeUnit = 30; //counted in minutes
 let sectionsInADay = minutesInADay / smallestTimeUnit;
 let earliestStartTime = '00:00:00';
 let latestFinishTime = '23:59:59';
