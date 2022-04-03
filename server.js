@@ -756,7 +756,7 @@ function getEvents(userId, initalDate, endDate) {
           console.log("eventdetails", eventdetails)
           console.log("eventDates", eventDates)
           if (eventdetails.occurrence == 1) {
-            eventDates[eventdetails.oneTimeDate].push(eventdetails)
+            if(eventDates[eventdetails.oneTimeDate]) eventDates[eventdetails.oneTimeDate].push(eventdetails);
           }
           else if (eventdetails.occurrence == 2) {
             // { id: 1, name: "Every Day" },
