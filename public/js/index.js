@@ -1546,7 +1546,7 @@ const myPeer = new Peer(undefined,
   //   //secure: true
   // }
   {
-    host: 'https://peer.imperiumline.com/',
+    host: 'peer.imperiumline.com/',
     //port: '',
     secure: true
   }
