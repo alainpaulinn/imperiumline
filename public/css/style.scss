@@ -4236,24 +4236,40 @@ body {
         flex-wrap: wrap;
   
         .commandButton {
+          transition: .3s;
           background: white;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
           border-radius: 15px;
           border: none;
           cursor: pointer;
+          .active{
+            background-color: $notification;
+          }
+          &:hover{
+            background: $sidepanel;
+          }
         }
       }
       .navigateWeeks{
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
+        position: relative;
         .commandButton {
+          transition: .3s;
           background: $notification;
           color: white;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
           border-radius: 15px;
           border: none;
           cursor: pointer;
+
+          i{
+            font-size: 18px;
+            padding: 0 .5rem;
+          }
+          display: flex;
+          align-items: center
         }
       }
     }

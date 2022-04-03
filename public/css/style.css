@@ -4866,12 +4866,22 @@ body {
 }
 
 .work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftCommandBar .commandButton {
+  -webkit-transition: .3s;
+  transition: .3s;
   background: white;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
   border-radius: 15px;
   border: none;
   cursor: pointer;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftCommandBar .commandButton .active {
+  background-color: #003061;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftCommandBar .commandButton:hover {
+  background: #ebf0f6;
 }
 
 .work_shifts_Panel .workshiftMatrix .subTitleBar .navigateWeeks {
@@ -4883,9 +4893,12 @@ body {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  position: relative;
 }
 
 .work_shifts_Panel .workshiftMatrix .subTitleBar .navigateWeeks .commandButton {
+  -webkit-transition: .3s;
+  transition: .3s;
   background: #003061;
   color: white;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
@@ -4893,6 +4906,17 @@ body {
   border-radius: 15px;
   border: none;
   cursor: pointer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .navigateWeeks .commandButton i {
+  font-size: 18px;
+  padding: 0 .5rem;
 }
 
 .work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas {

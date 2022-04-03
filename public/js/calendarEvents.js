@@ -182,6 +182,7 @@ goodselect(scheduleTypeChoiceElement, {
         newEventCreation.type = option.id;
     }
 });
+
 let recurrenceGoodSelectJs = document.getElementById("recurrenceGoodSelectJs");
 goodselect(recurrenceGoodSelectJs, {
     availableOptions: [{

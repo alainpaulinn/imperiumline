@@ -252,7 +252,12 @@ for (let j = 0; j < daysOfWeek.length; j++) {
 let previousWeekShiftsbtn
 let nextWeekShiftsbtn
 
+let presetsMyShiftsBtn = document.getElementById("presetsMyShiftsBtn")
+let presetsMyTeamShiftsBtn = document.getElementById("presetsMyTeamShiftsBtn")
+
 let jumpToAnotherWeekShifts = document.getElementById("jumpToAnotherWeekShifts")
+let jumpToAnotherTeamShifts = document.getElementById("jumpToAnotherTeamShifts")
+let jumpToAnotherUserShifts = document.getElementById("jumpToAnotherUserShifts")
 
 goodselect(jumpToAnotherWeekShifts, {
     availableOptions: [{
@@ -262,15 +267,14 @@ goodselect(jumpToAnotherWeekShifts, {
         id: 2,
         name: "Task"
     }],
-    placeHolder: "Jump to",
+    placeHolder: "Week",
     //selectedOptionId: 1,
     onOptionChange: (option) => {
-        !option ? scheduleTypeChoiceElement.classList.add("negativegoodselect") : scheduleTypeChoiceElement.classList.remove("negativegoodselect")
-        newEventCreation.type = option.id;
+        
     }
 });
 
-goodselect(jumpToAnotherWeekShifts, {
+goodselect(jumpToAnotherTeamShifts, {
     availableOptions: [{
         id: 1,
         name: "Meeting"
@@ -278,10 +282,24 @@ goodselect(jumpToAnotherWeekShifts, {
         id: 2,
         name: "Task"
     }],
-    placeHolder: "Jump to",
+    placeHolder: "Team",
     //selectedOptionId: 1,
     onOptionChange: (option) => {
-        !option ? scheduleTypeChoiceElement.classList.add("negativegoodselect") : scheduleTypeChoiceElement.classList.remove("negativegoodselect")
-        newEventCreation.type = option.id;
+        
+    }
+});
+goodselect(jumpToAnotherUserShifts, {
+    availableOptions: [{
+        id: 1,
+        name: "Meeting"
+    }, {
+        id: 2,
+        name: "Task"
+    }],
+    placeHolder: "User",
+    selectorWidth: '15rem',
+    //selectedOptionId: 1,
+    onOptionChange: (option) => {
+        
     }
 });
