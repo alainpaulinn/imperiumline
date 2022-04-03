@@ -1547,8 +1547,8 @@ const myPeer = new Peer(undefined,
   // }
   {
     host: 'peer.imperiumline.com/',
-    //port: '',
-    secure: true
+    port: '3001',
+    //secure: true
   }
 )
 let myPeerId;
