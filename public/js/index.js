@@ -1541,9 +1541,9 @@ socket.on('updateCallLog', (initialCallLog) => {
 let secondaryVideosDiv = document.getElementById('secondaryVideosDiv')
 const myPeer = new Peer(undefined,
   {
-    //host: '/',
-    //port: '3001'
-    secure: true
+    host: '/',
+    port: '3001',
+    //secure: true
   }
 )
 let myPeerId;
