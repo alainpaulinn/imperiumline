@@ -4933,6 +4933,7 @@ body {
   -moz-user-select: none;
        user-select: none;
   overflow-x: auto;
+  padding: 1rem;
 }
 
 .work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .slotNameRow {
@@ -5018,6 +5019,46 @@ body {
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: flex-end;
+}
+
+.work_shifts_Panel .workshiftMatrix .moreOptionsOnShifts .workShiftsLegend {
+  padding: 1rem;
+}
+
+.work_shifts_Panel .workshiftMatrix .moreOptionsOnShifts .workShiftsLegend .my-legend {
+  border-radius: 15px;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.733);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.733);
+}
+
+.work_shifts_Panel .workshiftMatrix .moreOptionsOnShifts .workShiftsLegend .my-legend .legend-title {
+  text-align: left;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.work_shifts_Panel .workshiftMatrix .moreOptionsOnShifts .workShiftsLegend .my-legend .legend-scale ul {
+  margin: 0;
+  margin-bottom: 5px;
+  padding: 0;
+  float: left;
+  list-style: none;
+}
+
+.work_shifts_Panel .workshiftMatrix .moreOptionsOnShifts .workShiftsLegend .my-legend .legend-scale ul li {
+  list-style: none;
+  margin-left: 0;
+  line-height: 18px;
+  margin-bottom: 2px;
+}
+
+.work_shifts_Panel .workshiftMatrix .moreOptionsOnShifts .workShiftsLegend .my-legend .legend-scale ul li span {
+  display: block;
+  float: left;
+  height: 16px;
+  width: 30px;
+  margin-right: 5px;
+  margin-left: 0;
 }
 
 .halfRemMargin {

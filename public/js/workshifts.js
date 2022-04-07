@@ -283,6 +283,7 @@ goodselect(jumpToAnotherTeamShifts, {
         name: "Task"
     }],
     placeHolder: "Team",
+    selectorWidth: '15rem',
     //selectedOptionId: 1,
     onOptionChange: (option) => {
         

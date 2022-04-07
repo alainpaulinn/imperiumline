@@ -4225,7 +4225,7 @@ body {
     padding: 1rem;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.16);
 
-    .subTitleBar{
+    .subTitleBar {
       display: flex;
       flex-wrap: wrap;
       flex-direction: column;
@@ -4234,7 +4234,7 @@ body {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-  
+
         .commandButton {
           transition: .3s;
           background: white;
@@ -4242,19 +4242,23 @@ body {
           border-radius: 15px;
           border: none;
           cursor: pointer;
-          .active{
+
+          .active {
             background-color: $notification;
           }
-          &:hover{
+
+          &:hover {
             background: $sidepanel;
           }
         }
       }
-      .navigateWeeks{
+
+      .navigateWeeks {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
         position: relative;
+
         .commandButton {
           transition: .3s;
           background: $notification;
@@ -4264,10 +4268,11 @@ body {
           border: none;
           cursor: pointer;
 
-          i{
+          i {
             font-size: 18px;
             padding: 0 .5rem;
           }
+
           display: flex;
           align-items: center
         }
@@ -4283,13 +4288,14 @@ body {
       user-select: none;
 
       overflow-x: auto;
+      padding: 1rem;
       //width: 150px;
 
       .slotNameRow {
         display: flex;
         align-items: center;
         gap: 3px;
-  
+
         .slotNameCell {
           width: 30px;
           min-width: 30px;
@@ -4297,14 +4303,14 @@ body {
           display: flex;
           align-items: center;
           justify-content: center;
-  
+
           border-left: 1px solid #cccfd1;
           writing-mode: vertical-rl;
           -webkit-text-orientation: mixed;
           text-orientation: mixed;
         }
       }
-  
+
       .dayparts-cell-test {
         transition: .3s;
         background-color: #EBF0F6;
@@ -4315,32 +4321,32 @@ body {
         padding: 0;
         //border: 1px solid #ededed;
         cursor: pointer;
-  
+
         &.active-test {
           background: #003061;
         }
-  
+
         &.active-test-last {
           border-top-right-radius: 15px;
           border-bottom-right-radius: 15px;
         }
-  
+
         &.active-test-first {
           border-top-left-radius: 15px;
           border-bottom-left-radius: 15px;
         }
       }
-  
+
       .day-test {
         display: flex;
         flex-direction: row;
         gap: 3px;
       }
-  
+
       .dayparts-cell-test:hover {
         background-color: #b1d1f8;
       }
-  
+
       .dayName-test {
         // position: -webkit-sticky;
         // position: sticky;
@@ -4351,11 +4357,56 @@ body {
         justify-content: flex-end;
       }
     }
+
+    .moreOptionsOnShifts {
+      .workShiftsLegend {
+        padding: 1rem;
+        .my-legend {
+          border-radius: 15px;
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.733);
+          
+
+          .legend-title {
+            text-align: left;
+            margin-bottom: 5px;
+            font-weight: bold;
+
+          }
+
+          .legend-scale{
+            ul {
+              margin: 0;
+              margin-bottom: 5px;
+              padding: 0;
+              float: left;
+              list-style: none;
+              li {
+
+                list-style: none;
+                margin-left: 0;
+                line-height: 18px;
+                margin-bottom: 2px;
+                span {
+                  display: block;
+                  float: left;
+                  height: 16px;
+                  width: 30px;
+                  margin-right: 5px;
+                  margin-left: 0;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
-.halfRemMargin{
+
+.halfRemMargin {
   margin: .5rem;
 }
-.oneRemPadding{
+
+.oneRemPadding {
   padding: 1rem;
 }
