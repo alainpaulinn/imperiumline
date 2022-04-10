@@ -3887,12 +3887,17 @@ body {
 
 .schedule-container .selectionPanel .card .calendar-toolbar > .current-month {
   font-size: 20px;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
   font-weight: bold;
   color: #808488;
+  text-align: center;
 }
 
 .schedule-container .selectionPanel .card .calendar-toolbar > [class$="month-btn"] {
   width: 40px;
+  margin: 0 1rem;
   aspect-ratio: 1;
   text-align: center;
   font-size: 20px;
@@ -4917,6 +4922,47 @@ body {
 .work_shifts_Panel .workshiftMatrix .subTitleBar .navigateWeeks .commandButton i {
   font-size: 18px;
   padding: 0 .5rem;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftEditButtons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftEditButtons .commandButton {
+  -webkit-transition: .3s;
+  transition: .3s;
+  background: white;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
+  border-radius: 15px;
+  border: none;
+  cursor: pointer;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftEditButtons .commandButton .active {
+  background-color: #003061;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftEditButtons .commandButton:hover {
+  background: #ebf0f6;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftKeyLegend {
+  width: 100%;
+  min-height: 40px;
+}
+
+.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftKeyLegend .indicator {
+  width: 40px;
+  height: 40px;
 }
 
 .work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas {
