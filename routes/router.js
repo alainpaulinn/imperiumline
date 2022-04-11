@@ -27,4 +27,8 @@ router.get('/connect', redirectToLogin, (req, res) => {
     res.render('connect')
 });
 
+router.get('/images', redirectToLogin, (req, res) => {
+  res.render('connect')
+});
+
 module.exports = router;

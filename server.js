@@ -64,6 +64,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use('/', require('./routes/router.js'));
 app.use('/auth', require('./routes/auth.js'));
+app.use('/images', require('./routes/router.js'));
 
 let connectedUsers = [];
 io.on('connection', (socket) => {

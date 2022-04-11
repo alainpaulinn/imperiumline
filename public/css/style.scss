@@ -3,10 +3,11 @@
 
 $sidepanel-bg: rgb(245, 249, 253);
 $sidepanel: rgb(235, 240, 246);
-$body: rgb(128, 132, 136);
+$body: rgb(91, 94, 97);
+//$body: rgb(91, 94, 97);
 $notification: rgb(0, 48, 97);
 //$notification: rgb(31, 141, 251);
-//$notification: rgba(7, 39, 71, 0.801);
+//$notification: rgba(0, 77, 4, 0.801);
 $c-chats: rgb(255, 255, 255);
 $warning-bg: rgb(255, 212, 212);
 $borderRadius: 15px;
@@ -80,7 +81,7 @@ body {
   overflow: hidden;
   right: 2rem;
   top: 6rem;
-  border-radius: 8px;
+  border-radius: $borderRadius;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
   padding: 1rem;
 
@@ -102,7 +103,7 @@ body {
       background: $notification;
       padding: 1rem;
       background: rgba(0, 48, 97, 0.589);
-      border-radius: 100%;
+      border-radius: $borderRadius;
     }
 
     img {
@@ -112,6 +113,7 @@ body {
       width: 100%;
       height: 100%;
       background-color: white;
+      border-radius: $borderRadius;
       object-fit: cover;
       z-index: -1;
       filter: blur(3px) brightness(50%);
@@ -132,7 +134,7 @@ body {
       color: white;
       cursor: pointer;
       width: 60px;
-      border-radius: 8px;
+      border-radius: $borderRadius;
       outline: none;
       border: none;
       padding: 0.8rem;
@@ -195,7 +197,7 @@ body {
     justify-content: space-between;
     align-items: center;
     background-color:#F5F9FD;
-    border-radius: 8px 8px 0 0;
+    border-radius: $borderRadius $borderRadius 0 0;
 
     border-bottom: 1px solid darken($sidepanel, 3%);
 
@@ -217,7 +219,7 @@ body {
         background: $notification;
         transform: translateY(-50%) rotate(0);
         opacity: 1;
-        border-radius: 20px;
+        border-radius: $borderRadius;
       }
 
       ul li:nth-child(1) {
@@ -251,7 +253,7 @@ body {
   }
 
   &__nav {
-    border-radius: 20px;
+    border-radius: $borderRadius;
     background-color: $sidepanel;
 
     &--spacer {
@@ -363,7 +365,7 @@ body {
 
       button {
         padding: .5rem;
-        border-radius: 20px;
+        border-radius: $borderRadius;
         background-color: $notification;
         border: none;
         color: white;
@@ -407,7 +409,7 @@ body {
   display: flex;
   flex: 0 0 0;
   flex-direction: column;
-  border-radius: 0 0 0 8px;
+  border-radius: 0 0 0 $borderRadius;
   overflow-y: auto;
 
   transition: all 0.4s;
@@ -510,7 +512,7 @@ body {
     width: 35px;
     height: 35px;
     margin-right: 10px;
-    border-radius: 100rem;
+    border-radius: $borderRadius;
     display: inline-block;
     border: 1px solid $notification;
   }
@@ -587,7 +589,7 @@ body {
           height: 40px;
           margin-right: 10px;
           //display: block;
-          border-radius: 100rem;
+          border-radius: $borderRadius;
 
           text-transform: uppercase;
           display: flex;
@@ -604,7 +606,7 @@ body {
           width: 40px;
           height: 40px;
           margin-right: 10px;
-          border-radius: 100rem;
+          border-radius: $borderRadius;
           text-transform: uppercase;
           display: flex;
           justify-content: center;
@@ -748,7 +750,7 @@ body {
       width: 100%;
       padding: 10px 10px 10px 40px;
       font-size: 13px;
-      border-radius: 100px;
+      border-radius: $borderRadius;
       border: 1px solid #f1f4f6;
       color: $body;
     }
@@ -831,7 +833,7 @@ body {
         height: 40px;
         margin-right: 10px;
         //display: block;
-        border-radius: 100rem;
+        border-radius: $borderRadius;
 
         text-transform: uppercase;
         display: flex;
@@ -848,7 +850,7 @@ body {
         width: 40px;
         height: 40px;
         margin-right: 10px;
-        border-radius: 100rem;
+        border-radius: $borderRadius;
         text-transform: uppercase;
         display: flex;
         justify-content: center;
@@ -959,7 +961,7 @@ body {
     img {
       width: 35px;
       height: 35px;
-      border-radius: 100rem;
+      border-radius: $borderRadius;
 
     }
 
@@ -989,7 +991,7 @@ body {
   background-color: $notification;
   padding: 3px 5px;
 
-  border-radius: 100px;
+  border-radius: $borderRadius;
 
   &--nav {
     display: flex;
@@ -1009,7 +1011,7 @@ body {
   flex-direction: column;
   background-color: white;
 
-  border-radius: 15px;
+  border-radius: $borderRadius;
   overflow: hidden;
 
   &__header {
@@ -1035,7 +1037,7 @@ body {
   &__status {
     width: 10px;
     height: 10px;
-    border-radius: 100rem;
+    border-radius: $borderRadius;
     background: #37d420;
     display: inline-block;
     margin-left: 10px;
@@ -1044,7 +1046,7 @@ body {
   &__pp {
     width: 40px;
     height: 40px;
-    border-radius: 100rem;
+    border-radius: $borderRadius;
     border: 1px solid $notification;
     object-fit: cover;
     text-transform: uppercase;
@@ -1104,7 +1106,7 @@ body {
   margin: 20px 0 20px;
 
   span {
-    border-radius: 4px;
+    border-radius: $borderRadius;
     color: rgba(83, 83, 83, 0.459);
     background: rgb(250, 250, 250);
     padding: 0 10px;
@@ -1136,7 +1138,7 @@ body {
 }
 
 .message-group-received>div:first-child>img {
-  border-radius: 50%;
+  border-radius: $borderRadius;
   height: 25px;
   width: 25px;
   object-fit: cover;
@@ -1151,7 +1153,7 @@ body {
 }
 
 .message-group-received>div:first-child>div {
-  border-radius: 50%;
+  border-radius: $borderRadius;
   height: 25px;
   width: 25px;
   background: $notification;
@@ -1305,18 +1307,18 @@ body {
 }
 
 .message-received:first-child>.message-received-text {
-  border-top-left-radius: 20px;
+  border-top-left-radius: $borderRadius;
 }
 
 .message-received:last-child>.message-received-text {
-  border-bottom-left-radius: 20px;
+  border-bottom-left-radius: $borderRadius;
 }
 
 .message-received-text {
   padding: 10px;
   min-height: 20px;
   background: #ebf0f6;
-  border-radius: 4px 20px 20px 4px;
+  border-radius: 4px $borderRadius $borderRadius 4px;
 
   max-width: 60%;
 
@@ -1329,7 +1331,7 @@ body {
     min-height: 20px;
     //background: #ebf0f6;
     background: $notification;
-    border-radius: 15px;
+    border-radius: $borderRadius;
 
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
     color: $sidepanel;
@@ -1489,7 +1491,7 @@ body {
 .message-sent-text {
   //background: rgb(31, 141, 251);
   background: $notification;
-  border-radius: 20px 4px 4px 20px;
+  border-radius: $borderRadius 4px 4px $borderRadius;
   min-height: 20px;
   padding: 10px;
   color: #ebf0f6;
@@ -1501,7 +1503,7 @@ body {
     margin-bottom: 0.5rem;
     //background: rgb(31, 141, 251);
     background: $sidepanel;
-    border-radius: 15px;
+    border-radius: $borderRadius;
     min-height: 20px;
     padding: 10px;
     //color: #ebf0f6;
@@ -1515,11 +1517,11 @@ body {
 }
 
 .message-sent:first-child>.message-sent-text {
-  border-top-right-radius: 20px;
+  border-top-right-radius: $borderRadius;
 }
 
 .message-sent:last-child>.message-sent-text {
-  border-bottom-right-radius: 20px;
+  border-bottom-right-radius: $borderRadius;
 }
 
 .message-sent-status {
@@ -1533,7 +1535,7 @@ body {
 .message-sent-status>img {
   width: 15px;
   height: 15px;
-  border-radius: 50%;
+  border-radius: $borderRadius;
   margin-top: auto;
 }
 
@@ -1607,7 +1609,7 @@ body {
   margin: 0px 10px;
   //background-color: #fff;
   background-color: #EBF0F6;
-  border-radius: 20px;
+  border-radius: $borderRadius;
   //border: black solid;
   //box-shadow: -1px 1px 10px 2px rgba(204, 197, 197, 0.5);
 
@@ -1629,7 +1631,7 @@ body {
         min-height: 20px;
         max-width: 100%;
         width: 100%;
-        border-radius: 20px;
+        border-radius: $borderRadius;
 
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
         cursor: pointer;
@@ -1641,7 +1643,7 @@ body {
         min-height: 20px;
         max-width: 100%;
         width: 100%;
-        border-radius: 20px;
+        border-radius: $borderRadius;
 
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
         cursor: pointer;
@@ -1652,7 +1654,7 @@ body {
         transform: translateX(-25%);
         display: flex;
 
-        border-radius: 20px;
+        border-radius: $borderRadius;
         width: 1.5rem;
         height: 1.5rem;
         cursor: pointer;
@@ -1755,7 +1757,7 @@ body {
   background-color: #EBF0F6;
   border: 1px solid rgba(0, 0, 0, 0.04);
   box-shadow: -1px 1px 10px 2px rgba(204, 197, 197, 0.5);
-  border-radius: 8px;
+  border-radius: $borderRadius;
   padding: 1rem 0;
 
   color: #969696;
@@ -1771,7 +1773,7 @@ body {
     img {
       width: 100px;
       height: 100px;
-      border-radius: 50%;
+      border-radius: $borderRadius;
       margin: 1rem;
     }
 
@@ -1868,7 +1870,7 @@ body {
   display: flex;
   justify-content: center;
   z-index: 1;
-  border-radius: 10px 10px 0 0;
+  border-radius: $borderRadius $borderRadius 0 0;
   bottom: 0;
   left: 0;
   //color:rgb(87, 87, 87);
@@ -2193,7 +2195,7 @@ body {
 
             button {
               transition: all 0.4s;
-              border-radius: 50%;
+              border-radius: $borderRadius;
               width: 2.5rem;
               height: 2.5rem;
               margin-left: 3px;
@@ -3167,7 +3169,7 @@ body {
 
   button {
     transition: all 0.4s;
-    border-radius: 50%;
+    border-radius: $borderRadius;
     width: 2.5rem;
     height: 2.5rem;
     margin-left: 3px;
@@ -3470,7 +3472,7 @@ body {
         color: $body;
         background: var(--btn-bg);
         border: none;
-        border-radius: var(--border-radius);
+        border-radius: $borderRadius;
 
         //display: flex;
         //justify-content: center;
@@ -3490,7 +3492,7 @@ body {
         color: white;
         background: $notification;
         border: none;
-        border-radius: var(--border-radius);
+        border-radius: $borderRadius;
 
         display: flex;
         justify-content: center;
@@ -3511,7 +3513,7 @@ body {
         color: white;
         background: $notification;
         border: none;
-        border-radius: var(--border-radius);
+        border-radius: $borderRadius;
 
         display: flex;
         justify-content: center;
@@ -3545,7 +3547,7 @@ body {
           bottom: 5px;
           width: 5px;
           height: 5px;
-          border-radius: 15px;
+          border-radius: $borderRadius;
           background-color: $notification;
           transform: translateX(-50%);
           left: 50%;
@@ -3586,7 +3588,7 @@ body {
       .current-day {
         background-color: var(--color-accent);
         color: var(--active-text-color);
-        border-radius: var(--border-radius);
+        border-radius: $borderRadius;
         font-weight: 700;
         transition: 0.5s;
         cursor: pointer;
@@ -3602,10 +3604,10 @@ body {
       .calendar-toolbar>[class$="month-btn"]:hover,
       .month-day:hover,
       .btn:hover {
-        border-radius: var(--border-radius);
+        border-radius: $borderRadius;
         background-color: var(--btn-bg);
         color: var(--color-accent);
-        border-radius: var(--border-radius);
+        border-radius: $borderRadius;
         transition: 0.1s;
         cursor: pointer;
         box-shadow: inset 0px 0px 0px 1.5px var(--color-accent);
@@ -3614,7 +3616,7 @@ body {
       .calendar-toolbar>[class$="month-btn"]:focus,
       .month-day:focus,
       .btn:focus {
-        border-radius: var(--border-radius);
+        border-radius: $borderRadius;
         background-color: var(--color-accent);
         color: var(--active-text-color);
       }
@@ -3630,7 +3632,7 @@ body {
       .btn {
         background: var(--btn-bg);
         border: none;
-        border-radius: var(--border-radius);
+        border-radius: $borderRadius;
         padding: 11px 13px;
         color: $body;
         font-weight: 600;
@@ -3683,7 +3685,7 @@ body {
                 height: 40px;
                 margin-right: 10px;
                 //display: block;
-                border-radius: 100rem;
+                border-radius: $borderRadius;
 
                 text-transform: uppercase;
                 display: flex;
@@ -3700,7 +3702,7 @@ body {
                 width: 40px;
                 height: 40px;
                 margin-right: 10px;
-                border-radius: 100rem;
+                border-radius: $borderRadius;
                 text-transform: uppercase;
                 display: flex;
                 justify-content: center;
@@ -3875,7 +3877,7 @@ body {
       flex: 1;
 
       color: $body;
-      border-radius: 0 0 15px 15px;
+      border-radius: 0 0 $borderRadius $borderRadius;
 
       //overflow: hidden;
       .ongoing {
@@ -3932,7 +3934,7 @@ body {
           padding: .8rem;
           background-color: rgb(218, 218, 248);
           text-decoration: none;
-          border-radius: 15px;
+          border-radius: $borderRadius;
 
           i {
             font-size: 13px;
@@ -3949,7 +3951,7 @@ body {
           top: 4rem;
           left: 4rem;
           background-color: white;
-          border-radius: 15px;
+          border-radius: $borderRadius;
           min-height: 6rem;
           max-height: 15rem;
           overflow-y: auto;
@@ -3973,7 +3975,7 @@ body {
           display: flex;
           padding: 1rem;
           border-bottom: 1px solid #f1f4f6;
-          border-radius: 15px;
+          border-radius: $borderRadius;
           cursor: pointer;
 
           .resultItemBundle {
@@ -3991,7 +3993,7 @@ body {
                 height: 25px;
                 margin-right: 10px;
                 //display: block;
-                border-radius: 100rem;
+                border-radius: $borderRadius;
 
                 text-transform: uppercase;
                 display: flex;
@@ -4008,7 +4010,7 @@ body {
                 width: 25px;
                 height: 25px;
                 margin-right: 10px;
-                border-radius: 100rem;
+                border-radius: $borderRadius;
                 text-transform: uppercase;
                 display: flex;
                 justify-content: center;
@@ -4055,7 +4057,7 @@ body {
               }
 
               .removePerson {
-                border-radius: 15px;
+                border-radius: $borderRadius;
                 width: 30px;
                 height: 30px;
                 background-color: $sidepanel;
@@ -4216,14 +4218,14 @@ body {
     padding: 1rem;
     background: white;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.16);
-    border-radius: 15px;
+    border-radius: $borderRadius;
   }
 
   .workshiftMatrix {
     flex: 1;
     width: 100%;
     background: white;
-    border-radius: 15px;
+    border-radius: $borderRadius;
     margin-top: 1rem;
     padding: 1rem;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.16);
@@ -4242,7 +4244,7 @@ body {
           transition: .3s;
           background: white;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
-          border-radius: 15px;
+          border-radius: $borderRadius;
           border: none;
           cursor: pointer;
 
@@ -4267,7 +4269,7 @@ body {
           background: $notification;
           color: white;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
-          border-radius: 15px;
+          border-radius: $borderRadius;
           border: none;
           cursor: pointer;
 
@@ -4289,7 +4291,7 @@ body {
           transition: .3s;
           background: white;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
-          border-radius: 15px;
+          border-radius: $borderRadius;
           border: none;
           cursor: pointer;
 
@@ -4395,7 +4397,7 @@ body {
       .workShiftsLegend {
         padding: 1rem;
         .my-legend {
-          border-radius: 15px;
+          border-radius: $borderRadius;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.733);
           
 
