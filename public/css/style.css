@@ -2192,7 +2192,7 @@ body {
   left: -22px;
   width: 20px;
   height: 20px;
-  border-top-right-radius: 20px;
+  border-top-right-radius: 15px;
   -webkit-box-shadow: 1px -10px 0 0 var(--clr);
           box-shadow: 1px -10px 0 0 var(--clr);
 }
@@ -2204,7 +2204,7 @@ body {
   right: -22px;
   width: 20px;
   height: 20px;
-  border-top-left-radius: 20px;
+  border-top-left-radius: 15px;
   -webkit-box-shadow: -1px -10px 0 0 var(--clr);
           box-shadow: -1px -10px 0 0 var(--clr);
 }
@@ -2343,7 +2343,7 @@ body {
           flex-direction: column;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 8px;
+  border-radius: 15px;
   background-color: #fff;
   margin-bottom: 1rem;
   padding: 1rem;
@@ -2366,7 +2366,7 @@ body {
   background-color: #003061;
   height: 40px;
   width: 40px;
-  border-radius: 100%;
+  border-radius: 15px;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
   display: -webkit-box;
@@ -2384,7 +2384,7 @@ body {
 .c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture div {
   height: 38px;
   width: 38px;
-  border-radius: 100%;
+  border-radius: 15px;
   -o-object-fit: cover;
      object-fit: cover;
   display: -webkit-box;
@@ -2444,7 +2444,7 @@ body {
 .c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 .picture {
   height: 40px;
   width: 40px;
-  border-radius: 100%;
+  border-radius: 15px;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
   display: -webkit-box;
@@ -2462,7 +2462,7 @@ body {
 .c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 .picture div {
   height: 38px;
   width: 38px;
-  border-radius: 100%;
+  border-radius: 15px;
   -o-object-fit: cover;
      object-fit: cover;
   display: -webkit-box;
@@ -2537,7 +2537,7 @@ body {
   background-color: light(#003061);
   height: 40px;
   width: 40px;
-  border-radius: 100%;
+  border-radius: 15px;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
   display: -webkit-box;
@@ -2556,7 +2556,7 @@ body {
 .c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .picture div {
   height: 38px;
   width: 38px;
-  border-radius: 100%;
+  border-radius: 15px;
   -o-object-fit: cover;
      object-fit: cover;
   display: -webkit-box;
@@ -2600,7 +2600,7 @@ body {
           flex: 1;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 8px;
+  border-radius: 15px;
   background-color: #fff;
   margin-bottom: 1rem;
   padding: 1rem;
@@ -2619,7 +2619,7 @@ body {
 .c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .topDetailsCard .circle {
   width: 100px;
   height: 100px;
-  border-radius: 100%;
+  border-radius: 15px;
   background: #003061;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2687,7 +2687,7 @@ body {
   padding: .5rem;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 8px;
+  border-radius: 15px;
   margin-top: .3rem;
 }
 
@@ -2698,7 +2698,7 @@ body {
 .c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .allPartifipantDiv .header button {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
-  border-radius: 50%;
+  border-radius: 15px;
   width: 2.5rem;
   height: 2.5rem;
   margin-left: 3px;
@@ -2741,7 +2741,7 @@ body {
           align-items: center;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 8px;
+  border-radius: 15px;
   margin-top: .3rem;
 }
 
@@ -2750,7 +2750,7 @@ body {
   background-color: #003061;
   width: 40px;
   height: 40px;
-  border-radius: 100%;
+  border-radius: 15px;
   -o-object-fit: cover;
      object-fit: cover;
   display: -webkit-box;
@@ -2771,7 +2771,7 @@ body {
   color: white;
   width: 38px;
   height: 38px;
-  border-radius: 100%;
+  border-radius: 15px;
 }
 
 .c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callParticipants .callParticipant .nameOnlineStatus {
@@ -2981,7 +2981,7 @@ body {
   margin-bottom: 1rem;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 8px;
+  border-radius: 15px;
   background-color: #fff;
   padding: 1rem;
 }
@@ -3007,7 +3007,7 @@ body {
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
-  border-radius: 8px;
+  border-radius: 15px;
 }
 
 .c-calls_panel .ongoingCallPage .call-container .call-main .video-call-wrapper .secondaryVideos {
@@ -3025,7 +3025,7 @@ body {
 .c-calls_panel .ongoingCallPage .call-container .call-main .video-call-wrapper .secondaryVideos .secondaryVideo {
   min-width: 130px;
   min-height: 100px;
-  border-radius: 8px;
+  border-radius: 15px;
   overflow: hidden;
   margin: 1rem;
   cursor: pointer;
@@ -3054,7 +3054,7 @@ body {
   color: white;
   padding: .4rem;
   background-color: rgba(0, 0, 0, 0.349);
-  border-radius: 4px 2px;
+  border-radius: 15px;
 }
 
 .c-calls_panel .ongoingCallPage .call-container .call-main .video-call-wrapper .name {
@@ -3064,7 +3064,7 @@ body {
   color: white;
   padding: .4rem;
   background-color: rgba(0, 0, 0, 0.349);
-  border-radius: 4px 2px;
+  border-radius: 15px;
 }
 
 .c-calls_panel .ongoingCallPage .call-container .call-main .video-call-actions {
@@ -3087,7 +3087,7 @@ body {
   outline: none;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 8px;
+  border-radius: 15px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3133,7 +3133,7 @@ body {
   background-color: white;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 8px;
+  border-radius: 15px;
 }
 
 .c-calls_panel .ongoingCallPage .call-container .call-main .video-call-actions .video-action-button .devicesPopup div {
@@ -3191,7 +3191,7 @@ body {
           flex: 1;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 8px;
+  border-radius: 15px;
   background-color: #fff;
   padding: 1rem;
 }
@@ -3212,7 +3212,7 @@ body {
 .c-calls_panel .ongoingCallPage .call-container .right-side .participants .profile-picture div {
   width: 40px;
   height: 40px;
-  border-radius: 100%;
+  border-radius: 15px;
   -o-object-fit: cover;
      object-fit: cover;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
@@ -3232,7 +3232,7 @@ body {
 .c-calls_panel .ongoingCallPage .call-container .right-side .participants .participant-more {
   width: 40px;
   height: 40px;
-  border-radius: 100%;
+  border-radius: 15px;
   -o-object-fit: cover;
      object-fit: cover;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
@@ -3262,7 +3262,7 @@ body {
           flex: 1;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 8px;
+  border-radius: 15px;
   background-color: #fff;
   margin-bottom: 1rem;
   padding: 1rem;
@@ -3309,7 +3309,7 @@ body {
 .c-calls_panel .ongoingCallPage .call-container .right-side .chat-container .chat-area .message-wrapper .profile-picture div {
   width: 40px;
   height: 40px;
-  border-radius: 100%;
+  border-radius: 15px;
   -o-object-fit: cover;
      object-fit: cover;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
@@ -3323,7 +3323,7 @@ body {
 
 .c-calls_panel .ongoingCallPage .call-container .right-side .chat-container .chat-area .message-wrapper .message-content .message {
   background-color: #ebf0f6;
-  border-radius: 20px;
+  border-radius: 15px;
   padding: 10px;
   margin-bottom: 10px;
 }
@@ -3412,7 +3412,7 @@ body {
   color: #5b5e61;
   padding: 0 0.75rem 0 1.5rem;
   margin-left: 0.5rem;
-  border-radius: 1.75rem;
+  border-radius: 15px;
   overflow: hidden;
   cursor: pointer;
   -webkit-transition: background-color 0.24s ease;
@@ -3463,7 +3463,7 @@ body {
   width: 0.875rem;
   height: 0.125rem;
   background: white;
-  border-radius: 0.25rem;
+  border-radius: 15px;
   margin-left: -6px;
   margin-top: -1px;
   -webkit-transform-origin: center;
@@ -3482,7 +3482,7 @@ body {
   width: 100%;
   height: 100%;
   background-color: #003061;
-  border-radius: 100%;
+  border-radius: 15px;
   -webkit-transition: all 0.4s cubic-bezier(1, 0, 0, 1);
   transition: all 0.4s cubic-bezier(1, 0, 0, 1);
 }
@@ -3535,7 +3535,7 @@ body {
   height: 24px;
   background: grey;
   display: block;
-  border-radius: 24px;
+  border-radius: 15px;
   position: relative;
 }
 
@@ -3547,7 +3547,7 @@ body {
   width: 16px;
   height: 16px;
   background: white;
-  border-radius: 16px;
+  border-radius: 15px;
   -webkit-transition: 0.3s;
   transition: 0.3s;
 }
@@ -3635,7 +3635,7 @@ body {
   width: 12px;
   height: 12px;
   margin: 1px;
-  border-radius: 100%;
+  border-radius: 15px;
   display: inline-block;
   -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
   animation: sk-bouncedelay 1.4s infinite ease-in-out both;
