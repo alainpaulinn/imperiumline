@@ -167,7 +167,7 @@ socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
             "userID": 128,
             "name": "tes1Name",
             "surname": "test1Surname",
-            "profilePicture": "/images/profiles/user-128.png"
+            "profilePicture": "/private/profiles/user-128.png"
         },
         {
             "userID": 130,
@@ -313,11 +313,11 @@ function buildChat(chat, exists) {
             "userID": 1,
             "name": "Test1Name",
             "surname": "Test1Surname",
-            "profilePicture": "/images/profiles/user-128.png"
+            "profilePicture": "/private/profiles/user-128.png"
         }
     ],
     "roomName": null,
-    "profilePicture": "/images/profiles/user-128.png",
+    "profilePicture": "/private/profiles/user-128.png",
     "type": 0,
     "lastmessage": "<em>New Chat</em>",
     "fromID": 7,
@@ -439,7 +439,7 @@ function openChat(openChatInfo) {
         "userID": 1,
         "name": "Test1Name",
         "surname": "Test1Surname",
-        "profilePicture": "/images/profiles/user-128.png"
+        "profilePicture": "/private/profiles/user-128.png"
     },
     "reactions": {
         "chat": 1,
@@ -462,7 +462,7 @@ function openChat(openChatInfo) {
   switch (type) {
     case 1:
 
-      if (profilePicture === null) { avatar = `<img class="c-openchat__box__pp" src='/images/profiles/group.jpeg' alt=''></img>` }
+      if (profilePicture === null) { avatar = `<img class="c-openchat__box__pp" src='/private/profiles/group.jpeg' alt=''></img>` }
       else avatar = `<img class="c-openchat__box__pp" src='${profilePicture}' alt=''></img>`;
 
       // groupId, audiocall = true, videoCall = false, is a group = true;
@@ -821,7 +821,7 @@ function displayMessageOnChat(expectedUser, message) {
             "userID": 128,
             "name": "tes1Name",
             "surname": "test1Surname",
-            "profilePicture": "/images/profiles/user-128.png"
+            "profilePicture": "/private/profiles/user-128.png"
           }
         }*/
   /*
@@ -1425,7 +1425,7 @@ socket.on('updateCallLog', (initialCallLog) => {
         "userID": 1,
         "name": "Test1Name",
         "surname": "Test1Surname",
-        "profilePicture": "/images/profiles/user-128.png"
+        "profilePicture": "/private/profiles/user-128.png"
     },
     "participantsOnCall": [],
     "participantsOffCall": [

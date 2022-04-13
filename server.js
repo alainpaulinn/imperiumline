@@ -41,6 +41,7 @@ db.connect((err) => {
 const port = process.env.PORT || 3600;
 
 app.use(express.static(path.join(__dirname, './public')));
+
 //Session & cookie configuration
 const sessionMiddleware = session({
   name: 'sessName',
@@ -64,7 +65,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use('/', require('./routes/router.js'));
 app.use('/auth', require('./routes/auth.js'));
-app.use('/images', require('./routes/router.js'));
+app.use('/private', require('./routes/router.js'));
 
 let connectedUsers = [];
 io.on('connection', (socket) => {
@@ -757,7 +758,7 @@ function getEvents(userId, initalDate, endDate) {
           console.log("eventdetails", eventdetails)
           console.log("eventDates", eventDates)
           if (eventdetails.occurrence == 1) {
-            if(eventDates[eventdetails.oneTimeDate]) eventDates[eventdetails.oneTimeDate].push(eventdetails);
+            if (eventDates[eventdetails.oneTimeDate]) eventDates[eventdetails.oneTimeDate].push(eventdetails);
           }
           else if (eventdetails.occurrence == 2) {
             // { id: 1, name: "Every Day" },
