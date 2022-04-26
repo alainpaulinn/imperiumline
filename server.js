@@ -577,7 +577,7 @@ io.on('connection', (socket) => {
       let thisUsershouldbeinthiscall = false
       for (var i = 0; i < thisCallparticipants.length; i++) { //For security purposes check if the answered person should be able to answer this call
         if (thisCallparticipants[i].userID == id) { thisUsershouldbeinthiscall = true; break; } }
-      if(thisUsershouldbeinthiscall == false) {return console.log("You are not allowed to answer this call")}
+      if(thisUsershouldbeinthiscall == false) {return console.log("You are not allowed to answer this call", callUniqueId)}
 
       //inform all users who accepted the call- to call me
       socket.to(callUniqueId + '-allAnswered-sockets').emit('connectUser', { peerId: myPeerId, userInfo: await getUserInfo(id)});
@@ -916,7 +916,7 @@ function getEventParticipants(givenEventId) {
 }
 
 const insertCallParticipant = (callUniqueId, callId, ParticipantId, initiatorId) => {
-  db.query("INSERT INTO `callparticipants`( `callUniqueId`, `callId`, `participantId`, `stillParticipating`, `initiatorId`) VALUES (?,?,?,?,?)  ON DUPLICATE KEY UPDATE `participantId` = ? ",
+  db.query("INSERT INTO `callparticipants`( `callUniqueId`, `callId`, `participantId`, `stillParticipating`, `initiatorId`, `missed`) VALUES (?,?,?,?,?, 0)  ON DUPLICATE KEY UPDATE `participantId` = ? ",
     [callUniqueId, callId, ParticipantId, 0, initiatorId, ParticipantId], async (err, changeResult) => {
       if (err) return console.log(err)
     })
