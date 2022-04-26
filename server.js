@@ -916,8 +916,8 @@ function getEventParticipants(givenEventId) {
 }
 
 const insertCallParticipant = (callUniqueId, callId, ParticipantId, initiatorId) => {
-  db.query("INSERT INTO `callparticipants`( `callUniqueId`, `callId`, `participantId`, `stillParticipating`, `initiatorId`, `missed`) VALUES (?,?,?,?,?, 0)  ON DUPLICATE KEY UPDATE `participantId` = ? ",
-    [callUniqueId, callId, ParticipantId, 0, initiatorId, ParticipantId], async (err, changeResult) => {
+  db.query("INSERT INTO `callparticipants`( `callUniqueId`, `callId`, `participantId`, `stillParticipating`, `initiatorId`, `missed`) VALUES (?,?,?,?,?,?)  ON DUPLICATE KEY UPDATE `participantId` = ? ",
+    [callUniqueId, callId, ParticipantId, 0, initiatorId, 0, ParticipantId], async (err, changeResult) => {
       if (err) return console.log(err)
     })
 }
