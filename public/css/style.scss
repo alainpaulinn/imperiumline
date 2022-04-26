@@ -2,6 +2,7 @@
 //@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
 
 $sidepanel-bg: rgb(245, 249, 253);
+$sidepanel: rgb(235, 240, 246); //OG
 $sidepanel: rgb(235, 240, 246);
 $body: rgb(91, 94, 97);
 //$body: rgb(91, 94, 97);
@@ -678,12 +679,13 @@ body {
 
 .c-chats {
   //padding: 1rem 0;
-
+  margin: 1rem 0rem 1rem 1rem;
+  border-radius: $borderRadius;
   overflow: hidden;
   border-right: 1px solid #f1f4f6;
   background: rgb(255, 255, 255);
   width: 350px;
-  height: 100%;
+  //height: 100%;
 
   display: flex;
   flex-direction: column;
@@ -1212,7 +1214,7 @@ body {
           position: absolute;
           transition: all 0.4s ease-in-out;
           color: rgb(122, 122, 122);
-
+          z-index: 1;
           display: flex;
           flex-direction: column;
           align-content: flex-start;
@@ -1344,6 +1346,16 @@ body {
 .message-group-received {
   width: 100%;
   margin-bottom: 1rem;
+  position: relative;
+}
+
+.senderOriginName {
+  position: absolute;
+  //left: 30px;
+
+  top: 100%;
+  font-size: 11px;
+  color: grey;
 }
 
 .message-group-sent {
@@ -1394,7 +1406,7 @@ body {
           position: absolute;
           transition: all 0.4s ease-in-out;
           color: rgb(122, 122, 122);
-
+          z-index: 1;
           display: flex;
           flex-direction: column;
           align-content: flex-start;
@@ -1999,7 +2011,7 @@ body {
 .c-calls_panel {
   display: none;
   flex: 1;
-
+  background-color: #ebf0f6;
   color: $body;
 
   .callHistoryPage {
@@ -2499,448 +2511,1080 @@ body {
     width: 100%;
     height: 100%;
 
-    //overflow: hidden;
-    .call-container {
-      width: 100%;
-      height: 100%;
-      //overflow: hidden;
-      display: flex;
+    .leftPart {
+      width: 350px;
+      background-color: white;
+      border-radius: $borderRadius;
+      margin: 1rem 0rem 1rem 1rem;
 
-      .call-main {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+
+      .leftPartHeaderDivTitle {
         padding: 1rem;
+        font-weight: bolder;
+        text-align: center;
+      }
+
+      .inviteSomeone {
+        margin: 1rem;
+        padding: 1rem;
+        //flex: 1;
+        font-weight: bolder;
+        text-align: center;
+        border-radius: $borderRadius;
+        cursor: pointer;
+        background-color: $sidepanel;
+        outline: none;
+        border: none;
+      }
+
+      .attendanceTitleSection {
+        padding: 1rem;
+        display: flex;
         width: 100%;
 
-        .callScreenHeader {
-          width: 100%;
-          //height: 6rem;
-          max-height: 6rem;
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          margin-bottom: 1rem;
-
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-          border-radius: $borderRadius;
-          background-color: #fff;
-
+        .leftHeaderItem {
           padding: 1rem;
-
-          h1 {
-            font-size: 18px;
-          }
-        }
-
-        .video-call-wrapper {
           flex: 1;
-          width: 100%;
-          position: relative;
+          font-weight: bolder;
+          text-align: center;
+          border-radius: $borderRadius;
+          cursor: pointer;
 
-          .primaryVideo {
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: white;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: $borderRadius;
+          &:hover {
+            background-color: $sidepanel-bg;
           }
 
-          .secondaryVideos {
-            position: absolute;
-            top: 0;
-            left: 0;
-            margin: .5rem;
-            display: flex;
-            width: 100%;
-            overflow-x: auto;
-
-            .secondaryVideo {
-              min-width: 130px;
-              min-height: 100px;
-              //background-color: red;
-              border-radius: $borderRadius;
-              overflow: hidden;
-              margin: 1rem;
-              cursor: pointer;
-
-              position: relative;
-
-              &:hover {
-                background-color: rgba(0, 0, 0, 0.274);
-              }
-
-              video {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: $sidepanel;
-                object-fit: cover;
-              }
-
-              .name {
-                position: absolute;
-                bottom: .5rem;
-                right: .5rem;
-                color: white;
-                padding: .4rem;
-                background-color: rgba(0, 0, 0, 0.349);
-                border-radius: $borderRadius;
-              }
-            }
-          }
-
-          .name {
-            position: absolute;
-            bottom: .5rem;
-            right: .5rem;
-            color: white;
-            padding: .4rem;
-            background-color: rgba(0, 0, 0, 0.349);
-            border-radius: $borderRadius;
-          }
-
-        }
-
-        /*
-        .callScreenHeader {
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 2rem;
-          .my-video{
-            min-width: 300px;
-            height: 200px;
-            background: $notification;
-            border-radius: 20px;
-            padding: 1rem;
+          &.headerItemSelected {
+            background-color: $sidepanel;
           }
         }
-        */
+      }
 
-        /*
-        .video-call-wrapper {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          grid-template-rows: repeat(2, 1fr);
-          grid-column-gap: 5px;
-          grid-row-gap: 5px;
+      .attendanceContentDiv {
+        min-height: 0;
+        overflow-y: auto;
 
-          border-radius: 20px;
-          overflow: hidden;
-
-          .video-participant{
-            min-width: 300px;
-            height: 200px;
-            position: relative;
-            img{
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            }
-            .participant-actions {
-              position: absolute;
-              top: 1rem;
-              left: 1rem;
-              .btn-mute,
-              .btn-camera {
-                width: 32px;
-                height: 32px;
-                border-radius: 4px;
-                background-color: rgba(0, 15, 47, 0.5);
-                background-repeat: no-repeat;
-                background-position: center;
-                background-size: 16px;
-                border: none;
-              }
-              .btn-mute {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-mic-off' viewBox='0 0 24 24'%3E%3Cpath d='M1 1l22 22M9 9v3a3 3 0 005.12 2.12M15 9.34V4a3 3 0 00-5.94-.6'/%3E%3Cpath d='M17 16.95A7 7 0 015 12v-2m14 0v2a7 7 0 01-.11 1.23M12 19v4M8 23h8'/%3E%3C/svg%3E%0A");
-                margin-right: 4px;
-              }
-              .btn-camera {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-camera-off' viewBox='0 0 24 24'%3E%3Cpath d='M1 1l22 22M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m3-3h6l2 3h4a2 2 0 012 2v9.34m-7.72-2.06a4 4 0 11-5.56-5.56'/%3E%3C/svg%3E%0A");
-              }
-            }
-            .name-tag{
-              position: absolute;
-              bottom: 1rem;
-              right: 1rem;
-              color: #fff;
-              background-color: rgba(0, 15, 47, 0.5);
-              border-radius: 4px;
-              padding: 4px 12px;
-            }
-          }
-          /*
-          .video-participant {
-            min-width: 300px;
-            height: 200px;
-            //background-color: $notification;
-            //padding: 1rem;
-            border: 1px solid $notification;
-
-            .participant-actions {
-              position: absolute;
-              display: flex;
-              width: 64px;
-
-              .btn-mute,
-              .btn-camera {
-                width: 32px;
-                height: 32px;
-                border-radius: 4px;
-                background-color: rgba(0, 15, 47, 0.5);
-                background-repeat: no-repeat;
-                background-position: center;
-                background-size: 16px;
-                border: none;
-              }
-
-              .btn-mute {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-mic-off' viewBox='0 0 24 24'%3E%3Cpath d='M1 1l22 22M9 9v3a3 3 0 005.12 2.12M15 9.34V4a3 3 0 00-5.94-.6'/%3E%3Cpath d='M17 16.95A7 7 0 015 12v-2m14 0v2a7 7 0 01-.11 1.23M12 19v4M8 23h8'/%3E%3C/svg%3E%0A");
-                margin-right: 4px;
-              }
-
-              .btn-camera {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-camera-off' viewBox='0 0 24 24'%3E%3Cpath d='M1 1l22 22M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m3-3h6l2 3h4a2 2 0 012 2v9.34m-7.72-2.06a4 4 0 11-5.56-5.56'/%3E%3C/svg%3E%0A");
-              }
-            }
-
-            .name-tag {
-              position: absolute;
-
-              color: #fff;
-              background-color: rgba(0, 15, 47, 0.5);
-              border-radius: 4px;
-              padding: 4px 12px;
-            }
-
-            img,
-            div {
-              //position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            }
-          } *-/
-        } */
-        .video-call-actions {
+        //display: static;
+        .presentMembersDiv {
           display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding-top: 1rem;
+          flex-direction: column;
+          min-height: 0;
 
-          //max-width: 500px;
-          .video-action-button {
-            position: relative;
-            border: none;
-            //height: 48px;
-            margin: 0 8px;
-            //min-width: 48px;
-            outline: none;
-            box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-            border-radius: $borderRadius;
+          .listMember {
             display: flex;
-            justify-content: center;
+            padding: .5rem;
             align-items: center;
-            background-color: #fff;
+            height: 100%;
+            overflow-y: auto;
 
-            i {
-              color: $body;
-              font-size: 24px;
-              padding: 1rem;
-              cursor: pointer;
+            .memberProfilePicture {
+              border: 1px solid $notification;
+              width: 40px;
+              height: 40px;
+              margin-right: 10px;
+              border-radius: $borderRadius;
+              text-transform: uppercase;
+              display: -webkit-box;
+              display: -ms-flexbox;
+              display: flex;
+              -webkit-box-pack: center;
+              -ms-flex-pack: center;
+              justify-content: center;
+              -webkit-box-align: center;
+              -ms-flex-align: center;
+              align-items: center;
+              color: white;
+              background-color: #003061;
+              -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+              transition: all 0.4s;
+              flex-shrink: 0;
             }
 
-            h1 {
-              padding: 1rem;
+            .memberNameRole {
+              display: flex;
+              flex-direction: column;
+              flex: 1;
+              overflow: hidden;
+
+              .memberName {
+                font-weight: bolder;
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+
+              .memberRole {
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+
             }
 
             button {
-              cursor: pointer;
-              outline: none;
-              border: none;
-              background-color: transparent;
-              border-right: 1px solid #f1f4f6;
-            }
-
-            button:last-of-type {
-              border: none;
-            }
-
-            .devicesPopup {
-              box-sizing: border-box;
-              display: none;
-              position: absolute;
-              bottom: 55px;
-              right: 0;
-              background-color: white;
-              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+              color: $body;
+              display: flex;
+              align-items: center;
+              padding: 1rem;
+              transition: all 0.4s;
+              //margin: 0 0.5rem;
               border-radius: $borderRadius;
-              //z-index: 10;
+              background-color: $sidepanel;
+              border: none;
+              outline: none;
+              cursor: pointer;
+              margin-left: .5rem;
 
-              //margin: 1rem;
-              div {
-                display: flex;
-                flex-direction: column;
-                padding: 1rem;
-                border-bottom: 1px solid #f1f4f6;
-                white-space: nowrap;
+              i {
+                font-size: 18px;
+              }
+
+              p {
+                margin-left: .5rem;
               }
             }
-
-            .devicesPopup.is-visible {
-              display: block !important;
-            }
-
           }
         }
-      }
 
-      .right-side {
-        width: 350px;
-        height: 100%;
-        padding-right: 1rem;
-        display: flex;
-        flex-direction: column;
+        .absentMembersDiv {
+          display: none;
+          flex-direction: column;
 
-        .participants {
-          margin-right: 1rem;
-          margin-top: 1rem;
-          margin-bottom: 1rem;
-          width: 100%;
-          height: 6rem;
-          max-height: 6rem;
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: center;
-          flex: 1;
-
-
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-          border-radius: $borderRadius;
-          background-color: #fff;
-
-          padding: 1rem;
-
-          .profile-picture {
+          .listMember {
             display: flex;
+            padding: .5rem;
             align-items: center;
-            justify-content: center;
+            height: 100%;
+            overflow-y: auto;
 
-            img,
-            div {
+            .memberProfilePicture {
+              border: 1px solid $notification;
               width: 40px;
               height: 40px;
-              border-radius: $borderRadius;
-              object-fit: cover;
-              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.90);
               margin-right: 10px;
+              border-radius: $borderRadius;
+              text-transform: uppercase;
+              display: -webkit-box;
+              display: -ms-flexbox;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              color: white;
+              background-color: #003061;
+              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+              transition: all 0.4s;
+              flex-shrink: 0;
+            }
 
+            .memberNameRole {
+              display: flex;
+              flex-direction: column;
+              flex: 1;
+              overflow: hidden;
+
+              .memberName {
+                font-weight: bolder;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+
+              .memberRole {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+
+            }
+
+            button {
+              color: $body;
               display: flex;
               align-items: center;
               justify-content: center;
+              padding: 1rem;
+              transition: all 0.4s;
+              //margin: 0 0.5rem;
+              border-radius: $borderRadius;
+              background-color: $sidepanel;
+              border: none;
+              outline: none;
+              cursor: pointer;
+              margin-left: .5rem;
+
+              i {
+                font-size: 18px;
+              }
+
+              p {
+                margin-left: .5rem;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .call-container {
+      flex: 1;
+      margin: 1rem;
+      padding: 1rem;
+      border-radius: $borderRadius;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+
+      .callScreenHeader {
+        display: flex;
+        //flex-direction: row;
+        justify-content: space-between;
+
+        .headerLeftPart {
+          display: flex;
+          flex-direction: column;
+          padding: 1rem;
+
+          .scheduledTimeContent {
+            font-size: 15px;
+          }
+
+          .MeetingTitle {
+            font-size: 20px;
+            font-weight: bold;
+          }
+        }
+
+        .headerRightPart {
+          padding: 1rem;
+        }
+      }
+
+      .mainVideoDiv {
+        border-radius: $borderRadius;
+        position: relative;
+        overflow: hidden;
+        flex: 1;
+
+        .callTopBar {
+          color: white;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          padding: 1rem;
+          display: flex;
+          flex-wrap: wrap;
+          background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+
+          visibility: hidden;
+          opacity: 0;
+
+          transition: all 0.4s;
+
+          .leftUserIdentifiers {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+
+            .mainVideoOwnerProfilePicture {
+              border: 1px solid $notification;
+              width: 40px;
+              height: 40px;
+              margin-right: 10px;
+              border-radius: $borderRadius;
+              text-transform: uppercase;
+              display: -webkit-box;
+              display: -ms-flexbox;
+              display: flex;
+              -webkit-box-pack: center;
+              -ms-flex-pack: center;
+              justify-content: center;
+              -webkit-box-align: center;
+              -ms-flex-align: center;
+              align-items: center;
+              color: white;
+              background-color: #003061;
+              -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+              transition: all 0.4s;
+            }
+
+            .mainVideoOwnerProfileNamePosition {
+              display: flex;
+              flex-direction: column;
+              transition: all 0.4s;
+
+              .videoOwnerName {
+                font-size: 18px;
+              }
             }
           }
 
-          .participant-more {
-            width: 40px;
-            height: 40px;
-            border-radius: $borderRadius;
-            object-fit: cover;
-            box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.90);
+          .rightVideoControls {
+            button {
+              transition: all 0.4s;
+              //margin: 0 0.5rem;
+              border-radius: $borderRadius;
+              padding: 1rem;
+              border: none;
+              outline: none;
+              background: rgba(0, 0, 0, 0.5);
+              color: white;
+              cursor: pointer;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+              i {
+                //font-size: 15px;
+              }
 
+              &:hover {
+                background: rgb(0, 0, 0);
+              }
+            }
           }
         }
 
-        .btn-close-right {
-          display: none;
-          padding: 1rem;
+        .mainVideoElement {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: $borderRadius;
+          //border: solid 1px $body;
+
+          &.fitVideoToWindow {
+            width: 100%;
+            height: unset;
+            object-fit: none;
+          }
         }
 
-        .chat-container {
-          margin-right: 1rem;
+        .callControls {
+          transition: all 0.4s;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          position: absolute;
+          bottom: 1rem;
+          left: 50%;
+          transform: translate(-50%);
+
+          visibility: hidden;
+          opacity: 0;
           width: 100%;
-          height: calc(100% - 8rem);
+
+          .alwaysVisibleControls {
+            .callControl {
+              transition: all 0.4s;
+              border-radius: $borderRadius;
+              padding: .5rem;
+              border: none;
+              outline: none;
+              background: rgba(0, 0, 0, 0.1);
+              color: white;
+              cursor: pointer;
+
+              &:hover {
+                background: rgba(0, 0, 0, 0.4);
+              }
+            }
+          }
+
+          .hiddableControls {
+            transition: all 0.4s;
+            display: flex;
+
+            .callControl {
+              //display: inline;
+              margin: 0 .5rem;
+              border-radius: $borderRadius;
+              padding: 1rem;
+              border: none;
+              outline: none;
+              background: rgba(0, 0, 0, 0.5);
+              color: white;
+              cursor: pointer;
+              //backdrop-filter: blur(5px);
+
+              &:hover {
+                background: rgba(0, 0, 0, 0.795);
+              }
+
+              i {
+                font-size: 18px;
+              }
+
+            }
+
+            .hangupbtn {
+              color: red;
+            }
+          }
+
+          .hideDown {
+            transform: translateY(100%);
+            display: none;
+          }
+
+        }
+
+        &:hover .callControls {
+          visibility: visible;
+          opacity: 1;
+        }
+
+        &:hover .callTopBar {
+          visibility: visible;
+          opacity: 1;
+        }
+      }
+
+      .transcription {
+        display: flex;
+        flex-direction: row;
+        height: 8rem;
+        padding: 1rem;
+        margin-top: 1rem;
+        background-color: $sidepanel;
+        border-radius: $borderRadius;
+
+        .soundwaveSvg {
+          width: 6rem;
+          fill-rule: evenodd;
+          clip-rule: evenodd;
+          stroke-linejoin: round;
+          stroke-miterlimit: 2;
+          fill: #7a7a7a;
+          box-shadow: rgb(255, 255, 255);
+        }
+
+        .transcriptionContents {
           flex: 1;
+          display: flex;
+          flex-direction: column;
+          overflow-y: auto;
+
+          .transcriptionContent {
+            display: flex;
+            margin-bottom: 1rem;
+
+            .profilepicture {
+              border: 1px solid $notification;
+              width: 40px;
+              height: 40px;
+              margin-right: 10px;
+              border-radius: $borderRadius;
+              text-transform: uppercase;
+              display: -webkit-box;
+              display: -ms-flexbox;
+              display: flex;
+              -webkit-box-pack: center;
+              -ms-flex-pack: center;
+              justify-content: center;
+              -webkit-box-align: center;
+              -ms-flex-align: center;
+              align-items: center;
+              color: white;
+              background-color: #003061;
+              -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
 
 
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+
+            }
+
+            .transcriptionWords {
+              flex: 1;
+            }
+          }
+        }
+
+      }
+    }
+
+    .rightPart {
+      width: 350px;
+      background-color: white;
+      border-radius: $borderRadius;
+      margin: 1rem 1rem 1rem 0rem;
+      padding: 1rem;
+      transition: all 0.4s;
+
+      display: flex;
+      flex-direction: column;
+
+      .rightPartheaderVideoMessaging {
+        padding: 1rem;
+        display: flex;
+        width: 100%;
+
+        .rightHeaderItem {
+          padding: 1rem;
+          flex: 1;
+          font-weight: bolder;
+          text-align: center;
           border-radius: $borderRadius;
-          background-color: #fff;
-          margin-bottom: 1rem;
+          cursor: pointer;
+
+          &:hover {
+            background-color: $sidepanel-bg;
+          }
+
+          &.headerItemSelected {
+            background-color: $sidepanel;
+          }
+        }
+      }
+
+      .rightPartContentDiv {
+        flex: 1;
+        min-height: 0;
+        background: $sidepanel-bg;
+        border-radius: $borderRadius;
+        display: flex;
+        overflow: hidden;
+        transition: all 0.4s;
+
+        .callParticipantsDiv {
+          overflow-y: auto;
+          width: 100%;
           padding: 1rem;
 
+          &.hideDivAside {
+            display: none;
+          }
+
+          .callParticipantDiv {
+            position: relative;
+            transition: all 0.4s;
+            border-radius: $borderRadius;
+            overflow: hidden;
+
+            video {
+              width: 100%;
+              border-radius: $borderRadius;
+            }
+
+            .sideVideoControls {
+              transition: all 0.4s;
+              position: absolute;
+              width: 100%;
+              top: 0;
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+              background-color: rgba(0, 0, 0, 0.3);
+
+              button {
+                transition: all 0.4s;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: .5rem;
+                border-radius: $borderRadius;
+                padding: .5rem;
+                border: none;
+                outline: none;
+                background: rgba(0, 0, 0, 0.5);
+                color: white;
+                cursor: pointer;
+                //backdrop-filter: blur(5px);
+
+                &:hover {
+                  background: rgba(0, 0, 0, 0.795);
+
+                }
+
+                i {
+                  font-size: 18px;
+                }
+
+                &.active {
+                  background-color: $notification;
+                  box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .4);
+                }
+
+                &.isSpeaking {
+                  background-color: $notification;
+                  box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .8);
+                  //animation: mymove .4s infinite
+                }
+
+                // @keyframes mymove {
+                //   50% {
+                //     box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 1);
+                //   }
+                // }
+              }
+
+              .miniVideowner {
+                flex: 1;
+                color: white;
+                padding: 1rem;
+              }
+            }
+          }
+        }
+
+        .callMessagingDiv {
+          width: 100%;
+          height: 100%;
           display: flex;
           flex-direction: column;
 
-          .chat-header {
-            padding: 1rem;
-            border-bottom: 1px solid #f1f4f6;
-
-            h1 {
-              font-size: 18px;
-            }
-          }
-
-          .chat-area {
-            overflow-y: scroll;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-
-            //padding: 0 1rem;
-            .message-wrapper {
-              display: flex;
-              padding: 0.5rem 1rem;
-
-              .profile-picture {
-
-                img,
-                div {
-                  width: 40px;
-                  height: 40px;
-                  border-radius: $borderRadius;
-                  object-fit: cover;
-                  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.90);
-                  margin-right: 10px;
-                }
-              }
-
-              .message-content {
-                .name {
-                  padding-left: 10px;
-                }
-
-                .message {
-                  background-color: $sidepanel;
-                  border-radius: $borderRadius;
-                  padding: 10px;
-                  margin-bottom: 10px;
-                }
-              }
-            }
+          &.hideDivAside {
+            display: none;
           }
         }
       }
+    }
 
-      .expand-btn {
-        display: none;
-      }
+    //overflow: hidden;
+    .call-container {
+      // width: 100%;
+      // height: 100%;
+      // //overflow: hidden;
+      // display: flex;
+
+      // .call-main {
+      //   flex: 1;
+      //   display: flex;
+      //   flex-direction: column;
+      //   justify-content: space-between;
+      //   align-items: center;
+      //   padding: 1rem;
+      //   width: 100%;
+
+      //   .callScreenHeader {
+      //     width: 100%;
+      //     //height: 6rem;
+      //     max-height: 6rem;
+      //     display: flex;
+      //     flex-direction: row;
+      //     align-items: center;
+      //     margin-bottom: 1rem;
+
+      //     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+      //     border-radius: $borderRadius;
+      //     background-color: #fff;
+
+      //     padding: 1rem;
+
+      //     h1 {
+      //       font-size: 18px;
+      //     }
+      //   }
+
+      //   .video-call-wrapper {
+      //     flex: 1;
+      //     width: 100%;
+      //     position: relative;
+
+      //     .primaryVideo {
+      //       position: absolute;
+      //       top: 0;
+      //       left: 0;
+      //       background-color: white;
+      //       width: 100%;
+      //       height: 100%;
+      //       object-fit: cover;
+      //       border-radius: $borderRadius;
+      //     }
+
+      //     .secondaryVideos {
+      //       position: absolute;
+      //       top: 0;
+      //       left: 0;
+      //       margin: .5rem;
+      //       display: flex;
+      //       width: 100%;
+      //       overflow-x: auto;
+
+      //       .secondaryVideo {
+      //         min-width: 130px;
+      //         min-height: 100px;
+      //         //background-color: red;
+      //         border-radius: $borderRadius;
+      //         overflow: hidden;
+      //         margin: 1rem;
+      //         cursor: pointer;
+
+      //         position: relative;
+
+      //         &:hover {
+      //           background-color: rgba(0, 0, 0, 0.274);
+      //         }
+
+      //         video {
+      //           position: absolute;
+      //           top: 0;
+      //           left: 0;
+      //           width: 100%;
+      //           height: 100%;
+      //           background-color: $sidepanel;
+      //           object-fit: cover;
+      //         }
+
+      //         .name {
+      //           position: absolute;
+      //           bottom: .5rem;
+      //           right: .5rem;
+      //           color: white;
+      //           padding: .4rem;
+      //           background-color: rgba(0, 0, 0, 0.349);
+      //           border-radius: $borderRadius;
+      //         }
+      //       }
+      //     }
+
+      //     .name {
+      //       position: absolute;
+      //       bottom: .5rem;
+      //       right: .5rem;
+      //       color: white;
+      //       padding: .4rem;
+      //       background-color: rgba(0, 0, 0, 0.349);
+      //       border-radius: $borderRadius;
+      //     }
+
+      //   }
+
+      //   /*
+      //   .callScreenHeader {
+      //     width: 100%;
+      //     display: flex;
+      //     justify-content: space-between;
+      //     margin-bottom: 2rem;
+      //     .my-video{
+      //       min-width: 300px;
+      //       height: 200px;
+      //       background: $notification;
+      //       border-radius: 20px;
+      //       padding: 1rem;
+      //     }
+      //   }
+      //   */
+
+      //   /*
+      //   .video-call-wrapper {
+      //     display: grid;
+      //     grid-template-columns: repeat(3, 1fr);
+      //     grid-template-rows: repeat(2, 1fr);
+      //     grid-column-gap: 5px;
+      //     grid-row-gap: 5px;
+
+      //     border-radius: 20px;
+      //     overflow: hidden;
+
+      //     .video-participant{
+      //       min-width: 300px;
+      //       height: 200px;
+      //       position: relative;
+      //       img{
+      //         width: 100%;
+      //         height: 100%;
+      //         object-fit: cover;
+      //       }
+      //       .participant-actions {
+      //         position: absolute;
+      //         top: 1rem;
+      //         left: 1rem;
+      //         .btn-mute,
+      //         .btn-camera {
+      //           width: 32px;
+      //           height: 32px;
+      //           border-radius: 4px;
+      //           background-color: rgba(0, 15, 47, 0.5);
+      //           background-repeat: no-repeat;
+      //           background-position: center;
+      //           background-size: 16px;
+      //           border: none;
+      //         }
+      //         .btn-mute {
+      //           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-mic-off' viewBox='0 0 24 24'%3E%3Cpath d='M1 1l22 22M9 9v3a3 3 0 005.12 2.12M15 9.34V4a3 3 0 00-5.94-.6'/%3E%3Cpath d='M17 16.95A7 7 0 015 12v-2m14 0v2a7 7 0 01-.11 1.23M12 19v4M8 23h8'/%3E%3C/svg%3E%0A");
+      //           margin-right: 4px;
+      //         }
+      //         .btn-camera {
+      //           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-camera-off' viewBox='0 0 24 24'%3E%3Cpath d='M1 1l22 22M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m3-3h6l2 3h4a2 2 0 012 2v9.34m-7.72-2.06a4 4 0 11-5.56-5.56'/%3E%3C/svg%3E%0A");
+      //         }
+      //       }
+      //       .name-tag{
+      //         position: absolute;
+      //         bottom: 1rem;
+      //         right: 1rem;
+      //         color: #fff;
+      //         background-color: rgba(0, 15, 47, 0.5);
+      //         border-radius: 4px;
+      //         padding: 4px 12px;
+      //       }
+      //     }
+      //     /*
+      //     .video-participant {
+      //       min-width: 300px;
+      //       height: 200px;
+      //       //background-color: $notification;
+      //       //padding: 1rem;
+      //       border: 1px solid $notification;
+
+      //       .participant-actions {
+      //         position: absolute;
+      //         display: flex;
+      //         width: 64px;
+
+      //         .btn-mute,
+      //         .btn-camera {
+      //           width: 32px;
+      //           height: 32px;
+      //           border-radius: 4px;
+      //           background-color: rgba(0, 15, 47, 0.5);
+      //           background-repeat: no-repeat;
+      //           background-position: center;
+      //           background-size: 16px;
+      //           border: none;
+      //         }
+
+      //         .btn-mute {
+      //           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-mic-off' viewBox='0 0 24 24'%3E%3Cpath d='M1 1l22 22M9 9v3a3 3 0 005.12 2.12M15 9.34V4a3 3 0 00-5.94-.6'/%3E%3Cpath d='M17 16.95A7 7 0 015 12v-2m14 0v2a7 7 0 01-.11 1.23M12 19v4M8 23h8'/%3E%3C/svg%3E%0A");
+      //           margin-right: 4px;
+      //         }
+
+      //         .btn-camera {
+      //           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-camera-off' viewBox='0 0 24 24'%3E%3Cpath d='M1 1l22 22M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m3-3h6l2 3h4a2 2 0 012 2v9.34m-7.72-2.06a4 4 0 11-5.56-5.56'/%3E%3C/svg%3E%0A");
+      //         }
+      //       }
+
+      //       .name-tag {
+      //         position: absolute;
+
+      //         color: #fff;
+      //         background-color: rgba(0, 15, 47, 0.5);
+      //         border-radius: 4px;
+      //         padding: 4px 12px;
+      //       }
+
+      //       img,
+      //       div {
+      //         //position: absolute;
+      //         top: 0;
+      //         left: 0;
+      //         width: 100%;
+      //         height: 100%;
+      //         object-fit: cover;
+      //       }
+      //     } *-/
+      //   } */
+      //   .video-call-actions {
+      //     display: flex;
+      //     justify-content: space-between;
+      //     align-items: center;
+      //     padding-top: 1rem;
+
+      //     //max-width: 500px;
+      //     .video-action-button {
+      //       position: relative;
+      //       border: none;
+      //       //height: 48px;
+      //       margin: 0 8px;
+      //       //min-width: 48px;
+      //       outline: none;
+      //       box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+      //       border-radius: $borderRadius;
+      //       display: flex;
+      //       justify-content: center;
+      //       align-items: center;
+      //       background-color: #fff;
+
+      //       i {
+      //         color: $body;
+      //         font-size: 24px;
+      //         padding: 1rem;
+      //         cursor: pointer;
+      //       }
+
+      //       h1 {
+      //         padding: 1rem;
+      //       }
+
+      //       button {
+      //         cursor: pointer;
+      //         outline: none;
+      //         border: none;
+      //         background-color: transparent;
+      //         border-right: 1px solid #f1f4f6;
+      //       }
+
+      //       button:last-of-type {
+      //         border: none;
+      //       }
+
+      //       .devicesPopup {
+      //         box-sizing: border-box;
+      //         display: none;
+      //         position: absolute;
+      //         bottom: 55px;
+      //         right: 0;
+      //         background-color: white;
+      //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+      //         border-radius: $borderRadius;
+      //         //z-index: 10;
+
+      //         //margin: 1rem;
+      //         div {
+      //           display: flex;
+      //           flex-direction: column;
+      //           padding: 1rem;
+      //           border-bottom: 1px solid #f1f4f6;
+      //           white-space: nowrap;
+      //         }
+      //       }
+
+      //       .devicesPopup.is-visible {
+      //         display: block !important;
+      //       }
+
+      //     }
+      //   }
+      // }
+
+      // .right-side {
+      //   width: 350px;
+      //   height: 100%;
+      //   padding-right: 1rem;
+      //   display: flex;
+      //   flex-direction: column;
+
+      //   .participants {
+      //     margin-right: 1rem;
+      //     margin-top: 1rem;
+      //     margin-bottom: 1rem;
+      //     width: 100%;
+      //     height: 6rem;
+      //     max-height: 6rem;
+      //     display: flex;
+      //     flex-direction: row;
+      //     align-items: center;
+      //     justify-content: center;
+      //     flex: 1;
+
+
+      //     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+      //     border-radius: $borderRadius;
+      //     background-color: #fff;
+
+      //     padding: 1rem;
+
+      //     .profile-picture {
+      //       display: flex;
+      //       align-items: center;
+      //       justify-content: center;
+
+      //       img,
+      //       div {
+      //         width: 40px;
+      //         height: 40px;
+      //         border-radius: $borderRadius;
+      //         object-fit: cover;
+      //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.90);
+      //         margin-right: 10px;
+
+      //         display: flex;
+      //         align-items: center;
+      //         justify-content: center;
+      //       }
+      //     }
+
+      //     .participant-more {
+      //       width: 40px;
+      //       height: 40px;
+      //       border-radius: $borderRadius;
+      //       object-fit: cover;
+      //       box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.90);
+
+      //       display: flex;
+      //       align-items: center;
+      //       justify-content: center;
+
+      //     }
+      //   }
+
+      //   .btn-close-right {
+      //     display: none;
+      //     padding: 1rem;
+      //   }
+
+      //   .chat-container {
+      //     margin-right: 1rem;
+      //     width: 100%;
+      //     height: calc(100% - 8rem);
+      //     flex: 1;
+
+
+      //     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+      //     border-radius: $borderRadius;
+      //     background-color: #fff;
+      //     margin-bottom: 1rem;
+      //     padding: 1rem;
+
+      //     display: flex;
+      //     flex-direction: column;
+
+      //     .chat-header {
+      //       padding: 1rem;
+      //       border-bottom: 1px solid #f1f4f6;
+
+      //       h1 {
+      //         font-size: 18px;
+      //       }
+      //     }
+
+      //     .chat-area {
+      //       overflow-y: scroll;
+      //       display: flex;
+      //       flex-direction: column;
+      //       flex: 1;
+
+      //       //padding: 0 1rem;
+      //       .message-wrapper {
+      //         display: flex;
+      //         padding: 0.5rem 1rem;
+
+      //         .profile-picture {
+
+      //           img,
+      //           div {
+      //             width: 40px;
+      //             height: 40px;
+      //             border-radius: $borderRadius;
+      //             object-fit: cover;
+      //             box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.90);
+      //             margin-right: 10px;
+      //           }
+      //         }
+
+      //         .message-content {
+      //           .name {
+      //             padding-left: 10px;
+      //           }
+
+      //           .message {
+      //             background-color: $sidepanel;
+      //             border-radius: $borderRadius;
+      //             padding: 10px;
+      //             margin-bottom: 10px;
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
+
+      // .expand-btn {
+      //   display: none;
+      // }
     }
 
   }
@@ -3214,7 +3858,7 @@ body {
 .spinner {
   margin: 0 auto 0;
   width: 39px;
-  height: 100%;
+  //height: 100%;
   text-align: center;
   display: flex;
   align-items: center;
@@ -3244,13 +3888,13 @@ body {
 }
 
 .spinner .bounce1 {
-  -webkit-animation-delay: -0.32s;
-  animation-delay: -0.32s;
+  -webkit-animation-delay: -0.4s;
+  animation-delay: -0.4s;
 }
 
 .spinner .bounce2 {
-  -webkit-animation-delay: -0.16s;
-  animation-delay: -0.16s;
+  -webkit-animation-delay: -0.2s;
+  animation-delay: -0.2s;
 }
 
 @-webkit-keyframes sk-bouncedelay {
@@ -3266,6 +3910,41 @@ body {
   }
 }
 
+//videoCoverDiv
+.videoCoverDiv {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: $sidepanel;
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  gap: 1rem;
+  z-index: 1;
+
+  .caleeProfilePicture {
+    border: 1px solid $notification;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: $borderRadius;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: #003061;
+    box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+    transition: all 0.4s;
+  }
+}
+
 @keyframes sk-bouncedelay {
 
   0%,
@@ -3278,6 +3957,100 @@ body {
   40% {
     -webkit-transform: scale(1.0);
     transform: scale(1.0);
+  }
+}
+
+
+//Notifications
+.notifications {
+  display: flex;
+  width: 350px;
+  position: fixed;
+  right: 0rem;
+  top: 0rem;
+  flex-direction: column;
+  align-items: center;
+  background-color: transparent;
+  gap: 1rem;
+  margin: 1rem;
+
+  .notification {
+    display: flex;
+    flex-direction: column;
+    background: $sidepanel-bg;
+    border-radius: $borderRadius;
+    box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+    //padding: 1rem 1rem 0rem 1rem;
+    //margin: 0rem 2rem;
+
+    overflow: hidden;
+    flex-shrink: 0;
+
+    .notificationTitle {
+      display: flex;
+      padding: 1rem 1rem 0rem 1rem;
+      gap: 1rem;
+    }
+
+    .notificationBody {
+      display: flex;
+      //margin: 1rem;
+      gap: 1rem;
+      padding: 1rem;
+
+      .profilePicture {
+        border: 1px solid $notification;
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: $borderRadius;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        background-color: #003061;
+        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+        transition: all 0.4s;
+      }
+
+      .notificationContent {
+        flex: 1;
+      }
+    }
+
+    .notificationActions {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0rem 1rem 1rem 1rem;
+      gap: 1rem;
+
+      button {
+        padding: .5rem 1rem;
+        border-radius: $borderRadius;
+        border: none;
+        outline: none;
+        cursor: pointer;
+      }
+
+      .normal {
+        background-color: $sidepanel;
+        color: $body;
+      }
+
+      .confirm {
+        background-color: $notification;
+        color: white;
+      }
+
+
+    }
+
+    .notificationProgressBar {
+      height: 3px;
+      background-color: rgba(0, 0, 0, 0.76);
+    }
+
   }
 }
 
@@ -4282,7 +5055,8 @@ body {
           align-items: center
         }
       }
-      .workshiftEditButtons{
+
+      .workshiftEditButtons {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
@@ -4304,10 +5078,12 @@ body {
           }
         }
       }
-      .workshiftKeyLegend{
+
+      .workshiftKeyLegend {
         width: 100%;
         min-height: 40px;
-        .indicator{
+
+        .indicator {
           width: 40px;
           height: 40px;
         }
@@ -4396,10 +5172,11 @@ body {
     .moreOptionsOnShifts {
       .workShiftsLegend {
         padding: 1rem;
+
         .my-legend {
           border-radius: $borderRadius;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.733);
-          
+
 
           .legend-title {
             text-align: left;
@@ -4408,19 +5185,21 @@ body {
 
           }
 
-          .legend-scale{
+          .legend-scale {
             ul {
               margin: 0;
               margin-bottom: 5px;
               padding: 0;
               float: left;
               list-style: none;
+
               li {
 
                 list-style: none;
                 margin-left: 0;
                 line-height: 18px;
                 margin-bottom: 2px;
+
                 span {
                   display: block;
                   float: left;

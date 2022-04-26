@@ -1,16 +1,485 @@
+<div class="leftPart">
+    <div class="leftPartHeaderDivTitle">
+        Attendance
+    </div>
+    <button class="inviteSomeone">
+        <i class='bx bx-plus' ></i> invite Someone
+    </button>
+    <div class="attendanceTitleSection">
+        <div id="presenceSelectorBtn" class="leftHeaderItem headerItemSelected">Present (0)</div>
+        <div id="absenceSelectorBtn" class="leftHeaderItem">Absent (0)</div>
+    </div>
+    <div class="attendanceContentDiv">
+        <div id="presentMembersDiv" class="presentMembersDiv hiddenDiv">
+            {{!-- <div class="listMember">
+                <div class="memberProfilePicture">TT</div>
+                <div class="memberNameRole">
+                    <div class="memberName">Richard Niyonzima</div>
+                    <div class="memberRole">Student</div>
+                    
+                </div>
+                <button><i class='bx bxs-message-square-detail' ></i>Chat</button>
+            </div>
+            <div class="listMember">
+                <div class="memberProfilePicture">TT</div>
+                <div class="memberNameRole">
+                    <div class="memberName">Richard Niyonzima</div>
+                    <div class="memberRole">Student</div>
+                    
+                </div>
+                <button><i class='bx bxs-message-square-detail' ></i>Chat</button>
+            </div>
+            <div class="listMember">
+                <div class="memberProfilePicture">TT</div>
+                <div class="memberNameRole">
+                    <div class="memberName">Richard Niyonzima</div>
+                    <div class="memberRole">Student</div>
+                    
+                </div>
+                <button><i class='bx bxs-message-square-detail' ></i>Chat</button>
+            </div> --}}
+        </div>
+        <div id="absentMembersDiv" class="absentMembersDiv">
+            {{!-- <div class="listMember">
+                <div class="memberProfilePicture">TT</div>
+                <div class="memberNameRole">
+                    <div class="memberName">Richard Niyonzima</div>
+                    <div class="memberRole">Student</div>
+                    
+                </div>
+                <button><i class='bx bxs-bell-ring' ></i>Ring</button>
+            </div>
+            <div class="listMember">
+                <div class="memberProfilePicture">TT</div>
+                <div class="memberNameRole">
+                    <div class="memberName">Richard Niyonzima</div>
+                    <div class="memberRole">Student</div>
+                    
+                </div>
+                <button><i class='bx bxs-bell-ring' ></i>Ring</button>
+            </div>
+            <div class="listMember">
+                <div class="memberProfilePicture">TT</div>
+                <div class="memberNameRole">
+                    <div class="memberName">Richard Niyonzima</div>
+                    <div class="memberRole">Student</div>
+                    
+                </div>
+                <button><i class='bx bxs-bell-ring' ></i>Ring</button>
+            </div> --}}
+        </div>
+    </div>
+</div>
 <div class="call-container">
+    <div class="callScreenHeader">
+
+        <div class="headerLeftPart">
+            <div class="scheduledTimeContent">Sheduled Time Content</div>
+            <div class="MeetingTitle">Title of the Meeting</div>
+        </div>
+        <div class="headerRightPart">
+            Time Remaining
+            <br>
+            <i class='bx bx-radio-circle-marked'></i>
+            11:50:00
+        </div>
+
+    </div>
+    <div class="mainVideoDiv" id="mainVideoDiv">
+
+        <video id="mainVideoElement" class="mainVideoElement" autoplay="true"
+            ></video>
+        {{!-- 
+        src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        <div class="videoCoverDiv">
+            <div class="caleeProfilePicture">RN</div>
+            <div class="activity">Connecting...</div>
+            <div class="spinner"> <div></div>  <div></div>  <div></div>  </div>
+            <div class="calleName">Niyonzima Richard</div>
+        </div> --}}
+        <div class="callTopBar">
+            <div class="leftUserIdentifiers">
+                <div class="mainVideoOwnerProfilePicture">NR</div>
+                <div class="mainVideoOwnerProfileNamePosition">
+                    <div class="videoOwnerName">Richard Niyonzima</div>
+                    <div class="videoOwnerPosition">Student</div>
+                </div>
+
+            </div>
+            <div class="rightVideoControls">
+                <button id="mainVideoFullscreenBtn"><i class='bx bx-fullscreen'></i></button>
+            </div>
+
+        </div>
+        <div class="callControls">
+            <div class="alwaysVisibleControls">
+                {{!-- <button id="hideVideoControlsBtn" class="callControl" title="Show video controls"><i
+                        class='bx bx-chevron-down'></i></button> --}}
+            </div>
+
+            <div id="hiddableControls" class="hiddableControls">
+                <button id="fitVideoToWindowBtn" class="callControl" title="Fit to window"><i
+                        class='bx bx-collapse'></i></button>
+                <button class="callControl" title="Share screen"><i class='bx bx-window-open'></i></button>
+                <button class="callControl" title="Choose video output device">
+                    <i class='bx bxs-video-recording'></i>
+                    <i class='bx bx-chevron-up'></i>
+                </button>
+                <button class="callControl" title="Mute video"><i class='bx bx-video-off'></i></button>
+                <button class="callControl hangupbtn" title="Leave this call"><i class='bx bxs-phone-off'></i></button>
+                <button class="callControl" title="Mute microphone"><i class='bx bxs-microphone-off'></i></button>
+                <button class="callControl" title="Silence Audio"><i class='bx bx-volume-mute'></i></button>
+                <button class="callControl" title="Choose audio output device">
+                    <i class='bx bxs-speaker'></i>
+                    <i class='bx bx-chevron-up'></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+    <div class="transcription">
+        {{> soundwavesvg}}
+        <div class="transcriptionContents">
+            <div class="transcriptionContent">
+                <div class="profilepicture">AN</div>
+                <p class="transcriptionWords">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nulla maxime
+                    ipsam,
+                    cum earum nostrum temporibus iusto quam harum assumenda. Sit rerum culpa impedit officia, ratione
+                    rem
+                    voluptas explicabo ab! Omnis eius hic nulla sunt dicta quos. Accusamus numquam quibusdam eum.</p>
+            </div>
+            <div class="transcriptionContent">
+                <div class="profilepicture">AJ</div>
+                <p class="transcriptionWords">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nulla maxime
+                    ipsam,
+                    cum earum nostrum temporibus iusto quam harum assumenda. Sit rerum culpa impedit officia, ratione
+                    rem
+                    voluptas explicabo ab! Omnis eius hic nulla sunt dicta quos. Accusamus numquam quibusdam eum.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="rightPart">
+    <div class="rightPartheaderVideoMessaging">
+        <div id="participantsSelectorBtn" class="rightHeaderItem participants headerItemSelected">Participants(6)</div>
+        <div id="messagesSelectorbtn" class="rightHeaderItem callChat">Messages(3)</div>
+    </div>
+
+    <div class="rightPartContentDiv">
+        <div id="rightCallParticipantsDiv" class="callParticipantsDiv">
+            {{!-- <div class="callParticipantDiv">
+                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                    class="callParticipant"></video>
+                <div class="sideVideoControls">
+                    <div class="miniVideowner">Niyonzima Richard</div>
+                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
+                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
+                </div>
+            </div>
+            <div class="callParticipantDiv">
+                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+                    class="callParticipant"></video>
+                <div class="sideVideoControls">
+                    <div class="miniVideowner">Niyonzima Richard</div>
+                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
+                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
+                </div>
+            </div>
+
+            <div class="callParticipantDiv">
+                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                    class="callParticipant"></video>
+                <div class="sideVideoControls">
+                    <div class="miniVideowner">Niyonzima Richard</div>
+                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
+                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
+                </div>
+            </div>
+
+            <div class="callParticipantDiv">
+                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                    class="callParticipant"></video>
+                <div class="sideVideoControls">
+                    <div class="miniVideowner">Niyonzima Richard</div>
+                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
+                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
+                </div>
+            </div>
+
+            <div class="callParticipantDiv">
+                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                    class="callParticipant"></video>
+                <div class="sideVideoControls">
+                    <div class="miniVideowner">Niyonzima Richard</div>
+                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
+                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
+                </div>
+            </div>
+
+            <div class="callParticipantDiv">
+                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                    class="callParticipant"></video>
+                <div class="sideVideoControls">
+                    <div class="miniVideowner">Niyonzima Richard</div>
+                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
+                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
+                </div>
+            </div>
+
+            <div class="callParticipantDiv">
+                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                    class="callParticipant"></video>
+                <div class="sideVideoControls">
+                    <div class="miniVideowner">Niyonzima Richard</div>
+                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
+                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
+                </div>
+            </div> --}}
+        </div>
+        <div id="rightCallMessagesDiv" class="callMessagingDiv hideDivAside">
+            <div class="c-openchat__box__info" style="scroll-behavior: smooth;">
+                <div class="push-down"></div>
+                <div class="message-separator"><span>Fri Jan 07 2022</span></div>
+                <div class="message-group-received">
+                    <div>
+                        <img class="receivedMessageProfile" src="/private/profiles/user-128.png" alt="">
+                    </div>
+                    <div>
+                        <div class="message-received" id="1">
+                            <div class="message-received-text" id="1-messageText">Hellowww</div>
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="message-group-received">
+                    <div>
+                        <img class="receivedMessageProfile" src="/private/profiles/user-128.png" alt="">
+                    </div>
+                    <div>
+                        <div class="message-received" id="2">
+                            <div class="message-received-text" id="2-messageText">Protocol ID:
+                                d77491a7-a681-4b6c-8c6a-12f91264f6d1protocol
+                                Error Pattern Title: LIDL FR: Imprimante Backoffice
+                                Snapshot version: 15335
+                                Search term: impriamnte bo
+
+                                Answered questions:
+                                &nbsp;
+                                1. Quelle est le type d'imprimante? -&gt; HP
+                                2. Quel est le dysfonctionnement? -&gt; Matériel, (Hardware)
+
+                                Solutions:
+                                &nbsp;
+                                1. Faire une demande d'intervention sur le site HP successful</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="message-group-received">
+                    <div>
+                        <img class="receivedMessageProfile" src="/private/profiles/user-128.png" alt="">
+                    </div>
+                    <div>
+                        <div class="message-received" id="3">
+                            <div class="message-received-text" id="3-messageText">again?</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="message-group-received">
+                    <div>
+                        <img class="receivedMessageProfile" src="/private/profiles/user-128.png" alt="">
+                    </div>
+                    <div>
+                        <div class="message-received" id="18">
+                            <div class="message-received-text" id="18-messageText">weekdndi</div>
+
+                        </div>
+                        <div class="message-received" id="19">
+                            <div class="message-received-text" id="19-messageText">wow it is working</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="message-separator"><span>Sat Jan 08 2022</span></div>
+                <div class="message-group-sent">
+                    <div class="message-sent" id="22">
+
+                        <div class="message-sent-text" id="22-messageText">Salama</div>
+                        <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg"
+                                alt=""></div>
+                    </div>
+                    <div class="message-sent" id="23">
+
+                        <div class="message-sent-text" id="23-messageText">ok</div>
+                        <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg"
+                                alt=""></div>
+                    </div>
+                </div>
+                <div class="message-separator"><span>Mon Jan 10 2022</span></div>
+                <div class="message-group-received">
+                    <div>
+                        <img class="receivedMessageProfile" src="/private/profiles/user-128.png" alt="">
+                    </div>
+                    <div>
+                        <div class="message-received" id="69">
+                            <div class="message-received-text" id="69-messageText">hhh</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="message-separator"><span>Tue Jan 11 2022</span></div>
+                <div class="message-group-received">
+                    <div>
+                        <img class="receivedMessageProfile" src="/private/profiles/user-128.png" alt="">
+                    </div>
+                    <div>
+                        <div class="message-received" id="71">
+                            <div class="message-received-text" id="71-messageText">
+                                iuyhjko987ytghho909oikj0-98yufghiokjhgft6789ikjhgyt679iokljbgt6790opkljhgyt679oikjh bn
+                                vg7h8injh gvghjni j ghjni jb yghj9ni jb gvyg7jmk b gvyghkmok b gvyg7uikomk fcfymkbvdrenb
+                                vghn j vghjmk vguik, ftyuikm cfrt678okm vgyuikjiijhoijbg9olm cfm bhuo,m gy9ol, bhu90pl,
+                                ghyu890-;l,m cdr678olkmnbgt789okjbvftolmftyuiol, vgyui jn jn ikm jikm km uiolm
+                                cft790olkmnbvfr59oknvcsw4589knbvft678okm m in bhu90plkmnbvcxse49</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="message-separator"><span>Wed Jan 12 2022</span></div>
+                <div class="message-group-sent">
+                    <div class="message-sent" id="76">
+
+                        <div class="message-sent-text" id="76-messageText">hello</div>
+                        <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg"
+                                alt=""></div>
+                    </div>
+                </div>
+                <div class="message-separator"><span>Sat Jan 15 2022</span></div>
+                <div class="message-group-sent">
+                    <div class="message-sent" id="85">
+
+                        <div class="message-sent-text" id="85-messageText">roteti</div>
+                        <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg"
+                                alt=""></div>
+                    </div>
+                    <div class="message-sent" id="86">
+
+                        <div class="message-sent-text" id="86-messageText">so bebi reset</div>
+                        <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg"
+                                alt=""></div>
+                    </div>
+                    <div class="message-sent" id="87">
+
+                        <div class="message-sent-text" id="87-messageText">njahala mind tru riseti</div>
+                        <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg"
+                                alt=""></div>
+                    </div>
+                </div>
+                <div class="message-separator"><span>Sat Jan 22 2022</span></div>
+                <div class="message-group-sent">
+                    <div class="message-sent" id="88">
+
+                        <div class="message-sent-text" id="88-messageText">so bebi reseti</div>
+                        <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg"
+                                alt=""></div>
+                    </div>
+                </div>
+                <div class="message-group-received">
+                    <div>
+                        <img class="receivedMessageProfile" src="/private/profiles/user-128.png" alt="">
+                    </div>
+                    <div>
+                        <div class="message-received" id="89">
+                            <div class="message-received-text" id="89-messageText">itsa wikendi</div>
+
+                        </div>
+                        <div class="message-received" id="90">
+                            <div class="message-received-text" id="90-messageText">roteti</div>
+
+                        </div>
+                        <div class="message-received" id="91">
+                            <div class="message-received-text" id="91-messageText">hahahhahahahahahaa</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="message-group-sent">
+                    <div class="message-sent" id="92">
+
+                        <div class="message-sent-text" id="92-messageText">guys</div>
+                        <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg"
+                                alt=""></div>
+                    </div>
+                    <div class="message-sent" id="93">
+
+                        <div class="message-sent-text" id="93-messageText">see/?</div>
+                        <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg"
+                                alt=""></div>
+                    </div>
+                </div>
+                <div class="message-separator"><span>Tue Jan 25 2022</span></div>
+                <div class="message-group-received">
+                    <div>
+                        <div class="receivedMessageProfile">tt</div>
+                    </div>
+                    <div>
+                        <div class="message-received" id="120">
+                            <div class="message-received-text" id="120-messageText">Hello wveryone?</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="message-group-received">
+                    <div>
+                        <div class="receivedMessageProfile">tt</div>
+                    </div>
+                    <div>
+                        <div class="message-received" id="121">
+                            <div class="message-received-text" id="121-messageText">hello</div>
+
+                        </div>
+                        <div class="message-received" id="122">
+                            <div class="message-received-text" id="122-messageText">how are you doing guys?</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="message-group-received">
+                    <div>
+                        <div class="receivedMessageProfile">tt</div>
+                    </div>
+                    <div>
+                        <div class="message-received" id="123">
+                            <div class="message-received-text" id="123-messageText">?</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="message-separator"><span>Wed Jan 26 2022</span></div>
+
+                <div class="message-separator"><span>Sun Apr 10 2022</span></div>
+
+            </div>
+            <div class="typingBox">
+                <button class="chat-options" href="" title=""><i class="bx bxs-smile"></i></button>
+                <button class="chat-options" href="" title=""><i class="bx bx-paperclip"></i></button>
+                <div id="w-input-container" onclick="setFocus()">
+                    <div class="w-input-text-group">
+                        <div id="w-input-text" class="w-input-text" contenteditable=""></div>
+                        <div class="w-placeholder">Type a message</div>
+                    </div>
+                </div>
+                <button class="chat-options" href="" title=""><i class="bx bxs-microphone"></i></button>
+                <button id="sendButton" class="chat-options" href="" title=""><i class="bx bxs-send"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{!-- <div class="call-container">
 
     <div class="call-main" id="call-main">
-        <!--
-        <div class="callScreenHeader">
-            <div class="connection-status"> 
-                <video width="300px" height="170px" id="remoteVideo" autoplay playsinline></video>
-            </div>
-            <div class="my-video"> 
-                my video
-                <video width="300px" height="170px" id="localVideo" autoplay muted playsinline></video>
-            </div>
-        </div> -->
         <div class="callScreenHeader">
             <div class="universalCallButtons">
                 <button><i class='bx bx-chevron-left' onclick="showCallHistory()"></i></button>
@@ -24,109 +493,7 @@
             </div>
             <div class="name" id="largeVideoName">Alain Paulin Niyonkuru</div>
         </div>
-        <!--
-        <div class="video-call-wrapper">
-            <div class="video-participant">
-                <img src="https://images.unsplash.com/photo-1566821582776-92b13ab46bb4?ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
-                    alt="participant">
-                <div class="participant-actions">
-                    <button class="btn-mute"></button>
-                    <button class="btn-camera"></button>
-                </div>
-                <a href="#" class="name-tag">Andy Will</a>
-                
-            </div>
-            <div class="video-participant">
-                <img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"
-                    alt="participant">
-                <div class="participant-actions">
-                    <button class="btn-mute"></button>
-                    <button class="btn-camera"></button>
-                </div>
-                <a href="#" class="name-tag">Emmy Lou</a>
-                
-            </div>
-            <div class="video-participant">
-                <img src="https://images.unsplash.com/photo-1576110397661-64a019d88a98?ixlib=rb-1.2.1&auto=format&fit=crop&w=1234&q=80"
-                    alt="participant">
-                <div class="participant-actions">
-                    <button class="btn-mute"></button>
-                    <button class="btn-camera"></button>
-                </div>
-                <a href="#" class="name-tag">Tim Russel</a>
-                
-            </div>
-            <div class="video-participant">
-                <img src="https://images.unsplash.com/photo-1600207438283-a5de6d9df13e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1234&q=80"
-                    alt="participant">
-                <div class="participant-actions">
-                    <button class="btn-mute"></button>
-                    <button class="btn-camera"></button>
-                </div>
-                <a href="#" class="name-tag">Jessica Bell</a>
-                
-            </div>
-            <div class="video-participant">
-                <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80"
-                    alt="participant">
-                <div class="participant-actions">
-                    <button class="btn-mute"></button>
-                    <button class="btn-camera"></button>
-                </div>
-                <a href="#" class="name-tag">Ryan Patrick</a>
-                
-            </div>
-            <div class="video-participant">
-                <img src="https://images.unsplash.com/photo-1542596594-649edbc13630?ixlib=rb-1.2.1&auto=format&fit=crop&w=1234&q=80"
-                    alt="participant">
-                <div class="participant-actions">
-                    <button class="btn-mute"></button>
-                    <button class="btn-camera"></button>
-                </div>
-                <a href="#" class="name-tag">Tina Cate</a>
-                
-            </div>
-        </div> -->
         <div class="video-call-actions ">
-            <!--
-            <button class="video-action-button"><i class='bx bxs-camera'></i></button>
-
-            <div class="video-action-button">
-                <div id="AudioOutDevicesPopup" tabindex="0" class="devicesPopup">
-
-                </div>
-                <button class="" onclick=""><i class='bx bxs-volume-mute' ></i></button>
-                <button id="AudioOutDevicesPop" class=""><i class='bx bx-chevron-up'></i></button>
-            </div>
-
-            <div class="video-action-button">
-                <div id="videoDevicesPopup" tabindex="0" class="devicesPopup">
-
-                </div>
-                <button class="" onclick="toggleVideo()"><i class='bx bxs-video-off'></i></button>
-                <button id="videoDevicesPop" class=""><i class='bx bx-chevron-up'></i></button>
-            </div>
-
-            <button class="red-bg video-action-button">
-                <h1 class="white" onclick="leaveCall()">Leave</h1><i class='bx bxs-phone bx-rotate-180 white'></i>
-            </button>
-
-            <div class="video-action-button">
-                <div id="audioInDevicesPopup" tabindex="0" class="devicesPopup">
-
-                    <div>ALINNNNN</div>
-                    <div>ALINNNNN</div>
-                    <div>ALINNNNN</div>
-                    <div>ALINNNNN</div>
-
-                </div>
-                <button class="" onclick="toggleAudioIn()"><i class='bx bxs-microphone-off'></i></button>
-                <button id="audioInDevicesPop" class=""><i class='bx bx-chevron-up'></i></button>
-            </div>
-            <button class="video-action-button" id="toggleScreenSharing" onclick="toggleScreenSharing()"><i
-                    class='bx bx-desktop'></i></button>
-
-            -->
             <button class="video-action-button" id="gotoFullscreen" class="" onclick="toggleFullscreen()">
                 <i class='bx bx-fullscreen'></i>
             </button>
@@ -145,182 +512,4 @@
             </button>
         </div>
     </div>
-    <!--
-    <div class="right-side">
-        <div class="participants">
-            <div class="profile-picture">
-                <img src="https://images.unsplash.com/photo-1576110397661-64a019d88a98?ixlib=rb-1.2.1&auto=format&fit=crop&w=1234&q=80"
-                    alt="pp">
-            </div>
-            <div class="profile-picture">
-                <img src="https://images.unsplash.com/photo-1566821582776-92b13ab46bb4?ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
-                    alt="pp">
-            </div>
-            <div class="profile-picture">
-                <img src="https://images.unsplash.com/photo-1600207438283-a5de6d9df13e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1234&q=80"
-                    alt="pp">
-            </div>
-            <div class="profile-picture">
-                <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80"
-                    alt="pp">
-            </div>
-            <div class="participant-more">2+</div>
-        </div>
-        <button class="btn-close-right">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
-                stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="feather feather-x-circle"
-                viewBox="0 0 24 24">
-                <defs></defs>
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="M15 9l-6 6M9 9l6 6"></path>
-            </svg>
-        </button>
-        <div class="chat-container">
-            <div class="chat-header">
-                <h1>Call Chat</h1>
-            </div>
-            <div class="chat-area" id="in-call-chatArea">
-                <div class="message-wrapper">
-                    <div class="profile-picture">
-                        <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80"
-                            alt="pp">
-                    </div>
-                    <div class="message-content">
-                        <p class="name">Ryan Patrick</p>
-                        <div class="message">Helloo team!😍</div>
-                    </div>
-                </div>
-                <div class="message-wrapper">
-                    <div class="profile-picture">
-                        <img src="https://images.unsplash.com/photo-1566821582776-92b13ab46bb4?ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
-                            alt="pp">
-                    </div>
-                    <div class="message-content">
-                        <p class="name">Andy Will</p>
-                        <div class="message">Hello! Can you hear me?🤯 <a class="mention">@ryanpatrick</a></div>
-                    </div>
-                </div>
-                <div class="message-wrapper">
-                    <div class="profile-picture">
-                        <img src="https://images.unsplash.com/photo-1600207438283-a5de6d9df13e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1234&q=80"
-                            alt="pp">
-                    </div>
-                    <div class="message-content">
-                        <p class="name">Jessica Bell</p>
-                        <div class="message">Hi team! Let's get started it.</div>
-                    </div>
-                </div>
-                <div class="message-wrapper reverse">
-                    <div class="profile-picture">
-                        <img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"
-                            alt="pp">
-                    </div>
-                    <div class="message-content">
-                        <p class="name">Emmy Lou</p>
-                        <div class="message">Good morning!🌈</div>
-                    </div>
-                </div>
-                <div class="message-wrapper">
-                    <div class="profile-picture">
-                        <img src="https://images.unsplash.com/photo-1576110397661-64a019d88a98?ixlib=rb-1.2.1&auto=format&fit=crop&w=1234&q=80"
-                            alt="pp">
-                    </div>
-                    <div class="message-content">
-                        <p class="name">Tim Russel</p>
-                        <div class="message">New design document⬇️</div>
-                    </div>
-                </div>
-                <div class="message-wrapper">
-                    <div class="profile-picture">
-                        <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80"
-                            alt="pp">
-                    </div>
-                    <div class="message-content">
-                        <p class="name">Ryan Patrick</p>
-                        <div class="message">Hi team!❤️</div>
-                        <div class="message">I downloaded the file <a class="mention">@timrussel</a></div>
-                    </div>
-                </div>
-                <div class="message-wrapper reverse">
-                    <div class="profile-picture">
-                        <img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"
-                            alt="pp">
-                    </div>
-                    <div class="message-content">
-                        <p class="name">Emmy Lou</p>
-                        <div class="message">Woooww! Awesome❤️</div>
-                    </div>
-                </div>
-                <div class="message-wrapper">
-                    <div class="profile-picture">
-                        <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80"
-                            alt="pp">
-                    </div>
-                    <div class="message-content">
-                        <p class="name">Ryan Patrick</p>
-                        <div class="message">Hi team!❤️</div>
-                        <div class="message">I downloaded the file <a class="mention">@timrussel</a></div>
-                    </div>
-                </div>
-                <div class="message-wrapper reverse">
-                    <div class="profile-picture">
-                        <img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"
-                            alt="pp">
-                    </div>
-                    <div class="message-content">
-                        <p class="name">Emmy Lou</p>
-                        <div class="message">Woooww! Awesome❤️</div>
-                    </div>
-                </div>
-                <div class="message-wrapper">
-                    <div class="profile-picture">
-                        <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80"
-                            alt="pp">
-                    </div>
-                    <div class="message-content">
-                        <p class="name">Ryan Patrick</p>
-                        <div class="message">Hi team!❤️</div>
-                        <div class="message">I downloaded the file <a class="mention">@timrussel</a></div>
-                    </div>
-                </div>
-                <div class="message-wrapper reverse">
-                    <div class="profile-picture">
-                        <img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"
-                            alt="pp">
-                    </div>
-                    <div class="message-content">
-                        <p class="name">Emmy Lou</p>
-                        <div class="message">Woooww! Awesome❤️</div>
-                    </div>
-                </div>
-            </div>
-            <div class="typingBox">
-                <button class='c-sidepanel__nav__chat-options padding-bottom-12px' href='' title=''><i
-                        class='bx bxs-smile'></i></i></button>
-
-                <div id="w-input-container" onclick="setFocus()">
-                    <div class="w-input-text-group">
-                        <div id="w-input-text" class="w-input-text" contenteditable></div>
-                        <div class="w-placeholder">Type a message</div>
-                    </div>
-                </div>
-                <button class='c-sidepanel__nav__chat-options padding-bottom-12px' href='' title=''><i
-                        class='bx bxs-microphone'></i></button>
-                <button id='call-message-sendButton'
-                    class='c-sidepanel__nav__chat-options padding-bottom-12px sendButton' href='' title=''><i
-                        class='bx bxs-send'></i></button>
-            </div>
-        </div>
-
-    </div>
-    
-    <button class="expand-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="feather feather-message-circle">
-            <path
-                d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-        </svg>
-    </button>
-    -->
-</div>
+</div> --}}

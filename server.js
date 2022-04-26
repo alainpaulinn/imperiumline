@@ -431,7 +431,7 @@ io.on('connection', (socket) => {
       return result;
     }
 
-    socket.on("join-room", async data => {
+    socket.on("initiateCall", async data => {
 
       let { callTo, audio, video, group, fromChat, previousCallId } = data;
       console.log(data)
@@ -475,8 +475,8 @@ io.on('connection', (socket) => {
               }
             }
             //send to all other connected users an incoming call
-            socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id) });
-            socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id) });
+            socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: [oneToCall, await getUserInfo(id)] });
+            socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: [oneToCall, await getUserInfo(id)] });
             socket.join(callUniqueId + '');
 
             return;
@@ -490,10 +490,9 @@ io.on('connection', (socket) => {
                 insertCallParticipant(callUniqueId, insertedCallId, callParticipant.userID, id)
               })
 
-              //join a room for answered call people
-              socket.join(callUniqueId + '-allAnswered-sockets');
-              setUserCallStatus(id, callUniqueId, 'onCall')
-              socket.emit('updateCallLog', await getCallLog(id));
+              socket.join(callUniqueId + '-allAnswered-sockets'); //join a room for answered call people
+              setUserCallStatus(id, callUniqueId, 'onCall') //register myself in the database that i am on this call
+              socket.emit('updateCallLog', await getCallLog(id)); //send myself an update in the call log
 
               for (let i = 0; i < groupMembersToCall.length; i++) {
                 console.log("groupMembersToCall", groupMembersToCall[i].userID)
@@ -501,19 +500,27 @@ io.on('connection', (socket) => {
                 for (let j = 0; j < connectedUsers.length; j++) {
                   console.log("connectedUsers", connectedUsers[j].id)
                   if (groupMembersToCall[i].userID == connectedUsers[j].id && groupMembersToCall[i].userID != id) { //&& groupMembersToCall[i].userID != id will eliminate my other onnected computers from reciving my call
+                    socket.to(connectedUsers[j].socket.id).emit('incomingCall', {
+                      callUniqueId: callUniqueId, 
+                      caller: await getUserInfo(id), 
+                      allUsers: groupMembersToCall,
+                      myInfo: await getUserInfo(connectedUsers[j].id)
+                    });
                     console.log("--->connectedUser identified", connectedUsers[j].id)
-                    groupMembersToCall_fullInfo.push({ peerId: connectedUsers[j].callId, userProfileIdentifier: groupMembersToCall[i] })
+                    groupMembersToCall_fullInfo.push({ 
+                      peerId: connectedUsers[j].callId, 
+                      userProfileIdentifier: groupMembersToCall[i]})
                     connectedUsers[j].socket.join(callUniqueId + '');
                   }
+                  //update callog for each connected user
                   if (groupMembersToCall[i].userID == connectedUsers[j].id) {
                     socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id));
                   }
-
                 }
               }
               //send to all other connected users an incoming call
-              socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id) });
-              socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id) });
+              //socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall });
+              socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall });
               socket.join(callUniqueId + '');
 
               break;
@@ -550,8 +557,8 @@ io.on('connection', (socket) => {
                   }
                 }
               }
-              socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id) });
-              socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id) });
+              socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: existingCallParticipants });
+              socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: existingCallParticipants });
               socket.join(callUniqueId + '');
 
 
@@ -564,16 +571,26 @@ io.on('connection', (socket) => {
       console.log("initialting call", data)
     })
     socket.on('answerCall', async data => {
-      //{myPeerId, callUniqueId: currentCallInfo.callUniqueId}
-      socket.to(data.callUniqueId + '-allAnswered-sockets').emit('user-connected', data.myPeerId);
-      setUserCallStatus(id, data.callUniqueId, 'onCall')
-      socket.join(data.callUniqueId + '-allAnswered-sockets');
-      let thisCallparticipants = await getCallParticipants(data.callUniqueId)
+      let { myPeerId, callUniqueId } = data;
+
+      let thisCallparticipants = await getCallParticipants(callUniqueId) //get all people who are allowed in this call
+      let thisUsershouldbeinthiscall = false
+      for (var i = 0; i < thisCallparticipants.length; i++) { //For security purposes check if the answered person should be able to answer this call
+        if (thisCallparticipants[i].userID == id) { thisUsershouldbeinthiscall = true; break; } }
+      if(thisUsershouldbeinthiscall == false) {return console.log("You are not allowed to answer this call")}
+
+      //inform all users who accepted the call- to call me
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('connectUser', { peerId: myPeerId, userInfo: await getUserInfo(id)});
+      setUserCallStatus(id, callUniqueId, 'onCall') // set this user to in-call status
+      socket.join(callUniqueId + '-allAnswered-sockets'); // become a member of the call room
+
+      //check connected people from allowed people
       for (let i = 0; i < connectedUsers.length; i++) {
         for (let j = 0; j < thisCallparticipants.length; j++) {
           if (connectedUsers[i].id == thisCallparticipants[j].userID) {
             connectedUsers[i].socket.emit
             socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
+            socket.to(connectedUsers[i].socket.id).emit('prepareMyInfo', {myInfo: await getUserInfo(connectedUsers[i].id), callStatus: await getCallLog(connectedUsers[i].id)});
           }
         }
       }
@@ -691,17 +708,17 @@ function getEvents(userId, initalDate, endDate) {
       [userId], async (err, _myEvents) => {
         if (err) return console.log(err);
         //if (_myEvents.length < 1) return console.log("no participated events found for this user")
-        console.log("my Events", _myEvents)
+        //console.log("my Events", _myEvents)
         //create an object with properties which represent all of the dates between thos intervals
         let eventDates = {};
         let currentDate = initalDate
         //console.log("currentDate", currentDate, initalDate)
         while (currentDate <= endDate) {
-          console.log("curr", currentDate)
+          //console.log("curr", currentDate)
           eventDates[currentDate.toISOString().slice(0, 10)] = [];
           currentDate.setDate(currentDate.getDate() + 1);
         }
-        console.log("Event Dates", eventDates);
+        //console.log("Event Dates", eventDates);
         //console.log(eventDates)
         for (let eventNumber = 0; eventNumber < _myEvents.length; eventNumber++) {
           /**
@@ -755,8 +772,8 @@ function getEvents(userId, initalDate, endDate) {
           }
            */
           let eventdetails = await getEventDetails(_myEvents[eventNumber].eventId);
-          console.log("eventdetails", eventdetails)
-          console.log("eventDates", eventDates)
+          //console.log("eventdetails", eventdetails)
+          //console.log("eventDates", eventDates)
           if (eventdetails.occurrence == 1) {
             if (eventDates[eventdetails.oneTimeDate]) eventDates[eventdetails.oneTimeDate].push(eventdetails);
           }
@@ -1082,9 +1099,13 @@ function getRoomInfo(roomID, viewerID) {
       let avatar = roomProfilePicture;
       db.query('SELECT `id`, `userID`, `roomID` FROM `participants` WHERE `roomID` = ?', [roomID], async (err, participants) => {
         if (err) return console.log(err)
-        participants.forEach(async participant => {
+
+        for (let i = 0; i < participants.length; i++) {
+          const participant = participants[i];
+          console.log('participant.userID', participant.userID)
           usersArray.push(await getUserInfo(participant.userID));
-        });
+        }
+        
         db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `roomID` = ? ORDER BY timeStamp DESC LIMIT 1', [roomID], async (err, messages) => {
           if (err) return console.log(err)
           //set default if there is no message (new fake message)
@@ -1105,8 +1126,9 @@ function getRoomInfo(roomID, viewerID) {
 
           switch (type) {
             case 0:
+              console.log(usersArray)
               //console.log("is a private chat");
-              var otherUser = await usersArray.filter(user => { return user.userID !== viewerID })[0];
+              var otherUser = usersArray.filter(user => { return user.userID !== viewerID })[0];
               avatar = otherUser.profilePicture;
               name = otherUser.name + ' ' + otherUser.surname;
               if (avatar == null) avatar = otherUser.name.charAt(0).toUpperCase() + otherUser.surname.charAt(0).toUpperCase();
@@ -1115,7 +1137,7 @@ function getRoomInfo(roomID, viewerID) {
               //console.log("is a group chat");
               avatar = roomProfilePicture;
               if (name == null) name = usersArray.map(user => { return "Group: " + user.name + ' ' + user.surname }).join(', ');
-              if (avatar == null) avatar = '/images/profiles/group.jpeg';
+              if (avatar == null) avatar = '/private/profiles/group.jpeg';
               break;
 
             default:
@@ -1156,14 +1178,25 @@ function getUserInfo(userID) {
   //console.log("getuserinfo function presented ID", userID)
   if (userID < 1) userID = 1
   return new Promise(function (resolve, reject) {
-    db.query('SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `password`, `company_id`, `registration_date` FROM `user` WHERE `id`= ?', [userID], async (err, profiles) => {
+    db.query('SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `password`, `company_id`, `positionId`, `registration_date` FROM `user` WHERE `id`= ?', [userID], async (err, profiles) => {
       if (err) return console.log(err)
       resolve({
         userID: profiles[0].id,
         name: profiles[0].name,
         surname: profiles[0].surname,
-        profilePicture: profiles[0].profilePicture
+        profilePicture: profiles[0].profilePicture,
+        role: await getUserRole(profiles[0].positionId),
+        status: connectedUsers.some(e => e.id === profiles[0].id )? 'online' : 'offline'
       })
+    });
+  })
+}
+function getUserRole(roleId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `position` FROM `positions` WHERE `id` = ?', [roleId], async (err, roles) => {
+      if (err) return console.log(err)
+      if (roles.length < 1) return console.log('no such role ID in the database: ' + roleId)
+      resolve(roles[0].position)
     });
   })
 }

@@ -56,5 +56,23 @@ router.get('/profiles*', function (req, res) {
     }
   }
 });
+router.get('/audio*', function (req, res) {
+  console.log(req.session.userId)
+  if (!req.session.userId || !req.session){
+    res.sendStatus(404); 
+    return console.log("no session found - cannot serve the file");
+  }
+  if (req.session.userId != undefined) {
+    let pathString = path.join(__dirname,'..', req.originalUrl);
+    console.log(pathString);
+    if (fs.existsSync(pathString)) {
+      fs.createReadStream(pathString).pipe(res);
+      console.log("The file exists", pathString);
+    } else {
+      res.sendStatus(404);
+      console.log("The file does not exist");
+    }
+  }
+});
 
 module.exports = router;

@@ -746,11 +746,12 @@ body {
 }
 
 .c-chats {
+  margin: 1rem 0rem 1rem 1rem;
+  border-radius: 15px;
   overflow: hidden;
   border-right: 1px solid #f1f4f6;
   background: white;
   width: 350px;
-  height: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1387,6 +1388,7 @@ body {
   -webkit-transition: all 0.4s ease-in-out;
   transition: all 0.4s ease-in-out;
   color: #7a7a7a;
+  z-index: 1;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1527,6 +1529,14 @@ body {
 .message-group-received {
   width: 100%;
   margin-bottom: 1rem;
+  position: relative;
+}
+
+.senderOriginName {
+  position: absolute;
+  top: 100%;
+  font-size: 11px;
+  color: grey;
 }
 
 .message-group-sent {
@@ -1590,6 +1600,7 @@ body {
   -webkit-transition: all 0.4s ease-in-out;
   transition: all 0.4s ease-in-out;
   color: #7a7a7a;
+  z-index: 1;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2251,6 +2262,7 @@ body {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
+  background-color: #ebf0f6;
   color: #5b5e61;
 }
 
@@ -2813,15 +2825,555 @@ body {
   height: 100%;
 }
 
+.c-calls_panel .ongoingCallPage .leftPart {
+  width: 350px;
+  background-color: white;
+  border-radius: 15px;
+  margin: 1rem 0rem 1rem 1rem;
+  padding: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .leftPartHeaderDivTitle {
+  padding: 1rem;
+  font-weight: bolder;
+  text-align: center;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .inviteSomeone {
+  margin: 1rem;
+  padding: 1rem;
+  font-weight: bolder;
+  text-align: center;
+  border-radius: 15px;
+  cursor: pointer;
+  background-color: #ebf0f6;
+  outline: none;
+  border: none;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceTitleSection {
+  padding: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceTitleSection .leftHeaderItem {
+  padding: 1rem;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  font-weight: bolder;
+  text-align: center;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceTitleSection .leftHeaderItem:hover {
+  background-color: #f5f9fd;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceTitleSection .leftHeaderItem.headerItemSelected {
+  background-color: #ebf0f6;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  min-height: 0;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: .5rem;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberProfilePicture {
+  border: 1px solid #003061;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 15px;
+  text-transform: uppercase;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: white;
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  overflow: hidden;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole .memberName {
+  font-weight: bolder;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole .memberRole {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember button {
+  color: #5b5e61;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 1rem;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  border-radius: 15px;
+  background-color: #ebf0f6;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin-left: .5rem;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember button i {
+  font-size: 18px;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember button p {
+  margin-left: .5rem;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv {
+  display: none;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: .5rem;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberProfilePicture {
+  border: 1px solid #003061;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 15px;
+  text-transform: uppercase;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: white;
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  overflow: hidden;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole .memberName {
+  font-weight: bolder;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole .memberRole {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember button {
+  color: #5b5e61;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 1rem;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  border-radius: 15px;
+  background-color: #ebf0f6;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin-left: .5rem;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember button i {
+  font-size: 18px;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember button p {
+  margin-left: .5rem;
+}
+
 .c-calls_panel .ongoingCallPage .call-container {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 15px;
+  background-color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .callScreenHeader {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerLeftPart {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding: 1rem;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerLeftPart .scheduledTimeContent {
+  font-size: 15px;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerLeftPart .MeetingTitle {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart {
+  padding: 1rem;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv {
+  border-radius: 15px;
+  position: relative;
+  overflow: hidden;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar {
+  color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0)));
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .leftUserIdentifiers {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .leftUserIdentifiers .mainVideoOwnerProfilePicture {
+  border: 1px solid #003061;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 15px;
+  text-transform: uppercase;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: white;
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .leftUserIdentifiers .mainVideoOwnerProfileNamePosition {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .leftUserIdentifiers .mainVideoOwnerProfileNamePosition .videoOwnerName {
+  font-size: 18px;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .rightVideoControls button {
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  border-radius: 15px;
+  padding: 1rem;
+  border: none;
+  outline: none;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  cursor: pointer;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .rightVideoControls button:hover {
+  background: black;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .mainVideoElement {
   width: 100%;
   height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 15px;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .mainVideoElement.fitVideoToWindow {
+  width: 100%;
+  height: unset;
+  -o-object-fit: none;
+     object-fit: none;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls {
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  -webkit-transform: translate(-50%);
+          transform: translate(-50%);
+  visibility: hidden;
+  opacity: 0;
+  width: 100%;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .alwaysVisibleControls .callControl {
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  border-radius: 15px;
+  padding: .5rem;
+  border: none;
+  outline: none;
+  background: rgba(0, 0, 0, 0.1);
+  color: white;
+  cursor: pointer;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .alwaysVisibleControls .callControl:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls {
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .call-main {
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .callControl {
+  margin: 0 .5rem;
+  border-radius: 15px;
+  padding: 1rem;
+  border: none;
+  outline: none;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  cursor: pointer;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .callControl:hover {
+  background: rgba(0, 0, 0, 0.795);
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .callControl i {
+  font-size: 18px;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .hangupbtn {
+  color: red;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hideDown {
+  -webkit-transform: translateY(100%);
+          transform: translateY(100%);
+  display: none;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv:hover .callControls {
+  visibility: visible;
+  opacity: 1;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv:hover .callTopBar {
+  visibility: visible;
+  opacity: 1;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .transcription {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  height: 8rem;
+  padding: 1rem;
+  margin-top: 1rem;
+  background-color: #ebf0f6;
+  border-radius: 15px;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .transcription .soundwaveSvg {
+  width: 6rem;
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  stroke-linejoin: round;
+  stroke-miterlimit: 2;
+  fill: #7a7a7a;
+  -webkit-box-shadow: white;
+          box-shadow: white;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .transcription .transcriptionContents {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -2832,262 +3384,147 @@ body {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  padding: 1rem;
-  width: 100%;
-  /*
-        .callScreenHeader {
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 2rem;
-          .my-video{
-            min-width: 300px;
-            height: 200px;
-            background: $notification;
-            border-radius: 20px;
-            padding: 1rem;
-          }
-        }
-        */
-  /*
-        .video-call-wrapper {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          grid-template-rows: repeat(2, 1fr);
-          grid-column-gap: 5px;
-          grid-row-gap: 5px;
-
-          border-radius: 20px;
-          overflow: hidden;
-
-          .video-participant{
-            min-width: 300px;
-            height: 200px;
-            position: relative;
-            img{
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            }
-            .participant-actions {
-              position: absolute;
-              top: 1rem;
-              left: 1rem;
-              .btn-mute,
-              .btn-camera {
-                width: 32px;
-                height: 32px;
-                border-radius: 4px;
-                background-color: rgba(0, 15, 47, 0.5);
-                background-repeat: no-repeat;
-                background-position: center;
-                background-size: 16px;
-                border: none;
-              }
-              .btn-mute {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-mic-off' viewBox='0 0 24 24'%3E%3Cpath d='M1 1l22 22M9 9v3a3 3 0 005.12 2.12M15 9.34V4a3 3 0 00-5.94-.6'/%3E%3Cpath d='M17 16.95A7 7 0 015 12v-2m14 0v2a7 7 0 01-.11 1.23M12 19v4M8 23h8'/%3E%3C/svg%3E%0A");
-                margin-right: 4px;
-              }
-              .btn-camera {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-camera-off' viewBox='0 0 24 24'%3E%3Cpath d='M1 1l22 22M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m3-3h6l2 3h4a2 2 0 012 2v9.34m-7.72-2.06a4 4 0 11-5.56-5.56'/%3E%3C/svg%3E%0A");
-              }
-            }
-            .name-tag{
-              position: absolute;
-              bottom: 1rem;
-              right: 1rem;
-              color: #fff;
-              background-color: rgba(0, 15, 47, 0.5);
-              border-radius: 4px;
-              padding: 4px 12px;
-            }
-          }
-          /*
-          .video-participant {
-            min-width: 300px;
-            height: 200px;
-            //background-color: $notification;
-            //padding: 1rem;
-            border: 1px solid $notification;
-
-            .participant-actions {
-              position: absolute;
-              display: flex;
-              width: 64px;
-
-              .btn-mute,
-              .btn-camera {
-                width: 32px;
-                height: 32px;
-                border-radius: 4px;
-                background-color: rgba(0, 15, 47, 0.5);
-                background-repeat: no-repeat;
-                background-position: center;
-                background-size: 16px;
-                border: none;
-              }
-
-              .btn-mute {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-mic-off' viewBox='0 0 24 24'%3E%3Cpath d='M1 1l22 22M9 9v3a3 3 0 005.12 2.12M15 9.34V4a3 3 0 00-5.94-.6'/%3E%3Cpath d='M17 16.95A7 7 0 015 12v-2m14 0v2a7 7 0 01-.11 1.23M12 19v4M8 23h8'/%3E%3C/svg%3E%0A");
-                margin-right: 4px;
-              }
-
-              .btn-camera {
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-camera-off' viewBox='0 0 24 24'%3E%3Cpath d='M1 1l22 22M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m3-3h6l2 3h4a2 2 0 012 2v9.34m-7.72-2.06a4 4 0 11-5.56-5.56'/%3E%3C/svg%3E%0A");
-              }
-            }
-
-            .name-tag {
-              position: absolute;
-
-              color: #fff;
-              background-color: rgba(0, 15, 47, 0.5);
-              border-radius: 4px;
-              padding: 4px 12px;
-            }
-
-            img,
-            div {
-              //position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            }
-          } *-/
-        } */
+  overflow-y: auto;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .call-main .callScreenHeader {
-  width: 100%;
-  max-height: 6rem;
+.c-calls_panel .ongoingCallPage .call-container .transcription .transcriptionContents .transcriptionContent {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
   margin-bottom: 1rem;
-  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+}
+
+.c-calls_panel .ongoingCallPage .call-container .transcription .transcriptionContents .transcriptionContent .profilepicture {
+  border: 1px solid #003061;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
   border-radius: 15px;
-  background-color: #fff;
-  padding: 1rem;
+  text-transform: uppercase;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: white;
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .call-main .callScreenHeader h1 {
-  font-size: 18px;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-wrapper {
+.c-calls_panel .ongoingCallPage .call-container .transcription .transcriptionContents .transcriptionContent .transcriptionWords {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
-  width: 100%;
-  position: relative;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-wrapper .primaryVideo {
-  position: absolute;
-  top: 0;
-  left: 0;
+.c-calls_panel .ongoingCallPage .rightPart {
+  width: 350px;
   background-color: white;
-  width: 100%;
-  height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
   border-radius: 15px;
+  margin: 1rem 1rem 1rem 0rem;
+  padding: 1rem;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-wrapper .secondaryVideos {
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin: .5rem;
+.c-calls_panel .ongoingCallPage .rightPart .rightPartheaderVideoMessaging {
+  padding: 1rem;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   width: 100%;
-  overflow-x: auto;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-wrapper .secondaryVideos .secondaryVideo {
-  min-width: 130px;
-  min-height: 100px;
+.c-calls_panel .ongoingCallPage .rightPart .rightPartheaderVideoMessaging .rightHeaderItem {
+  padding: 1rem;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  font-weight: bolder;
+  text-align: center;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.c-calls_panel .ongoingCallPage .rightPart .rightPartheaderVideoMessaging .rightHeaderItem:hover {
+  background-color: #f5f9fd;
+}
+
+.c-calls_panel .ongoingCallPage .rightPart .rightPartheaderVideoMessaging .rightHeaderItem.headerItemSelected {
+  background-color: #ebf0f6;
+}
+
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  min-height: 0;
+  background: #f5f9fd;
+  border-radius: 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  overflow: hidden;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv {
+  overflow-y: auto;
+  width: 100%;
+  padding: 1rem;
+}
+
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv.hideDivAside {
+  display: none;
+}
+
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv {
+  position: relative;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
   border-radius: 15px;
   overflow: hidden;
-  margin: 1rem;
-  cursor: pointer;
-  position: relative;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-wrapper .secondaryVideos .secondaryVideo:hover {
-  background-color: rgba(0, 0, 0, 0.274);
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv video {
+  width: 100%;
+  border-radius: 15px;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-wrapper .secondaryVideos .secondaryVideo video {
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls {
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
   position: absolute;
+  width: 100%;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #ebf0f6;
-  -o-object-fit: cover;
-     object-fit: cover;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-wrapper .secondaryVideos .secondaryVideo .name {
-  position: absolute;
-  bottom: .5rem;
-  right: .5rem;
-  color: white;
-  padding: .4rem;
-  background-color: rgba(0, 0, 0, 0.349);
-  border-radius: 15px;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-wrapper .name {
-  position: absolute;
-  bottom: .5rem;
-  right: .5rem;
-  color: white;
-  padding: .4rem;
-  background-color: rgba(0, 0, 0, 0.349);
-  border-radius: 15px;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-actions {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  padding-top: 1rem;
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-actions .video-action-button {
-  position: relative;
-  border: none;
-  margin: 0 8px;
-  outline: none;
-  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 15px;
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button {
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3097,195 +3534,47 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  background-color: #fff;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-actions .video-action-button i {
-  color: #5b5e61;
-  font-size: 24px;
-  padding: 1rem;
+  margin: .5rem;
+  border-radius: 15px;
+  padding: .5rem;
+  border: none;
+  outline: none;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
   cursor: pointer;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-actions .video-action-button h1 {
-  padding: 1rem;
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button:hover {
+  background: rgba(0, 0, 0, 0.795);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-actions .video-action-button button {
-  cursor: pointer;
-  outline: none;
-  border: none;
-  background-color: transparent;
-  border-right: 1px solid #f1f4f6;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-actions .video-action-button button:last-of-type {
-  border: none;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-actions .video-action-button .devicesPopup {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  display: none;
-  position: absolute;
-  bottom: 55px;
-  right: 0;
-  background-color: white;
-  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 15px;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-actions .video-action-button .devicesPopup div {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  padding: 1rem;
-  border-bottom: 1px solid #f1f4f6;
-  white-space: nowrap;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .call-main .video-call-actions .video-action-button .devicesPopup.is-visible {
-  display: block !important;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .right-side {
-  width: 350px;
-  height: 100%;
-  padding-right: 1rem;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .right-side .participants {
-  margin-right: 1rem;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  width: 100%;
-  height: 6rem;
-  max-height: 6rem;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
-  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 15px;
-  background-color: #fff;
-  padding: 1rem;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .right-side .participants .profile-picture {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .right-side .participants .profile-picture img,
-.c-calls_panel .ongoingCallPage .call-container .right-side .participants .profile-picture div {
-  width: 40px;
-  height: 40px;
-  border-radius: 15px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  margin-right: 10px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .right-side .participants .participant-more {
-  width: 40px;
-  height: 40px;
-  border-radius: 15px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .right-side .btn-close-right {
-  display: none;
-  padding: 1rem;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .right-side .chat-container {
-  margin-right: 1rem;
-  width: 100%;
-  height: calc(100% - 8rem);
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
-  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-  border-radius: 15px;
-  background-color: #fff;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .right-side .chat-container .chat-header {
-  padding: 1rem;
-  border-bottom: 1px solid #f1f4f6;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .right-side .chat-container .chat-header h1 {
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button i {
   font-size: 18px;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .right-side .chat-container .chat-area {
-  overflow-y: scroll;
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button.active {
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.4);
+          box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.4);
+}
+
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button.isSpeaking {
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.8);
+          box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.8);
+}
+
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls .miniVideowner {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  color: white;
+  padding: 1rem;
+}
+
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callMessagingDiv {
+  width: 100%;
+  height: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3293,42 +3582,9 @@ body {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .right-side .chat-container .chat-area .message-wrapper {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  padding: 0.5rem 1rem;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .right-side .chat-container .chat-area .message-wrapper .profile-picture img,
-.c-calls_panel .ongoingCallPage .call-container .right-side .chat-container .chat-area .message-wrapper .profile-picture div {
-  width: 40px;
-  height: 40px;
-  border-radius: 15px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  margin-right: 10px;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .right-side .chat-container .chat-area .message-wrapper .message-content .name {
-  padding-left: 10px;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .right-side .chat-container .chat-area .message-wrapper .message-content .message {
-  background-color: #ebf0f6;
-  border-radius: 15px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .expand-btn {
+.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callMessagingDiv.hideDivAside {
   display: none;
 }
 
@@ -3618,7 +3874,6 @@ body {
 .spinner {
   margin: 0 auto 0;
   width: 39px;
-  height: 100%;
   text-align: center;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -3654,13 +3909,13 @@ body {
 }
 
 .spinner .bounce1 {
-  -webkit-animation-delay: -0.32s;
-  animation-delay: -0.32s;
+  -webkit-animation-delay: -0.4s;
+  animation-delay: -0.4s;
 }
 
 .spinner .bounce2 {
-  -webkit-animation-delay: -0.16s;
-  animation-delay: -0.16s;
+  -webkit-animation-delay: -0.2s;
+  animation-delay: -0.2s;
 }
 
 @-webkit-keyframes sk-bouncedelay {
@@ -3674,6 +3929,56 @@ body {
   }
 }
 
+.videoCoverDiv {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #ebf0f6;
+  height: 100%;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  overflow: hidden;
+  gap: 1rem;
+  z-index: 1;
+}
+
+.videoCoverDiv .caleeProfilePicture {
+  border: 1px solid #003061;
+  width: 80px;
+  height: 80px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 15px;
+  text-transform: uppercase;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: white;
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
 @keyframes sk-bouncedelay {
   0%,
   80%,
@@ -3685,6 +3990,124 @@ body {
     -webkit-transform: scale(1);
     transform: scale(1);
   }
+}
+
+.notifications {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 350px;
+  position: fixed;
+  right: 0rem;
+  top: 0rem;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: transparent;
+  gap: 1rem;
+  margin: 1rem;
+}
+
+.notifications .notification {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  background: #f5f9fd;
+  border-radius: 15px;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
+
+.notifications .notification .notificationTitle {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 1rem 1rem 0rem 1rem;
+  gap: 1rem;
+}
+
+.notifications .notification .notificationBody {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.notifications .notification .notificationBody .profilePicture {
+  border: 1px solid #003061;
+  width: 40px;
+  height: 40px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 15px;
+  text-transform: uppercase;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: white;
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
+.notifications .notification .notificationBody .notificationContent {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+.notifications .notification .notificationActions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  padding: 0rem 1rem 1rem 1rem;
+  gap: 1rem;
+}
+
+.notifications .notification .notificationActions button {
+  padding: .5rem 1rem;
+  border-radius: 15px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.notifications .notification .notificationActions .normal {
+  background-color: #ebf0f6;
+  color: #5b5e61;
+}
+
+.notifications .notification .notificationActions .confirm {
+  background-color: #003061;
+  color: white;
+}
+
+.notifications .notification .notificationProgressBar {
+  height: 3px;
+  background-color: rgba(0, 0, 0, 0.76);
 }
 
 /*
