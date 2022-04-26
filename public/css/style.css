@@ -3502,6 +3502,9 @@ body {
 .c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv video {
   width: 100%;
   border-radius: 15px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  height: 220px;
 }
 
 .c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls {

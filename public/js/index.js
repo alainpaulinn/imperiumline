@@ -1756,19 +1756,9 @@ function stopScreenSharing() {
 
 
 ///////Video Sizing//////////////////////
-function toggleFullscreen() {
-  let elem = document.querySelector('#call-main');
-
-  if (!document.fullscreenElement) {
-    document.getElementById("gotoFullscreen").classList.add('red-bg')
-    elem.requestFullscreen().catch(err => {
-      document.getElementById("gotoFullscreen").classList.remove('red-bg')
-      alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-    });
-  } else {
-    document.exitFullscreen();
-    document.getElementById("gotoFullscreen").classList.remove('red-bg')
-  }
+function toggleFullscreen(element) {
+  if (!document.fullscreenElement) { element.requestFullscreen().catch(err => { alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`); }); }
+  else { document.exitFullscreen(); }
 }
 
 
@@ -1784,6 +1774,7 @@ myPeer.on('open', myPeerId => {
   let awaitedUsers = []
   let myInfo;
   let allInvitedUsers;
+  let receivedUsers = 0;
 
   socket.on('prepareCallingOthers', initiatedCallInfo => {
     navigator.getUserMedia({ video: true, audio: true }, stream => {
@@ -1857,10 +1848,10 @@ myPeer.on('open', myPeerId => {
         sideVideoDiv = createSideVideo(userVideoStream, { videoOwner: { name: userInfo.name, surname: userInfo.surname, id: userInfo.userID } })
         rightCallParticipantsDiv.append(sideVideoDiv)
 
-        //on the first call of event 'connectUser' if we are the caller: close the waiting tone
-        stopWaitingTone()
-        //on the first call of event 'connectUser' if we are the caller: remove waiting div
-        videoCoverDiv.remove()
+        stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
+        videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
+        receivedUsers++
+        if(receivedUsers == 1) document.getElementById('mainVideoDiv') = createMainVideoDiv(userVideoStream, userInfo)
       })
       call.once('close', () => {
         console.log('user is closing after my call', userInfo)
@@ -1880,9 +1871,12 @@ myPeer.on('open', myPeerId => {
     call.once('stream', function (remoteStream) {
       console.log('I answered a socket call and the user streamed right back', infomingPeerInfo)
       updateAttendanceList(infomingPeerInfo, 'present')
-      //display this user's video
+
       sideVideoDiv = createSideVideo(remoteStream, { videoOwner: { name: infomingPeerInfo.name, surname: infomingPeerInfo.surname, id: infomingPeerInfo.userID } })
-      rightCallParticipantsDiv.append(sideVideoDiv)
+      rightCallParticipantsDiv.append(sideVideoDiv) //display this user's video
+
+      receivedUsers++
+      if(receivedUsers == 1) document.getElementById('mainVideoDiv') = createMainVideoDiv(userVideoStream, userInfo)
     })
 
   })
@@ -1941,7 +1935,7 @@ myPeer.on('open', myPeerId => {
     // let { name, profilePicture, surname, userID } = allUsers array
     isGroup = allUsers.length > 2 ? true : false
     callees = allUsers.filter(user => { return user.userID != caller.userID })
-    displayName = callees.map(calee => {return calee.name + ' ' + calee.surname}).join(', ')
+    displayName = callees.map(calee => { return calee.name + ' ' + calee.surname }).join(', ')
     firstCallee = callees[0]
     displayInitials = isGroup == true ? 'Grp' : firstCallee.name.charAt(0) + firstCallee.surname.charAt(0)
     profilePicture = isGroup == true ? '/private/profiles/group.jpeg' : firstCallee.profilePicture
@@ -1953,6 +1947,50 @@ myPeer.on('open', myPeerId => {
       screenMessage: reason,
       spinner: true
     }
+  }
+
+  function createMainVideoDiv(stream, userInfo) {
+    let { userID, name, surname, profilePicture, role } = userInfo;
+    // let mainVideoDiv = document.getElementById('mainVideoDiv')
+
+    //topBar
+    let mainVideoOwnerProfilePicture;
+    if (profilePicture == null) mainVideoOwnerProfilePicture = createElement({ type: 'div', className: 'mainVideoOwnerProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+    else mainVideoOwnerProfilePicture = createElement({ type: 'div', src: profilePicture })
+    let videoOwnerName = createElement({ type: 'div', className: 'videoOwnerName', textContent: name.charAt(0) + surname.charAt(0) })
+    let videoOwnerPosition = createElement({ type: 'div', className: 'videoOwnerPosition', textContent: role })
+    let mainVideoOwnerProfileNamePosition = createElement({ type: 'div', className: 'mainVideoOwnerProfileNamePosition', childrenArray: [videoOwnerName, videoOwnerPosition] })
+    let leftUserIdentifiers = createElement({ type: 'div', className: 'leftUserIdentifiers', childrenArray: [mainVideoOwnerProfilePicture, mainVideoOwnerProfileNamePosition] })
+    let mainVideoFullscreenBtn = createElement({
+      type: 'button',
+      className: 'mainVideoFullscreenBtn',
+      childrenArray: [createElement({ type: 'i', class: 'bx bx-fullscreen' })],
+      onclick: () => { toggleFullscreen(mainVideoDiv) }
+    })
+    let rightVideoControls = createElement({ type: 'div', className: 'rightVideoControls', childrenArray: [mainVideoFullscreenBtn] })
+    let callTopBar = createElement({ type: 'div', className: 'callTopBar', childrenArray: [leftUserIdentifiers, rightVideoControls] })
+
+    //call controls
+    let alwaysVisibleControls = createElement({ type: 'div', className: 'alwaysVisibleControls'})
+    let fitToFrame = createElement({ type: 'div', className: 'callControl', title: "Fit video to frame", childrenArray:[createElement({type: 'i', class: 'bx bx-collapse'})],
+      onClick: () => {
+
+      }})
+    let shareScreenBtn = createElement({ type: 'div', className: 'callControl', title: "Choose video output device", childrenArray:[createElement({type: 'i', class: 'bx bx-window-open'})]})
+    let closeVideoBtn = createElement({ type: 'div', className: 'callControl', title: "Close my video", childrenArray:[createElement({type: 'i', class: 'bx bxs-video-recording'}, createElement({type: 'i', class: 'bx bx-chevron-up'}))]})
+    let HangUpBtn = createElement({ type: 'div', className: 'callControl hangupbtn', title: "Leave this call", childrenArray:[createElement({type: 'i', class: 'bx bxs-phone-off'})]})
+    let muteMicrophone = createElement({ type: 'div', className: 'callControl', title: "Mute my microphone", childrenArray:[createElement({type: 'i', class: 'bx bx-video-off'})]})
+    let silenceAudio = createElement({ type: 'div', className: 'callControl', title: "Silence all call audio", childrenArray:[createElement({type: 'i', class: 'bx bx-volume-mute'})]})
+    let chooseAudioOutputDeviceBtn = createElement({ type: 'div', className: 'callControl', title: "Choose audio output device", childrenArray:[createElement({type: 'i', class: 'bx bxs-speaker'}, createElement({type: 'i', class: 'bx bx-chevron-up'}))]})
+    
+    let hiddableControls = createElement({ type: 'div', className: 'hiddableControls', childrenArray: [fitToFrame, shareScreenBtn, closeVideoBtn, HangUpBtn, muteMicrophone, silenceAudio, chooseAudioOutputDeviceBtn]})
+    let callControls = createElement({ type: 'div', className: 'callControls', childrenArray: [alwaysVisibleControls, hiddableControls]})
+    //main video element
+    let mainVideoElement = createElement({ type: 'video', class: 'mainVideoElement', srcObject: stream })
+    mainVideoElement.play();
+    
+    let mainVideoDiv = createElement({ type: 'div', class: 'mainVideoDiv', childrenArray: [mainVideoElement, callTopBar, callControls]})
+    return mainVideoDiv
   }
 })
 
@@ -1986,6 +2024,7 @@ function createElement(configuration) {
   if (configuration.src) elementToReturn.src = configuration.src
   if (configuration.textContent) elementToReturn.textContent = configuration.textContent
   if (configuration.childrenArray) configuration.childrenArray.forEach(child => elementToReturn.append(child))
+  if (configuration.onclick) elementToReturn.addEventListener('click', configuration.onclick)
   return elementToReturn
 }
 

@@ -3067,6 +3067,8 @@ body {
             video {
               width: 100%;
               border-radius: $borderRadius;
+              object-fit: cover;
+              height: 220px;
             }
 
             .sideVideoControls {
