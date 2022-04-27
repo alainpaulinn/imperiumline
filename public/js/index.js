@@ -1787,9 +1787,10 @@ myPeer.on('open', myPeerId => {
         let targetedUser = groupMembersToCall_fullInfo.find(member => member.userProfileIdentifier.userID == user.userID);
         if (targetedUser == undefined) {
 
-          let ringTextForMe = user.userID === caller.userID ? 'Waiting...' : 'User Offline';
+          let ringTextForMe = user.userID === caller.userID ? 'Waiting ...' : 'User Offline';
+          let ringIconForMe = user.userID === caller.userID ? 'bx bxs-hourglass' : 'bx bxs-phone-off';
 
-          let offlineIcon = createElement({ type: 'i', class: 'bx bxs-phone-off' })
+          let offlineIcon = createElement({ type: 'i', class: ringIconForMe })
           let offlineText = createElement({ type: 'p', textContent: ringTextForMe })
           let offlineButton = createElement({ type: 'button', childrenArray: [offlineIcon, offlineText] })
 
@@ -1887,7 +1888,7 @@ myPeer.on('open', myPeerId => {
             let memberNameRole = createElement({ type: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
 
             let ringIcon = createElement({ type: 'i', class: 'bx bx-x' })
-            let ringText = createElement({ type: 'p', textContent: 'Rejected' })
+            let ringText = createElement({ type: 'p', textContent: 'Not answered' })
             let ringButton = createElement({ type: 'button', childrenArray: [ringIcon, ringText] })
             
 
