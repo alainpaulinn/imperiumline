@@ -1801,6 +1801,7 @@ myPeer.on('open', myPeerId => {
           stream.getTracks().forEach(function (track) { track.stop(); });
           videoCoverDiv.remove();
           mySideVideoDiv.remove()
+          
         }
         else {
           if (receivedUsers < 1) {
