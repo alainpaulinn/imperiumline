@@ -1780,8 +1780,47 @@ myPeer.on('open', myPeerId => {
       //put create and append my sidevideo
       let mySideVideoDiv = createSideVideo(stream, { videoOwner: { name: name, surname: surname, id: userID } })
       rightCallParticipantsDiv.append(mySideVideoDiv)
+
+      // create awaited users divs
+      let awaitedUserDivs = allUsers.map(user => {
+        //let { userID, name, surname, role, profilePicture, status } = user
+        let targetedUser = groupMembersToCall_fullInfo.find(member => member.userProfileIdentifier.userID == user.userID);
+        if (targetedUser == undefined) {
+
+          let ringTextForMe = user.userID === caller.userID ? 'Waiting...' : 'User Offline';
+
+          let offlineIcon = createElement({ type: 'i', class: 'bx bxs-phone-off' })
+          let offlineText = createElement({ type: 'p', textContent: ringTextForMe })
+          let offlineButton = createElement({ type: 'button', childrenArray: [offlineIcon, offlineText] })
+
+          let chatIcon = createElement({ type: 'i', class: 'bx bxs-message-square-detail' })
+          let chatButton = createElement({ type: 'button', childrenArray: [chatIcon] })
+
+          let actions = [
+            { element: offlineButton, functionCall: () => { } },
+            { element: chatButton, functionCall: () => { console.log('chat with user', userID) } }]
+          return { userID: user.userID, div: userForAttendanceList(user, actions) }
+        }
+        else {
+
+          let ringIcon = createElement({ type: 'i', class: 'bx bxs-bell-ring' })
+          let ringText = createElement({ type: 'p', textContent: 'Ringing...' })
+          let ringButton = createElement({ type: 'button', childrenArray: [ringIcon, ringText] })
+
+          let chatIcon = createElement({ type: 'i', class: 'bx bxs-message-square-detail' })
+          let chatButton = createElement({ type: 'button', childrenArray: [chatIcon] })
+
+          let actions = [
+            { element: ringButton, functionCall: () => { console.log('ringing', userID) } },
+            { element: chatButton, functionCall: () => { console.log('chat with user', userID) } }
+          ]
+          return { userID: user.userID, div: userForAttendanceList(user, actions) }
+        }
+      })
+      console.log("awaitedUserDivs", awaitedUserDivs)
+
       //create Cover waiting
-      let videoCoverDiv = videoConnectingScreen(prepareVideoCoverDiv(allUsers, caller, 'Calling...'))
+      let videoCoverDiv = videoConnectingScreen(prepareVideoCoverDiv(allUsers, caller, 'Dialling...', awaitedUserDivs))
       mainVideoDiv.prepend(videoCoverDiv)
 
       //awaitedUsers = groupMembersToCall_fullInfo
@@ -1790,6 +1829,7 @@ myPeer.on('open', myPeerId => {
       //put Users on absence list
       allInvitedUsers = setAllUsers(allUsers)
       updateAttendanceList(caller, 'present')
+
       handleOutgoingPeerCalls(caller, videoCoverDiv)
 
 
@@ -1797,21 +1837,35 @@ myPeer.on('open', myPeerId => {
       socket.on('callRejected', timeoutDetails => {
         console.log('remote call Rejected')
         let { callUniqueId, userInfo } = timeoutDetails
-        if (allUsers.length <= 2) {
-          stream.getTracks().forEach(function (track) { track.stop(); });
-          videoCoverDiv.remove();
-          mySideVideoDiv.remove()
-          
-        }
-        else {
-          if (receivedUsers < 1) {
-            videoCoverDiv.textContent = ''
-            videoCoverDiv.remove()
-            videoCoverDiv = videoConnectingScreen(prepareVideoCoverDiv(allUsers, caller, 'Calling.........................'))
-            mainVideoDiv.prepend(videoCoverDiv)
-          }
-          else {
+
+        for (let i = 0; i < awaitedUserDivs.length; i++) {
+          const awaitedDiv = awaitedUserDivs[i];
+          if (awaitedDiv.userID == userInfo.userID) {
+
+            let memberProfilePicture;
+            if (profilePicture == null) memberProfilePicture = createElement({ type: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+            else memberProfilePicture = createElement({ type: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+
+            let memberName = createElement({ type: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
+            let memberRole = createElement({ type: 'div', class: 'memberRole', textContent: userInfo.role })
+            let memberNameRole = createElement({ type: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+
+            let ringIcon = createElement({ type: 'i', class: 'bx bx-x' })
+            let ringText = createElement({ type: 'p', textContent: 'Rejected' })
+            let ringButton = createElement({ type: 'button', childrenArray: [ringIcon, ringText] })
             
+
+            let chatIcon = createElement({ type: 'i', class: 'bx bxs-message-square-detail' })
+            let chatButton = createElement({ type: 'button', childrenArray: [chatIcon] })
+            chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
+
+            let ringAgainIcon = createElement({ type: 'i', class: 'bx bxs-bell-ring' })
+            let ringAgainText = createElement({ type: 'p', textContent: 'Ring Again' })
+            let ringAgainButton = createElement({ type: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
+            ringAgainButton.addEventListener('click', () => console.log('ring again USER', userInfo.userID))
+
+            awaitedDiv.div.textContent = '';
+            awaitedDiv.div.append(memberProfilePicture, memberNameRole, ringButton, chatButton, ringAgainButton)
           }
         }
       })
@@ -1820,13 +1874,35 @@ myPeer.on('open', myPeerId => {
       socket.on('callNotAnswered', timeoutDetails => {
         console.log('remote call not answered')
         let { callUniqueId, userInfo } = timeoutDetails
-        if (allUsers.length <= 2) {
-          stream.getTracks().forEach(function (track) { track.stop(); });
-          videoCoverDiv.remove();
-          mySideVideoDiv.remove()
-        }
-        else {
-          
+        for (let i = 0; i < awaitedUserDivs.length; i++) {
+          const awaitedDiv = awaitedUserDivs[i];
+          if (awaitedDiv.userID == userInfo.userID) {
+
+            let memberProfilePicture;
+            if (profilePicture == null) memberProfilePicture = createElement({ type: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+            else memberProfilePicture = createElement({ type: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+
+            let memberName = createElement({ type: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
+            let memberRole = createElement({ type: 'div', class: 'memberRole', textContent: userInfo.role })
+            let memberNameRole = createElement({ type: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+
+            let ringIcon = createElement({ type: 'i', class: 'bx bx-x' })
+            let ringText = createElement({ type: 'p', textContent: 'Rejected' })
+            let ringButton = createElement({ type: 'button', childrenArray: [ringIcon, ringText] })
+            
+
+            let chatIcon = createElement({ type: 'i', class: 'bx bxs-message-square-detail' })
+            let chatButton = createElement({ type: 'button', childrenArray: [chatIcon] })
+            chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
+
+            let ringAgainIcon = createElement({ type: 'i', class: 'bx bxs-bell-ring' })
+            let ringAgainText = createElement({ type: 'p', textContent: 'Ring Again' })
+            let ringAgainButton = createElement({ type: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
+            ringAgainButton.addEventListener('click', () => console.log('ring again USER', userInfo.userID))
+
+            awaitedDiv.div.textContent = '';
+            awaitedDiv.div.append(memberProfilePicture, memberNameRole, ringButton, chatButton, ringAgainButton)
+          }
         }
 
       })
@@ -1950,6 +2026,11 @@ myPeer.on('open', myPeerId => {
     absenceSelectorBtn.textContent = 'Absent (' + absentMembersDiv.childElementCount + ')'
   }
 
+  function makeCalleeElement(userInfo, status) {
+    let { name, profilePicture, surname, userID, role } = userInfo
+    let userDiv = userForAttendanceList(user, actions)
+  }
+
   function updateAttendanceList(userInfo, status) {
     //display the caller's name on present members DIV
     let { name, profilePicture, surname, userID } = userInfo
@@ -1995,23 +2076,26 @@ myPeer.on('open', myPeerId => {
     return allInvitedUsersArray;
   }
 
-  function prepareVideoCoverDiv(allUsers, caller, reason) {
-    let isGroup, displayName, displayInitials, profilePicture, screenMessage, spinner, callees, firstCallee
+  function prepareVideoCoverDiv(allUsers, caller, reason, awaitedUserDivs) {
+    let isGroup, displayName, displayInitials, profilePicture, screenMessage, spinner, callees, firstCallee, calleesDiv;
     // let { name, profilePicture, surname, userID } = caller
     // let { name, profilePicture, surname, userID } = allUsers array
+    // let { name, profilePicture, surname, userID, role } = specialStatuseUsers array
+
     isGroup = allUsers.length > 2 ? true : false
     callees = allUsers.filter(user => { return user.userID != caller.userID })
     displayName = callees.map(calee => { return calee.name + ' ' + calee.surname }).join(', ')
     firstCallee = callees[0]
     displayInitials = isGroup == true ? 'Grp' : firstCallee.name.charAt(0) + firstCallee.surname.charAt(0)
     profilePicture = isGroup == true ? '/private/profiles/group.jpeg' : firstCallee.profilePicture
+
     return {
       isGroup: isGroup,
-      displayName: displayName,
+      awaitedUserDivs: awaitedUserDivs,
       displayInitials: displayInitials,
       profilePicture: profilePicture,
       screenMessage: reason,
-      spinner: true
+      spinner: true,
     }
   }
 
@@ -2168,19 +2252,25 @@ function stopWaitingTone() {
 
 function videoConnectingScreen(constraints) {
   // let memberNameRole = createElement({ type: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
-  let { isGroup, displayName, displayInitials, profilePicture, screenMessage, spinner } = constraints
+  let { isGroup, awaitedUserDivs, displayInitials, profilePicture, screenMessage, spinner } = constraints
+
+  // isGroup: isGroup,
+  // awaitedUserDivs: awaitedUserDivs,
+  // displayInitials: displayInitials,
+  // profilePicture: profilePicture,
+  // screenMessage: reason,
+  // spinner: true,
 
   let caleeProfilePicture;
   if (constraints.profilePicture != null) { caleeProfilePicture = createElement({ type: 'img', class: 'caleeProfilePicture', src: constraints.profilePicture }) }
   else caleeProfilePicture = createElement({ type: 'div', class: 'caleeProfilePicture', textContent: constraints.displayInitials })
   let activity = createElement({ type: 'div', class: 'activity', textContent: constraints.screenMessage })
   let spinnerDiv = createElement({ type: 'div', class: 'spinner', childrenArray: [createElement({ type: 'div' }), createElement({ type: 'div' }), createElement({ type: 'div' })] })
-  let calleName = createElement({ type: 'div', class: 'calleName', textContent: constraints.displayName })
-
+  let calleesDiv = createElement({ type: 'div', class: 'calleesDiv', childrenArray: awaitedUserDivs.map(awaitedUserDiv => awaitedUserDiv.div) })
 
   let videoCoverDiv
-  if (spinner == true) videoCoverDiv = createElement({ type: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, spinnerDiv, calleName] })
-  else videoCoverDiv = createElement({ type: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, calleName] })
+  if (spinner == true) videoCoverDiv = createElement({ type: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, spinnerDiv, calleesDiv] })
+  else videoCoverDiv = createElement({ type: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, calleesDiv] })
 
   return videoCoverDiv
 }
@@ -2196,7 +2286,7 @@ function displayNotification(notificationConfig) {
 
   //Title
   let titleIcon = createElement({ type: 'i', class: iconClass })
-  let titleTextDiv = createElement({ type: 'div', class: 'notification', textContent: titleText })
+  let titleTextDiv = createElement({ type: 'div', class: 'notificationTitleText', textContent: titleText })
   let notificationTitle = createElement({ type: 'div', class: 'notificationTitle', childrenArray: [titleIcon, titleTextDiv] })
 
   //Body

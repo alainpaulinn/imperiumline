@@ -2572,13 +2572,15 @@ body {
           display: flex;
           flex-direction: column;
           min-height: 0;
+          overflow-y: auto;
 
           .listMember {
+            background-color: white;
             display: flex;
             padding: .5rem;
             align-items: center;
             height: 100%;
-            overflow-y: auto;
+            
 
             .memberProfilePicture {
               border: 1px solid $notification;
@@ -2587,18 +2589,11 @@ body {
               margin-right: 10px;
               border-radius: $borderRadius;
               text-transform: uppercase;
-              display: -webkit-box;
-              display: -ms-flexbox;
               display: flex;
-              -webkit-box-pack: center;
-              -ms-flex-pack: center;
               justify-content: center;
-              -webkit-box-align: center;
-              -ms-flex-align: center;
               align-items: center;
               color: white;
               background-color: #003061;
-              -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
               box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
               transition: all 0.4s;
               flex-shrink: 0;
@@ -2647,6 +2642,9 @@ body {
 
               p {
                 margin-left: .5rem;
+              }
+              &:hover{
+                background-color: darken($sidepanel, 5%)
               }
             }
           }
@@ -2655,13 +2653,15 @@ body {
         .absentMembersDiv {
           display: none;
           flex-direction: column;
+          overflow-y: auto;
 
           .listMember {
+            background-color: white;
             display: flex;
             padding: .5rem;
             align-items: center;
             height: 100%;
-            overflow-y: auto;
+            
 
             .memberProfilePicture {
               border: 1px solid $notification;
@@ -2724,6 +2724,9 @@ body {
 
               p {
                 margin-left: .5rem;
+              }
+              &:hover{
+                background-color: darken($sidepanel, 5%)
               }
             }
           }
@@ -3930,6 +3933,8 @@ body {
   gap: 1rem;
   z-index: 1;
 
+  padding: 1rem;
+
   .caleeProfilePicture {
     border: 1px solid $notification;
     width: 80px;
@@ -3944,6 +3949,89 @@ body {
     background-color: #003061;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
     transition: all 0.4s;
+    flex-shrink: 0;
+  }
+  .calleesDiv{
+    overflow-y: auto;
+    flex: 1;
+    padding: 1rem;
+    background-color: $sidepanel-bg;
+    border-radius: $borderRadius;
+    
+    .listMember {
+      background-color: white;
+      display: flex;
+      padding: .5rem;
+      align-items: center;
+      border-radius: $borderRadius;
+      margin-bottom: .5rem;
+
+      .memberProfilePicture {
+        border: 1px solid $notification;
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+        border-radius: $borderRadius;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        background-color: #003061;
+        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+        transition: all 0.4s;
+        flex-shrink: 0;
+      }
+
+      .memberNameRole {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+
+        .memberName {
+          font-weight: bolder;
+          display: block;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .memberRole {
+          display: block;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+      }
+
+      button {
+        color: $body;
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        transition: all 0.4s;
+        //margin: 0 0.5rem;
+        border-radius: $borderRadius;
+        background-color: $sidepanel;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        margin-left: .5rem;
+
+        i {
+          font-size: 18px;
+        }
+
+        p {
+          margin-left: .5rem;
+        }
+        &:hover{
+          background-color: darken($sidepanel, 5%)
+        }
+      }
+    }
   }
 }
 

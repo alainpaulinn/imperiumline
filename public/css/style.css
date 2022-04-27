@@ -2899,9 +2899,11 @@ body {
       -ms-flex-direction: column;
           flex-direction: column;
   min-height: 0;
+  overflow-y: auto;
 }
 
 .c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember {
+  background-color: white;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2910,7 +2912,6 @@ body {
       -ms-flex-align: center;
           align-items: center;
   height: 100%;
-  overflow-y: auto;
 }
 
 .c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberProfilePicture {
@@ -2924,15 +2925,15 @@ body {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
   color: white;
   background-color: #003061;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   -ms-flex-negative: 0;
@@ -2995,15 +2996,21 @@ body {
   margin-left: .5rem;
 }
 
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember button:hover {
+  background-color: #d9e3ee;
+}
+
 .c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv {
   display: none;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  overflow-y: auto;
 }
 
 .c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember {
+  background-color: white;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3012,7 +3019,6 @@ body {
       -ms-flex-align: center;
           align-items: center;
   height: 100%;
-  overflow-y: auto;
 }
 
 .c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberProfilePicture {
@@ -3096,6 +3102,10 @@ body {
 
 .c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember button p {
   margin-left: .5rem;
+}
+
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember button:hover {
+  background-color: #d9e3ee;
 }
 
 .c-calls_panel .ongoingCallPage .call-container {
@@ -3969,6 +3979,7 @@ body {
   overflow: hidden;
   gap: 1rem;
   z-index: 1;
+  padding: 1rem;
 }
 
 .videoCoverDiv .caleeProfilePicture {
@@ -3994,6 +4005,117 @@ body {
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
+
+.videoCoverDiv .calleesDiv {
+  overflow-y: auto;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  padding: 1rem;
+  background-color: #f5f9fd;
+  border-radius: 15px;
+}
+
+.videoCoverDiv .calleesDiv .listMember {
+  background-color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: .5rem;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border-radius: 15px;
+  margin-bottom: .5rem;
+}
+
+.videoCoverDiv .calleesDiv .listMember .memberProfilePicture {
+  border: 1px solid #003061;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 15px;
+  text-transform: uppercase;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: white;
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
+
+.videoCoverDiv .calleesDiv .listMember .memberNameRole {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  overflow: hidden;
+}
+
+.videoCoverDiv .calleesDiv .listMember .memberNameRole .memberName {
+  font-weight: bolder;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.videoCoverDiv .calleesDiv .listMember .memberNameRole .memberRole {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.videoCoverDiv .calleesDiv .listMember button {
+  color: #5b5e61;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 1rem;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  border-radius: 15px;
+  background-color: #ebf0f6;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin-left: .5rem;
+}
+
+.videoCoverDiv .calleesDiv .listMember button i {
+  font-size: 18px;
+}
+
+.videoCoverDiv .calleesDiv .listMember button p {
+  margin-left: .5rem;
+}
+
+.videoCoverDiv .calleesDiv .listMember button:hover {
+  background-color: #d9e3ee;
 }
 
 @keyframes sk-bouncedelay {
