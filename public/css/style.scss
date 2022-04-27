@@ -2799,20 +2799,14 @@ body {
               margin-right: 10px;
               border-radius: $borderRadius;
               text-transform: uppercase;
-              display: -webkit-box;
-              display: -ms-flexbox;
               display: flex;
-              -webkit-box-pack: center;
-              -ms-flex-pack: center;
               justify-content: center;
-              -webkit-box-align: center;
-              -ms-flex-align: center;
               align-items: center;
               color: white;
               background-color: #003061;
-              -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
               box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
               transition: all 0.4s;
+              object-fit: cover;
             }
 
             .mainVideoOwnerProfileNamePosition {
@@ -2821,7 +2815,8 @@ body {
               transition: all 0.4s;
 
               .videoOwnerName {
-                font-size: 18px;
+                font-size: 15px;
+                font-weight: bolder;
               }
             }
           }
@@ -2837,6 +2832,11 @@ body {
               background: rgba(0, 0, 0, 0.5);
               color: white;
               cursor: pointer;
+              width: 40px;
+              height: 40px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
 
               i {
                 //font-size: 15px;

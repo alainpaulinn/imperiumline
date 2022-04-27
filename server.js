@@ -590,10 +590,24 @@ io.on('connection', (socket) => {
           if (connectedUsers[i].id == thisCallparticipants[j].userID) {
             connectedUsers[i].socket.emit
             socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
-            socket.to(connectedUsers[i].socket.id).emit('prepareMyInfo', {myInfo: await getUserInfo(connectedUsers[i].id), callStatus: await getCallLog(connectedUsers[i].id)});
           }
         }
       }
+    })
+
+    socket.on('callNotAnswered', async callUniqueId => {
+      let callAccess = await checkCallAccess(id, callUniqueId)
+      if(callAccess == false) return console.log('user does not have access to this call')
+
+      setCallAsMissed(id, callUniqueId)
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('callNotAnswered', { callUniqueId: callUniqueId, userInfo: await getUserInfo(id)});
+    })
+    socket.on('callRejected', async callUniqueId => {
+      let callAccess = await checkCallAccess(id, callUniqueId)
+      if(callAccess == false) return console.log('user does not have access to this call')
+
+      setCallAsMissed(id, callUniqueId)
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('callRejected', { callUniqueId: callUniqueId, userInfo: await getUserInfo(id)});
     })
 
     socket.on('leaveCall', async data => {
@@ -625,7 +639,6 @@ io.on('connection', (socket) => {
 
     ////////////////Meeting/schedule planning/////////////////
     socket.on('scheduleInviteSearch', inviteId => {
-
       db.query("SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `company_id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 10", ['%' + inviteId + '%', '%' + inviteId + '%', '%' + inviteId + '%'], async (err, userSearchResult) => {
         if (err) return console.log(err)
         let foundUsersusers = userSearchResult.map(searchPerson => {
@@ -694,6 +707,8 @@ io.on('connection', (socket) => {
       connectedUsers = _connectedUsers;
       console.log("connectedUsers", connectedUsers)
     });
+
+    function informAllUserLeft(leftUser, callUniqueId){}
   }
   else {
     var destination = '/connect';
@@ -885,7 +900,7 @@ function getEventDetails(givenEventId) {
   })
 }
 //getEventDetails(3).then(console.log)
-getEvents(9, new Date("2022-03-15"), new Date("2022-03-23")).then(console.log)
+//getEvents(9, new Date("2022-03-15"), new Date("2022-03-23")).then(console.log)
 
 const insertEventParticipant = (eventId, participantId) => {
   /**
@@ -920,6 +935,24 @@ const insertCallParticipant = (callUniqueId, callId, ParticipantId, initiatorId)
     [callUniqueId, callId, ParticipantId, 0, initiatorId, 0, ParticipantId], async (err, changeResult) => {
       if (err) return console.log(err)
     })
+}
+const setCallAsMissed = (userId, callUniqueId) => {
+  db.query("UPDATE `callparticipants` SET `missed`=? WHERE `callUniqueId` = ?",
+    [userId, callUniqueId], async (err, changeResult) => {
+      if (err) return console.log(err)
+    })
+}
+function checkCallAccess(userId, callUniqueId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `callUniqueId`, `callId`, `participantId`, `stillParticipating`, `initiatorId`, `startDate`, `missed` FROM `callparticipants` WHERE `callUniqueId` = ? AND `participantId` = ?', [callUniqueId, userId], async (err, myCallResults) => {
+      if (err) return console.log(err)
+      if (myCallResults.length > 0) {
+        resolve(true)
+      }else{
+        resolve(false)
+      }
+    })
+  })
 }
 
 function getCallLog(userId) {
