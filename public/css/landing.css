@@ -212,16 +212,16 @@ p {
 
 .feature-section .feature i {
   position: absolute;
-  width: 50px;
-  height: 50px;
-  top: -35px;
+  width: 55px;
+  height: 55px;
+  top: -33px;
   left: 0;
   right: 0;
   margin: 0 auto;
   border-radius: 50%;
   -webkit-box-shadow: 0 3px 15px 2px rgba(0, 0, 0, 0.2);
           box-shadow: 0 3px 15px 2px rgba(0, 0, 0, 0.2);
-  padding: 8px;
+  padding: 11px;
   color: #0099d8;
   background-color: #fff;
   font-size: 2.5rem;
@@ -266,7 +266,7 @@ p {
 }
 
 .cta .cta-btn {
-  padding: 150px 0;
+  padding: 100px 0;
 }
 
 .cta .cta-btn p {
@@ -331,9 +331,6 @@ p {
 }
 
 @media (max-width: 742px) {
-  .banner {
-    padding-top: 10px;
-  }
   .banner .description {
     font-size: 1.2rem;
     padding: 0 20px;

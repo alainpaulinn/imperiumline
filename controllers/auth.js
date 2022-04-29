@@ -12,7 +12,7 @@ exports.register = (req, res) => {
     const {name, surname, email, password, password_confirm} = req.body;
     //check for required fiels
     if(!name || !surname || !email || !password || !password_confirm) {
-        return res.render('landingPage', {
+        return res.render('connect', {
             register_message_failure: 'All fields are required',
             email: email,
             name: name,
@@ -28,7 +28,7 @@ exports.register = (req, res) => {
         }
         //if user already exists
         if(result.length > 0) {
-            return res.render('landingPage', {
+            return res.render('connect', {
                 register_message_failure: 'this email is already registered',
                 name: name,
                 surname: surname,
@@ -38,7 +38,7 @@ exports.register = (req, res) => {
         }
         //if passwords do not match
         else if(password !== password_confirm) {
-            return res.render('landingPage', {
+            return res.render('connect', {
                 register_message_failure: 'The passwords do not match',
                 name: name,
                 surname: surname,
@@ -57,7 +57,7 @@ exports.register = (req, res) => {
             }
             //if registration successfull
             else{
-                res.render('landingPage',{
+                res.render('connect',{
                     register_message_success: "The account is registered successfully. Go ahead with Login"
                 })
             }
@@ -77,7 +77,7 @@ exports.login = (req, res) => {
             return;
         }
         if(result.length <= 0) {
-            return res.render('landingPage', {
+            return res.render('connect', {
                 login_message_failure: 'This user is does not exist. register an account?',
 
                 email: email,
@@ -88,7 +88,7 @@ exports.login = (req, res) => {
         else{
             db.query('SELECT password FROM user WHERE email = ?', [email], async (err, result) => {
                 if (err) {
-                    res.render('landingPage', {
+                    res.render('connect', {
                         login_message_failure: 'An error occured while loggin in. Please Try again',
                         email: email,
                         password: password,
@@ -118,7 +118,7 @@ exports.login = (req, res) => {
                         })
                     }
                     else{
-                        res.render('landingPage', {
+                        res.render('connect', {
                             login_message_failure: 'Password Incorrect',
                             email: email
                         })

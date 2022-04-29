@@ -26,18 +26,18 @@
     <div class="wrapper">
         <div class="login-register">
 
-            <ul>
+            {{!-- <ul>
                 <li class="form-tab active" id="login-tab">Login</li>
                 <li class="form-tab" id="register-tab">Register</li>
             </ul>
 
             <form class="login content content-active" action="/auth/login" method="POST">
-                
+
                 {{#if login_message_success}}
-                    <p class="message-success">{{login_message_success}}</p> 
+                <p class="message-success">{{login_message_success}}</p>
                 {{/if}}
                 {{#if login_message_failure}}
-                    <p class="message-failure">{{login_message_failure}}</p> 
+                <p class="message-failure">{{login_message_failure}}</p>
                 {{/if}}
 
 
@@ -85,7 +85,8 @@
 
                 <div class="form-group">
                     <label for="password_confirm">Confirm Password</label>
-                    <input id="password_register2" type="password" name="password_confirm" value="{{password_confirm}}" required />
+                    <input id="password_register2" type="password" name="password_confirm" value="{{password_confirm}}"
+                        required />
                 </div>
 
                 <input type="checkbox" onclick="showPwRegister()" />Show Password<br>
@@ -96,61 +97,136 @@
             </form>
             <div>
             </div>
-            <div class="background">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+            --}}
+
+
+
+            <div class="content-container">
+                <section class="appIntro">
+                    <H1>Welcome to Imperium&nbsp;Line</H1>
+                    <p>
+                        Imperium Line is a private messaging function between two or more people. It enables unlimited
+                        number of voice and video private or group calls.
+                    </p>
+                </section>
+                <section class="wrapper">
+                    <div class="heading">
+                        <h1 class="text text-large">Sign In</h1>
+                        <p class="text text-normal">New user? <span><a href="#" class="text text-links">Create an
+                                    account</a></span>
+                        </p>
+                    </div>
+                    <form name="login" class="form" action="/auth/login" method="POST">
+                        <div class="error-control">
+                            {{#if login_message_success}}
+                            <p class="message-success">{{login_message_success}}</p>
+                            {{/if}}
+                            {{#if login_message_failure}}
+                            <p class="message-failure">{{login_message_failure}}</p>
+                            {{/if}}
+                        </div>
+                        <div class="input-control">
+                            <label for="email" class="input-label" hidden>Email Address</label>
+                            <input type="email" name="email" required class="input-field" placeholder="Email Address">
+                        </div>
+                        <div class="input-control">
+                            <label for="password" class="input-label" hidden>Password</label>
+                            <input id="password_login" type="password" name="password" required class="input-field" placeholder="Password">
+                        </div>
+                        <div class="input-control">
+                            <a href="#" class="text text-links">Forgot Password <i class='bx bx-shield-quarter'></i></a>
+                            <input type="button" name="submit" class="input-submit" value="Login" disabled>
+                        </div>
+                    </form>
+                </section>
             </div>
-            <script src="/js/jquery.min.js"></script>
-            <script src="/socket.io/socket.io.js"></script>
-            <script src="/js/connect.js"></script>
+
+
+        </div>
+        <section class="feature-section">
+            <h2>Features</h2>
+            <div class="features">
+                <div class="feature-item">
+                    <i class='bx bxs-bowl-rice'></i>
+                    <h3>Todo List</h3>
+                    <p>Add your tasks, Mark them as done/undone, save detailed information, filter the list, see how
+                        long
+                        you've worked on a task...Everything you might expect from a Todo app is there at your
+                        fingertips!
+                    </p>
+                </div>
+                <div class="feature feature-item">
+                    <i class='bx bxs-timer'></i>
+                    <h3>Pomodoro Timer</h3>
+                    <p>A timer and a Todo list by their own is a powerful tool for productivity. But their real power
+                        unleashes when they work together. Track time working on tasks from your Todo list. Pomodo will
+                        add
+                        time metrics to your Todo items automattically!</p>
+                </div>
+                <div class="feature feature-item">
+                    <i class='bx bxs-inbox'></i>
+                    <h3>Shelf</h3>
+                    <p>No more lost links! Dump all the links you want to take a look at later in your Shelf! Shelf will
+                        try
+                        to fetch the metadata like title and description of the url to keep them organised. And check
+                        them
+                        off you're done.</p>
+                </div>
+                <div class="feature feature-item">
+                    <i class='bx bxs-bookmarks'></i>
+                    <h3>Bookmark</h3>
+                    <p>Acess all your bookmarks without leaving your current window. Bookmarks list your all of your
+                        bookmarks in a single tree stucture, with all your nested folders!</p>
+                </div>
+                <div class="feature feature-item">
+                    <i class='bx bxs-cloud'></i>
+                    <h3>Weather Information</h3>
+                    <p>Get just the right amount of weather information about your cuurent location. You're never gonna
+                        need
+                        that wind direction thing, so we're not going to distract you with that.</p>
+                </div>
+                <div class="feature feature-item">
+                    <i class='bx bx-image'></i>
+                    <h3>Dynamic Wallpaper</h3>
+                    <p>Your home is always new and shiny with specially curated collection of images. They gets updated
+                        automattically every hour if you keep the tab open. Alternatively, you can change image any
+                        time!
+                    </p>
+                </div>
+            </div>
+
+            <div class="get-involved">
+                <p>Have a feature idea? Or, Want to get involved in the development? Imperium Line is open source!</p>
+                <a target="_blank" href="https://github.com/faahim/nest-tab">
+                    <p>Find Imperium Line on GitHub</p> <i class='bx bxl-github'></i>
+                </a>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="cta-btn">
+                <p>Your new chat app awaits!</p>
+                <a href="https://github.com/faahim/nest-tab/raw/master/package/nest-tab.crx">Download Imperium Line
+                    Now!</a>
+                <p class="warning">If prompt, Click Accept/Add to install the Application.</p>
+            </div>
+        </section>
+    </div>
+    <div class="footer">
+        <a href="mailto:alainpaulinn@gmail.com">Contact Us</a>
+        <a href="/download/windows">
+            <p>Windows</p><i class='bx bxl-windows'></i>
+        </a>
+        <a href="/download/mac">
+            <p>Mac</p><i class='bx bxl-apple'></i>
+        </a>
+        <a href="/download/linux">
+            <p>Linux</p><i>🐧</i>
+        </a>
+    </div>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/connect.js"></script>
 </body>
 
 </html>
