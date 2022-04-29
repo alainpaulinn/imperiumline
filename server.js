@@ -7,8 +7,7 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const dotenv = require('dotenv');
 const session = require('express-session');
-//const { v4: uuidv4 } = require('uuid');
-//console.log(uuidv4())
+
 const fs = require('fs')
 
 dotenv.config({ path: './.env' });
@@ -27,7 +26,6 @@ app.engine('hbs', handlebars.engine);
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, "views"));
 //app.set('partials', 'views/partials')
-
 
 db.connect((err) => {
   if (err) {
@@ -185,24 +183,14 @@ io.on('connection', (socket) => {
       //console.log("EXPECTEEEDDD uuuuuser",await chatInfoforMembers(message.toRoom), expectedUser,id,message)
     });
     socket.on('searchPeople', (searchPeople) => {
-      db.query("SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `company_id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchPeople + '%', '%' + searchPeople + '%', '%' + searchPeople + '%'], async (err, userSearchResult) => {
+      db.query("SELECT `id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchPeople + '%', '%' + searchPeople + '%', '%' + searchPeople + '%'], async (err, userSearchResult) => {
         if (err) return console.log(err)
-        let foundUsersusers = userSearchResult.map(searchPerson => {
-          return {
-            company_id: searchPerson.company_id,
-            email: searchPerson.email,
-            id: searchPerson.id,
-            name: searchPerson.name,
-            profilePicture: searchPerson.profilePicture,
-            surname: searchPerson.surname
-          }
-        })
-        var listWithoutMe = foundUsersusers.filter(function (user) {
-          return user.id != id;
-        });
-
-        socket.emit('searchPerson', listWithoutMe)
-
+        let foundUsers = []
+        for (let i = 0; i < userSearchResult.length; i++) {
+          const userID = userSearchResult[i].id;
+          if(id != userID) foundUsers.push( await getUserInfo(userID))
+        }
+        socket.emit('searchPerson', foundUsers)
       })
     })
     socket.on('makeChat', (makeChat) => {
@@ -501,15 +489,16 @@ io.on('connection', (socket) => {
                   console.log("connectedUsers", connectedUsers[j].id)
                   if (groupMembersToCall[i].userID == connectedUsers[j].id && groupMembersToCall[i].userID != id) { //&& groupMembersToCall[i].userID != id will eliminate my other onnected computers from reciving my call
                     socket.to(connectedUsers[j].socket.id).emit('incomingCall', {
-                      callUniqueId: callUniqueId, 
-                      caller: await getUserInfo(id), 
+                      callUniqueId: callUniqueId,
+                      caller: await getUserInfo(id),
                       allUsers: groupMembersToCall,
                       myInfo: await getUserInfo(connectedUsers[j].id)
                     });
                     console.log("--->connectedUser identified", connectedUsers[j].id)
-                    groupMembersToCall_fullInfo.push({ 
-                      peerId: connectedUsers[j].callId, 
-                      userProfileIdentifier: groupMembersToCall[i]})
+                    groupMembersToCall_fullInfo.push({
+                      peerId: connectedUsers[j].callId,
+                      userProfileIdentifier: groupMembersToCall[i]
+                    })
                     connectedUsers[j].socket.join(callUniqueId + '');
                   }
                   //update callog for each connected user
@@ -576,11 +565,12 @@ io.on('connection', (socket) => {
       let thisCallparticipants = await getCallParticipants(callUniqueId) //get all people who are allowed in this call
       let thisUsershouldbeinthiscall = false
       for (var i = 0; i < thisCallparticipants.length; i++) { //For security purposes check if the answered person should be able to answer this call
-        if (thisCallparticipants[i].userID == id) { thisUsershouldbeinthiscall = true; break; } }
-      if(thisUsershouldbeinthiscall == false) {return console.log("You are not allowed to answer this call", callUniqueId)}
+        if (thisCallparticipants[i].userID == id) { thisUsershouldbeinthiscall = true; break; }
+      }
+      if (thisUsershouldbeinthiscall == false) { return console.log("You are not allowed to answer this call", callUniqueId) }
 
       //inform all users who accepted the call- to call me
-      socket.to(callUniqueId + '-allAnswered-sockets').emit('connectUser', { peerId: myPeerId, userInfo: await getUserInfo(id)});
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('connectUser', { peerId: myPeerId, userInfo: await getUserInfo(id) });
       setUserCallStatus(id, callUniqueId, 'onCall') // set this user to in-call status
       socket.join(callUniqueId + '-allAnswered-sockets'); // become a member of the call room
 
@@ -597,17 +587,17 @@ io.on('connection', (socket) => {
 
     socket.on('callNotAnswered', async callUniqueId => {
       let callAccess = await checkCallAccess(id, callUniqueId)
-      if(callAccess == false) return console.log('user does not have access to this call')
+      if (callAccess == false) return console.log('user does not have access to this call')
 
       setCallAsMissed(id, callUniqueId)
-      socket.to(callUniqueId + '-allAnswered-sockets').emit('callNotAnswered', { callUniqueId: callUniqueId, userInfo: await getUserInfo(id)});
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('callNotAnswered', { callUniqueId: callUniqueId, userInfo: await getUserInfo(id) });
     })
     socket.on('callRejected', async callUniqueId => {
       let callAccess = await checkCallAccess(id, callUniqueId)
-      if(callAccess == false) return console.log('user does not have access to this call')
+      if (callAccess == false) return console.log('user does not have access to this call')
 
       setCallAsMissed(id, callUniqueId)
-      socket.to(callUniqueId + '-allAnswered-sockets').emit('callRejected', { callUniqueId: callUniqueId, userInfo: await getUserInfo(id)});
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('callRejected', { callUniqueId: callUniqueId, userInfo: await getUserInfo(id) });
     })
 
     socket.on('leaveCall', async data => {
@@ -708,7 +698,7 @@ io.on('connection', (socket) => {
       console.log("connectedUsers", connectedUsers)
     });
 
-    function informAllUserLeft(leftUser, callUniqueId){}
+    function informAllUserLeft(leftUser, callUniqueId) { }
   }
   else {
     var destination = '/connect';
@@ -948,7 +938,7 @@ function checkCallAccess(userId, callUniqueId) {
       if (err) return console.log(err)
       if (myCallResults.length > 0) {
         resolve(true)
-      }else{
+      } else {
         resolve(false)
       }
     })
@@ -1138,7 +1128,7 @@ function getRoomInfo(roomID, viewerID) {
           console.log('participant.userID', participant.userID)
           usersArray.push(await getUserInfo(participant.userID));
         }
-        
+
         db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `roomID` = ? ORDER BY timeStamp DESC LIMIT 1', [roomID], async (err, messages) => {
           if (err) return console.log(err)
           //set default if there is no message (new fake message)
@@ -1176,7 +1166,6 @@ function getRoomInfo(roomID, viewerID) {
             default:
               break;
           }
-
           resolve({
             roomID: roomID,
             users: await Promise.all(usersArray),
@@ -1189,7 +1178,6 @@ function getRoomInfo(roomID, viewerID) {
             timestamp: timestamp,
             unreadCount: 0 //tobe done later
           })
-
         });
       });
     });
@@ -1213,13 +1201,15 @@ function getUserInfo(userID) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `password`, `company_id`, `positionId`, `registration_date` FROM `user` WHERE `id`= ?', [userID], async (err, profiles) => {
       if (err) return console.log(err)
+      if (profiles.length < 1) return console.log('No profile found for user ' + userID)
       resolve({
+        email: profiles[0].email,
         userID: profiles[0].id,
         name: profiles[0].name,
         surname: profiles[0].surname,
         profilePicture: profiles[0].profilePicture,
         role: await getUserRole(profiles[0].positionId),
-        status: connectedUsers.some(e => e.id === profiles[0].id )? 'online' : 'offline'
+        status: connectedUsers.some(e => e.id === profiles[0].id) ? 'online' : 'offline'
       })
     });
   })

@@ -1084,7 +1084,7 @@ socket.on('searchPerson', (searchPeople) => {
     }
 
     searchResults.innerHTML +=
-      `<li class="resultItem" id="user${searchPerson.id}">
+      `<li class="resultItem" id="user${searchPerson.userID}">
       <div data-id="" class="resultItemBundle" href="" title="">
         <div class="containerImage">
           ${searchAvatar}
@@ -1093,24 +1093,22 @@ socket.on('searchPerson', (searchPeople) => {
           <div class="nameSurnamePosition">
             <p class="resultsNameSurname">${searchPerson.name + " " + searchPerson.surname}</p>
             <p class="resultsPosition">${searchPerson.email}</p>
-            <p class="resultsquote">Dispute Analyst</p>
+            <p class="resultsquote">${searchPerson.role}</p>
           </div>
           <div class="universalCallButtons">
-            <button id="${searchPerson.id}chatButton" class='searchChatButton'><i class='bx bxs-message-square-add' ></i></button>
-            <button id="${searchPerson.id}audioButton" class='searchAudioButton'><i class='bx bxs-phone' ></i></button>
-            <button id="${searchPerson.id}videoButton" class='searchVideoButton'><i class='bx bxs-video-recording' ></i></button>
+            <button id="${searchPerson.userID}chatButton" class='searchChatButton'><i class='bx bxs-message-square-add' ></i></button>
+            <button id="${searchPerson.userID}audioButton" class='searchAudioButton'><i class='bx bxs-phone' ></i></button>
+            <button id="${searchPerson.userID}videoButton" class='searchVideoButton'><i class='bx bxs-video-recording' ></i></button>
           </div>
         </div>
       </div>
     </li>`;
-
   })
   let searchChatButtons = document.querySelectorAll('.searchChatButton')
   searchChatButtons.forEach(searchChatButton => {
     searchChatButton.addEventListener('click', function () {
       chatSearchToogle();
       console.log("CHAT", this.id)
-      //socket.emit('chat',this.id)
       socket.emit('makeChat', this.id.slice(0, -10))
       ITriggeredChatCreation = true;
     })
@@ -1119,7 +1117,6 @@ socket.on('searchPerson', (searchPeople) => {
   searchAudioButtons.forEach(searchAudioButton => {
     searchAudioButton.addEventListener('click', function () {
       console.log("AUDIO", this.id)
-      //call(callTo, audio, video, group, fromChat, previousCallId)
       call(this.id.slice(0, -11), true, false, false, false, null)
     })
   })
@@ -1127,13 +1124,9 @@ socket.on('searchPerson', (searchPeople) => {
   searchVideoButtons.forEach(searchVideoButton => {
     searchVideoButton.addEventListener('click', function () {
       console.log("VIDEO", this.id)
-      //call(callTo, audio, video, group, fromChat, previousCallId)
       call(this.id.slice(0, -11), true, true, false, false, null)
     })
   })
-  //console.log(searchChatbuttons)
-
-  //console.log(searchPerson)
 })
 
 function chatSearchToogle() {
@@ -1152,7 +1145,6 @@ function chatSearchToogle() {
   console.log("clicked")
   searchResultsContainer.classList.toggle("searchIntoView")
   chatContainingDiv.classList.toggle("hideLeft")
-
 }
 
 function buildOptions(message, sent) {
@@ -1337,7 +1329,6 @@ let work_shifts_button = document.getElementById("work_shifts-option")
 let message_button = document.getElementById("messages-option")
 let calls_button = document.getElementById("calls-option")
 
-let callPopupElement = document.getElementById("incomingCallPopup");
 let callHistoryPage = document.getElementById("callHistoryPage")
 let ongoingCallPage = document.getElementById("ongoingCallPage")
 
@@ -1412,18 +1403,6 @@ callParticipantsBtn.addEventListener("click", () => {
   callParticipantsDiv.classList.toggle("displayNoneToggle")
   callParticipantsBtn.classList.toggle("rotate90")
 })
-
-////////////////////////////Launch Call function////////////////
-function ignoreIncomingCall() {
-  callPopupElement.style.display = "none"
-}
-
-function closeIncomingCallPopup() {
-  callPopupElement.style.display = "none"
-}
-
-
-/////////////////////////Detailed call processing///////////////
 
 /////////////////////////////Call LOG/////////////////////
 socket.on('updateCallLog', (initialCallLog) => {
@@ -1643,12 +1622,6 @@ function show_conncted_users() {
   socket.emit('showConnectedUsers')
 }
 
-function showIncomingCallPopup() {
-  callPopupElement.style.display = "flex";
-}
-function hideIncomingCallPopup() {
-  callPopupElement.style.display = "none";
-}
 function showOngoingCallSection() {
   time_scheduling_panel.style.display = "none"
   messages_panel.style.display = "none";
@@ -1763,13 +1736,8 @@ function toggleFullscreen(element) {
 
 // when my peer is ready with an ID ---> this means that we cannot receive a call before a peer Id is opened
 myPeer.on('open', myPeerId => {
-  console.log('a peer is opened: ', myPeerId)
-
   //all connected Peers variable
-  const peers = {}
   let myStream;
-  //let awaitedUsers = []
-  //let myInfo;
   let allInvitedUsers;
   let receivedUsers = 0;
 
@@ -1907,7 +1875,6 @@ myPeer.on('open', myPeerId => {
         }
 
       })
-      function handlecallReject() { }
     }, (err) => { alert('Failed to get local media stream', err); });
   })
   socket.on('incomingCall', incomingCallInfo => {
@@ -2141,8 +2108,6 @@ myPeer.on('open', myPeerId => {
     let hiddableControls = createElement({ type: 'div', class: 'hiddableControls', childrenArray: [fitToFrame, shareScreenBtn, closeVideoBtn, HangUpBtn, muteMicrophone, silenceAudio, chooseAudioOutputDeviceBtn] })
     let callControls = createElement({ type: 'div', class: 'callControls', childrenArray: [alwaysVisibleControls, hiddableControls] })
 
-
-    //let mainVideoDiv = createElement({ type: 'div', class: 'mainVideoDiv', childrenArray: [mainVideoElement, callTopBar, callControls] })
     return [mainVideoElement, callTopBar, callControls]
   }
 })
@@ -2359,3 +2324,31 @@ displayNotification({
   delay: 3000,
   tone: 'notification'
 })
+
+
+function createOngoingCallScreen(){
+  // leftPart
+  let leftPartHeaderDivTitle = createElement({ type: 'div', class: 'leftPartHeaderDivTitle'})
+  let inviteSomeone = createElement({ 
+    type: 'button',
+    class: 'inviteSomeone', 
+    childrenArray: [createElement({ type: 'i', class: 'bx bx-plus'}), createElement({ type: 'p', textContent: 'invite Someone'})]
+  })
+  let presenceSelectorBtn = createElement({ type: 'div', class: 'leftHeaderItem headerItemSelected', textContent: 'Present (0)'})
+  let absenceSelectorBtn = createElement({ type: 'div', class: 'leftHeaderItem', textContent: 'Absent (0)'})
+
+  let attendanceTitleSection = createElement({ type: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn]})
+  let presentMembersDiv = createElement({ type: 'div', class:'presentMembersDiv', id: 'presentMembersDiv'})
+  let absentMembersDiv = createElement({ type: 'div', class:'absentMembersDiv', id: 'absentMembersDiv'})
+  let attendanceContentDiv = createElement({ type: 'div', class: 'attendanceContentDiv', childrenArray:[presentMembersDiv, absentMembersDiv]})
+
+  let leftPart = createElement({ type: 'div', class: 'leftPart', textContent: 'Attendance', childrenArray:[leftPartHeaderDivTitle,inviteSomeone, attendanceTitleSection, attendanceContentDiv]})
+  //call-container
+
+  return{
+    leftPartHeaderDivTitle: leftPartHeaderDivTitle,
+    inviteSomeone: inviteSomeone,
+    attendanceTitleSection: attendanceTitleSection,
+    
+  }
+}

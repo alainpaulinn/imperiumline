@@ -2,147 +2,41 @@
     <div class="leftPartHeaderDivTitle">
         Attendance
     </div>
-    <button class="inviteSomeone">
-        <i class='bx bx-plus'></i> invite Someone
-    </button>
+
     <div class="attendanceTitleSection">
         <div id="presenceSelectorBtn" class="leftHeaderItem headerItemSelected">Present (0)</div>
         <div id="absenceSelectorBtn" class="leftHeaderItem">Absent (0)</div>
     </div>
     <div class="attendanceContentDiv">
         <div id="presentMembersDiv" class="presentMembersDiv hiddenDiv">
-            {{!-- <div class="listMember">
-                <div class="memberProfilePicture">TT</div>
-                <div class="memberNameRole">
-                    <div class="memberName">Richard Niyonzima</div>
-                    <div class="memberRole">Student</div>
 
-                </div>
-                <button><i class='bx bxs-message-square-detail'></i>Chat</button>
-            </div>
-            <div class="listMember">
-                <div class="memberProfilePicture">TT</div>
-                <div class="memberNameRole">
-                    <div class="memberName">Richard Niyonzima</div>
-                    <div class="memberRole">Student</div>
-
-                </div>
-                <button><i class='bx bxs-message-square-detail'></i>Chat</button>
-            </div>
-            <div class="listMember">
-                <div class="memberProfilePicture">TT</div>
-                <div class="memberNameRole">
-                    <div class="memberName">Richard Niyonzima</div>
-                    <div class="memberRole">Student</div>
-
-                </div>
-                <button><i class='bx bxs-message-square-detail'></i>Chat</button>
-            </div> --}}
         </div>
         <div id="absentMembersDiv" class="absentMembersDiv">
-            {{!-- <div class="listMember">
-                <div class="memberProfilePicture">TT</div>
-                <div class="memberNameRole">
-                    <div class="memberName">Richard Niyonzima</div>
-                    <div class="memberRole">Student</div>
 
-                </div>
-                <button><i class='bx bxs-bell-ring'></i>Ring</button>
-            </div>
-            <div class="listMember">
-                <div class="memberProfilePicture">TT</div>
-                <div class="memberNameRole">
-                    <div class="memberName">Richard Niyonzima</div>
-                    <div class="memberRole">Student</div>
-
-                </div>
-                <button><i class='bx bxs-bell-ring'></i>Ring</button>
-            </div>
-            <div class="listMember">
-                <div class="memberProfilePicture">TT</div>
-                <div class="memberNameRole">
-                    <div class="memberName">Richard Niyonzima</div>
-                    <div class="memberRole">Student</div>
-
-                </div>
-                <button><i class='bx bxs-bell-ring'></i>Ring</button>
-            </div> --}}
         </div>
     </div>
 </div>
 <div class="call-container">
     <div class="callScreenHeader">
-
         <div class="headerLeftPart">
             <div class="scheduledTimeContent">Sheduled Time Content</div>
-            <div class="MeetingTitle">Title of the Meeting</div>
+            <div class="MeetingTitle">Untitled meeting</div>
         </div>
         <div class="headerRightPart">
-            Time Remaining
-            <br>
-            <i class='bx bx-radio-circle-marked'></i>
-            11:50:00
-        </div>
+            <div class="meetingTimer">
+                <p>Time Remaining</p>
+                <span><i class='bx bx-radio-circle-marked'></i><p>11:50:00</p></span>
+            </div>
 
+            <button class="inviteSomeone" id="inviteSomeone">
+                <i class='bx bx-plus'></i> <p>invite Someone</p>
+            </button>
+        </div>
+        
     </div>
     <div class="mainVideoDiv" id="mainVideoDiv">
-
-        <video id="mainVideoElement" class="mainVideoElement" autoplay="true"></video>
-
-        {{!-- src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" --}}
-        {{!-- <div class="videoCoverDiv">
-            <div class="caleeProfilePicture">RN</div>
-            <div class="activity">Connecting...</div>
-            <div class="spinner">
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-            <div class="calleesDiv">
-                <div class="listMember"><img class="memberProfilePicture" src="/private/profiles/user-129.png">
-                    <div class="memberNameRole">
-                        <div class="memberName">Test2Name Test2Surname</div>
-                        <div class="memberRole">Central Branding Director</div>
-                    </div><button><i class="bx bxs-message-square-detail"></i></button>
-                </div>
-                <div class="listMember"><img class="memberProfilePicture" src="/private/profiles/user-129.png">
-                    <div class="memberNameRole">
-                        <div class="memberName">Test2Name Test2Surname</div>
-                        <div class="memberRole">Central Branding Director</div>
-                    </div><button><i class="bx bxs-message-square-detail"></i></button>
-                </div>
-                <div class="listMember"><img class="memberProfilePicture" src="/private/profiles/user-129.png">
-                    <div class="memberNameRole">
-                        <div class="memberName">Test2Name Test2Surname</div>
-                        <div class="memberRole">Central Branding Director</div>
-                    </div><button><i class="bx bxs-message-square-detail"></i></button>
-                </div>
-                <div class="listMember"><img class="memberProfilePicture" src="/private/profiles/user-129.png">
-                    <div class="memberNameRole">
-                        <div class="memberName">Test2Name Test2Surname</div>
-                        <div class="memberRole">Central Branding Director</div>
-                    </div><button><i class="bx bxs-message-square-detail"></i></button>
-                </div>
-                <div class="listMember"><img class="memberProfilePicture" src="/private/profiles/user-129.png">
-                    <div class="memberNameRole">
-                        <div class="memberName">Test2Name Test2Surname</div>
-                        <div class="memberRole">Central Branding Director</div>
-                    </div><button><i class="bx bxs-message-square-detail"></i></button>
-                </div>
-                <div class="listMember"><img class="memberProfilePicture" src="/private/profiles/user-129.png">
-                    <div class="memberNameRole">
-                        <div class="memberName">Test2Name Test2Surname</div>
-                        <div class="memberRole">Central Branding Director</div>
-                    </div><button><i class="bx bxs-message-square-detail"></i></button>
-                </div>
-                <div class="listMember"><img class="memberProfilePicture" src="/private/profiles/user-129.png">
-                    <div class="memberNameRole">
-                        <div class="memberName">Test2Name Test2Surname</div>
-                        <div class="memberRole">Central Branding Director</div>
-                    </div><button><i class="bx bxs-message-square-detail"></i></button>
-                </div>
-            </div>
-        </div> --}}
+        <div class="spinner"><div></div><div></div><div></div></div>
+        {{!-- <video id="mainVideoElement" class="mainVideoElement" autoplay="true"></video>
         <div class="callTopBar">
             <div class="leftUserIdentifiers">
                 <div class="mainVideoOwnerProfilePicture">NR</div>
@@ -158,10 +52,7 @@
 
         </div>
         <div class="callControls">
-            <div class="alwaysVisibleControls">
-                {{!-- <button id="hideVideoControlsBtn" class="callControl" title="Show video controls"><i
-                        class='bx bx-chevron-down'></i></button> --}}
-            </div>
+            <div class="alwaysVisibleControls"></div>
 
             <div id="hiddableControls" class="hiddableControls">
                 <button id="fitVideoToWindowBtn" class="callControl" title="Fit to window"><i
@@ -181,7 +72,7 @@
                 </button>
             </div>
 
-        </div>
+        </div> --}}
     </div>
     <div class="transcription">
         {{> soundwavesvg}}
@@ -213,74 +104,7 @@
 
     <div class="rightPartContentDiv">
         <div id="rightCallParticipantsDiv" class="callParticipantsDiv">
-            {{!-- <div class="callParticipantDiv">
-                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                    class="callParticipant"></video>
-                <div class="sideVideoControls">
-                    <div class="miniVideowner">Niyonzima Richard</div>
-                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
-                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
-                </div>
-            </div>
-            <div class="callParticipantDiv">
-                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
-                    class="callParticipant"></video>
-                <div class="sideVideoControls">
-                    <div class="miniVideowner">Niyonzima Richard</div>
-                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
-                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
-                </div>
-            </div>
 
-            <div class="callParticipantDiv">
-                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-                    class="callParticipant"></video>
-                <div class="sideVideoControls">
-                    <div class="miniVideowner">Niyonzima Richard</div>
-                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
-                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
-                </div>
-            </div>
-
-            <div class="callParticipantDiv">
-                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-                    class="callParticipant"></video>
-                <div class="sideVideoControls">
-                    <div class="miniVideowner">Niyonzima Richard</div>
-                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
-                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
-                </div>
-            </div>
-
-            <div class="callParticipantDiv">
-                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-                    class="callParticipant"></video>
-                <div class="sideVideoControls">
-                    <div class="miniVideowner">Niyonzima Richard</div>
-                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
-                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
-                </div>
-            </div>
-
-            <div class="callParticipantDiv">
-                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-                    class="callParticipant"></video>
-                <div class="sideVideoControls">
-                    <div class="miniVideowner">Niyonzima Richard</div>
-                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
-                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
-                </div>
-            </div>
-
-            <div class="callParticipantDiv">
-                <video src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-                    class="callParticipant"></video>
-                <div class="sideVideoControls">
-                    <div class="miniVideowner">Niyonzima Richard</div>
-                    <button class="callControl"><i class='bx bx-volume-mute'></i></button>
-                    <button class="callControl"><i class='bx bxs-user-voice'></i></button>
-                </div>
-            </div> --}}
         </div>
         <div id="rightCallMessagesDiv" class="callMessagingDiv hideDivAside">
             <div class="c-openchat__box__info" style="scroll-behavior: smooth;">
@@ -522,40 +346,3 @@
         </div>
     </div>
 </div>
-
-{{!-- <div class="call-container">
-
-    <div class="call-main" id="call-main">
-        <div class="callScreenHeader">
-            <div class="universalCallButtons">
-                <button><i class='bx bx-chevron-left' onclick="showCallHistory()"></i></button>
-            </div>
-            <h1>On Call with</h1>
-        </div>
-        <div class="video-call-wrapper">
-            <video class="primaryVideo" id="largeVideo" autoplay playsinline></video>
-            <div class="secondaryVideos" id="secondaryVideosDiv">
-
-            </div>
-            <div class="name" id="largeVideoName">Alain Paulin Niyonkuru</div>
-        </div>
-        <div class="video-call-actions ">
-            <button class="video-action-button" id="gotoFullscreen" class="" onclick="toggleFullscreen()">
-                <i class='bx bx-fullscreen'></i>
-            </button>
-            <button class="video-action-button" id="videoDevicesPop" class="" onclick="removeVideo()">
-                <i class='bx bxs-video-off'></i>
-            </button>
-            <button class="red-bg video-action-button">
-                <h1 class="white" onclick="leaveCall()">Leave</h1>
-                <i class='bx bxs-phone bx-rotate-180 white'></i>
-            </button>
-            <button class="video-action-button" id="audioInDevicesPop" class="" onclick="removeAudio()">
-                <i class='bx bxs-microphone-off'></i>
-            </button>
-            <button class="video-action-button" id="toggleScreenSharing" onclick="toggleScreenSharing()">
-                <i class='bx bx-desktop'></i>
-            </button>
-        </div>
-    </div>
-</div> --}}

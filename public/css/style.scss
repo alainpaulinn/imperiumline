@@ -2527,18 +2527,7 @@ body {
         text-align: center;
       }
 
-      .inviteSomeone {
-        margin: 1rem;
-        padding: 1rem;
-        //flex: 1;
-        font-weight: bolder;
-        text-align: center;
-        border-radius: $borderRadius;
-        cursor: pointer;
-        background-color: $sidepanel;
-        outline: none;
-        border: none;
-      }
+      
 
       .attendanceTitleSection {
         padding: 1rem;
@@ -2747,11 +2736,14 @@ body {
         display: flex;
         //flex-direction: row;
         justify-content: space-between;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
 
         .headerLeftPart {
           display: flex;
           flex-direction: column;
-          padding: 1rem;
+          flex: 1;
+          justify-content: space-between;
 
           .scheduledTimeContent {
             font-size: 15px;
@@ -2764,7 +2756,27 @@ body {
         }
 
         .headerRightPart {
-          padding: 1rem;
+          display: flex;
+          .meetingTimer{
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            span{
+              display: flex;
+              align-items: center;
+            }
+          }
+          .inviteSomeone {
+            padding: 1rem;
+            //flex: 1;
+            font-weight: bolder;
+            text-align: center;
+            border-radius: $borderRadius;
+            cursor: pointer;
+            background-color: $sidepanel;
+            outline: none;
+            border: none;
+          }
         }
       }
 
@@ -2858,6 +2870,7 @@ body {
           object-fit: cover;
           border-radius: $borderRadius;
           //border: solid 1px $body;
+          background-color: $sidepanel-bg;
 
           &.fitVideoToWindow {
             width: 100%;

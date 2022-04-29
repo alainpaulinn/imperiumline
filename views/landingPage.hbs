@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/landing.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <title>Imperium Line</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="content-body" role="main" aria-label="main content">
+            <div class="content">
+
+                <div class="row">
+                    <div class="left">
+                        <a href="/join" class="button"><span class="btn-text">Join</span></a>
+                    </div>
+                    <div class="right">
+                        <span>Join Imperium Line. A modern way to stay connected to your teams</span>
+
+                    </div>
+                </div>
+
+                <p class="made-with">Made by Alain Paulin Niyonkuru</p>
+            </div>
+
+
+        </div>
+        <section class="feature-section">
+            <h2>Features</h2>
+            <div class="feature feature-item">
+                <i class='bx bxs-bowl-rice'></i>
+                <h3>Todo List</h3>
+                <p>Add your tasks, Mark them as done/undone, save detailed information, filter the list, see how
+                    long
+                    you've worked on a task...Everything you might expect from a Todo app is there at your
+                    fingertips!
+                </p>
+            </div>
+            <div class="feature feature-item">
+                <i class='bx bxs-timer'></i>
+                <h3>Pomodoro Timer</h3>
+                <p>A timer and a Todo list by their own is a powerful tool for productivity. But their real power
+                    unleashes when they work together. Track time working on tasks from your Todo list. Pomodo will
+                    add
+                    time metrics to your Todo items automattically!</p>
+            </div>
+            <div class="feature feature-item">
+                <i class='bx bxs-inbox'></i>
+                <h3>Shelf</h3>
+                <p>No more lost links! Dump all the links you want to take a look at later in your Shelf! Shelf will
+                    try
+                    to fetch the metadata like title and description of the url to keep them organised. And check
+                    them
+                    off you're done.</p>
+            </div>
+            <div class="feature feature-item">
+                <i class='bx bxs-bookmarks'></i>
+                <h3>Bookmark</h3>
+                <p>Acess all your bookmarks without leaving your current window. Bookmarks list your all of your
+                    bookmarks in a single tree stucture, with all your nested folders!</p>
+            </div>
+            <div class="feature feature-item">
+                <i class='bx bxs-cloud'></i>
+                <h3>Weather Information</h3>
+                <p>Get just the right amount of weather information about your cuurent location. You're never gonna
+                    need
+                    that wind direction thing, so we're not going to distract you with that.</p>
+            </div>
+            <div class="feature feature-item">
+                <i class='bx bx-image'></i>
+                <h3>Dynamic Wallpaper</h3>
+                <p>Your home is always new and shiny with specially curated collection of images. They gets updated
+                    automattically every hour if you keep the tab open. Alternatively, you can change image any
+                    time!
+                </p>
+            </div>
+            <div class="get-involved">
+                <p>Have a feature idea? Or, Want to get involved in the development? Imperium Line is open source!</p>
+                <a target="_blank" href="https://github.com/faahim/nest-tab">Find Imperium Line on GitHub</a>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="cta-btn">
+                <p>Your new chat app awaits!</p>
+                <a href="https://github.com/faahim/nest-tab/raw/master/package/nest-tab.crx">Download Imperium Line
+                    Now!</a>
+                <p class="warning">If prompt, Click Accept/Add to install the Application.</p>
+            </div>
+        </section>
+        <div class="footer">
+            <a href="mailto:alainpaulinn@gmail.com">Contact Us</a>
+            <a href="/download/windows">
+                <p>Windows</p><i class='bx bxl-windows'></i>
+            </a>
+            <a href="/download/mac">
+                <p>Mac</p><i class='bx bxl-apple'></i>
+            </a>
+            <a href="/download/linux">
+                <p>Linux</p><i>🐧</i>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>
+
+
+{{!-- <section class="feature-section">
+    <h2>Features</h2>
+    <div class="feature feature-item">
+        <i class='bx bxs-bowl-rice'></i>
+        <h3>Todo List</h3>
+        <p>Add your tasks, Mark them as done/undone, save detailed information, filter the list, see how long
+            you've worked on a task...Everything you might expect from a Todo app is there at your fingertips!
+        </p>
+    </div>
+    <div class="feature feature-item">
+        <i class='bx bxs-timer'></i>
+        <h3>Pomodoro Timer</h3>
+        <p>A timer and a Todo list by their own is a powerful tool for productivity. But their real power
+            unleashes when they work together. Track time working on tasks from your Todo list. Pomodo will add
+            time metrics to your Todo items automattically!</p>
+    </div>
+    <div class="feature feature-item">
+        <i class='bx bxs-inbox'></i>
+        <h3>Shelf</h3>
+        <p>No more lost links! Dump all the links you want to take a look at later in your Shelf! Shelf will try
+            to fetch the metadata like title and description of the url to keep them organised. And check them
+            off you're done.</p>
+    </div>
+    <div class="feature feature-item">
+        <i class='bx bxs-bookmarks'></i>
+        <h3>Bookmark</h3>
+        <p>Acess all your bookmarks without leaving your current window. Bookmarks list your all of your
+            bookmarks in a single tree stucture, with all your nested folders!</p>
+    </div>
+    <div class="feature feature-item">
+        <i class='bx bxs-cloud'></i>
+        <h3>Weather Information</h3>
+        <p>Get just the right amount of weather information about your cuurent location. You're never gonna need
+            that wind direction thing, so we're not going to distract you with that.</p>
+    </div>
+    <div class="feature feature-item">
+        <i class='bx bx-image'></i>
+        <h3>Dynamic Wallpaper</h3>
+        <p>Your home is always new and shiny with specially curated collection of images. They gets updated
+            automattically every hour if you keep the tab open. Alternatively, you can change image any time!
+        </p>
+    </div>
+    <div class="get-involved">
+        <p>Have a feature idea? Or, Want to get involved in the development? Nest Tab is open source!</p>
+        <a target="_blank" href="https://github.com/faahim/nest-tab">Find Nest Tab on GitHub</a>
+    </div>
+</section>
+
+<section class="cta">
+    <div class="cta-btn">
+        <p>Your new home awaits!</p>
+        <a href="https://github.com/faahim/nest-tab/raw/master/package/nest-tab.crx">Download Nest Tab Now!</a>
+        <p class="warning">If prompt, Click Accept/Add to install the extension.</p>
+    </div>
+    <div class="credit">
+        <p>Made with <i class="material-icons">favorite</i> by <a target="_blank" href="https://twitter.com/faahim01"
+                target="_blank">Fahim</a></p>
+    </div>
+</section> --}}
