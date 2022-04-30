@@ -78,7 +78,7 @@ exports.login = (req, res) => {
         }
         if(result.length <= 0) {
             return res.render('connect', {
-                login_message_failure: 'This user is does not exist. register an account?',
+                login_message_failure: 'No user with such login',
 
                 email: email,
                 password: password,

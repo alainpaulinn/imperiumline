@@ -2289,7 +2289,7 @@ function displayNotification(notificationConfig) {
     notificationTone = new Audio('/private/audio/imperiumLineCall.mp3'); notificationTone.play()
     notificationTone.addEventListener('ended', function () { this.currentTime = 0; this.play(); }, false);
   }
-  function notificationStop() { notificationTone.currentTime = 0; notificationTone.pause(); notification.remove() }
+  function notificationStop() { if(notificationTone) {notificationTone.currentTime = 0; notificationTone.pause(); notification.remove() } }
 
   dismissbutton.addEventListener('click', () => { notificationStop(); onHide(); })
   setTimeout(() => { notificationStop(); onEnd(); }, delay);
@@ -2350,5 +2350,23 @@ function createOngoingCallScreen(){
     inviteSomeone: inviteSomeone,
     attendanceTitleSection: attendanceTitleSection,
     
+  }
+}
+
+
+
+
+window.onbeforeunload = function(){
+  deleteAllCookies()
+  return 'Are you sure you want to leave?';
+};
+function deleteAllCookies() {
+  var cookies = document.cookie.split(";");
+
+  for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i];
+      var eqPos = cookie.indexOf("=");
+      var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }
 }

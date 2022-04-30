@@ -30,13 +30,9 @@ const checkImageAccess = (req, res, next) => {
   }
 }
 
-router.get('/', redirectToHome, (req, res) => {
-  res.render('index')
-});
-
-router.get('/connect', redirectToLogin, (req, res) => {
-    res.render('connect')
-});
+router.get('/', redirectToHome, (req, res) => { res.render('index') });
+router.get('/connect', redirectToLogin, (req, res) => { res.render('connect') });
+router.get('/signUp', redirectToLogin, (req, res) => { res.render('signUp') });
 
 router.get('/profiles*', function (req, res) {
   console.log(req.session.userId)
