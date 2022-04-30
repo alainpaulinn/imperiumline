@@ -12,7 +12,7 @@ exports.register = (req, res) => {
     const {name, surname, email, password, password_confirm} = req.body;
     //check for required fiels
     if(!name || !surname || !email || !password || !password_confirm) {
-        return res.render('connect', {
+        return res.render('signUp', {
             register_message_failure: 'All fields are required',
             email: email,
             name: name,
@@ -28,7 +28,7 @@ exports.register = (req, res) => {
         }
         //if user already exists
         if(result.length > 0) {
-            return res.render('connect', {
+            return res.render('signUp', {
                 register_message_failure: 'this email is already registered',
                 name: name,
                 surname: surname,
@@ -38,7 +38,7 @@ exports.register = (req, res) => {
         }
         //if passwords do not match
         else if(password !== password_confirm) {
-            return res.render('connect', {
+            return res.render('signUp', {
                 register_message_failure: 'The passwords do not match',
                 name: name,
                 surname: surname,
@@ -57,7 +57,7 @@ exports.register = (req, res) => {
             }
             //if registration successfull
             else{
-                res.render('connect',{
+                res.render('signUp',{
                     register_message_success: "The account is registered successfully. Go ahead with Login"
                 })
             }

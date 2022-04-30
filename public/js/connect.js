@@ -4,19 +4,48 @@ let password_login = document.getElementById("password_login");
 visibleLabel.addEventListener('click', () => {
   visibleLabel.textContent = '';
   if (passwordVisible.checked) {
-    let icon = document.createElement('i'); icon.setAttribute('class', 'bx bxs-hide');
-    let text = document.createElement('p'); text.textContent = 'Hide Password';
-    visibleLabel.append(icon, text)
-    password_login.type = 'text'
-  }
-  else {
     let icon = document.createElement('i'); icon.setAttribute('class', 'bx bxs-show');
     let text = document.createElement('p'); text.textContent = 'Show Password';
     visibleLabel.append(icon, text)
+    
     password_login.type = 'password'; 
+    
+  }
+  else {
+    let icon = document.createElement('i'); icon.setAttribute('class', 'bx bxs-hide');
+    let text = document.createElement('p'); text.textContent = 'Hide Password';
+    visibleLabel.append(icon, text)
+
+    password_login.type = 'text'
+    
   }
   console.log(passwordVisible.checked)
   console.log(visibleLabel.checked)
+})
+
+let visibleLabelRegister = document.getElementById('visibleLabelRegister')
+let passwordCheckboxRegister = document.getElementById('passwordCheckboxRegister')
+let password_loginRegister = document.getElementById("password_login");
+visibleLabelRegister.addEventListener('click', () => {
+  visibleLabelRegister.textContent = '';
+  if (passwordCheckboxRegister.checked) {
+    let icon = document.createElement('i'); icon.setAttribute('class', 'bx bxs-show');
+    let text = document.createElement('p'); text.textContent = 'Show Password';
+    visibleLabelRegister.append(icon, text)
+    
+    password_loginRegister.type = 'password'; 
+    
+  }
+  else {
+    let icon = document.createElement('i'); icon.setAttribute('class', 'bx bxs-hide');
+    let text = document.createElement('p'); text.textContent = 'Hide Password';
+    visibleLabelRegister.append(icon, text)
+    
+    password_loginRegister.type = 'text'
+    
+  }
+  console.log(passwordVisible.checked)
+  console.log(visibleLabelRegister.checked)
 })
 
 //cookie notification

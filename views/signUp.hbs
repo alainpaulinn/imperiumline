@@ -116,7 +116,7 @@
                         <p class="text text-normal">Already have an account? <span><a href="/connect" class="text text-links">Log in</a></span>
                         </p>
                     </div>
-                    <form name="login" class="form" action="/auth/login" method="POST">
+                    <form name="login" class="form" action="/auth/register" method="POST">
                         <div class="error-control">
                             {{>register_messages}}
                         </div>
@@ -133,12 +133,18 @@
                             <input id="email" type="email" name="email" value="{{surname}}" placeholder="Email" class="input-field" required />
                         </div>
                         <div class="input-control">
-                            <label for="password" class="input-label" hidden>Password</label>
-                            <input id="password" type="password" name="password" value="{{surname}}" placeholder="Create password" class="input-field" required />
+                            <label for="password_loginRegister" class="input-label" hidden>Password</label>
+                            <input id="password_loginRegister" type="password" name="password" value="{{surname}}" placeholder="Create password" class="input-field" required />
                         </div>
                         <div class="input-control">
                             <label for="password_confirm" class="input-label" hidden>Password</label>
                             <input id="password_confirm" type="password" name="password_confirm" value="{{surname}}" placeholder="Confirm password" class="input-field" required />
+                        </div>
+                        <div class="input-control">
+                            <div class="input-control-item">
+                                <input type="checkbox" name="visible" id="passwordCheckboxRegister" hidden />
+                                <label for="passwordCheckboxRegister" class="input-label" id="visibleLabelRegister"><i class='bx bxs-show'></i><p>Show Password</p></label>
+                            </div>
                         </div>
                         <div class="input-control">
                             {{!-- <a href="#" class="text text-links">Forgot Password <i class='bx bx-shield-quarter'></i></a> --}}
