@@ -20,7 +20,7 @@ visibleLabel.addEventListener('click', () => {
 })
 
 //cookie notification
-if(localStorage.getItem("cookieConsentIL") != true){
+if(localStorage.getItem("cookieConsentIL") != 'given'){
   displayNotification({
     title: { iconClass: 'bx bxs-cookie', titleText: 'Cookie usage consent' },
     body: {
@@ -32,7 +32,7 @@ if(localStorage.getItem("cookieConsentIL") != true){
     actions: [
       {
         type: 'confirm', displayText: 'I give consent', actionFunction: () => {
-          localStorage.setItem("cookieConsentIL", true)
+          localStorage.setItem("cookieConsentIL", 'given')
         }
       }
     ],
