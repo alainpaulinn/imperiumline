@@ -512,6 +512,13 @@ io.on('connection', (socket) => {
               socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall });
               socket.join(callUniqueId + '');
 
+              socket.on('cancelCall', () => { // if the caller decides to close the call => end the call for everybody
+
+                console.log('canceled call ', callUniqueId);
+                socket.to(callUniqueId + '').emit('callCancelled');
+
+              })
+
               break;
 
             case 1:

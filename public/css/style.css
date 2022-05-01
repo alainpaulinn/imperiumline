@@ -1134,6 +1134,7 @@ body {
 
 .c-openchat__box {
   height: 100%;
+  width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -4041,9 +4042,6 @@ body {
 
 .videoCoverDiv .calleesDiv {
   overflow-y: auto;
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
   padding: 1rem;
   background-color: #f5f9fd;
   border-radius: 15px;
@@ -4146,6 +4144,38 @@ body {
 
 .videoCoverDiv .calleesDiv .listMember button:hover {
   background-color: #d9e3ee;
+}
+
+.videoCoverDiv .waitingCallControls {
+  margin-top: auto;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.videoCoverDiv .waitingCallControls .callControl {
+  margin: 0 .5rem;
+  border-radius: 15px;
+  padding: 1rem;
+  border: none;
+  outline: none;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  cursor: pointer;
+}
+
+.videoCoverDiv .waitingCallControls .callControl:hover {
+  background: rgba(0, 0, 0, 0.795);
+}
+
+.videoCoverDiv .waitingCallControls .callControl i {
+  font-size: 18px;
+}
+
+.videoCoverDiv .waitingCallControls .hangupbtn {
+  color: red;
 }
 
 @keyframes sk-bouncedelay {

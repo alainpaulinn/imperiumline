@@ -1009,6 +1009,7 @@ body {
 
 .c-openchat__box {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   background-color: white;
@@ -2527,7 +2528,7 @@ body {
         text-align: center;
       }
 
-      
+
 
       .attendanceTitleSection {
         padding: 1rem;
@@ -2569,7 +2570,7 @@ body {
             padding: .5rem;
             align-items: center;
             height: 100%;
-            
+
 
             .memberProfilePicture {
               border: 1px solid $notification;
@@ -2632,7 +2633,8 @@ body {
               p {
                 margin-left: .5rem;
               }
-              &:hover{
+
+              &:hover {
                 background-color: darken($sidepanel, 5%)
               }
             }
@@ -2650,7 +2652,7 @@ body {
             padding: .5rem;
             align-items: center;
             height: 100%;
-            
+
 
             .memberProfilePicture {
               border: 1px solid $notification;
@@ -2714,7 +2716,8 @@ body {
               p {
                 margin-left: .5rem;
               }
-              &:hover{
+
+              &:hover {
                 background-color: darken($sidepanel, 5%)
               }
             }
@@ -2757,15 +2760,18 @@ body {
 
         .headerRightPart {
           display: flex;
-          .meetingTimer{
+
+          .meetingTimer {
             padding: 1rem;
             display: flex;
             flex-direction: column;
-            span{
+
+            span {
               display: flex;
               align-items: center;
             }
           }
+
           .inviteSomeone {
             padding: 1rem;
             //flex: 1;
@@ -3964,13 +3970,14 @@ body {
     transition: all 0.4s;
     flex-shrink: 0;
   }
-  .calleesDiv{
+
+  .calleesDiv {
     overflow-y: auto;
-    flex: 1;
+    //flex: 1;
     padding: 1rem;
     background-color: $sidepanel-bg;
     border-radius: $borderRadius;
-    
+
     .listMember {
       background-color: white;
       display: flex;
@@ -4040,11 +4047,45 @@ body {
         p {
           margin-left: .5rem;
         }
-        &:hover{
+
+        &:hover {
           background-color: darken($sidepanel, 5%)
         }
       }
     }
+  }
+
+  .waitingCallControls {
+    margin-top: auto;
+    transition: all 0.4s;
+    display: flex;
+
+    .callControl {
+      //display: inline;
+      margin: 0 .5rem;
+      border-radius: $borderRadius;
+      padding: 1rem;
+      border: none;
+      outline: none;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      cursor: pointer;
+      //backdrop-filter: blur(5px);
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.795);
+      }
+
+      i {
+        font-size: 18px;
+      }
+
+    }
+
+    .hangupbtn {
+      color: red;
+    }
+
   }
 }
 

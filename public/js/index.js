@@ -1719,7 +1719,9 @@ function stopScreenSharing() {
     document.getElementById("toggleScreenSharing").classList.remove("red-bg")
   }
   screenStream.getTracks().forEach(function (track) {
+    console.log('track', track);
     track.stop();
+    stream.removeTrack(track);
   });
   screenSharing = false
 }
@@ -1790,17 +1792,27 @@ myPeer.on('open', myPeerId => {
 
       //create Cover waiting
       let videoCoverDiv = videoConnectingScreen(prepareVideoCoverDiv(allUsers, caller, 'Dialling...', awaitedUserDivs))
-      mainVideoDiv.prepend(videoCoverDiv)
+      mainVideoDiv.prepend(videoCoverDiv.videoCoverDiv)
 
-      //awaitedUsers = groupMembersToCall_fullInfo
       myInfo = caller
       myStream = stream
       //put Users on absence list
       allInvitedUsers = setAllUsers(allUsers)
       updateAttendanceList(caller, 'present')
 
-      handleOutgoingPeerCalls(caller, videoCoverDiv)
+      handleOutgoingPeerCalls(caller, videoCoverDiv.videoCoverDiv)
 
+      let { chooseVideoOutputDeviceBtn, closeVideoBtn, HangUpBtn, muteMicrophoneBtn, chooseAudioOutputDeviceBtn } = videoCoverDiv.controls
+      HangUpBtn.addEventListener('click', () => {
+        socket.emit('cancelCall')
+        mySideVideoDiv.remove();
+        stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
+        videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
+        updateAttendanceList(caller, 'absent')
+        stream.getTracks().forEach((track) => { console.log('track', track); track.stop(); stream.removeTrack(track); })
+        myStream.getTracks().forEach((track) => { console.log('track', track); myStream.stop(); myStream.removeTrack(track); })
+        stream = null;
+      })
 
       //Handle RejectedCall
       socket.on('callRejected', timeoutDetails => {
@@ -1822,7 +1834,7 @@ myPeer.on('open', myPeerId => {
             let ringIcon = createElement({ type: 'i', class: 'bx bx-x' })
             let ringText = createElement({ type: 'p', textContent: 'Rejected' })
             let ringButton = createElement({ type: 'button', childrenArray: [ringIcon, ringText] })
-            
+
 
             let chatIcon = createElement({ type: 'i', class: 'bx bxs-message-square-detail' })
             let chatButton = createElement({ type: 'button', childrenArray: [chatIcon] })
@@ -1858,7 +1870,7 @@ myPeer.on('open', myPeerId => {
             let ringIcon = createElement({ type: 'i', class: 'bx bx-x' })
             let ringText = createElement({ type: 'p', textContent: 'Not answered' })
             let ringButton = createElement({ type: 'button', childrenArray: [ringIcon, ringText] })
-            
+
 
             let chatIcon = createElement({ type: 'i', class: 'bx bxs-message-square-detail' })
             let chatButton = createElement({ type: 'button', childrenArray: [chatIcon] })
@@ -1882,7 +1894,7 @@ myPeer.on('open', myPeerId => {
     let { name, profilePicture, surname, userID } = caller
 
     let responded = false;
-    displayNotification({
+    let notification = displayNotification({
       title: { iconClass: 'bx bxs-phone-call', titleText: 'Incoming call' },
       body: {
         shortOrImage: {
@@ -1910,6 +1922,7 @@ myPeer.on('open', myPeerId => {
         }
       ],
       obligatoryActions: {
+        onDisplay: () => { },
         onHide: () => { responded = false; console.log('call notification Hidden') },
         onEnd: () => {
           if (responded == false) {
@@ -1921,6 +1934,7 @@ myPeer.on('open', myPeerId => {
       delay: 60000,
       tone: 'call'
     })
+    socket.on('callCancelled', () => { notification.notificationStop(); })
     handleOutgoingPeerCalls(myInfo)
   })
 
@@ -2064,6 +2078,7 @@ myPeer.on('open', myPeerId => {
       profilePicture: profilePicture,
       screenMessage: reason,
       spinner: true,
+      videoConnectingControls: true
     }
   }
 
@@ -2201,10 +2216,12 @@ function call(callTo, audio, video, group, fromChat, previousCallId) {
 
 function initiateCall(initiationInfo) {
   let { callTo, audio, video, group, fromChat, previousCallId } = initiationInfo
-  navigator.getUserMedia({ video: true, audio: true }, stream => {
-    showOngoingCallSection()
-    startWaitingTone()
-    socket.emit("initiateCall", { callTo, audio, video, group, fromChat, previousCallId })
+  navigator.getUserMedia({ video: true, audio: true }, stream => {  //test user media accessibiity
+  showOngoingCallSection()
+  startWaitingTone()
+  socket.emit("initiateCall", { callTo, audio, video, group, fromChat, previousCallId })
+  stream.getTracks().forEach(track => { track.stop(); stream.removeTrack(track);  })  //stop media tracks
+
   }, (err) => { alert('Failed to get local media stream', err); });
 }
 
@@ -2238,7 +2255,20 @@ function videoConnectingScreen(constraints) {
   if (spinner == true) videoCoverDiv = createElement({ type: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, spinnerDiv, calleesDiv] })
   else videoCoverDiv = createElement({ type: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, calleesDiv] })
 
-  return videoCoverDiv
+  let controls = {};
+  if (constraints.videoConnectingControls) {
+    let chooseVideoOutputDeviceBtn = createElement({ type: 'button', class: 'callControl', title: "Choose camera", childrenArray: [createElement({ type: 'i', class: 'bx bxs-video-recording' }), createElement({ type: 'i', class: 'bx bx-chevron-up' })] })
+    let closeVideoBtn = createElement({ type: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ type: 'i', class: 'bx bxs-video-off' })] })
+
+    let HangUpBtn = createElement({ type: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ type: 'i', class: 'bx bxs-phone-off' })] })
+    let muteMicrophoneBtn = createElement({ type: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ type: 'i', class: 'bx bx-video-off' })] })
+    let chooseAudioOutputDeviceBtn = createElement({ type: 'button', class: 'callControl', title: "Choose audio output device", childrenArray: [createElement({ type: 'i', class: 'bx bxs-speaker' }), createElement({ type: 'i', class: 'bx bx-chevron-up' })] })
+
+    let hiddableControls = createElement({ type: 'div', class: 'waitingCallControls', childrenArray: [chooseVideoOutputDeviceBtn, closeVideoBtn, HangUpBtn, muteMicrophoneBtn, chooseAudioOutputDeviceBtn] })
+    videoCoverDiv.append(hiddableControls)
+    controls = { chooseVideoOutputDeviceBtn, closeVideoBtn, HangUpBtn, muteMicrophoneBtn, chooseAudioOutputDeviceBtn }
+  }
+  return { videoCoverDiv, controls }
 }
 
 function displayNotification(notificationConfig) {
@@ -2246,7 +2276,7 @@ function displayNotification(notificationConfig) {
   let { iconClass, titleText } = title
   let { shortOrImage, bodyContent } = body
   let { shortOrImagType, shortOrImagContent } = shortOrImage
-  let { onEnd, onHide } = obligatoryActions
+  let { onDisplay, onEnd, onHide } = obligatoryActions
 
   let notificationsDiv = document.getElementById('notificationsDiv')
 
@@ -2289,7 +2319,7 @@ function displayNotification(notificationConfig) {
     notificationTone = new Audio('/private/audio/imperiumLineCall.mp3'); notificationTone.play()
     notificationTone.addEventListener('ended', function () { this.currentTime = 0; this.play(); }, false);
   }
-  function notificationStop() { if(notificationTone) {notificationTone.currentTime = 0; notificationTone.pause(); notification.remove() } }
+  const notificationStop = () => { if (notificationTone) { notificationTone.currentTime = 0; notificationTone.pause(); notification.remove() } }
 
   dismissbutton.addEventListener('click', () => { notificationStop(); onHide(); })
   setTimeout(() => { notificationStop(); onEnd(); }, delay);
@@ -2301,10 +2331,14 @@ function displayNotification(notificationConfig) {
     notificationProgressBar.style.width = width + '%'
     if (width < 1) clearInterval(countDown)
   }, interval);
+
+  notification.notificationStop = notificationStop
+
+  return notification
 }
 
 //exemplary Notification Code
-displayNotification({
+let notification = displayNotification({
   title: { iconClass: 'bx bxs-phone-call', titleText: 'Incoming call' },
   body: {
     shortOrImage: { shortOrImagType: 'image', shortOrImagContent: 'http://localhost:3000/images/profiles/group.jpeg' },
@@ -2318,6 +2352,7 @@ displayNotification({
     // }
   ],
   obligatoryActions: {
+    onDisplay: () => { console.log('Notification Displayed') },
     onHide: () => { console.log('Notification Hidden') },
     onEnd: () => { console.log('Notification Ended') },
   },
@@ -2326,37 +2361,35 @@ displayNotification({
 })
 
 
-function createOngoingCallScreen(){
+function createOngoingCallScreen() {
   // leftPart
-  let leftPartHeaderDivTitle = createElement({ type: 'div', class: 'leftPartHeaderDivTitle'})
-  let inviteSomeone = createElement({ 
+  let leftPartHeaderDivTitle = createElement({ type: 'div', class: 'leftPartHeaderDivTitle' })
+  let inviteSomeone = createElement({
     type: 'button',
-    class: 'inviteSomeone', 
-    childrenArray: [createElement({ type: 'i', class: 'bx bx-plus'}), createElement({ type: 'p', textContent: 'invite Someone'})]
+    class: 'inviteSomeone',
+    childrenArray: [createElement({ type: 'i', class: 'bx bx-plus' }), createElement({ type: 'p', textContent: 'invite Someone' })]
   })
-  let presenceSelectorBtn = createElement({ type: 'div', class: 'leftHeaderItem headerItemSelected', textContent: 'Present (0)'})
-  let absenceSelectorBtn = createElement({ type: 'div', class: 'leftHeaderItem', textContent: 'Absent (0)'})
+  let presenceSelectorBtn = createElement({ type: 'div', class: 'leftHeaderItem headerItemSelected', textContent: 'Present (0)' })
+  let absenceSelectorBtn = createElement({ type: 'div', class: 'leftHeaderItem', textContent: 'Absent (0)' })
 
-  let attendanceTitleSection = createElement({ type: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn]})
-  let presentMembersDiv = createElement({ type: 'div', class:'presentMembersDiv', id: 'presentMembersDiv'})
-  let absentMembersDiv = createElement({ type: 'div', class:'absentMembersDiv', id: 'absentMembersDiv'})
-  let attendanceContentDiv = createElement({ type: 'div', class: 'attendanceContentDiv', childrenArray:[presentMembersDiv, absentMembersDiv]})
+  let attendanceTitleSection = createElement({ type: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn] })
+  let presentMembersDiv = createElement({ type: 'div', class: 'presentMembersDiv', id: 'presentMembersDiv' })
+  let absentMembersDiv = createElement({ type: 'div', class: 'absentMembersDiv', id: 'absentMembersDiv' })
+  let attendanceContentDiv = createElement({ type: 'div', class: 'attendanceContentDiv', childrenArray: [presentMembersDiv, absentMembersDiv] })
 
-  let leftPart = createElement({ type: 'div', class: 'leftPart', textContent: 'Attendance', childrenArray:[leftPartHeaderDivTitle,inviteSomeone, attendanceTitleSection, attendanceContentDiv]})
+  let leftPart = createElement({ type: 'div', class: 'leftPart', textContent: 'Attendance', childrenArray: [leftPartHeaderDivTitle, inviteSomeone, attendanceTitleSection, attendanceContentDiv] })
   //call-container
 
-  return{
+  return {
     leftPartHeaderDivTitle: leftPartHeaderDivTitle,
     inviteSomeone: inviteSomeone,
     attendanceTitleSection: attendanceTitleSection,
-    
+
   }
 }
 
 
-
-
-window.onbeforeunload = function(){
+window.onbeforeunload = function () {
   deleteAllCookies()
   return 'Are you sure you want to leave?';
 };
@@ -2364,9 +2397,9 @@ function deleteAllCookies() {
   var cookies = document.cookie.split(";");
 
   for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i];
-      var eqPos = cookie.indexOf("=");
-      var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    var cookie = cookies[i];
+    var eqPos = cookie.indexOf("=");
+    var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }
 }

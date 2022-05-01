@@ -346,6 +346,7 @@ body {
   width: 100%;
   display: flex;
   justify-content: space-around;
+  margin-bottom: 10rem;
 
   .appIntro {
     margin-bottom: 2rem;
@@ -539,6 +540,7 @@ body {
 
     .appIntro {
       max-width: 100%;
+      display: none;
     }
   }
 
@@ -574,6 +576,7 @@ body {
 
     .appIntro {
       max-width: 100%;
+      display: none;
     }
   }
 

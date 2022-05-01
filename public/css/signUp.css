@@ -386,6 +386,7 @@ body {
   display: flex;
   -ms-flex-pack: distribute;
       justify-content: space-around;
+  margin-bottom: 10rem;
 }
 
 .content-container .appIntro {
@@ -595,6 +596,7 @@ body {
   }
   .content-container .appIntro {
     max-width: 100%;
+    display: none;
   }
   .feature-section {
     -ms-grid-columns: (200px)[2];
@@ -627,6 +629,7 @@ body {
   }
   .content-container .appIntro {
     max-width: 100%;
+    display: none;
   }
   .feature-section {
     -ms-grid-columns: (140px)[2];
