@@ -1958,9 +1958,10 @@ myPeer.on('open', myPeerId => {
 
         receivedUsers = receivedUsers + 1;
         let maindiv = document.getElementById('mainVideoDiv')
-        maindiv.textContent = '';
+        
         console.log(receivedUsers, 'receivedUsers')
         if (receivedUsers < 2) {
+          maindiv.textContent = '';
           let mainVideoDivContent = createMainVideoDiv(userVideoStream, userInfo)
           mainVideoDivContent.forEach(div => {
             maindiv.append(div)
