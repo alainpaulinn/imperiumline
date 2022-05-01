@@ -1808,10 +1808,10 @@ myPeer.on('open', myPeerId => {
         mySideVideoDiv.remove();
         stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
         videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
+        receivedUsers = 0;
         updateAttendanceList(caller, 'absent')
         stream.getTracks().forEach((track) => { console.log('track', track); track.stop(); stream.removeTrack(track); })
         myStream.getTracks().forEach((track) => { console.log('track', track); myStream.stop(); myStream.removeTrack(track); })
-        stream = null;
       })
 
       //Handle RejectedCall
