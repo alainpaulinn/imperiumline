@@ -1934,7 +1934,7 @@ myPeer.on('open', myPeerId => {
       delay: 60000,
       tone: 'call'
     })
-    socket.on('callCancelled', () => { notification.notificationStop(); })
+    socket.on('callCancelled', () => { notification.notificationStop(); receivedUsers = 0; })
     handleOutgoingPeerCalls(myInfo)
   })
 
