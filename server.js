@@ -490,6 +490,7 @@ io.on('connection', (socket) => {
                   if (groupMembersToCall[i].userID == connectedUsers[j].id && groupMembersToCall[i].userID != id) { //&& groupMembersToCall[i].userID != id will eliminate my other onnected computers from reciving my call
                     socket.to(connectedUsers[j].socket.id).emit('incomingCall', {
                       callUniqueId: callUniqueId,
+                      callType: videoPresentation === 1 ? "video" : "audio",
                       caller: await getUserInfo(id),
                       allUsers: groupMembersToCall,
                       myInfo: await getUserInfo(connectedUsers[j].id)
@@ -509,7 +510,7 @@ io.on('connection', (socket) => {
               }
               //send to all other connected users an incoming call
               //socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall });
-              socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall });
+              socket.emit('prepareCallingOthers', { callUniqueId, callType: videoPresentation === 1 ? "video" : "audio", groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall });
               socket.join(callUniqueId + '');
 
               socket.on('cancelCall', () => { // if the caller decides to close the call => end the call for everybody
@@ -568,6 +569,7 @@ io.on('connection', (socket) => {
     })
     socket.on('answerCall', async data => {
       let { myPeerId, callUniqueId } = data;
+      console.log('user ', id, ' has joined the call ',callUniqueId,' and requests to be called')
 
       let thisCallparticipants = await getCallParticipants(callUniqueId) //get all people who are allowed in this call
       let thisUsershouldbeinthiscall = false
