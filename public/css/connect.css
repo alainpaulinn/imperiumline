@@ -484,10 +484,12 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  cursor: pointer;
 }
 
 .content-container .wrapper .form .input-control .input-control-item input {
   margin-right: 5px;
+  cursor: pointer;
 }
 
 .content-container .wrapper .form .input-control .input-control-item label {
@@ -497,9 +499,15 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  cursor: pointer;
+}
+
+.content-container .wrapper .form .input-control .input-control-item label p {
+  cursor: pointer;
 }
 
 .content-container .wrapper .form .input-control .input-control-item label i {
+  cursor: pointer;
   font-size: 1.5rem;
   margin-right: 5px;
 }

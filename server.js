@@ -568,7 +568,7 @@ io.on('connection', (socket) => {
       console.log("initialting call", data)
     })
     socket.on('answerCall', async data => {
-      let { myPeerId, callUniqueId } = data;
+      let { myPeerId, callUniqueId, callType } = data;
       console.log('user ', id, ' has joined the call ',callUniqueId,' and requests to be called')
 
       let thisCallparticipants = await getCallParticipants(callUniqueId) //get all people who are allowed in this call
@@ -579,7 +579,7 @@ io.on('connection', (socket) => {
       if (thisUsershouldbeinthiscall == false) { return console.log("You are not allowed to answer this call", callUniqueId) }
 
       //inform all users who accepted the call- to call me
-      socket.to(callUniqueId + '-allAnswered-sockets').emit('connectUser', { peerId: myPeerId, userInfo: await getUserInfo(id) });
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('connectUser', { peerId: myPeerId, userInfo: await getUserInfo(id), callType });
       setUserCallStatus(id, callUniqueId, 'onCall') // set this user to in-call status
       socket.join(callUniqueId + '-allAnswered-sockets'); // become a member of the call room
 
