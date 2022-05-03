@@ -1743,6 +1743,7 @@ myPeer.on('open', myPeerId => {
   let allInvitedUsers;
   let receivedUsers = 0;
   let connectuserAlreadyLaunched = false
+  let globalCallType = "audio" // by default
 
   let caller_me, videoCoverDiv_videoCoverDiv
 
@@ -1753,21 +1754,11 @@ myPeer.on('open', myPeerId => {
 
       //save these important variables
       myInfo = caller
-      myStream = stream
-      // determine if Video or audio
-      switch (callType) {
-        case "audio":
-          myStream.getVideoTracks().forEach(track => { myStream.removeTrack(track) })
-          break;
-        case "video":
-          break;
-          myStream = stream; // restore the video component
-        default:
-          myStream.getVideoTracks().forEach(track => { myStream.removeTrack(track) })
-          break;
-      }
-      //put create and append my sidevideo
-      let mySideVideoDiv = createSideVideo(myStream, caller)
+      caller_me = caller
+
+      saveLocalMediaStream(callType, stream)
+
+      let mySideVideoDiv = createSideVideo(callType, myStream, caller)
       rightCallParticipantsDiv.append(mySideVideoDiv)
 
       // create awaited users divs
@@ -1817,12 +1808,7 @@ myPeer.on('open', myPeerId => {
       allInvitedUsers = setAllUsers(allUsers)
       updateAttendanceList(caller, 'present')
 
-      caller_me = caller
       videoCoverDiv_videoCoverDiv = videoCoverDiv.videoCoverDiv
-      // handleOutgoingPeerCalls(caller, videoCoverDiv.videoCoverDiv)
-
-      // ----------------------------------------------
-
 
       let { closeVideoBtn, HangUpBtn, muteMicrophoneBtn } = videoCoverDiv.controls
       HangUpBtn.addEventListener('click', () => {
@@ -1833,8 +1819,14 @@ myPeer.on('open', myPeerId => {
         receivedUsers = 0;
         updateAttendanceList(caller, 'absent')
         stream.getTracks().forEach((track) => { console.log('track', track); track.stop(); stream.removeTrack(track); })
-        myStream.getTracks().forEach((track) => { console.log('track', track); myStream.stop(); myStream.removeTrack(track); })
+        myStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); myStream.removeTrack(track); })
+        properStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); properStream.removeTrack(track); })
       })
+
+      closeVideoBtn.addEventListener('click', () =>{
+        
+      })
+
 
 
       //Handle RejectedCall
@@ -1913,7 +1905,7 @@ myPeer.on('open', myPeerId => {
     }, (err) => { alert('Failed to get local media stream', err); });
   })
   socket.on('incomingCall', incomingCallInfo => {
-    let { callUniqueId,callType, caller, myInfo, allUsers } = incomingCallInfo
+    let { callUniqueId, callType, caller, myInfo, allUsers } = incomingCallInfo
     let { name, profilePicture, surname, userID } = caller
     caller_me = myInfo
     let responded = false;
@@ -1924,12 +1916,12 @@ myPeer.on('open', myPeerId => {
           shortOrImagType: profilePicture == null ? 'short' : 'image',
           shortOrImagContent: profilePicture == null ? name.charAt(0) + surname.charAt(0) : profilePicture
         },
-        bodyContent: 'Incoming '+callType+' call from' + name + ' ' + surname //+ (groupMembersToCall_fullInfo.length == 1 ? '.' : ' with ' + (groupMembersToCall_fullInfo.length - 1) + ' other' + ((groupMembersToCall_fullInfo.length - 1) > 1 ? 's.' : '.'))
+        bodyContent: 'Incoming ' + callType + ' call from' + name + ' ' + surname //+ (allUsers.length <= 2 ? '.' : ' with ' + (groupMembersToCall_fullInfo.length - 1) + ' other' + ((groupMembersToCall_fullInfo.length - 1) > 1 ? 's.' : '.'))
       },
       actions: [
         { type: 'normal', displayText: 'Reject', actionFunction: () => { socket.emit("callRejected", callUniqueId); responded == true } },
-        { type: 'confirm', displayText: 'Audio', actionFunction: () => { callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers) } },
-        { type: 'confirm', displayText: 'Video', actionFunction: () => { callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers) } },
+        { type: 'confirm', displayText: 'Audio', actionFunction: () => { callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers); responded == true } },
+        { type: 'confirm', displayText: 'Video', actionFunction: () => { callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers); responded == true } },
       ],
       obligatoryActions: {
         onDisplay: () => { },
@@ -1953,30 +1945,17 @@ myPeer.on('open', myPeerId => {
     navigator.getUserMedia({ video: true, audio: true }, stream => {
       responded = true
       myStream = stream // store our stream globally so that to access it whenever needed
-      callType = answertype // store the call type fpr incoming videos and sending our stream
-      switch (answertype) {
-        case "audio":
-          myStream.getVideoTracks().forEach(track => { myStream.removeTrack(track) }) // remove video Tracks
-          break;
-        case "video":
-          myStream = stream; // restore the video track
-          break;
-        default:
-          myStream.getVideoTracks().forEach(track => { myStream.removeTrack(track) }) // remove video tracks by default
-          break;
-      }
-
-      socket.emit("answerCall", { myPeerId, callUniqueId })
-      //put create and append my sidevideo
-      let mySideVideoDiv = createSideVideo(myStream, myInfo)
+      // store the call type fpr incoming videos and sending our stream
+      saveLocalMediaStream(answertype, stream)
+      // let properStream = getStreamToUseLocally(answertype, myStream)
+      socket.emit("answerCall", { myPeerId, callUniqueId, callType: answertype })
+      // ut create and append my sidevideo
+      let mySideVideoDiv = createSideVideo(answertype, myStream, myInfo)
       rightCallParticipantsDiv.append(mySideVideoDiv)
 
       allInvitedUsers = setAllUsers(allUsers)
       updateAttendanceList(myInfo, 'present')
       showOngoingCallSection()
-      //handleOutgoingPeerCalls(myInfo)
-
-      // -------------------------------
     }, (err) => { alert('Failed to get local media stream', err); });
   }
 
@@ -1988,47 +1967,20 @@ myPeer.on('open', myPeerId => {
 
   }
 
-  //for incoming Peer Calls
-  myPeer.on('call', call => {
-    let infomingPeerInfo = call.metadata
-    call.answer(myStream)
-    let sideVideoDiv
-    call.once('stream', function (remoteStream) {
-      console.log('I answered a socket call and the user streamed right back', infomingPeerInfo)
-      updateAttendanceList(infomingPeerInfo, 'present')
-
-      sideVideoDiv = createSideVideo(remoteStream, infomingPeerInfo)
-      rightCallParticipantsDiv.append(sideVideoDiv) //display this user's video
-
-      receivedUsers = receivedUsers + 1;
-      let maindiv = document.getElementById('mainVideoDiv')
-
-      console.log(receivedUsers, 'receivedUsers')
-      if (receivedUsers < 2) {
-        maindiv.textContent = '';
-        let mainVideoDivContent = createMainVideoDiv(remoteStream, infomingPeerInfo)
-        mainVideoDivContent.forEach(div => {
-          maindiv.append(div)
-        })
-      }
-    })
-
-  })
-
   socket.on('connectUser', userToConnect => {
     connectuserAlreadyLaunched = true
     console.log("I was asked by the server to peer call the user", userToConnect.userInfo.userID)
-    let { peerId, userInfo } = userToConnect
+    let { peerId, userInfo, callType } = userToConnect
     let { userID, name, surname, profilePicture, role } = userInfo
-    let options = { metadata: caller_me }
+    let options = { metadata: { userInfo: caller_me, callType: globalCallType } }
     const call = myPeer.call(peerId, myStream, options)
+    console.log('I am sending these tracks: ', myStream.getTracks(), ' to ', userInfo)
     let sideVideoDiv
     call.once('stream', userVideoStream => {
-      console.log('user is streaming back after my call', userInfo)
+      console.log('user responded with : ', userVideoStream.getTracks(), ' from ', userInfo)
       updateAttendanceList(userInfo, 'present')
       // display this user's video
-      sideVideoDiv = createSideVideo(userVideoStream, userInfo)
-      console.log('userVideoStream', userVideoStream.getAudioTracks())
+      sideVideoDiv = createSideVideo(callType, userVideoStream, userInfo)
       rightCallParticipantsDiv.append(sideVideoDiv)
 
       stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
@@ -2040,7 +1992,7 @@ myPeer.on('open', myPeerId => {
       console.log(receivedUsers, 'receivedUsers')
       if (receivedUsers < 2) {
         maindiv.textContent = '';
-        let mainVideoDivContent = createMainVideoDiv(userVideoStream, userInfo)
+        let mainVideoDivContent = createMainVideoDiv(callType, userVideoStream, userInfo)
         mainVideoDivContent.forEach(div => {
           maindiv.append(div)
         })
@@ -2055,14 +2007,41 @@ myPeer.on('open', myPeerId => {
 
   })
 
+  //for incoming Peer Calls
+  myPeer.on('call', call => {
+    let infomingPeerInfo = call.metadata.userInfo
+    let callType = call.metadata.callType
+    console.log('incoming peer call type: ', callType)
+    call.answer(myStream)
+    console.log('I am sending back : ', myStream.getTracks(), ' to ', call.metadata)
+    let sideVideoDiv
+    call.once('stream', function (remoteStream) {
+      // let properStream = getStreamToUseLocally(callType, remoteStream)
+
+      console.log('I received : ', remoteStream.getTracks(), ' to ', call.metadata)
+      updateAttendanceList(infomingPeerInfo, 'present')
+
+      sideVideoDiv = createSideVideo(callType, remoteStream, infomingPeerInfo)
+      rightCallParticipantsDiv.append(sideVideoDiv) //display this user's video
+
+      receivedUsers = receivedUsers + 1;
+      let maindiv = document.getElementById('mainVideoDiv')
+
+      console.log(receivedUsers, 'receivedUsers')
+      if (receivedUsers < 2) {
+        maindiv.textContent = '';
+        let mainVideoDivContent = createMainVideoDiv(callType, remoteStream, infomingPeerInfo)
+        mainVideoDivContent.forEach(div => {
+          maindiv.append(div)
+        })
+      }
+    })
+
+  })
+
   function updateAttendanceNumbers() {
     presenceSelectorBtn.textContent = 'Present (' + presentMembersDiv.childElementCount + ')'
     absenceSelectorBtn.textContent = 'Absent (' + absentMembersDiv.childElementCount + ')'
-  }
-
-  function makeCalleeElement(userInfo, status) {
-    let { name, profilePicture, surname, userID, role } = userInfo
-    let userDiv = userForAttendanceList(user, actions)
   }
 
   function updateAttendanceList(userInfo, status) {
@@ -2133,13 +2112,57 @@ myPeer.on('open', myPeerId => {
       videoConnectingControls: true
     }
   }
-
-
+  function saveLocalMediaStream(type, stream) {
+    let modifiedStream
+    switch (type) {
+      case "audio":
+        modifiedStream = convertToAudioOnlyStream(stream)
+        break;
+      case "video":
+        modifiedStream = stream; // restore the video component
+        break;
+      default:
+        modifiedStream = convertToAudioOnlyStream(stream)
+        break;
+    }
+    globalCallType = type
+    myStream = modifiedStream
+  }
 })
 
-function createMainVideoDiv(stream, userInfo) {
+function convertToAudioOnlyStream(stream) {
+  // remove all video tracks
+  stream.getVideoTracks().forEach(track => { stream.removeTrack(track); });
+  // add a fake video track -> https://github.com/peers/peerjs/issues/435 
+  var image = createElement({ type: 'img', src: '/images/audioCallInterface.png' })
+  let canvas = Object.assign(document.createElement("canvas"), { w:900, h:600 });
+  context = canvas.getContext('2d');
+  drawImageScaled(image, context)
+  function drawImageScaled(img, ctx) {
+    var canvas = ctx.canvas;
+    var hRatio = canvas.width / img.width;
+    var vRatio = canvas.height / img.height;
+    var ratio = Math.min(hRatio, vRatio);
+    var centerShift_x = (canvas.width - img.width * ratio) / 2;
+    var centerShift_y = (canvas.height - img.height * ratio) / 2;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
+  }
+  let blackStream = canvas.captureStream();
+  stream.addTrack(blackStream.getVideoTracks()[0]);
+  return stream;
+}
+
+function removeAllVideoTracks(stream) {
+  let streamToReturn = stream
+  streamToReturn.getVideoTracks().forEach(function (track) {
+    stream.removeTrack(track)
+  })
+  return streamToReturn
+}
+
+function createMainVideoDiv(callType, stream, userInfo) {
   let { userID, name, surname, profilePicture, role } = userInfo;
-  // let mainVideoDiv = document.getElementById('mainVideoDiv')
 
   //main video element
   let mainVideoElement = createElement({ type: 'video', class: 'mainVideoElement', srcObject: stream })
@@ -2190,13 +2213,13 @@ function createMainVideoDiv(stream, userInfo) {
   let audioCallCover = createElement({ type: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
 
   let callParticipantDiv
-  if (stream.getVideoTracks().length < 1) { audioCallCover.style.display = 'flex' }
+  if (callType == "audio") { audioCallCover.style.display = 'flex' }
   else audioCallCover.style.display = 'none'
 
   return [mainVideoElement, audioCallCover, callTopBar, callControls]
 }
 
-function createSideVideo(stream, userInfo) {
+function createSideVideo( type, stream, userInfo) {
   let { videoOwner } = userInfo;
   let { userID, name, surname, profilePicture, role } = userInfo
   let videoElement = createElement({ type: 'video', srcObject: stream, class: 'callParticipant' }); videoElement.play()
@@ -2227,7 +2250,7 @@ function createSideVideo(stream, userInfo) {
   })
   // overall callParticipant Div
   let callParticipantDiv
-  if (stream.getVideoTracks().length < 1) { audioCallCover.style.display = 'flex' }
+  if (type == "audio") { audioCallCover.style.display = 'flex' }
   else audioCallCover.style.display = 'none'
   callParticipantDiv = createElement({ type: 'div', class: 'callParticipantDiv', childrenArray: [videoElement, audioCallCover, sideVideoControls] })
 
@@ -2240,7 +2263,7 @@ function createSideVideo(stream, userInfo) {
     callParticipantDiv.addEventListener("click", () => {
       let maindiv = document.getElementById('mainVideoDiv')
       maindiv.textContent = ''
-      let mainVideoDivContent = createMainVideoDiv(stream, userInfo)
+      let mainVideoDivContent = createMainVideoDiv(type, stream, userInfo)
       mainVideoDivContent.forEach(div => {
         maindiv.append(div)
       })
@@ -2267,7 +2290,7 @@ function createElement(configuration) {
 function userForAttendanceList(userInfo, actions) {
   let { userID, name, surname, role, profilePicture, status } = userInfo
   // actions is an array of buttons where on item is {element, functionCall}
-  //container is presentMembersDiv
+  // container is presentMembersDiv
   let memberProfilePicture;
   if (profilePicture == null) memberProfilePicture = createElement({ type: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
   else memberProfilePicture = createElement({ type: 'img', class: 'memberProfilePicture', src: profilePicture })
@@ -2320,6 +2343,11 @@ function call(callTo, audio, video, group, fromChat, previousCallId) {
 function initiateCall(initiationInfo) {
   let { callTo, audio, video, group, fromChat, previousCallId } = initiationInfo
   navigator.getUserMedia({ video: true, audio: true }, stream => {  //test user media accessibiity
+    console.log('Initial stream', stream)
+    console.log('initial Media stream tracks', stream.getTracks())
+    let modifiedStream = convertToAudioOnlyStream(stream)
+    console.log('modified stream', modifiedStream)
+    console.log('modified Media stream tracks', modifiedStream.getTracks())
     showOngoingCallSection()
     startWaitingTone()
     socket.emit("initiateCall", { callTo, audio, video, group, fromChat, previousCallId })
