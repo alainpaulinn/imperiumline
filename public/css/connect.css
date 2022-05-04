@@ -591,60 +591,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-@media (max-width: 742px) {
-  .content-container {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-  }
-  .content-container .appIntro {
-    max-width: 100%;
-  }
-  .feature-section {
-    -ms-grid-columns: (200px)[2];
-        grid-template-columns: repeat(2, 200px);
-  }
-  .feature-section .get-involved {
-    grid-column: span 2;
-  }
-  .cta .cta-btn {
-    padding: 80px 0;
-  }
-  .cta .cta-btn p {
-    font-size: 2em;
-  }
-  .cta .cta-btn a {
-    padding: 15px 30px;
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 488px) {
-  .content-container {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-  }
-  .content-container .appIntro {
-    max-width: 100%;
-  }
-  .feature-section {
-    -ms-grid-columns: (140px)[2];
-        grid-template-columns: repeat(2, 140px);
-  }
-  .feature-section .get-involved {
-    grid-column: span 2;
-  }
-}
-
 .notifications {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -762,5 +708,62 @@ body {
 .notifications .notification .notificationProgressBar {
   height: 3px;
   background-color: rgba(0, 0, 0, 0.76);
+}
+
+@media (max-width: 742px) {
+  .content-container {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .content-container .appIntro {
+    max-width: 100%;
+  }
+  .feature-section {
+    -ms-grid-columns: (200px)[2];
+        grid-template-columns: repeat(2, 200px);
+  }
+  .feature-section .get-involved {
+    grid-column: span 2;
+  }
+  .cta .cta-btn {
+    padding: 80px 0;
+  }
+  .cta .cta-btn p {
+    font-size: 2em;
+  }
+  .cta .cta-btn a {
+    padding: 15px 30px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 488px) {
+  .content-container {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .content-container .appIntro {
+    max-width: 100%;
+  }
+  .feature-section {
+    -ms-grid-columns: (140px)[2];
+        grid-template-columns: repeat(2, 140px);
+  }
+  .feature-section .get-involved {
+    grid-column: span 2;
+  }
+  .notifications {
+    width: calc(100% - 2rem);
+  }
 }
 /*# sourceMappingURL=connect.css.map */

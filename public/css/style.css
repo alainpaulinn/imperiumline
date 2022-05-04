@@ -3446,6 +3446,12 @@ body {
   font-size: 18px;
 }
 
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .callControl .active {
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
+          box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
+}
+
 .c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .hangupbtn {
   color: red;
 }
@@ -3677,14 +3683,14 @@ body {
 
 .c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button.active {
   background-color: #003061;
-  -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.4);
-          box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.4);
+  -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
+          box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
 }
 
 .c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button.isSpeaking {
   background-color: #003061;
-  -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.8);
-          box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.8);
+  -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
+          box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
 }
 
 .c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls .miniVideowner {
@@ -4282,6 +4288,12 @@ body {
 
 .videoCoverDiv .waitingCallControls .callControl i {
   font-size: 18px;
+}
+
+.videoCoverDiv .waitingCallControls .callControl.active {
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
+          box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
 }
 
 .videoCoverDiv .waitingCallControls .hangupbtn {

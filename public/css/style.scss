@@ -2982,7 +2982,10 @@ body {
               i {
                 font-size: 18px;
               }
-
+              .active{
+                background-color: $notification;
+                box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
+              }
             }
 
             .hangupbtn {
@@ -3173,12 +3176,12 @@ body {
 
                 &.active {
                   background-color: $notification;
-                  box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .4);
+                  box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
                 }
 
                 &.isSpeaking {
                   background-color: $notification;
-                  box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .8);
+                  box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
 
                 }
 
@@ -4148,6 +4151,10 @@ body {
 
       i {
         font-size: 18px;
+      }
+      &.active{
+        background-color: $notification;
+        box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
       }
 
     }

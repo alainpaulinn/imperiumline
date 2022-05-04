@@ -1584,7 +1584,36 @@ absenceSelectorBtn.addEventListener('click', (e) => {
 /////////////////////////////////CALL LOG END//////////////////////
 
 let secondaryVideosDiv = document.getElementById('secondaryVideosDiv')
-const myPeer = new Peer(undefined, { host: 'peer.imperiumline.com', secure: true })
+const myPeer = new Peer(undefined, {
+  host: 'peer.imperiumline.com',
+  secure: true,
+  config: {
+    iceServers: [
+      {
+        urls: "stun:stun.l.google.com:19302"
+      },
+      {
+        urls: "turn:0.peerjs.com:3478",
+        username: "peerjs",
+        credential: "peerjsp"
+      },
+      {
+        url: 'turn:numb.viagenie.ca',
+        credential: 'muazkh',
+        username: 'webrtc@live.com'
+      },
+      { "url": "stun:stun.l.google.com:19302" },
+
+      {
+        "url": "turn:stun.imperiumline.com:5349",
+        credential: 'guest',
+        username: 'somepassword'
+      }
+
+    ],
+    sdpSemantics: "unified-plan"
+  }
+})
 const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 let videoSelectPopup = document.getElementById("videoDevicesPopup")
@@ -1651,18 +1680,12 @@ function showMessagesPanel() {
 }
 
 //functional buttons//////////////////
-function removeAudio() {
-  if (!tream) return;
-  for (let index in tream.getAudioTracks()) {
-    tream.getAudioTracks()[index].enabled = !tream.getAudioTracks()[index].enabled
-    tream.getAudioTracks()[index].enabled ? audioInDevicesPop.classList.remove("red-bg") : audioInDevicesPop.classList.add("red-bg")
-  }
-}
-function removeVideo() {
-  if (!tream) return;
-  for (let index in tream.getAudioTracks()) {
-    tream.getVideoTracks()[index].enabled = !tream.getVideoTracks()[index].enabled
-    tream.getVideoTracks()[index].enabled ? videoDevicesPop.classList.remove("red-bg") : videoDevicesPop.classList.add("red-bg")
+
+function removeVideo(stream, button) {
+  if (!stream) return;
+  for (let index in stream.getAudioTracks()) {
+    stream.getVideoTracks()[index].enabled = !stream.getVideoTracks()[index].enabled
+    stream.getVideoTracks()[index].enabled ? videoDevicesPop.classList.remove("red-bg") : videoDevicesPop.classList.add("red-bg")
   }
 }
 
@@ -1758,7 +1781,7 @@ myPeer.on('open', myPeerId => {
 
       saveLocalMediaStream(callType, stream)
 
-      let mySideVideoDiv = createSideVideo(callType, myStream, caller)
+      let mySideVideoDiv = createSideVideo(globalCallType, myStream, caller)
       rightCallParticipantsDiv.append(mySideVideoDiv)
 
       // create awaited users divs
@@ -1820,12 +1843,25 @@ myPeer.on('open', myPeerId => {
         updateAttendanceList(caller, 'absent')
         stream.getTracks().forEach((track) => { console.log('track', track); track.stop(); stream.removeTrack(track); })
         myStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); myStream.removeTrack(track); })
-        properStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); properStream.removeTrack(track); })
       })
 
-      closeVideoBtn.addEventListener('click', () =>{
-        
+      muteMicrophoneBtn.addEventListener('click', () => {
+        toggleDisableAudio(myStream)
+        console.log("audio disable happened")
+        determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
       })
+
+      closeVideoBtn.addEventListener('click', () => {
+        toggleDisableVideo(myStream)
+        console.log("video disable happened")
+        determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
+
+        mySideVideoDiv.remove()
+        mySideVideoDiv = createSideVideo(globalCallType, myStream, caller)
+        rightCallParticipantsDiv.prepend(mySideVideoDiv)
+      })
+      determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
+
 
 
 
@@ -1977,6 +2013,10 @@ myPeer.on('open', myPeerId => {
     console.log('I am sending these tracks: ', myStream.getTracks(), ' to ', userInfo)
     let sideVideoDiv
     call.once('stream', userVideoStream => {
+      for (let i = 0; i < userVideoStream.getTracks().length; i++) {
+        const track = userVideoStream.getTracks()[i];
+        track.muted = false;
+      }
       console.log('user responded with : ', userVideoStream.getTracks(), ' from ', userInfo)
       updateAttendanceList(userInfo, 'present')
       // display this user's video
@@ -2016,8 +2056,10 @@ myPeer.on('open', myPeerId => {
     console.log('I am sending back : ', myStream.getTracks(), ' to ', call.metadata)
     let sideVideoDiv
     call.once('stream', function (remoteStream) {
-      // let properStream = getStreamToUseLocally(callType, remoteStream)
-
+      for (let i = 0; i < remoteStream.getTracks().length; i++) {
+        const track = remoteStream.getTracks()[i];
+        track.muted = false;
+      }
       console.log('I received : ', remoteStream.getTracks(), ' to ', call.metadata)
       updateAttendanceList(infomingPeerInfo, 'present')
 
@@ -2128,38 +2170,72 @@ myPeer.on('open', myPeerId => {
     globalCallType = type
     myStream = modifiedStream
   }
+  function toggleDisableAudio(stream) {
+    if (!stream) return console.warn('No Stream provided to the function');
+    for (let index in stream.getAudioTracks()) {
+      let audioTrack = stream.getAudioTracks()[index]
+      if (audioTrack.enabled) { audioTrack.enabled = false }
+      else { audioTrack.enabled = true }
+    }
+  }
+  function toggleDisableVideo(stream) {
+    if (!stream) return console.warn('No Stream provided to the function');
+    for (let index in stream.getVideoTracks()) {
+      let videoTrack = stream.getVideoTracks()[index]
+      if (videoTrack.enabled) { videoTrack.enabled = false; globalCallType = "audio" }
+      else { videoTrack.enabled = true; globalCallType = "video" }
+    }
+  }
+  function determineAudioVideoState(stream, audioButton, videoButton) {
+    if (!stream) return console.warn('No Stream provided to the function');
+    for (let index in stream.getVideoTracks()) {
+      let videoTrack = stream.getVideoTracks()[index]
+      if (videoTrack.enabled) { videoButton.classList.remove("active") }
+      else { videoButton.classList.add("active") }
+    }
+    for (let index in stream.getAudioTracks()) {
+      let audioTrack = stream.getAudioTracks()[index]
+      if (audioTrack.enabled) { audioButton.classList.remove("active") }
+      else { audioButton.classList.add("active") }
+    }
+  }
 })
 
 function convertToAudioOnlyStream(stream) {
   // remove all video tracks
-  stream.getVideoTracks().forEach(track => { stream.removeTrack(track); });
+  stream.getVideoTracks().forEach(track => {
+    track.enabled = false;
+    // stream.removeTrack(track); 
+  });
   // add a fake video track -> https://github.com/peers/peerjs/issues/435 
-  var image = createElement({ type: 'img', src: '/images/audioCallInterface.png' })
-  let canvas = Object.assign(document.createElement("canvas"), { w:900, h:600 });
-  context = canvas.getContext('2d');
-  drawImageScaled(image, context)
-  function drawImageScaled(img, ctx) {
-    var canvas = ctx.canvas;
-    var hRatio = canvas.width / img.width;
-    var vRatio = canvas.height / img.height;
-    var ratio = Math.min(hRatio, vRatio);
-    var centerShift_x = (canvas.width - img.width * ratio) / 2;
-    var centerShift_y = (canvas.height - img.height * ratio) / 2;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
-  }
-  let blackStream = canvas.captureStream();
-  stream.addTrack(blackStream.getVideoTracks()[0]);
+
+
+  // var image = createElement({ type: 'img', src: '/images/audioCallInterface.png' })
+  // let canvas = Object.assign(document.createElement("canvas"), { w: 300, h: 300 });
+  // context = canvas.getContext('2d');
+  // drawImageScaled(image, context)
+  // function drawImageScaled(img, ctx) {
+  //   var canvas = ctx.canvas;
+  //   var hRatio = canvas.width / img.width;
+  //   var vRatio = canvas.height / img.height;
+  //   var ratio = Math.min(hRatio, vRatio);
+  //   var centerShift_x = (canvas.width - img.width * ratio) / 2;
+  //   var centerShift_y = (canvas.height - img.height * ratio) / 2;
+  //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  //   ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
+  // }
+  // let blackStream = canvas.captureStream();
+  // stream.addTrack(blackStream.getVideoTracks()[0]);
   return stream;
 }
 
-function removeAllVideoTracks(stream) {
-  let streamToReturn = stream
-  streamToReturn.getVideoTracks().forEach(function (track) {
-    stream.removeTrack(track)
-  })
-  return streamToReturn
-}
+// function removeAllVideoTracks(stream) {
+//   let streamToReturn = stream
+//   streamToReturn.getVideoTracks().forEach(function (track) {
+//     stream.removeTrack(track)
+//   })
+//   return streamToReturn
+// }
 
 function createMainVideoDiv(callType, stream, userInfo) {
   let { userID, name, surname, profilePicture, role } = userInfo;
@@ -2179,10 +2255,24 @@ function createMainVideoDiv(callType, stream, userInfo) {
 
   let muteBtn = createElement({
     type: 'button', title: 'Mute Video', childrenArray: [createElement({ type: 'i', class: 'bx bx-volume-mute' })], onclick: () => {
-      if (mainVideoElement.muted == true) { mainVideoElement.muted = false; muteBtn.classList.remove('active'); }
-      else { mainVideoElement.muted = true; muteBtn.classList.add('active') }
+      for (let index in stream.getAudioTracks()) {
+        let audioTrack = stream.getAudioTracks()[index]
+        audioTrack.enabled = !audioTrack.enabled
+      }
+      determinAudioState()
     }
   })
+  determinAudioState()
+  function determinAudioState() {
+    for (let index in stream.getAudioTracks()) {
+      let audioTrack = stream.getAudioTracks()[index]
+      if (audioTrack.enabled) {
+        muteBtn.classList.remove("active")
+      } else {
+        muteBtn.classList.add("active")
+      }
+    }
+  }
   let speakerBtn = createElement({ type: 'button', title: 'User is speaking', childrenArray: [createElement({ type: 'i', class: 'bx bxs-user-voice' })] })
   streamVolumeOnTreshold(stream, 20, speakerBtn)
   let mainVideoFullscreenBtn = createElement({ type: 'button', class: 'mainVideoFullscreenBtn', childrenArray: [createElement({ type: 'i', class: 'bx bx-fullscreen' })], onclick: () => { toggleFullscreen(mainVideoDiv) } })
@@ -2219,16 +2309,17 @@ function createMainVideoDiv(callType, stream, userInfo) {
   return [mainVideoElement, audioCallCover, callTopBar, callControls]
 }
 
-function createSideVideo( type, stream, userInfo) {
+function createSideVideo(type, stream, userInfo) {
   let { videoOwner } = userInfo;
   let { userID, name, surname, profilePicture, role } = userInfo
-  let videoElement = createElement({ type: 'video', srcObject: stream, class: 'callParticipant' }); videoElement.play()
+  let videoElement = createElement({ type: 'video', srcObject: stream, class: 'callParticipant', autoPlay: "true" }); videoElement.play()
 
   let miniVideowner = createElement({ type: 'div', class: 'miniVideowner', textContent: name + " " + surname })
   let muteBtn = createElement({ type: 'button', title: 'Mute Video', childrenArray: [createElement({ type: 'i', class: 'bx bx-volume-mute' })] })
   let speakerBtn = createElement({ type: 'button', title: 'User is speaking', childrenArray: [createElement({ type: 'i', class: 'bx bxs-user-voice' })] })
   let sideVideoControls = createElement({ type: 'div', class: 'sideVideoControls', childrenArray: [miniVideowner, muteBtn, speakerBtn] })
 
+  determinAudioState() // activate / deactivate mute button
   // AudioCall Cover Div
   let audioCallprofilePicture
   if (profilePicture == null) audioCallprofilePicture = createElement({ type: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
@@ -2237,9 +2328,22 @@ function createSideVideo( type, stream, userInfo) {
   let audioCallCover = createElement({ type: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
 
   muteBtn.addEventListener('click', () => {
-    if (videoElement.muted == true) { videoElement.muted = false; muteBtn.classList.remove('active'); }
-    else { videoElement.muted = true; muteBtn.classList.add('active') }
+    for (let index in stream.getAudioTracks()) {
+      let audioTrack = stream.getAudioTracks()[index]
+      audioTrack.enabled = !audioTrack.enabled
+    }
+    determinAudioState()
   })
+  function determinAudioState() {
+    for (let index in stream.getAudioTracks()) {
+      let audioTrack = stream.getAudioTracks()[index]
+      if (audioTrack.enabled) {
+        muteBtn.classList.remove("active")
+      } else {
+        muteBtn.classList.add("active")
+      }
+    }
+  }
   streamVolumeOnTreshold(stream, 20, speakerBtn)
   console.log('stream', stream)
   stream.getAudioTracks().forEach(track => {
@@ -2284,6 +2388,7 @@ function createElement(configuration) {
   if (configuration.textContent) elementToReturn.textContent = configuration.textContent
   if (configuration.childrenArray) configuration.childrenArray.forEach(child => elementToReturn.append(child))
   if (configuration.onclick) elementToReturn.addEventListener('click', configuration.onclick)
+  if (configuration.autoPlay) elementToReturn.setAttribute('autoplay', 'true')
   return elementToReturn
 }
 
