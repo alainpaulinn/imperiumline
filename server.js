@@ -188,7 +188,7 @@ io.on('connection', (socket) => {
         let foundUsers = []
         for (let i = 0; i < userSearchResult.length; i++) {
           const userID = userSearchResult[i].id;
-          if(id != userID) foundUsers.push( await getUserInfo(userID))
+          if (id != userID) foundUsers.push(await getUserInfo(userID))
         }
         socket.emit('searchPerson', foundUsers)
       })
@@ -569,7 +569,7 @@ io.on('connection', (socket) => {
     })
     socket.on('answerCall', async data => {
       let { myPeerId, callUniqueId, callType } = data;
-      console.log('user ', id, ' has joined the call ',callUniqueId,' and requests to be called')
+      console.log('user ', id, ' has joined the call ', callUniqueId, ' and requests to be called')
 
       let thisCallparticipants = await getCallParticipants(callUniqueId) //get all people who are allowed in this call
       let thisUsershouldbeinthiscall = false
@@ -629,6 +629,23 @@ io.on('connection', (socket) => {
           }
         }
       }
+    })
+    // search to add new users to call
+    socket.on('searchPeopleToInviteToCall', (callSearchData) => {
+      let { callUniqueId, searchText } = callSearchData
+      db.query("SELECT `id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchText + '%', '%' + searchText + '%', '%' + searchText + '%'], async (err, userSearchResult) => {
+        if (err) return console.log(err)
+        let thisCallparticipants = await getCallParticipants(callUniqueId) //get all people who are allowed in this call
+        let foundUsers = thisCallparticipants.filter(user => {
+          !(userSearchResult.map(result => { result.id }).includes(user.userID)) && user.userID != id
+        })
+
+        // 
+        console.log('thisCallparticipants', thisCallparticipants)
+        console.log('userSearchResult', userSearchResult)
+        console.log('id', id)
+        socket.emit('foundUsers', foundUsers)
+      })
     })
 
     // for testing only

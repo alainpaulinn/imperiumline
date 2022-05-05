@@ -17,25 +17,85 @@
     </div>
 </div>
 <div class="call-container">
-    <div class="callScreenHeader">
+    <div class="callScreenHeader" id="callScreenHeader">
         <div class="headerLeftPart">
-            <div class="scheduledTimeContent">Sheduled Time Content</div>
             <div class="MeetingTitle">Untitled meeting</div>
+            <div class="scheduledTimeContent">Sheduled Time Content</div>
         </div>
         <div class="headerRightPart">
             <div class="meetingTimer">
                 <p>Time Remaining</p>
-                <span><i class='bx bx-radio-circle-marked'></i><p>11:50:00</p></span>
+                <span><i class='bx bx-radio-circle-marked'></i>
+                    <p>11:50:00</p>
+                </span>
             </div>
 
             <button class="inviteSomeone" id="inviteSomeone">
-                <i class='bx bx-plus'></i> <p>invite Someone</p>
+                <i class='bx bx-plus'></i>
+                <p>invite Someone</p>
+
             </button>
+            <div class="popdown " style="">
+                <div class="searchField">
+                    <input type="text" class="searchField" placeholder="Search users">
+                    <button>Done</button>
+                </div>
+                <div class="invitedDiv">
+                    <div class="listMember"><img class="memberProfilePicture" src="/private/profiles/user-129.png">
+                        <div class="memberNameRole">
+                            <div class="memberName">Test2Name Test2Surname</div>
+                            <div class="memberRole">Central Branding Director</div>
+                        </div>
+                        <button><i class="bx bxs-phone-off"></i>
+                            <p>User Offline</p>
+                        </button><button><i class="bx bxs-message-square-detail"></i></button>
+                    </div>
+                    <div class="listMember"><img class="memberProfilePicture" src="/private/profiles/user-128.png">
+                        <div class="memberNameRole">
+                            <div class="memberName">Test1Name Test1Surname</div>
+                            <div class="memberRole">Central Branding Director</div>
+                        </div><button><i class="bx bxs-hourglass"></i>
+                            <p>Waiting ...</p>
+                        </button><button><i class="bx bxs-message-square-detail"></i></button>
+                    </div>
+                    <div class="listMember">
+                        <div class="memberProfilePicture">TT</div>
+                        <div class="memberNameRole">
+                            <div class="memberName">Test3Name Test3Surname</div>
+                            <div class="memberRole">Future Metrics Vice President</div>
+                        </div><button><i class="bx bxs-phone-off"></i>
+                            <p>User Offline</p>
+                        </button><button><i class="bx bxs-message-square-detail"></i></button>
+                    </div>
+                    <div class="listMember">
+                        <div class="memberProfilePicture">tt</div>
+                        <div class="memberNameRole">
+                            <div class="memberName">test4Name test4Surname</div>
+                            <div class="memberRole">Future Branding Administrator</div>
+                        </div><button><i class="bx bxs-phone-off"></i>
+                            <p>User Offline</p>
+                        </button><button><i class="bx bxs-message-square-detail"></i></button>
+                    </div>
+                    <div class="listMember">
+                        <div class="memberProfilePicture">tt</div>
+                        <div class="memberNameRole">
+                            <div class="memberName">test5Name test5Surname</div>
+                            <div class="memberRole">Dynamic Resonance Manager</div>
+                        </div><button><i class="bx bxs-phone-off"></i>
+                            <p>User Offline</p>
+                        </button><button><i class="bx bxs-message-square-detail"></i></button>
+                    </div>
+                </div>
+            </div>
         </div>
-        
+
     </div>
     <div class="mainVideoDiv" id="mainVideoDiv">
-        {{!-- <div class="spinner"><div></div><div></div><div></div></div> --}}
+        {{!-- <div class="spinner">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div> --}}
         {{!-- <video id="mainVideoElement" class="mainVideoElement" autoplay="true"></video>
         <div class="callTopBar">
             <div class="leftUserIdentifiers">

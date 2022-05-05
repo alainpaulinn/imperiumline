@@ -2739,6 +2739,7 @@ body {
         display: flex;
         //flex-direction: row;
         justify-content: space-between;
+        align-items: center;
         flex-wrap: wrap;
         margin-bottom: 1rem;
 
@@ -2760,6 +2761,7 @@ body {
 
         .headerRightPart {
           display: flex;
+          position: relative;
 
           .meetingTimer {
             padding: 1rem;
@@ -2774,7 +2776,7 @@ body {
 
           .inviteSomeone {
             padding: 1rem;
-            //flex: 1;
+            flex: 1;
             font-weight: bolder;
             text-align: center;
             border-radius: $borderRadius;
@@ -2782,7 +2784,177 @@ body {
             background-color: $sidepanel;
             outline: none;
             border: none;
+            color: $body;
+            position: relative;
+            display: flex;
+            align-items: center;
+
+            p {
+              color: $body;
+            }
+
+            &:hover {
+              background-color: darken($sidepanel, 5%)
+            }
           }
+
+          .popdown {
+            &:before {
+              content: "";
+              position: absolute;
+              width: 10px; height: 10px;
+              transform: rotate(45deg);
+              background-color: white;
+              top: -0.4rem;
+              right: 1.5rem;
+            }
+            width: 350px;
+            max-height: 350px;
+            padding: 1rem;
+            position: absolute;
+            background-color: white;
+            border-radius: $borderRadius;
+            top: calc(100% + 0rem);
+            right: 0;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.4s;
+            z-index: 2;
+            box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+            display: flex;
+            gap: 1rem;
+            flex-direction: column;
+
+            &.popdownDisplayed {
+              top: calc(100% + 1rem);
+              visibility: visible;
+              opacity: 1;
+            }
+
+            .searchField {
+              ////////////////border: 1px solid #f1f4f6;
+              border-radius: $borderRadius;
+              gap: 1rem;
+              display: flex;
+
+              input {
+                border-radius: $borderRadius;
+                outline: none;
+                background: white;
+                border: none;
+                flex: 1;
+                color: $body;
+                background: lighten($sidepanel, 3%);
+                padding: .5rem 1rem;
+              }
+
+              button {
+                background: $sidepanel;
+                border-radius: $borderRadius;
+                outline: none;
+                border: none;
+                padding: .5rem 1rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                i{
+                  font-size: 1.5rem;
+                }
+
+                &:hover {
+                  background: darken($sidepanel, 5%)
+                }
+              }
+
+              // .searchField{
+              //   background-color: $sidepanel;
+              //   border-radius: $borderRadius;
+              // }
+            }
+
+            .invitedDiv {
+              overflow-y: auto;
+              border-radius: $borderRadius;
+              flex: 1;
+
+              .listMember {
+                background-color: white;
+                display: flex;
+                padding: .5rem;
+                align-items: center;
+                border-radius: $borderRadius;
+                margin-bottom: .5rem;
+
+                .memberProfilePicture {
+                  border: 1px solid $notification;
+                  width: 40px;
+                  height: 40px;
+                  margin-right: 10px;
+                  border-radius: $borderRadius;
+                  text-transform: uppercase;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  color: white;
+                  background-color: #003061;
+                  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+                  transition: all 0.4s;
+                  flex-shrink: 0;
+                }
+
+                .memberNameRole {
+                  display: flex;
+                  flex-direction: column;
+                  flex: 1;
+                  overflow: hidden;
+
+                  .memberName {
+                    font-weight: bolder;
+                    display: block;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  }
+
+                  .memberRole {
+                    display: block;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  }
+
+                }
+
+                button {
+                  color: $body;
+                  display: flex;
+                  align-items: center;
+                  padding: 1rem;
+                  transition: all 0.4s;
+                  //margin: 0 0.5rem;
+                  border-radius: $borderRadius;
+                  background-color: $sidepanel;
+                  border: none;
+                  outline: none;
+                  cursor: pointer;
+                  margin-left: .5rem;
+
+                  i {
+                    font-size: 18px;
+                  }
+
+                  p {
+                    margin-left: .5rem;
+                  }
+
+                  &:hover {
+                    background-color: darken($sidepanel, 5%)
+                  }
+                }
+              }
+            }
+          }
+
         }
       }
 
@@ -2845,6 +3017,7 @@ body {
           .rightVideoControls {
             display: flex;
             gap: 0.5rem;
+
             button {
               transition: all 0.4s;
               //margin: 0 0.5rem;
@@ -2868,6 +3041,7 @@ body {
               &:hover {
                 background: rgb(0, 0, 0);
               }
+
               &.active {
                 background-color: $notification;
                 box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .8);
@@ -2982,7 +3156,8 @@ body {
               i {
                 font-size: 18px;
               }
-              .active{
+
+              .active {
                 background-color: $notification;
                 box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
               }
@@ -4152,7 +4327,8 @@ body {
       i {
         font-size: 18px;
       }
-      &.active{
+
+      &.active {
         background-color: $notification;
         box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
       }

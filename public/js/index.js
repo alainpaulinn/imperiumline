@@ -1775,31 +1775,27 @@ myPeer.on('open', myPeerId => {
       let { callUniqueId, callType, caller, groupMembersToCall_fullInfo, allUsers } = initiatedCallInfo
       let { userID, name, surname, profilePicture, role } = caller
 
+      // create topBar
+      createTopBar({ callUniqueId: callUniqueId, callTitle: 'Unnamed call', isTeam: 'isTeam' }, caller)
+      //callUniqueId, callTitle, isTeam
       //save these important variables
       myInfo = caller
       caller_me = caller
-
       saveLocalMediaStream(callType, stream)
-
       let mySideVideoDiv = createSideVideo(globalCallType, myStream, caller)
       rightCallParticipantsDiv.append(mySideVideoDiv)
-
       // create awaited users divs
       let awaitedUserDivs = allUsers.map(user => {
         //let { userID, name, surname, role, profilePicture, status } = user
         let targetedUser = groupMembersToCall_fullInfo.find(member => member.userProfileIdentifier.userID == user.userID);
         if (targetedUser == undefined) {
-
           let ringTextForMe = user.userID === caller.userID ? 'Waiting ...' : 'User Offline';
           let ringIconForMe = user.userID === caller.userID ? 'bx bxs-hourglass' : 'bx bxs-phone-off';
-
           let offlineIcon = createElement({ type: 'i', class: ringIconForMe })
           let offlineText = createElement({ type: 'p', textContent: ringTextForMe })
           let offlineButton = createElement({ type: 'button', childrenArray: [offlineIcon, offlineText] })
-
           let chatIcon = createElement({ type: 'i', class: 'bx bxs-message-square-detail' })
           let chatButton = createElement({ type: 'button', childrenArray: [chatIcon] })
-
           let actions = [
             { element: offlineButton, functionCall: () => { } },
             { element: chatButton, functionCall: () => { console.log('chat with user', userID) } }]
@@ -1822,7 +1818,6 @@ myPeer.on('open', myPeerId => {
         }
       })
       console.log("awaitedUserDivs", awaitedUserDivs)
-
       //create Cover waiting
       let videoCoverDiv = videoConnectingScreen(prepareVideoCoverDiv(allUsers, caller, 'Dialling...', awaitedUserDivs))
       mainVideoDiv.prepend(videoCoverDiv.videoCoverDiv)
@@ -1967,7 +1962,6 @@ myPeer.on('open', myPeerId => {
             socket.emit("callNotAnswered", callUniqueId)
             console.log('call notification Ended')
           }
-
         },
       },
       delay: 60000,
@@ -2013,12 +2007,15 @@ myPeer.on('open', myPeerId => {
     console.log('I am sending these tracks: ', myStream.getTracks(), ' to ', userInfo)
     let sideVideoDiv
     call.once('stream', userVideoStream => {
+
+      //i decided to unmute these tracks becaise for some reason i was receiveing muted tracks
       for (let i = 0; i < userVideoStream.getTracks().length; i++) {
         const track = userVideoStream.getTracks()[i];
         track.muted = false;
       }
       console.log('user responded with : ', userVideoStream.getTracks(), ' from ', userInfo)
       updateAttendanceList(userInfo, 'present')
+
       // display this user's video
       sideVideoDiv = createSideVideo(callType, userVideoStream, userInfo)
       rightCallParticipantsDiv.append(sideVideoDiv)
@@ -2229,14 +2226,6 @@ function convertToAudioOnlyStream(stream) {
   return stream;
 }
 
-// function removeAllVideoTracks(stream) {
-//   let streamToReturn = stream
-//   streamToReturn.getVideoTracks().forEach(function (track) {
-//     stream.removeTrack(track)
-//   })
-//   return streamToReturn
-// }
-
 function createMainVideoDiv(callType, stream, userInfo) {
   let { userID, name, surname, profilePicture, role } = userInfo;
 
@@ -2389,6 +2378,8 @@ function createElement(configuration) {
   if (configuration.childrenArray) configuration.childrenArray.forEach(child => elementToReturn.append(child))
   if (configuration.onclick) elementToReturn.addEventListener('click', configuration.onclick)
   if (configuration.autoPlay) elementToReturn.setAttribute('autoplay', 'true')
+  if (configuration.type) elementToReturn.setAttribute('type', configuration.type)
+  if (configuration.placeHolder) elementToReturn.setAttribute('placeholder', configuration.placeHolder)
   return elementToReturn
 }
 
@@ -2623,22 +2614,68 @@ function createOngoingCallScreen() {
     leftPartHeaderDivTitle: leftPartHeaderDivTitle,
     inviteSomeone: inviteSomeone,
     attendanceTitleSection: attendanceTitleSection,
-
   }
 }
 
+function createTopBar(callInfo, myInfo) {
+  let { callUniqueId, callTitle, isTeam } = callInfo
+  let callScreenHeader = document.getElementById('callScreenHeader')
 
-window.onbeforeunload = function () {
-  deleteAllCookies()
-  return 'Are you sure you want to leave?';
-};
-function deleteAllCookies() {
-  var cookies = document.cookie.split(";");
 
-  for (var i = 0; i < cookies.length; i++) {
-    var cookie = cookies[i];
-    var eqPos = cookie.indexOf("=");
-    var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-  }
+  let MeetingTitle = createElement({ type: 'div', class: 'MeetingTitle', textContent: callTitle })
+  let headerLeftPart = createElement({ type: 'div', class: 'headerLeftPart', childrenArray: [MeetingTitle] })
+
+  let input = createElement({ type: 'input', placeHolder: 'Search users' })
+  let doneBtn = createElement({ type: 'button', childrenArray: [createElement({ type: 'i', class: 'bx bx-check' }), createElement({ type: 'p', textContent: 'Done' })] })
+  let searchField = createElement({ type: 'div', class: 'searchField', childrenArray: [input, doneBtn] })
+
+  let invitedDiv = createElement({ type: 'div', class: 'invitedDiv', textContent:'Type to search ...' })
+
+  input.addEventListener('input', function () {
+    var searchText = this.value;
+    console.log('searching People', callUniqueId)
+    socket.emit('searchPeopleToInviteToCall', {callUniqueId, searchText});
+  })
+
+  socket.on('searchPeopleToInviteToCall', (searchPeople) => {
+    console.log(searchPeople)
+    // searchResults.innerHTML = '';
+  
+    // searchPeople.forEach(searchPerson => {
+      
+    // })
+  })
+
+  let popDown = createElement({ type: 'div', class: 'popdown', childrenArray: [searchField, invitedDiv] })
+  let inviteSomeone = createElement({
+    type: 'button',
+    class: 'inviteSomeone',
+    childrenArray: [
+      createElement({ type: 'i', class: 'bx bx-plus' }),
+      createElement({ type: 'p', textContent: 'Add Participants' }),
+    ],
+    onclick: () => {
+      popDown.classList.toggle('popdownDisplayed')
+    }
+  })
+  let headerRightPart = createElement({ type: 'div', class: 'headerRightPart', childrenArray: [inviteSomeone, popDown] })
+
+  callScreenHeader.textContent = '';
+  callScreenHeader.append(headerLeftPart, headerRightPart)
 }
+
+
+// window.onbeforeunload = function () {
+//   deleteAllCookies()
+//   return 'Are you sure you want to leave?';
+// };
+// function deleteAllCookies() {
+//   var cookies = document.cookie.split(";");
+
+//   for (var i = 0; i < cookies.length; i++) {
+//     var cookie = cookies[i];
+//     var eqPos = cookie.indexOf("=");
+//     var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+//     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+//   }
+// }
