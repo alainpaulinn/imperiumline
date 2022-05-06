@@ -1775,13 +1775,14 @@ myPeer.on('open', myPeerId => {
       let { callUniqueId, callType, caller, groupMembersToCall_fullInfo, allUsers } = initiatedCallInfo
       let { userID, name, surname, profilePicture, role } = caller
 
-      // create topBar
-      createTopBar({ callUniqueId: callUniqueId, callTitle: 'Unnamed call', isTeam: 'isTeam' }, caller)
-      //callUniqueId, callTitle, isTeam
       //save these important variables
       myInfo = caller
       caller_me = caller
       saveLocalMediaStream(callType, stream)
+
+      // create topBar
+      createTopBar({ callUniqueId: callUniqueId, callType: globalCallType, callTitle: 'Unnamed call', isTeam: 'isTeam' }, caller)
+
       let mySideVideoDiv = createSideVideo(globalCallType, myStream, caller)
       rightCallParticipantsDiv.append(mySideVideoDiv)
       // create awaited users divs
@@ -1789,13 +1790,13 @@ myPeer.on('open', myPeerId => {
         //let { userID, name, surname, role, profilePicture, status } = user
         let targetedUser = groupMembersToCall_fullInfo.find(member => member.userProfileIdentifier.userID == user.userID);
         if (targetedUser == undefined) {
-          let ringTextForMe = user.userID === caller.userID ? 'Waiting ...' : 'User Offline';
+          let ringTextForMe = user.userID === caller.userID ? 'Waiting ...' : 'Offline';
           let ringIconForMe = user.userID === caller.userID ? 'bx bxs-hourglass' : 'bx bxs-phone-off';
-          let offlineIcon = createElement({ type: 'i', class: ringIconForMe })
-          let offlineText = createElement({ type: 'p', textContent: ringTextForMe })
-          let offlineButton = createElement({ type: 'button', childrenArray: [offlineIcon, offlineText] })
-          let chatIcon = createElement({ type: 'i', class: 'bx bxs-message-square-detail' })
-          let chatButton = createElement({ type: 'button', childrenArray: [chatIcon] })
+          let offlineIcon = createElement({ elementType: 'i', class: ringIconForMe })
+          let offlineText = createElement({ elementType: 'p', textContent: ringTextForMe })
+          let offlineButton = createElement({ elementType: 'button', childrenArray: [offlineIcon, offlineText] })
+          let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
+          let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
           let actions = [
             { element: offlineButton, functionCall: () => { } },
             { element: chatButton, functionCall: () => { console.log('chat with user', userID) } }]
@@ -1803,12 +1804,12 @@ myPeer.on('open', myPeerId => {
         }
         else {
 
-          let ringIcon = createElement({ type: 'i', class: 'bx bxs-bell-ring' })
-          let ringText = createElement({ type: 'p', textContent: 'Ringing...' })
-          let ringButton = createElement({ type: 'button', childrenArray: [ringIcon, ringText] })
+          let ringIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
+          let ringText = createElement({ elementType: 'p', textContent: 'Ringing...' })
+          let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
 
-          let chatIcon = createElement({ type: 'i', class: 'bx bxs-message-square-detail' })
-          let chatButton = createElement({ type: 'button', childrenArray: [chatIcon] })
+          let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
+          let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
 
           let actions = [
             { element: ringButton, functionCall: () => { console.log('ringing', userID) } },
@@ -1870,25 +1871,25 @@ myPeer.on('open', myPeerId => {
           if (awaitedDiv.userID == userInfo.userID) {
 
             let memberProfilePicture;
-            if (profilePicture == null) memberProfilePicture = createElement({ type: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-            else memberProfilePicture = createElement({ type: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+            if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+            else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
 
-            let memberName = createElement({ type: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
-            let memberRole = createElement({ type: 'div', class: 'memberRole', textContent: userInfo.role })
-            let memberNameRole = createElement({ type: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+            let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
+            let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
+            let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
 
-            let ringIcon = createElement({ type: 'i', class: 'bx bx-x' })
-            let ringText = createElement({ type: 'p', textContent: 'Rejected' })
-            let ringButton = createElement({ type: 'button', childrenArray: [ringIcon, ringText] })
+            let ringIcon = createElement({ elementType: 'i', class: 'bx bx-x' })
+            let ringText = createElement({ elementType: 'p', textContent: 'Rejected' })
+            let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
 
 
-            let chatIcon = createElement({ type: 'i', class: 'bx bxs-message-square-detail' })
-            let chatButton = createElement({ type: 'button', childrenArray: [chatIcon] })
+            let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
+            let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
             chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
 
-            let ringAgainIcon = createElement({ type: 'i', class: 'bx bxs-bell-ring' })
-            let ringAgainText = createElement({ type: 'p', textContent: 'Ring Again' })
-            let ringAgainButton = createElement({ type: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
+            let ringAgainIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
+            let ringAgainText = createElement({ elementType: 'p', textContent: 'Ring Again' })
+            let ringAgainButton = createElement({ elementType: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
             ringAgainButton.addEventListener('click', () => console.log('ring again USER', userInfo.userID))
 
             awaitedDiv.div.textContent = '';
@@ -1906,32 +1907,71 @@ myPeer.on('open', myPeerId => {
           if (awaitedDiv.userID == userInfo.userID) {
 
             let memberProfilePicture;
-            if (profilePicture == null) memberProfilePicture = createElement({ type: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-            else memberProfilePicture = createElement({ type: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+            if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+            else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
 
-            let memberName = createElement({ type: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
-            let memberRole = createElement({ type: 'div', class: 'memberRole', textContent: userInfo.role })
-            let memberNameRole = createElement({ type: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+            let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
+            let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
+            let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
 
-            let ringIcon = createElement({ type: 'i', class: 'bx bx-x' })
-            let ringText = createElement({ type: 'p', textContent: 'Not answered' })
-            let ringButton = createElement({ type: 'button', childrenArray: [ringIcon, ringText] })
+            let ringIcon = createElement({ elementType: 'i', class: 'bx bx-x' })
+            let ringText = createElement({ elementType: 'p', textContent: 'Not answered' })
+            let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
 
 
-            let chatIcon = createElement({ type: 'i', class: 'bx bxs-message-square-detail' })
-            let chatButton = createElement({ type: 'button', childrenArray: [chatIcon] })
+            let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
+            let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
             chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
 
-            let ringAgainIcon = createElement({ type: 'i', class: 'bx bxs-bell-ring' })
-            let ringAgainText = createElement({ type: 'p', textContent: 'Ring Again' })
-            let ringAgainButton = createElement({ type: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
+            let ringAgainIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
+            let ringAgainText = createElement({ elementType: 'p', textContent: 'Ring Again' })
+            let ringAgainButton = createElement({ elementType: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
             ringAgainButton.addEventListener('click', () => console.log('ring again USER', userInfo.userID))
 
             awaitedDiv.div.textContent = '';
+            console.log('timeoutDetails', timeoutDetails)
             awaitedDiv.div.append(memberProfilePicture, memberNameRole, ringButton, chatButton, ringAgainButton)
           }
         }
 
+      })
+
+      // Handle added users to call
+      socket.on('userAddedToCall', (additionDetails) => {
+        let { callUniqueId, userInfo } = additionDetails
+        console.log('additionDetails', additionDetails)
+        let memberProfilePicture;
+        if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+        else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+
+        let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
+        let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
+        let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+
+        let status = userInfo.status == "online" ? "Ringing" : "Offline"
+        let ringIcon = createElement({ elementType: 'i', class: 'bx bx-x' })
+
+        let ringText = createElement({ elementType: 'p', textContent: status })
+        let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
+
+
+        let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
+        let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
+        chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
+
+        let ringAgainIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
+        let ringAgainText = createElement({ elementType: 'p', textContent: 'Ring Again' })
+        let ringAgainButton = createElement({ elementType: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
+        ringAgainButton.addEventListener('click', () => console.log('ring again USER', userInfo.userID))
+
+        //awaitedDiv.div.textContent = '';
+        console.log('additionDetails', additionDetails)
+        let addeduserDiv = createElement({
+          elementType: 'div', class: 'listMember', childrenArray: [
+            memberProfilePicture, memberNameRole, ringButton, chatButton, ringAgainButton
+          ]
+        })
+        videoCoverDiv.calleesDiv.prepend(addeduserDiv)
       })
     }, (err) => { alert('Failed to get local media stream', err); });
   })
@@ -2109,12 +2149,12 @@ myPeer.on('open', myPeerId => {
     let allInvitedUsersArray = allUsers.map(user => {
       let { userID, name, surname, profilePicture, role } = user;
       //element, functionCall
-      let chatIcon = createElement({ type: 'i', class: 'bx bxs-message-square-detail' })
-      let chatButton = createElement({ type: 'button', childrenArray: [chatIcon] })
+      let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
+      let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
 
-      let ringIcon = createElement({ type: 'i', class: 'bx bxs-bell-ring' })
-      let ringText = createElement({ type: 'p', textContent: 'Ring' })
-      let ringButton = createElement({ type: 'button', childrenArray: [ringIcon, ringText] })
+      let ringIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
+      let ringText = createElement({ elementType: 'p', textContent: 'Ring' })
+      let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
 
       let actions = [
         { element: chatButton, functionCall: () => { console.log('chat with user', userID) } },
@@ -2207,7 +2247,7 @@ function convertToAudioOnlyStream(stream) {
   // add a fake video track -> https://github.com/peers/peerjs/issues/435 
 
 
-  // var image = createElement({ type: 'img', src: '/images/audioCallInterface.png' })
+  // var image = createElement({ elementType: 'img', src: '/images/audioCallInterface.png' })
   // let canvas = Object.assign(document.createElement("canvas"), { w: 300, h: 300 });
   // context = canvas.getContext('2d');
   // drawImageScaled(image, context)
@@ -2230,20 +2270,20 @@ function createMainVideoDiv(callType, stream, userInfo) {
   let { userID, name, surname, profilePicture, role } = userInfo;
 
   //main video element
-  let mainVideoElement = createElement({ type: 'video', class: 'mainVideoElement', srcObject: stream })
+  let mainVideoElement = createElement({ elementType: 'video', class: 'mainVideoElement', srcObject: stream })
   mainVideoElement.play();
 
   //topBar
   let mainVideoOwnerProfilePicture;
-  if (profilePicture == null) mainVideoOwnerProfilePicture = createElement({ type: 'div', class: 'mainVideoOwnerProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-  else mainVideoOwnerProfilePicture = createElement({ type: 'img', class: 'mainVideoOwnerProfilePicture', src: profilePicture })
-  let videoOwnerName = createElement({ type: 'div', class: 'videoOwnerName', textContent: name + ' ' + surname })
-  let videoOwnerPosition = createElement({ type: 'div', class: 'videoOwnerPosition', textContent: role })
-  let mainVideoOwnerProfileNamePosition = createElement({ type: 'div', class: 'mainVideoOwnerProfileNamePosition', childrenArray: [videoOwnerName, videoOwnerPosition] })
-  let leftUserIdentifiers = createElement({ type: 'div', class: 'leftUserIdentifiers', childrenArray: [mainVideoOwnerProfilePicture, mainVideoOwnerProfileNamePosition] })
+  if (profilePicture == null) mainVideoOwnerProfilePicture = createElement({ elementType: 'div', class: 'mainVideoOwnerProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+  else mainVideoOwnerProfilePicture = createElement({ elementType: 'img', class: 'mainVideoOwnerProfilePicture', src: profilePicture })
+  let videoOwnerName = createElement({ elementType: 'div', class: 'videoOwnerName', textContent: name + ' ' + surname })
+  let videoOwnerPosition = createElement({ elementType: 'div', class: 'videoOwnerPosition', textContent: role })
+  let mainVideoOwnerProfileNamePosition = createElement({ elementType: 'div', class: 'mainVideoOwnerProfileNamePosition', childrenArray: [videoOwnerName, videoOwnerPosition] })
+  let leftUserIdentifiers = createElement({ elementType: 'div', class: 'leftUserIdentifiers', childrenArray: [mainVideoOwnerProfilePicture, mainVideoOwnerProfileNamePosition] })
 
   let muteBtn = createElement({
-    type: 'button', title: 'Mute Video', childrenArray: [createElement({ type: 'i', class: 'bx bx-volume-mute' })], onclick: () => {
+    type: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })], onclick: () => {
       for (let index in stream.getAudioTracks()) {
         let audioTrack = stream.getAudioTracks()[index]
         audioTrack.enabled = !audioTrack.enabled
@@ -2262,34 +2302,34 @@ function createMainVideoDiv(callType, stream, userInfo) {
       }
     }
   }
-  let speakerBtn = createElement({ type: 'button', title: 'User is speaking', childrenArray: [createElement({ type: 'i', class: 'bx bxs-user-voice' })] })
+  let speakerBtn = createElement({ elementType: 'button', title: 'User is speaking', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-voice' })] })
   streamVolumeOnTreshold(stream, 20, speakerBtn)
-  let mainVideoFullscreenBtn = createElement({ type: 'button', class: 'mainVideoFullscreenBtn', childrenArray: [createElement({ type: 'i', class: 'bx bx-fullscreen' })], onclick: () => { toggleFullscreen(mainVideoDiv) } })
-  let rightVideoControls = createElement({ type: 'div', class: 'rightVideoControls', childrenArray: [muteBtn, speakerBtn, mainVideoFullscreenBtn] })
-  let callTopBar = createElement({ type: 'div', class: 'callTopBar', childrenArray: [leftUserIdentifiers, rightVideoControls] })
+  let mainVideoFullscreenBtn = createElement({ elementType: 'button', class: 'mainVideoFullscreenBtn', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-fullscreen' })], onclick: () => { toggleFullscreen(mainVideoDiv) } })
+  let rightVideoControls = createElement({ elementType: 'div', class: 'rightVideoControls', childrenArray: [muteBtn, speakerBtn, mainVideoFullscreenBtn] })
+  let callTopBar = createElement({ elementType: 'div', class: 'callTopBar', childrenArray: [leftUserIdentifiers, rightVideoControls] })
 
   //call controls
-  let alwaysVisibleControls = createElement({ type: 'button', class: 'alwaysVisibleControls' })
+  let alwaysVisibleControls = createElement({ elementType: 'button', class: 'alwaysVisibleControls' })
   let fitToFrame = createElement({
-    type: 'button', class: 'callControl', title: "Fit video to frame", childrenArray: [createElement({ type: 'i', class: 'bx bx-collapse' })],
+    type: 'button', class: 'callControl', title: "Fit video to frame", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-collapse' })],
     onClick: () => { mainVideoElement.classList.toggle('fitVideoToWindow') }
   })
-  let shareScreenBtn = createElement({ type: 'button', class: 'callControl', title: "Choose video output device", childrenArray: [createElement({ type: 'i', class: 'bx bx-window-open' })] })
-  let closeVideoBtn = createElement({ type: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ type: 'i', class: 'bx bxs-video-recording' }), createElement({ type: 'i', class: 'bx bx-chevron-up' })] })
-  let HangUpBtn = createElement({ type: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ type: 'i', class: 'bx bxs-phone-off' })] })
-  let muteMicrophone = createElement({ type: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ type: 'i', class: 'bx bx-video-off' })] })
-  let silenceAudio = createElement({ type: 'button', class: 'callControl', title: "Silence all call audio", childrenArray: [createElement({ type: 'i', class: 'bx bx-volume-mute' })] })
-  let chooseAudioOutputDeviceBtn = createElement({ type: 'button', class: 'callControl', title: "Choose audio output device", childrenArray: [createElement({ type: 'i', class: 'bx bxs-speaker' }), createElement({ type: 'i', class: 'bx bx-chevron-up' })] })
+  let shareScreenBtn = createElement({ elementType: 'button', class: 'callControl', title: "Choose video output device", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-window-open' })] })
+  let closeVideoBtn = createElement({ elementType: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video-recording' }), createElement({ elementType: 'i', class: 'bx bx-chevron-up' })] })
+  let HangUpBtn = createElement({ elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })] })
+  let muteMicrophone = createElement({ elementType: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-video-off' })] })
+  let silenceAudio = createElement({ elementType: 'button', class: 'callControl', title: "Silence all call audio", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })] })
+  let chooseAudioOutputDeviceBtn = createElement({ elementType: 'button', class: 'callControl', title: "Choose audio output device", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-speaker' }), createElement({ elementType: 'i', class: 'bx bx-chevron-up' })] })
 
-  let hiddableControls = createElement({ type: 'div', class: 'hiddableControls', childrenArray: [fitToFrame, shareScreenBtn, closeVideoBtn, HangUpBtn, muteMicrophone, silenceAudio, chooseAudioOutputDeviceBtn] })
-  let callControls = createElement({ type: 'div', class: 'callControls', childrenArray: [alwaysVisibleControls, hiddableControls] })
+  let hiddableControls = createElement({ elementType: 'div', class: 'hiddableControls', childrenArray: [fitToFrame, shareScreenBtn, closeVideoBtn, HangUpBtn, muteMicrophone, silenceAudio, chooseAudioOutputDeviceBtn] })
+  let callControls = createElement({ elementType: 'div', class: 'callControls', childrenArray: [alwaysVisibleControls, hiddableControls] })
 
   // AudioCall Cover Div
   let audioCallprofilePicture
-  if (profilePicture == null) audioCallprofilePicture = createElement({ type: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-  else audioCallprofilePicture = createElement({ type: 'img', class: 'profilePicture', src: profilePicture })
-  let audioCallCoverName = createElement({ type: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
-  let audioCallCover = createElement({ type: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
+  if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+  else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
+  let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
+  let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
 
   let callParticipantDiv
   if (callType == "audio") { audioCallCover.style.display = 'flex' }
@@ -2301,20 +2341,20 @@ function createMainVideoDiv(callType, stream, userInfo) {
 function createSideVideo(type, stream, userInfo) {
   let { videoOwner } = userInfo;
   let { userID, name, surname, profilePicture, role } = userInfo
-  let videoElement = createElement({ type: 'video', srcObject: stream, class: 'callParticipant', autoPlay: "true" }); videoElement.play()
+  let videoElement = createElement({ elementType: 'video', srcObject: stream, class: 'callParticipant', autoPlay: "true" }); videoElement.play()
 
-  let miniVideowner = createElement({ type: 'div', class: 'miniVideowner', textContent: name + " " + surname })
-  let muteBtn = createElement({ type: 'button', title: 'Mute Video', childrenArray: [createElement({ type: 'i', class: 'bx bx-volume-mute' })] })
-  let speakerBtn = createElement({ type: 'button', title: 'User is speaking', childrenArray: [createElement({ type: 'i', class: 'bx bxs-user-voice' })] })
-  let sideVideoControls = createElement({ type: 'div', class: 'sideVideoControls', childrenArray: [miniVideowner, muteBtn, speakerBtn] })
+  let miniVideowner = createElement({ elementType: 'div', class: 'miniVideowner', textContent: name + " " + surname })
+  let muteBtn = createElement({ elementType: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })] })
+  let speakerBtn = createElement({ elementType: 'button', title: 'User is speaking', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-voice' })] })
+  let sideVideoControls = createElement({ elementType: 'div', class: 'sideVideoControls', childrenArray: [miniVideowner, muteBtn, speakerBtn] })
 
   determinAudioState() // activate / deactivate mute button
   // AudioCall Cover Div
   let audioCallprofilePicture
-  if (profilePicture == null) audioCallprofilePicture = createElement({ type: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-  else audioCallprofilePicture = createElement({ type: 'img', class: 'profilePicture', src: profilePicture })
-  let audioCallCoverName = createElement({ type: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
-  let audioCallCover = createElement({ type: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
+  if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+  else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
+  let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
+  let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
 
   muteBtn.addEventListener('click', () => {
     for (let index in stream.getAudioTracks()) {
@@ -2345,7 +2385,7 @@ function createSideVideo(type, stream, userInfo) {
   let callParticipantDiv
   if (type == "audio") { audioCallCover.style.display = 'flex' }
   else audioCallCover.style.display = 'none'
-  callParticipantDiv = createElement({ type: 'div', class: 'callParticipantDiv', childrenArray: [videoElement, audioCallCover, sideVideoControls] })
+  callParticipantDiv = createElement({ elementType: 'div', class: 'callParticipantDiv', childrenArray: [videoElement, audioCallCover, sideVideoControls] })
 
   if (userID == mySavedID) {
     videoElement.muted = true;
@@ -2367,8 +2407,8 @@ function createSideVideo(type, stream, userInfo) {
 }
 
 function createElement(configuration) {
-  if (!configuration.type) return console.warn('no element type provided')
-  let elementToReturn = document.createElement(configuration.type)
+  if (!configuration.elementType) return console.warn('no element type provided')
+  let elementToReturn = document.createElement(configuration.elementType)
   if (configuration.id) elementToReturn.setAttribute('id', configuration.id)
   if (configuration.class) elementToReturn.setAttribute('class', configuration.class)
   if (configuration.title) elementToReturn.setAttribute('title', configuration.title)
@@ -2388,13 +2428,13 @@ function userForAttendanceList(userInfo, actions) {
   // actions is an array of buttons where on item is {element, functionCall}
   // container is presentMembersDiv
   let memberProfilePicture;
-  if (profilePicture == null) memberProfilePicture = createElement({ type: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-  else memberProfilePicture = createElement({ type: 'img', class: 'memberProfilePicture', src: profilePicture })
+  if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+  else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture })
 
-  let memberName = createElement({ type: 'div', class: 'memberName', textContent: name + ' ' + surname })
-  let memberRole = createElement({ type: 'div', class: 'memberRole', textContent: role })
-  let memberNameRole = createElement({ type: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
-  let chatButton = createElement({ type: 'button', childrenArray: [createElement({ type: 'i', class: 'bx bxs-message-square-detail' }), createElement({ type: 'p', textContent: 'Chat' }),] })
+  let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: name + ' ' + surname })
+  let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: role })
+  let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+  let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' }), createElement({ elementType: 'p', textContent: 'Chat' }),] })
 
   let actionElements = actions.map(action => {
     //let { element, functionCall } = action
@@ -2403,7 +2443,7 @@ function userForAttendanceList(userInfo, actions) {
     return element;
   })
 
-  let presentMember = createElement({ type: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole].concat(actionElements) })
+  let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole].concat(actionElements) })
   return presentMember
 }
 
@@ -2461,7 +2501,7 @@ function stopWaitingTone() {
 }
 
 function videoConnectingScreen(constraints) {
-  // let memberNameRole = createElement({ type: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+  // let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
   let { isGroup, awaitedUserDivs, displayInitials, profilePicture, screenMessage, spinner } = constraints
 
   // isGroup: isGroup,
@@ -2472,30 +2512,30 @@ function videoConnectingScreen(constraints) {
   // spinner: true,
 
   let caleeProfilePicture;
-  if (constraints.profilePicture != null) { caleeProfilePicture = createElement({ type: 'img', class: 'caleeProfilePicture', src: constraints.profilePicture }) }
-  else caleeProfilePicture = createElement({ type: 'div', class: 'caleeProfilePicture', textContent: constraints.displayInitials })
-  let activity = createElement({ type: 'div', class: 'activity', textContent: constraints.screenMessage })
-  let spinnerDiv = createElement({ type: 'div', class: 'spinner', childrenArray: [createElement({ type: 'div' }), createElement({ type: 'div' }), createElement({ type: 'div' })] })
-  let calleesDiv = createElement({ type: 'div', class: 'calleesDiv', childrenArray: awaitedUserDivs.map(awaitedUserDiv => awaitedUserDiv.div) })
+  if (constraints.profilePicture != null) { caleeProfilePicture = createElement({ elementType: 'img', class: 'caleeProfilePicture', src: constraints.profilePicture }) }
+  else caleeProfilePicture = createElement({ elementType: 'div', class: 'caleeProfilePicture', textContent: constraints.displayInitials })
+  let activity = createElement({ elementType: 'div', class: 'activity', textContent: constraints.screenMessage })
+  let spinnerDiv = createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })
+  let calleesDiv = createElement({ elementType: 'div', class: 'calleesDiv', childrenArray: awaitedUserDivs.map(awaitedUserDiv => awaitedUserDiv.div) })
 
   let videoCoverDiv
-  if (spinner == true) videoCoverDiv = createElement({ type: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, spinnerDiv, calleesDiv] })
-  else videoCoverDiv = createElement({ type: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, calleesDiv] })
+  if (spinner == true) videoCoverDiv = createElement({ elementType: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, spinnerDiv, calleesDiv] })
+  else videoCoverDiv = createElement({ elementType: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, calleesDiv] })
 
   let controls = {};
   if (constraints.videoConnectingControls) {
-    //let chooseVideoOutputDeviceBtn = createElement({ type: 'button', class: 'callControl', title: "Choose camera", childrenArray: [createElement({ type: 'i', class: 'bx bxs-video-recording' }), createElement({ type: 'i', class: 'bx bx-chevron-up' })] })
-    let closeVideoBtn = createElement({ type: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ type: 'i', class: 'bx bxs-video-off' })] })
+    //let chooseVideoOutputDeviceBtn = createElement({ elementType: 'button', class: 'callControl', title: "Choose camera", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video-recording' }), createElement({ elementType: 'i', class: 'bx bx-chevron-up' })] })
+    let closeVideoBtn = createElement({ elementType: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video-off' })] })
 
-    let HangUpBtn = createElement({ type: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ type: 'i', class: 'bx bxs-phone-off' })] })
-    let muteMicrophoneBtn = createElement({ type: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ type: 'i', class: 'bx bxs-microphone-off' })] })
-    //let chooseAudioOutputDeviceBtn = createElement({ type: 'button', class: 'callControl', title: "Choose audio output device", childrenArray: [createElement({ type: 'i', class: 'bx bxs-speaker' }), createElement({ type: 'i', class: 'bx bx-chevron-up' })] })
+    let HangUpBtn = createElement({ elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })] })
+    let muteMicrophoneBtn = createElement({ elementType: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-microphone-off' })] })
+    //let chooseAudioOutputDeviceBtn = createElement({ elementType: 'button', class: 'callControl', title: "Choose audio output device", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-speaker' }), createElement({ elementType: 'i', class: 'bx bx-chevron-up' })] })
 
-    let hiddableControls = createElement({ type: 'div', class: 'waitingCallControls', childrenArray: [closeVideoBtn, HangUpBtn, muteMicrophoneBtn] })
+    let hiddableControls = createElement({ elementType: 'div', class: 'waitingCallControls', childrenArray: [closeVideoBtn, HangUpBtn, muteMicrophoneBtn] })
     videoCoverDiv.append(hiddableControls)
     controls = { closeVideoBtn, HangUpBtn, muteMicrophoneBtn }
   }
-  return { videoCoverDiv, controls }
+  return { videoCoverDiv, controls, calleesDiv }
 }
 
 function displayNotification(notificationConfig) {
@@ -2508,16 +2548,16 @@ function displayNotification(notificationConfig) {
   let notificationsDiv = document.getElementById('notificationsDiv')
 
   //Title
-  let titleIcon = createElement({ type: 'i', class: iconClass })
-  let titleTextDiv = createElement({ type: 'div', class: 'notificationTitleText', textContent: titleText })
-  let notificationTitle = createElement({ type: 'div', class: 'notificationTitle', childrenArray: [titleIcon, titleTextDiv] })
+  let titleIcon = createElement({ elementType: 'i', class: iconClass })
+  let titleTextDiv = createElement({ elementType: 'div', class: 'notificationTitleText', textContent: titleText })
+  let notificationTitle = createElement({ elementType: 'div', class: 'notificationTitle', childrenArray: [titleIcon, titleTextDiv] })
 
   //Body
   let profilePicture;
-  if (shortOrImagType == 'short') { profilePicture = createElement({ type: 'div', class: 'profilePicture', textContent: shortOrImagContent }) }
-  if (shortOrImagType == 'image') { profilePicture = createElement({ type: 'img', class: 'profilePicture', src: shortOrImagContent }) }
-  let notificationContent = createElement({ type: 'div', class: 'notificationContent', textContent: bodyContent })
-  let notificationBody = createElement({ type: 'div', class: 'notificationBody', childrenArray: [profilePicture, notificationContent] })
+  if (shortOrImagType == 'short') { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: shortOrImagContent }) }
+  if (shortOrImagType == 'image') { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: shortOrImagContent }) }
+  let notificationContent = createElement({ elementType: 'div', class: 'notificationContent', textContent: bodyContent })
+  let notificationBody = createElement({ elementType: 'div', class: 'notificationBody', childrenArray: [profilePicture, notificationContent] })
 
   let notification;
 
@@ -2525,19 +2565,19 @@ function displayNotification(notificationConfig) {
   let buttonsArray = [];
   actions.forEach(action => {
     let { type, displayText, actionFunction } = action
-    let actionBtn = createElement({ type: 'button', class: type, textContent: displayText })
+    let actionBtn = createElement({ elementType: 'button', class: type, textContent: displayText })
     actionBtn.addEventListener('click', () => { notificationStop(); actionFunction(); })
     buttonsArray.push(actionBtn)
   })
-  let dismissbutton = createElement({ type: 'button', class: 'normal', textContent: 'Hide' })
+  let dismissbutton = createElement({ elementType: 'button', class: 'normal', textContent: 'Hide' })
   buttonsArray.push(dismissbutton)
-  let notificationActions = createElement({ type: 'div', class: 'notificationActions', childrenArray: buttonsArray })
+  let notificationActions = createElement({ elementType: 'div', class: 'notificationActions', childrenArray: buttonsArray })
 
   //progressbar
-  let notificationProgressBar = createElement({ type: 'div', class: 'notificationProgressBar' })
+  let notificationProgressBar = createElement({ elementType: 'div', class: 'notificationProgressBar' })
 
   //notification Element
-  notification = createElement({ type: 'div', class: 'notification', childrenArray: [notificationTitle, notificationBody, notificationActions, notificationProgressBar] })
+  notification = createElement({ elementType: 'div', class: 'notification', childrenArray: [notificationTitle, notificationBody, notificationActions, notificationProgressBar] })
   notificationsDiv.append(notification)
 
   // run the On display event
@@ -2593,21 +2633,21 @@ let notification = displayNotification({
 
 function createOngoingCallScreen() {
   // leftPart
-  let leftPartHeaderDivTitle = createElement({ type: 'div', class: 'leftPartHeaderDivTitle' })
+  let leftPartHeaderDivTitle = createElement({ elementType: 'div', class: 'leftPartHeaderDivTitle' })
   let inviteSomeone = createElement({
     type: 'button',
     class: 'inviteSomeone',
-    childrenArray: [createElement({ type: 'i', class: 'bx bx-plus' }), createElement({ type: 'p', textContent: 'invite Someone' })]
+    childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' }), createElement({ elementType: 'p', textContent: 'invite Someone' })]
   })
-  let presenceSelectorBtn = createElement({ type: 'div', class: 'leftHeaderItem headerItemSelected', textContent: 'Present (0)' })
-  let absenceSelectorBtn = createElement({ type: 'div', class: 'leftHeaderItem', textContent: 'Absent (0)' })
+  let presenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem headerItemSelected', textContent: 'Present (0)' })
+  let absenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem', textContent: 'Absent (0)' })
 
-  let attendanceTitleSection = createElement({ type: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn] })
-  let presentMembersDiv = createElement({ type: 'div', class: 'presentMembersDiv', id: 'presentMembersDiv' })
-  let absentMembersDiv = createElement({ type: 'div', class: 'absentMembersDiv', id: 'absentMembersDiv' })
-  let attendanceContentDiv = createElement({ type: 'div', class: 'attendanceContentDiv', childrenArray: [presentMembersDiv, absentMembersDiv] })
+  let attendanceTitleSection = createElement({ elementType: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn] })
+  let presentMembersDiv = createElement({ elementType: 'div', class: 'presentMembersDiv', id: 'presentMembersDiv' })
+  let absentMembersDiv = createElement({ elementType: 'div', class: 'absentMembersDiv', id: 'absentMembersDiv' })
+  let attendanceContentDiv = createElement({ elementType: 'div', class: 'attendanceContentDiv', childrenArray: [presentMembersDiv, absentMembersDiv] })
 
-  let leftPart = createElement({ type: 'div', class: 'leftPart', textContent: 'Attendance', childrenArray: [leftPartHeaderDivTitle, inviteSomeone, attendanceTitleSection, attendanceContentDiv] })
+  let leftPart = createElement({ elementType: 'div', class: 'leftPart', textContent: 'Attendance', childrenArray: [leftPartHeaderDivTitle, inviteSomeone, attendanceTitleSection, attendanceContentDiv] })
   //call-container
 
   return {
@@ -2618,47 +2658,62 @@ function createOngoingCallScreen() {
 }
 
 function createTopBar(callInfo, myInfo) {
-  let { callUniqueId, callTitle, isTeam } = callInfo
+  let { callUniqueId, callType, callTitle, isTeam } = callInfo
   let callScreenHeader = document.getElementById('callScreenHeader')
 
 
-  let MeetingTitle = createElement({ type: 'div', class: 'MeetingTitle', textContent: callTitle })
-  let headerLeftPart = createElement({ type: 'div', class: 'headerLeftPart', childrenArray: [MeetingTitle] })
+  let MeetingTitle = createElement({ elementType: 'div', class: 'MeetingTitle', textContent: callTitle })
+  let headerLeftPart = createElement({ elementType: 'div', class: 'headerLeftPart', childrenArray: [MeetingTitle] })
 
-  let input = createElement({ type: 'input', placeHolder: 'Search users' })
-  let doneBtn = createElement({ type: 'button', childrenArray: [createElement({ type: 'i', class: 'bx bx-check' }), createElement({ type: 'p', textContent: 'Done' })] })
-  let searchField = createElement({ type: 'div', class: 'searchField', childrenArray: [input, doneBtn] })
+  let input = createElement({ elementType: 'input', placeHolder: 'Search users' })
+  let doneBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-check' }), createElement({ elementType: 'p', textContent: 'Done' })] })
+  let searchField = createElement({ elementType: 'div', class: 'searchField', childrenArray: [input, doneBtn] })
 
-  let invitedDiv = createElement({ type: 'div', class: 'invitedDiv', textContent:'Type to search ...' })
+  let invitedDiv = createElement({ elementType: 'div', class: 'invitedDiv', textContent: 'Type to search ...' })
 
-  input.addEventListener('input', function () {
-    var searchText = this.value;
-    console.log('searching People', callUniqueId)
-    socket.emit('searchPeopleToInviteToCall', {callUniqueId, searchText});
+  input.addEventListener('input', () => {
+    var searchText = input.value;
+    console.log('searching People', callUniqueId, searchText)
+    socket.emit('searchPeopleToInviteToCall', { callUniqueId, searchText });
   })
+
 
   socket.on('searchPeopleToInviteToCall', (searchPeople) => {
     console.log(searchPeople)
-    // searchResults.innerHTML = '';
-  
-    // searchPeople.forEach(searchPerson => {
-      
-    // })
+    if (searchPeople.length == 0) { return invitedDiv.textContent = 'No user found.' }
+    invitedDiv.textContent = ''
+    searchPeople.forEach((searchPerson) => {
+      let searchPersonElement;
+      let element = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-plus' })] })
+      let actions = [
+        {
+          element, functionCall: () => {
+            console.log('add user; ', searchPerson.userID)
+            searchPersonElement.remove()
+            socket.emit('addUserToCall', { callUniqueId, userID: searchPerson.userID, callType });
+          }
+        }
+      ];
+      searchPersonElement = userForAttendanceList(searchPerson, actions)
+      invitedDiv.append(searchPersonElement)
+    })
   })
 
-  let popDown = createElement({ type: 'div', class: 'popdown', childrenArray: [searchField, invitedDiv] })
+  let popDown = createElement({ elementType: 'div', class: 'popdown', childrenArray: [searchField, invitedDiv] })
   let inviteSomeone = createElement({
-    type: 'button',
+    elementType: 'button',
     class: 'inviteSomeone',
     childrenArray: [
-      createElement({ type: 'i', class: 'bx bx-plus' }),
-      createElement({ type: 'p', textContent: 'Add Participants' }),
+      createElement({ elementType: 'i', class: 'bx bx-plus' }),
+      createElement({ elementType: 'p', textContent: 'Add Participants' }),
     ],
     onclick: () => {
+      input.focus()
       popDown.classList.toggle('popdownDisplayed')
     }
   })
-  let headerRightPart = createElement({ type: 'div', class: 'headerRightPart', childrenArray: [inviteSomeone, popDown] })
+  doneBtn.addEventListener('click', () => { popDown.classList.toggle('popdownDisplayed') })
+  let headerRightPart = createElement({ elementType: 'div', class: 'headerRightPart', childrenArray: [inviteSomeone, popDown] })
 
   callScreenHeader.textContent = '';
   callScreenHeader.append(headerLeftPart, headerRightPart)

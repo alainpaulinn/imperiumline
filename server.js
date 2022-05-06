@@ -14,6 +14,7 @@ dotenv.config({ path: './.env' });
 
 const db = require('./db/db.js');
 const { connect } = require('tls');
+const console = require('console');
 
 const handlebars = require('express-handlebars').create({
   layoutsDir: path.join(__dirname, "views/layouts"),
@@ -633,19 +634,51 @@ io.on('connection', (socket) => {
     // search to add new users to call
     socket.on('searchPeopleToInviteToCall', (callSearchData) => {
       let { callUniqueId, searchText } = callSearchData
+      console.log('callSearchData', callSearchData)
       db.query("SELECT `id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchText + '%', '%' + searchText + '%', '%' + searchText + '%'], async (err, userSearchResult) => {
         if (err) return console.log(err)
-        let thisCallparticipants = await getCallParticipants(callUniqueId) //get all people who are allowed in this call
-        let foundUsers = thisCallparticipants.filter(user => {
-          !(userSearchResult.map(result => { result.id }).includes(user.userID)) && user.userID != id
-        })
-
-        // 
+      let thisCallparticipantsInFull = await getCallParticipants(callUniqueId)
+      let thisCallparticipants = thisCallparticipantsInFull.map(participant => {return participant.userID}) //get all people who are allowed in this call
+        // let foundUsers = thisCallparticipants.filter(user => {
+        //   !(userSearchResult.map(result => { result.id }).includes(user.userID)) && user.userID != id
+        // })
+        foundUsers = []
+        for (let i = 0; i < userSearchResult.length; i++) {
+          const userID = userSearchResult[i].id;
+          if(!thisCallparticipants.includes(userID) && userID != id) {
+            foundUsers.push( await getUserInfo(userID))
+          }
+        }
         console.log('thisCallparticipants', thisCallparticipants)
         console.log('userSearchResult', userSearchResult)
         console.log('id', id)
-        socket.emit('foundUsers', foundUsers)
+        socket.emit('searchPeopleToInviteToCall', foundUsers)
       })
+      
+    })
+    socket.on('addUserToCall', async identifications => {
+      let access = checkCallAccess(id, identifications.callUniqueId)
+      if(access == false) { return console.log('User :', id, ' cannot add user :', identifications.userID, ' to call because he has no access to this call :', identifications.callUniqueId)}
+      let { callUniqueId, userID, callType } = identifications
+
+      let thisCallparticipantsInFull = await getCallParticipants(callUniqueId)
+      let thisCallparticipants = thisCallparticipantsInFull.map(participant => {return participant.userID}) //get all people who are allowed in this call
+      
+      for (let j = 0; j < connectedUsers.length; j++) {
+        if(connectedUsers[j] == userID && !thisCallparticipants.includes(userID)) {
+          connectedUsers[j].socket.join(callUniqueId + '');
+          socket.to(connectedUsers[j].socket.id).emit('incomingCall', {
+            callUniqueId: callUniqueId,
+            callType: callType,
+            caller: await getUserInfo(id),
+            allUsers: thisCallparticipantsInFull,
+            myInfo: await getUserInfo(connectedUsers[j].id)
+          });
+          socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id)); // update callee callog
+        }
+      }
+      socket.emit('userAddedToCall', { callUniqueId: callUniqueId, userInfo: await getUserInfo(userID)})
+      insertCallParticipant(callUniqueId, 'insertedCallId', id, userID)
     })
 
     // for testing only
