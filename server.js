@@ -664,7 +664,7 @@ io.on('connection', (socket) => {
 
       let thisCallparticipantsInFull = await getCallParticipants(callUniqueId)
       let thisCallparticipants = thisCallparticipantsInFull.map(participant => {return participant.userID}) //get all people who are allowed in this call
-      
+      thisCallparticipantsInFull.push( await getUserInfo(userID))
       for (let j = 0; j < connectedUsers.length; j++) {
         //console.log("searching to add connectedUser", connectedUsers[j].id)
         if(connectedUsers[j].id == userID && !thisCallparticipants.includes(userID)) {

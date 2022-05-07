@@ -1129,6 +1129,11 @@ socket.on('searchPerson', (searchPeople) => {
   })
 })
 
+function initiateChat(userID){
+  socket.emit('makeChat', userID)
+
+}
+
 function chatSearchToogle() {
   var chatContainerHeader = document.querySelector("c-chats__header");
   var newSearchBox = document.getElementById("newChatTitle");
@@ -2165,7 +2170,7 @@ myPeer.on('open', myPeerId => {
 
       let actions = [
         { element: chatButton, functionCall: () => { console.log('chat with user', userID) } },
-        { element: ringButton, functionCall: () => { console.log('Ring user', userID) } }]
+        { element: ringButton, functionCall: () => { console.log('Ring user', userID); } }]
 
       let presenceDiv = userForAttendanceList(user, actions)
       absentMembersDiv.append(presenceDiv)
@@ -2316,20 +2321,18 @@ function createMainVideoDiv(callType, stream, userInfo) {
   let callTopBar = createElement({ elementType: 'div', class: 'callTopBar', childrenArray: [leftUserIdentifiers, rightVideoControls] })
 
   //call controls
-  let alwaysVisibleControls = createElement({ elementType: 'button', class: 'alwaysVisibleControls' })
+  //let alwaysVisibleControls = createElement({ elementType: 'button', class: 'alwaysVisibleControls' })
   let fitToFrame = createElement({
     elementType: 'button', class: 'callControl', title: "Fit video to frame", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-collapse' })],
     onClick: () => { mainVideoElement.classList.toggle('fitVideoToWindow') }
   })
-  let shareScreenBtn = createElement({ elementType: 'button', class: 'callControl', title: "Choose video output device", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-window-open' })] })
-  let closeVideoBtn = createElement({ elementType: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video-recording' }), createElement({ elementType: 'i', class: 'bx bx-chevron-up' })] })
+  let closeVideoBtn = createElement({ elementType: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
   let HangUpBtn = createElement({ elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })] })
-  let muteMicrophone = createElement({ elementType: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-video-off' })] })
-  let silenceAudio = createElement({ elementType: 'button', class: 'callControl', title: "Silence all call audio", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })] })
-  let chooseAudioOutputDeviceBtn = createElement({ elementType: 'button', class: 'callControl', title: "Choose audio output device", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-speaker' }), createElement({ elementType: 'i', class: 'bx bx-chevron-up' })] })
+  let muteMicrophone = createElement({ elementType: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-microphone' })] })
+  let shareScreenBtn = createElement({ elementType: 'button', class: 'callControl', title: "Choose video output device", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-window-open' })] })
 
-  let hiddableControls = createElement({ elementType: 'div', class: 'hiddableControls', childrenArray: [fitToFrame, shareScreenBtn, closeVideoBtn, HangUpBtn, muteMicrophone, silenceAudio, chooseAudioOutputDeviceBtn] })
-  let callControls = createElement({ elementType: 'div', class: 'callControls', childrenArray: [alwaysVisibleControls, hiddableControls] })
+  let hiddableControls = createElement({ elementType: 'div', class: 'hiddableControls', childrenArray: [fitToFrame, closeVideoBtn, HangUpBtn, muteMicrophone, shareScreenBtn] })
+  let callControls = createElement({ elementType: 'div', class: 'callControls', childrenArray: [ hiddableControls] })
 
   // AudioCall Cover Div
   let audioCallprofilePicture
