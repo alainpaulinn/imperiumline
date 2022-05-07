@@ -1772,7 +1772,7 @@ myPeer.on('open', myPeerId => {
 
   socket.on('prepareCallingOthers', initiatedCallInfo => {
     navigator.getUserMedia({ video: true, audio: true }, stream => {
-      let { callUniqueId, callType, caller, groupMembersToCall_fullInfo, allUsers } = initiatedCallInfo
+      let { callUniqueId, callType, caller, groupMembersToCall_fullInfo, allUsers, callTitle } = initiatedCallInfo
       let { userID, name, surname, profilePicture, role } = caller
 
       //save these important variables
@@ -1781,7 +1781,7 @@ myPeer.on('open', myPeerId => {
       saveLocalMediaStream(callType, stream)
 
       // create topBar
-      createTopBar({ callUniqueId: callUniqueId, callType: globalCallType, callTitle: 'Unnamed call', isTeam: 'isTeam' }, caller)
+      createTopBar({ callUniqueId: callUniqueId, callType: globalCallType, callTitle: callTitle, isTeam: 'isTeam' }, caller)
 
       let mySideVideoDiv = createSideVideo(globalCallType, myStream, caller)
       rightCallParticipantsDiv.append(mySideVideoDiv)
@@ -1941,42 +1941,44 @@ myPeer.on('open', myPeerId => {
         let { callUniqueId, userInfo } = additionDetails
         console.log('additionDetails', additionDetails)
         let memberProfilePicture;
-        if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+        if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
         else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
 
         let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
         let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
         let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
 
-        let status = userInfo.status == "online" ? "Ringing" : "Offline"
-        let ringIcon = createElement({ elementType: 'i', class: 'bx bx-x' })
+        let status = userInfo.status == "offline" ? "Offline" : "Ringing ...";
+
+        let statIcon = userInfo.status == "offline" ? 'bx bxs-phone-off' : 'bx bxs-bell-ring'
+        let ringIcon = createElement({ elementType: 'i', class: statIcon })
 
         let ringText = createElement({ elementType: 'p', textContent: status })
         let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
-
 
         let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
         let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
         chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
 
-        let ringAgainIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
-        let ringAgainText = createElement({ elementType: 'p', textContent: 'Ring Again' })
-        let ringAgainButton = createElement({ elementType: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
-        ringAgainButton.addEventListener('click', () => console.log('ring again USER', userInfo.userID))
-
         //awaitedDiv.div.textContent = '';
         console.log('additionDetails', additionDetails)
         let addeduserDiv = createElement({
           elementType: 'div', class: 'listMember', childrenArray: [
-            memberProfilePicture, memberNameRole, ringButton, chatButton, ringAgainButton
+            memberProfilePicture, memberNameRole, ringButton, chatButton
           ]
         })
         videoCoverDiv.calleesDiv.prepend(addeduserDiv)
+        awaitedUserDivs.push({ userID: userInfo.userID, div: addeduserDiv })
+
+        //add this new users to the attendance list
+        allUsers.push(userInfo)
+        allInvitedUsers = setAllUsers(allUsers)
+        updateAttendanceList(userInfo, 'absent')
       })
     }, (err) => { alert('Failed to get local media stream', err); });
   })
   socket.on('incomingCall', incomingCallInfo => {
-    let { callUniqueId, callType, caller, myInfo, allUsers } = incomingCallInfo
+    let { callUniqueId, callType, caller, myInfo, allUsers, callTitle } = incomingCallInfo
     let { name, profilePicture, surname, userID } = caller
     caller_me = myInfo
     let responded = false;
@@ -1990,12 +1992,12 @@ myPeer.on('open', myPeerId => {
         bodyContent: 'Incoming ' + callType + ' call from' + name + ' ' + surname //+ (allUsers.length <= 2 ? '.' : ' with ' + (groupMembersToCall_fullInfo.length - 1) + ' other' + ((groupMembersToCall_fullInfo.length - 1) > 1 ? 's.' : '.'))
       },
       actions: [
-        { type: 'normal', displayText: 'Reject', actionFunction: () => { socket.emit("callRejected", callUniqueId); responded == true } },
-        { type: 'confirm', displayText: 'Audio', actionFunction: () => { callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers); responded == true } },
-        { type: 'confirm', displayText: 'Video', actionFunction: () => { callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers); responded == true } },
+        { type: 'normal', displayText: 'Reject', actionFunction: () => { socket.emit("callRejected", callUniqueId); responded = true } },
+        { type: 'confirm', displayText: 'Audio', actionFunction: () => { callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers, callTitle); responded = true } },
+        { type: 'confirm', displayText: 'Video', actionFunction: () => { callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers, callTitle); responded = true } },
       ],
       obligatoryActions: {
-        onDisplay: () => { },
+        onDisplay: () => { responded = false; },
         onHide: () => { responded = false; console.log('call notification Hidden') },
         onEnd: () => {
           if (responded == false) {
@@ -2011,14 +2013,17 @@ myPeer.on('open', myPeerId => {
 
   })
 
-  function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers) {
+  function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers, callTitle) {
     navigator.getUserMedia({ video: true, audio: true }, stream => {
       responded = true
       myStream = stream // store our stream globally so that to access it whenever needed
       // store the call type fpr incoming videos and sending our stream
       saveLocalMediaStream(answertype, stream)
       // let properStream = getStreamToUseLocally(answertype, myStream)
+      callInfo = { callUniqueId, callType: globalCallType, callTitle: callTitle ? callTitle : 'Untitled Call', isTeam: false }
       socket.emit("answerCall", { myPeerId, callUniqueId, callType: answertype })
+      createTopBar(callInfo, myInfo) // create top bar
+
       // ut create and append my sidevideo
       let mySideVideoDiv = createSideVideo(answertype, myStream, myInfo)
       rightCallParticipantsDiv.append(mySideVideoDiv)
@@ -2126,10 +2131,12 @@ myPeer.on('open', myPeerId => {
   function updateAttendanceList(userInfo, status) {
     //display the caller's name on present members DIV
     let { name, profilePicture, surname, userID } = userInfo
+    let itsANewUser = true
     for (let i = 0; i < allInvitedUsers.length; i++) {
       const elementObject = allInvitedUsers[i];
       //let { userID: userID, div: presenceDiv, chatButton: chatButton, ringButton: ringButton } = elementObject
       if (elementObject.userID == userID) {
+        itsANewUser = false
         if (status == 'present') {
           presentMembersDiv.append(elementObject.div);
           elementObject.ringButton.remove()
@@ -2283,7 +2290,7 @@ function createMainVideoDiv(callType, stream, userInfo) {
   let leftUserIdentifiers = createElement({ elementType: 'div', class: 'leftUserIdentifiers', childrenArray: [mainVideoOwnerProfilePicture, mainVideoOwnerProfileNamePosition] })
 
   let muteBtn = createElement({
-    type: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })], onclick: () => {
+    elementType: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })], onclick: () => {
       for (let index in stream.getAudioTracks()) {
         let audioTrack = stream.getAudioTracks()[index]
         audioTrack.enabled = !audioTrack.enabled
@@ -2311,7 +2318,7 @@ function createMainVideoDiv(callType, stream, userInfo) {
   //call controls
   let alwaysVisibleControls = createElement({ elementType: 'button', class: 'alwaysVisibleControls' })
   let fitToFrame = createElement({
-    type: 'button', class: 'callControl', title: "Fit video to frame", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-collapse' })],
+    elementType: 'button', class: 'callControl', title: "Fit video to frame", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-collapse' })],
     onClick: () => { mainVideoElement.classList.toggle('fitVideoToWindow') }
   })
   let shareScreenBtn = createElement({ elementType: 'button', class: 'callControl', title: "Choose video output device", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-window-open' })] })
@@ -2566,7 +2573,7 @@ function displayNotification(notificationConfig) {
   actions.forEach(action => {
     let { type, displayText, actionFunction } = action
     let actionBtn = createElement({ elementType: 'button', class: type, textContent: displayText })
-    actionBtn.addEventListener('click', () => { notificationStop(); actionFunction(); })
+    actionBtn.addEventListener('click', () => { actionFunction(); notificationStop(); })
     buttonsArray.push(actionBtn)
   })
   let dismissbutton = createElement({ elementType: 'button', class: 'normal', textContent: 'Hide' })
@@ -2690,7 +2697,7 @@ function createTopBar(callInfo, myInfo) {
           element, functionCall: () => {
             console.log('add user; ', searchPerson.userID)
             searchPersonElement.remove()
-            socket.emit('addUserToCall', { callUniqueId, userID: searchPerson.userID, callType });
+            socket.emit('addUserToCall', { callUniqueId, userID: searchPerson.userID, callType, callTitle });
           }
         }
       ];

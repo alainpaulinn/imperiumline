@@ -494,7 +494,8 @@ io.on('connection', (socket) => {
                       callType: videoPresentation === 1 ? "video" : "audio",
                       caller: await getUserInfo(id),
                       allUsers: groupMembersToCall,
-                      myInfo: await getUserInfo(connectedUsers[j].id)
+                      myInfo: await getUserInfo(connectedUsers[j].id),
+                      callTitle: 'Untitled Call'
                     });
                     console.log("--->connectedUser identified", connectedUsers[j].id)
                     groupMembersToCall_fullInfo.push({
@@ -511,7 +512,7 @@ io.on('connection', (socket) => {
               }
               //send to all other connected users an incoming call
               //socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall });
-              socket.emit('prepareCallingOthers', { callUniqueId, callType: videoPresentation === 1 ? "video" : "audio", groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall });
+              socket.emit('prepareCallingOthers', { callUniqueId, callType: videoPresentation === 1 ? "video" : "audio", groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall, callTitle: 'Untitled Call' });
               socket.join(callUniqueId + '');
 
               socket.on('cancelCall', () => { // if the caller decides to close the call => end the call for everybody
@@ -659,26 +660,28 @@ io.on('connection', (socket) => {
     socket.on('addUserToCall', async identifications => {
       let access = checkCallAccess(id, identifications.callUniqueId)
       if(access == false) { return console.log('User :', id, ' cannot add user :', identifications.userID, ' to call because he has no access to this call :', identifications.callUniqueId)}
-      let { callUniqueId, userID, callType } = identifications
+      let { callUniqueId, userID, callType, callTitle } = identifications
 
       let thisCallparticipantsInFull = await getCallParticipants(callUniqueId)
       let thisCallparticipants = thisCallparticipantsInFull.map(participant => {return participant.userID}) //get all people who are allowed in this call
       
       for (let j = 0; j < connectedUsers.length; j++) {
-        if(connectedUsers[j] == userID && !thisCallparticipants.includes(userID)) {
+        //console.log("searching to add connectedUser", connectedUsers[j].id)
+        if(connectedUsers[j].id == userID && !thisCallparticipants.includes(userID)) {
           connectedUsers[j].socket.join(callUniqueId + '');
           socket.to(connectedUsers[j].socket.id).emit('incomingCall', {
             callUniqueId: callUniqueId,
             callType: callType,
             caller: await getUserInfo(id),
             allUsers: thisCallparticipantsInFull,
-            myInfo: await getUserInfo(connectedUsers[j].id)
+            myInfo: await getUserInfo(connectedUsers[j].id),
+            callTitle: callTitle
           });
           socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id)); // update callee callog
         }
       }
       socket.emit('userAddedToCall', { callUniqueId: callUniqueId, userInfo: await getUserInfo(userID)})
-      insertCallParticipant(callUniqueId, 'insertedCallId', id, userID)
+      insertCallParticipant(callUniqueId, 1, userID, id) //  is a fictional ID
     })
 
     // for testing only
