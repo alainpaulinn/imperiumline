@@ -727,6 +727,16 @@ body {
       transition: all 0.4s;
 
     }
+    .newChat{
+      background-color: $notification;
+      //padding: 1rem;
+      width: 40px;
+      height: 40px;
+      border-radius: $borderRadius;
+      color: white;
+      box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+
+    }
 
     button {
       display: inline-block;
@@ -735,7 +745,6 @@ body {
       align-items: center;
       justify-content: center;
       outline: none;
-      background: transparent;
       border: none;
       cursor: pointer;
 
@@ -743,7 +752,6 @@ body {
       svg,
       i {
         transition: all 0.8s ease-in-out;
-        color: #a8abad;
         font-size: 20px;
       }
     }
@@ -1174,7 +1182,7 @@ body {
   max-width: 100%;
   margin: 2px 0;
   display: flex;
-  color: $notification;
+  color: black;
   white-space: pre-line;
   /*-ms-hyphens: auto;
   -webkit-hyphens: auto;
@@ -1573,44 +1581,36 @@ body {
 //Typing --- Box
 .typingBox {
   display: flex;
+  gap: 1rem;
   width: 100%;
   max-width: 100%;
   align-items: center;
   padding: .8rem;
-  //background-color: #EBF0F6;
   background-color: white;
   box-shadow: 3px -3px 10px -2px rgba(204, 197, 197, 0.5);
-
-  //box-shadow: 3px 5px 10px -2px rgba(204, 197, 197, 0.5);
   .chat-options {
     text-decoration: none;
     outline: none;
     border: none;
-    color: $body;
+    color: white;
     display: flex;
     align-items: center;
-    align-self: flex-end;
-    background-color: transparent;
-    padding: 1rem 0.5rem;
-    ;
-
+    justify-content: center;
+    background-color: $notification;
+    height: 40px;
+    width: 40px;
+    border-radius: $borderRadius;
+    cursor: pointer;
+    box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.878);
+    display: flex;
     svg,
     i {
-      //margin-right: 5px;
-      //margin-left: 10px;
       font-size: 18px;
-
     }
-
-
     &:hover {
-      color: $notification;
-
-      svg,
-      i {
-        color: $notification;
+      background-color: lighten($notification, 5%);
+      svg, i {
       }
-
     }
   }
 }
@@ -1619,7 +1619,7 @@ body {
 #w-input-container {
   flex: 1;
   color: #76797c;
-  margin: 0px 10px;
+  //margin: 0px 10px;
   //background-color: #fff;
   background-color: #EBF0F6;
   border-radius: $borderRadius;
@@ -2202,6 +2202,7 @@ body {
           .universalCallButtons {
             min-width: 0;
             display: flex;
+            gap: 0.5rem;
             transition: all 0.4s;
             margin-left: 5px;
             align-items: flex-end;
@@ -2209,11 +2210,11 @@ body {
             button {
               transition: all 0.4s;
               border-radius: $borderRadius;
-              width: 2.5rem;
-              height: 2.5rem;
-              margin-left: 3px;
+              width: 40px;
+              height: 40px;
 
               display: flex;
+
               align-items: center;
               justify-content: center;
               cursor: pointer;
@@ -4082,13 +4083,13 @@ body {
   transition: all 0.4s;
   margin-left: 5px;
   align-items: flex-end;
-
+  gap: 0.5rem;
   button {
     transition: all 0.4s;
     border-radius: $borderRadius;
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-left: 3px;
+    width: 40px;
+    height: 40px;
+    
 
     display: flex;
     align-items: center;

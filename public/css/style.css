@@ -803,6 +803,16 @@ body {
   transition: all 0.4s;
 }
 
+.c-chats__header .newChat {
+  background-color: #003061;
+  width: 40px;
+  height: 40px;
+  border-radius: 15px;
+  color: white;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+}
+
 .c-chats__header button {
   display: inline-block;
   -webkit-transition: all 0.8s ease-in-out;
@@ -814,7 +824,6 @@ body {
       -ms-flex-pack: center;
           justify-content: center;
   outline: none;
-  background: transparent;
   border: none;
   cursor: pointer;
 }
@@ -823,7 +832,6 @@ body {
 .c-chats__header button i {
   -webkit-transition: all 0.8s ease-in-out;
   transition: all 0.8s ease-in-out;
-  color: #a8abad;
   font-size: 20px;
 }
 
@@ -1338,7 +1346,7 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  color: #003061;
+  color: black;
   white-space: pre-line;
   /*-ms-hyphens: auto;
   -webkit-hyphens: auto;
@@ -1772,6 +1780,7 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  gap: 1rem;
   width: 100%;
   max-width: 100%;
   -webkit-box-align: center;
@@ -1787,17 +1796,24 @@ body {
   text-decoration: none;
   outline: none;
   border: none;
-  color: #5b5e61;
+  color: white;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  -ms-flex-item-align: end;
-      align-self: flex-end;
-  background-color: transparent;
-  padding: 1rem 0.5rem;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background-color: #003061;
+  height: 40px;
+  width: 40px;
+  border-radius: 15px;
+  cursor: pointer;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.878);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.878);
+  display: flex;
 }
 
 .typingBox .chat-options svg,
@@ -1806,12 +1822,7 @@ body {
 }
 
 .typingBox .chat-options:hover {
-  color: #003061;
-}
-
-.typingBox .chat-options:hover svg,
-.typingBox .chat-options:hover i {
-  color: #003061;
+  background-color: #003d7b;
 }
 
 /** This is the css of the input **/
@@ -1820,7 +1831,6 @@ body {
       -ms-flex: 1;
           flex: 1;
   color: #76797c;
-  margin: 0px 10px;
   background-color: #EBF0F6;
   border-radius: 15px;
   -webkit-box-align: center;
@@ -2507,6 +2517,7 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  gap: 0.5rem;
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   margin-left: 5px;
@@ -2519,9 +2530,8 @@ body {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   border-radius: 15px;
-  width: 2.5rem;
-  height: 2.5rem;
-  margin-left: 3px;
+  width: 40px;
+  height: 40px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -4211,15 +4221,15 @@ body {
   -webkit-box-align: end;
       -ms-flex-align: end;
           align-items: flex-end;
+  gap: 0.5rem;
 }
 
 .universalCallButtons button {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   border-radius: 15px;
-  width: 2.5rem;
-  height: 2.5rem;
-  margin-left: 3px;
+  width: 40px;
+  height: 40px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;

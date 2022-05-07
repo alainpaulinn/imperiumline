@@ -1129,7 +1129,7 @@ socket.on('searchPerson', (searchPeople) => {
   })
 })
 
-function initiateChat(userID){
+function initiateChat(userID) {
   socket.emit('makeChat', userID)
 
 }
@@ -2096,7 +2096,7 @@ myPeer.on('open', myPeerId => {
 
   //for incoming Peer Calls
   myPeer.on('call', call => {
-    let infomingPeerInfo = call.metadata.userInfo
+    let incomingPeerInfo = call.metadata.userInfo
     let callType = call.metadata.callType
     console.log('incoming peer call type: ', callType)
     call.answer(myStream)
@@ -2108,9 +2108,9 @@ myPeer.on('open', myPeerId => {
         track.muted = false;
       }
       console.log('I received : ', remoteStream.getTracks(), ' to ', call.metadata)
-      updateAttendanceList(infomingPeerInfo, 'present')
+      updateAttendanceList(incomingPeerInfo, 'present')
 
-      sideVideoDiv = createSideVideo(callType, remoteStream, infomingPeerInfo)
+      sideVideoDiv = createSideVideo(callType, remoteStream, incomingPeerInfo)
       rightCallParticipantsDiv.append(sideVideoDiv) //display this user's video
 
       receivedUsers = receivedUsers + 1;
@@ -2119,7 +2119,7 @@ myPeer.on('open', myPeerId => {
       console.log(receivedUsers, 'receivedUsers')
       if (receivedUsers < 2) {
         maindiv.textContent = '';
-        let mainVideoDivContent = createMainVideoDiv(callType, remoteStream, infomingPeerInfo)
+        let mainVideoDivContent = createMainVideoDiv(callType, remoteStream, incomingPeerInfo)
         mainVideoDivContent.forEach(div => {
           maindiv.append(div)
         })
@@ -2248,6 +2248,98 @@ myPeer.on('open', myPeerId => {
       else { audioButton.classList.add("active") }
     }
   }
+
+  function createMainVideoDiv(callType, stream, userInfo) {
+    let { userID, name, surname, profilePicture, role } = userInfo;
+
+    //main video element
+    let mainVideoElement = createElement({ elementType: 'video', class: 'mainVideoElement', srcObject: stream })
+    mainVideoElement.play();
+
+    //topBar
+    let mainVideoOwnerProfilePicture;
+    if (profilePicture == null) mainVideoOwnerProfilePicture = createElement({ elementType: 'div', class: 'mainVideoOwnerProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+    else mainVideoOwnerProfilePicture = createElement({ elementType: 'img', class: 'mainVideoOwnerProfilePicture', src: profilePicture })
+    let videoOwnerName = createElement({ elementType: 'div', class: 'videoOwnerName', textContent: name + ' ' + surname })
+    let videoOwnerPosition = createElement({ elementType: 'div', class: 'videoOwnerPosition', textContent: role })
+    let mainVideoOwnerProfileNamePosition = createElement({ elementType: 'div', class: 'mainVideoOwnerProfileNamePosition', childrenArray: [videoOwnerName, videoOwnerPosition] })
+    let leftUserIdentifiers = createElement({ elementType: 'div', class: 'leftUserIdentifiers', childrenArray: [mainVideoOwnerProfilePicture, mainVideoOwnerProfileNamePosition] })
+
+    let muteBtn = createElement({
+      elementType: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })], onclick: () => {
+        for (let index in stream.getAudioTracks()) {
+          let audioTrack = stream.getAudioTracks()[index]
+          audioTrack.enabled = !audioTrack.enabled
+        }
+        determinAudioState()
+      }
+    })
+    determinAudioState()
+    function determinAudioState() {
+      for (let index in stream.getAudioTracks()) {
+        let audioTrack = stream.getAudioTracks()[index]
+        if (audioTrack.enabled) {
+          muteBtn.classList.remove("active")
+        } else {
+          muteBtn.classList.add("active")
+        }
+      }
+    }
+    let speakerBtn = createElement({ elementType: 'button', title: 'User is speaking', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-voice' })] })
+    streamVolumeOnTreshold(stream, 20, speakerBtn)
+    let mainVideoFullscreenBtn = createElement({ elementType: 'button', class: 'mainVideoFullscreenBtn', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-fullscreen' })], onclick: () => { toggleFullscreen(mainVideoDiv) } })
+    let rightVideoControls = createElement({ elementType: 'div', class: 'rightVideoControls', childrenArray: [muteBtn, speakerBtn, mainVideoFullscreenBtn] })
+    let callTopBar = createElement({ elementType: 'div', class: 'callTopBar', childrenArray: [leftUserIdentifiers, rightVideoControls] })
+
+    //call controls
+    //let alwaysVisibleControls = createElement({ elementType: 'button', class: 'alwaysVisibleControls' })
+    let fitToFrame = createElement({
+      elementType: 'button', class: 'callControl', title: "Fit video to frame", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-collapse' })],
+      onClick: () => {
+        mainVideoElement.classList.toggle('fitVideoToWindow') 
+      }
+    })
+    let closeVideoBtn = createElement({
+      elementType: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })],
+      onclick: () => {
+
+      }
+    })
+    let HangUpBtn = createElement({
+      elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })],
+      onclick: () => {
+
+      }
+    })
+    let muteMicrophone = createElement({
+      elementType: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-microphone' })],
+      onclick: () => {
+
+      }
+    })
+    let shareScreenBtn = createElement({
+      elementType: 'button', class: 'callControl', title: "Choose video output device", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-window-open' })],
+      onclick: () => {
+
+      }
+    })
+
+    let hiddableControls = createElement({ elementType: 'div', class: 'hiddableControls', childrenArray: [fitToFrame, closeVideoBtn, HangUpBtn, muteMicrophone, shareScreenBtn] })
+    let callControls = createElement({ elementType: 'div', class: 'callControls', childrenArray: [hiddableControls] })
+
+    // AudioCall Cover Div
+    let audioCallprofilePicture
+    if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+    else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
+    let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
+    let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
+
+    let callParticipantDiv
+    if (callType == "audio") { audioCallCover.style.display = 'flex' }
+    else audioCallCover.style.display = 'none'
+
+    return [mainVideoElement, audioCallCover, callTopBar, callControls]
+  }
 })
 
 function convertToAudioOnlyStream(stream) {
@@ -2278,75 +2370,7 @@ function convertToAudioOnlyStream(stream) {
   return stream;
 }
 
-function createMainVideoDiv(callType, stream, userInfo) {
-  let { userID, name, surname, profilePicture, role } = userInfo;
 
-  //main video element
-  let mainVideoElement = createElement({ elementType: 'video', class: 'mainVideoElement', srcObject: stream })
-  mainVideoElement.play();
-
-  //topBar
-  let mainVideoOwnerProfilePicture;
-  if (profilePicture == null) mainVideoOwnerProfilePicture = createElement({ elementType: 'div', class: 'mainVideoOwnerProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-  else mainVideoOwnerProfilePicture = createElement({ elementType: 'img', class: 'mainVideoOwnerProfilePicture', src: profilePicture })
-  let videoOwnerName = createElement({ elementType: 'div', class: 'videoOwnerName', textContent: name + ' ' + surname })
-  let videoOwnerPosition = createElement({ elementType: 'div', class: 'videoOwnerPosition', textContent: role })
-  let mainVideoOwnerProfileNamePosition = createElement({ elementType: 'div', class: 'mainVideoOwnerProfileNamePosition', childrenArray: [videoOwnerName, videoOwnerPosition] })
-  let leftUserIdentifiers = createElement({ elementType: 'div', class: 'leftUserIdentifiers', childrenArray: [mainVideoOwnerProfilePicture, mainVideoOwnerProfileNamePosition] })
-
-  let muteBtn = createElement({
-    elementType: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })], onclick: () => {
-      for (let index in stream.getAudioTracks()) {
-        let audioTrack = stream.getAudioTracks()[index]
-        audioTrack.enabled = !audioTrack.enabled
-      }
-      determinAudioState()
-    }
-  })
-  determinAudioState()
-  function determinAudioState() {
-    for (let index in stream.getAudioTracks()) {
-      let audioTrack = stream.getAudioTracks()[index]
-      if (audioTrack.enabled) {
-        muteBtn.classList.remove("active")
-      } else {
-        muteBtn.classList.add("active")
-      }
-    }
-  }
-  let speakerBtn = createElement({ elementType: 'button', title: 'User is speaking', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-voice' })] })
-  streamVolumeOnTreshold(stream, 20, speakerBtn)
-  let mainVideoFullscreenBtn = createElement({ elementType: 'button', class: 'mainVideoFullscreenBtn', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-fullscreen' })], onclick: () => { toggleFullscreen(mainVideoDiv) } })
-  let rightVideoControls = createElement({ elementType: 'div', class: 'rightVideoControls', childrenArray: [muteBtn, speakerBtn, mainVideoFullscreenBtn] })
-  let callTopBar = createElement({ elementType: 'div', class: 'callTopBar', childrenArray: [leftUserIdentifiers, rightVideoControls] })
-
-  //call controls
-  //let alwaysVisibleControls = createElement({ elementType: 'button', class: 'alwaysVisibleControls' })
-  let fitToFrame = createElement({
-    elementType: 'button', class: 'callControl', title: "Fit video to frame", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-collapse' })],
-    onClick: () => { mainVideoElement.classList.toggle('fitVideoToWindow') }
-  })
-  let closeVideoBtn = createElement({ elementType: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
-  let HangUpBtn = createElement({ elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })] })
-  let muteMicrophone = createElement({ elementType: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-microphone' })] })
-  let shareScreenBtn = createElement({ elementType: 'button', class: 'callControl', title: "Choose video output device", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-window-open' })] })
-
-  let hiddableControls = createElement({ elementType: 'div', class: 'hiddableControls', childrenArray: [fitToFrame, closeVideoBtn, HangUpBtn, muteMicrophone, shareScreenBtn] })
-  let callControls = createElement({ elementType: 'div', class: 'callControls', childrenArray: [ hiddableControls] })
-
-  // AudioCall Cover Div
-  let audioCallprofilePicture
-  if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-  else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
-  let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
-  let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
-
-  let callParticipantDiv
-  if (callType == "audio") { audioCallCover.style.display = 'flex' }
-  else audioCallCover.style.display = 'none'
-
-  return [mainVideoElement, audioCallCover, callTopBar, callControls]
-}
 
 function createSideVideo(type, stream, userInfo) {
   let { videoOwner } = userInfo;
