@@ -757,6 +757,13 @@ io.on('connection', (socket) => {
       // socket.to(data.callUniqueId + '-allAnswered-sockets').emit('user-disconnected', data.myPeerId);
     })
 
+    socket.on('stopScreenSharing', async callUniqueId => {
+      let access = await checkCallAccess(id, callUniqueId)
+      if(access != true) { return console.log('User :', id, ' cannot leave because he has no access to this call :', callUniqueId)}
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('userLeftCall', {userID: id, callUniqueId:callUniqueId})
+
+    })
+
     ///////////////
     socket.on('disconnecting', () => {
       console.log('socket.roomsssssssssssssssssssssss', socket.rooms); // the Set contains at least the socket ID
