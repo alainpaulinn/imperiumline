@@ -598,14 +598,14 @@ io.on('connection', (socket) => {
 
     socket.on('callNotAnswered', async callUniqueId => {
       let callAccess = await checkCallAccess(id, callUniqueId)
-      if (callAccess == false) return console.log('user does not have access to this call')
+      if (callAccess != true) return console.log('user does not have access to this call')
 
       setCallAsMissed(id, callUniqueId)
       socket.to(callUniqueId + '-allAnswered-sockets').emit('callNotAnswered', { callUniqueId: callUniqueId, userInfo: await getUserInfo(id) });
     })
     socket.on('callRejected', async callUniqueId => {
       let callAccess = await checkCallAccess(id, callUniqueId)
-      if (callAccess == false) return console.log('user does not have access to this call')
+      if (callAccess != true) return console.log('user does not have access to this call')
 
       setCallAsMissed(id, callUniqueId)
       socket.to(callUniqueId + '-allAnswered-sockets').emit('callRejected', { callUniqueId: callUniqueId, userInfo: await getUserInfo(id) });
@@ -659,7 +659,7 @@ io.on('connection', (socket) => {
     })
     socket.on('addUserToCall', async identifications => {
       let access = checkCallAccess(id, identifications.callUniqueId)
-      if(access == false) { return console.log('User :', id, ' cannot add user :', identifications.userID, ' to call because he has no access to this call :', identifications.callUniqueId)}
+      if(access != true) { return console.log('User :', id, ' cannot add user :', identifications.userID, ' to call because he has no access to this call :', identifications.callUniqueId)}
       let { callUniqueId, userID, callType, callTitle } = identifications
 
       let thisCallparticipantsInFull = await getCallParticipants(callUniqueId)
@@ -749,10 +749,26 @@ io.on('connection', (socket) => {
           }
         })
     })
+    socket.on('stopScreenSharing', async callUniqueId => {
+      let access = await checkCallAccess(id, callUniqueId)
+      if(access != true) { return console.log('User :', id, ' cannot stop screen sharing because he has no access to this call :', callUniqueId)}
+      
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('stoppedScreenSharing', {userID: id, callUniqueId:callUniqueId})
+      // socket.to(data.callUniqueId + '-allAnswered-sockets').emit('user-disconnected', data.myPeerId);
+    })
 
     ///////////////
+    socket.on('disconnecting', () => {
+      console.log('socket.roomsssssssssssssssssssssss', socket.rooms); // the Set contains at least the socket ID
+      let roomsArray = Array.from(socket.rooms);
+      roomsArray.forEach(function (room) {
+        socket.to(room).emit('userDisconnectedFromCall', {id: id, room: room})
+        console.log('userDisconnectedFromCall', id, room)
+      })
+    })
+
     socket.on('disconnect', () => {
-      console.log('user disconnected');
+      console.log('user disconnected', socket.rooms);
       let _connectedUsers = connectedUsers.filter(function (user) {
         return user.socket != socket;
       });

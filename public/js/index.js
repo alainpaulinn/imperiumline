@@ -1394,7 +1394,9 @@ function updateSidePanel(sidepanelOptions) {
 
 }
 
-
+function setUserOffline(id, room) {
+  console.log('setUserOffline', id, room);
+}
 
 
 /////////////////////Call filtering////////////////////////
@@ -1627,13 +1629,6 @@ let audioInSelectPopup = document.getElementById("audioInDevicesPopup")
 let videoDevicesPop = document.getElementById("videoDevicesPop")
 let audioInDevicesPop = document.getElementById("audioInDevicesPop")
 
-
-let tream;
-
-var screenSharing = false;
-var screenStream;
-
-
 //ringtone preparation
 const ringtone = new Audio('/audio/imperiumLine.mp3')
 ringtone.addEventListener('ended', function () {
@@ -1694,16 +1689,16 @@ function removeVideo(stream, button) {
   }
 }
 
-function toggleScreenSharing() {
-  if (screenSharing) {
-    stopScreenSharing()
-    console.log("stopping screenshare")
-  }
-  else {
-    startScreenShare()
-    console.log("Initiating screenshare")
-  }
-}
+// function toggleScreenSharing() {
+//   if (screenSharing) {
+//     stopScreenSharing()
+//     console.log("stopping screenshare")
+//   }
+//   else {
+//     startScreenShare()
+//     console.log("Initiating screenshare")
+//   }
+// }
 
 function startScreenShare() {
   if (screenSharing) {
@@ -1766,30 +1761,71 @@ function toggleFullscreen(element) {
 
 // when my peer is ready with an ID ---> this means that we cannot receive a call before a peer Id is opened
 myPeer.on('open', myPeerId => {
-  //all connected Peers variable
+  console.log('my peer is now connected with id: ' + myPeerId)
   let myStream;
+  let myScreenStream;
+  let _callUniqueId;
   let allInvitedUsers;
-  let receivedUsers = 0;
-  let connectuserAlreadyLaunched = false
   let globalCallType = "audio" // by default
+  let screenSharing = false
+  let globalMainVideoDiv;
+  let mySideVideoDiv;
+  let myScreenSideVideo;
+  let myScreenViewers = [];
+
+  let participants = []
+  // let participant = {
+  //   userInfo: userInfo,
+  //   peerId: peerId,
+  //   userMediaSideVideo: { stream, callType, userMediaSideVideo, callObject, isOnMainVideo },
+  //   screnMediaSideVideo: { stream, callType, userMediaSideVideo, callObject, isOnMainVideo }
+  // }
 
   let caller_me, videoCoverDiv_videoCoverDiv
 
+  let optionalResolutions = [
+    { minWidth: 320 },
+    { minWidth: 640 },
+    { minWidth: 1024 },
+    { minWidth: 1280 },
+    { minWidth: 1920 },
+    { minWidth: 2560 },
+  ]
+  let mainCallVariables;
+  // call bluePrint
+  /*
+  let mainCallVariables = {
+    myPeerId: myPeerId,
+    myStream: myStream,
+    myScreenStream: screenStream,
+    mainVideoDIv: { mainVideoDiv, mainVideoElement, audioCallCover, callTopBar, callControls},
+    callMemberObects: [
+      {
+        userInfo: userInfo,
+        mediaType: "video",
+        peerId: 'peer ID',
+        call: 'the call object',
+        sideVideoDiv: 'sideVideoDiv Element'
+      },
+    ]
+  }*/
+
   socket.on('prepareCallingOthers', initiatedCallInfo => {
-    navigator.getUserMedia({ video: true, audio: true }, stream => {
+    navigator.getUserMedia({ video: { optional: optionalResolutions }, audio: true }, stream => {
       let { callUniqueId, callType, caller, groupMembersToCall_fullInfo, allUsers, callTitle } = initiatedCallInfo
       let { userID, name, surname, profilePicture, role } = caller
 
       //save these important variables
       myInfo = caller
       caller_me = caller
+      _callUniqueId = callUniqueId
       saveLocalMediaStream(callType, stream)
 
       // create topBar
       createTopBar({ callUniqueId: callUniqueId, callType: globalCallType, callTitle: callTitle, isTeam: 'isTeam' }, caller)
 
-      let mySideVideoDiv = createSideVideo(globalCallType, myStream, caller)
-      rightCallParticipantsDiv.append(mySideVideoDiv)
+      mySideVideoDiv = createSideVideo(globalCallType, myStream, caller, 'userMedia')
+      rightCallParticipantsDiv.prepend(mySideVideoDiv)
       // create awaited users divs
       let awaitedUserDivs = allUsers.map(user => {
         //let { userID, name, surname, role, profilePicture, status } = user
@@ -1840,7 +1876,6 @@ myPeer.on('open', myPeerId => {
         mySideVideoDiv.remove();
         stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
         videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
-        receivedUsers = 0;
         updateAttendanceList(caller, 'absent')
         stream.getTracks().forEach((track) => { console.log('track', track); track.stop(); stream.removeTrack(track); })
         myStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); myStream.removeTrack(track); })
@@ -1856,21 +1891,16 @@ myPeer.on('open', myPeerId => {
         toggleDisableVideo(myStream)
         console.log("video disable happened")
         determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
-
         mySideVideoDiv.remove()
-        mySideVideoDiv = createSideVideo(globalCallType, myStream, caller)
+        mySideVideoDiv = createSideVideo(globalCallType, myStream, caller, 'userMedia')
+        rightCallParticipantsDiv.textContent = ''
         rightCallParticipantsDiv.prepend(mySideVideoDiv)
       })
       determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
 
-
-
-
-      //Handle RejectedCall
-      socket.on('callRejected', timeoutDetails => {
+      socket.on('callRejected', timeoutDetails => { //Handle RejectedCall
         console.log('remote call Rejected')
         let { callUniqueId, userInfo } = timeoutDetails
-
         for (let i = 0; i < awaitedUserDivs.length; i++) {
           const awaitedDiv = awaitedUserDivs[i];
           if (awaitedDiv.userID == userInfo.userID) {
@@ -1986,6 +2016,7 @@ myPeer.on('open', myPeerId => {
     let { callUniqueId, callType, caller, myInfo, allUsers, callTitle } = incomingCallInfo
     let { name, profilePicture, surname, userID } = caller
     caller_me = myInfo
+    _callUniqueId = callUniqueId
     let responded = false;
     let notification = displayNotification({
       title: { iconClass: 'bx bxs-phone-call', titleText: 'Incoming call' },
@@ -2030,7 +2061,8 @@ myPeer.on('open', myPeerId => {
       createTopBar(callInfo, myInfo) // create top bar
 
       // ut create and append my sidevideo
-      let mySideVideoDiv = createSideVideo(answertype, myStream, myInfo)
+      mySideVideoDiv = createSideVideo(answertype, myStream, myInfo, 'userMedia')
+      rightCallParticipantsDiv.textContent = ''
       rightCallParticipantsDiv.append(mySideVideoDiv)
 
       allInvitedUsers = setAllUsers(allUsers)
@@ -2039,93 +2071,132 @@ myPeer.on('open', myPeerId => {
     }, (err) => { alert('Failed to get local media stream', err); });
   }
 
-  function handleOutgoingPeerCalls(myInfo, videoCoverDiv) {
-    if (connectuserAlreadyLaunched == true) return;
-
-    //let { userID, name, surname, profilePicture, role } = myInfo
-    console.log("handleOutgoingPeerCalls() is now exposed. ready to connect 'connectuser'", myInfo, videoCoverDiv, 'connectuserAlreadyLaunched', connectuserAlreadyLaunched)
-
-  }
-
   socket.on('connectUser', userToConnect => {
-    connectuserAlreadyLaunched = true
-    console.log("I was asked by the server to peer call the user", userToConnect.userInfo.userID)
     let { peerId, userInfo, callType } = userToConnect
     let { userID, name, surname, profilePicture, role } = userInfo
-    let options = { metadata: { userInfo: caller_me, callType: globalCallType } }
+    let callMediaType = 'userMedia' // set Dafault calltype
+    let options = { metadata: { userInfo: caller_me, callType: globalCallType, callMediaType: callMediaType } }
     const call = myPeer.call(peerId, myStream, options)
-    console.log('I am sending these tracks: ', myStream.getTracks(), ' to ', userInfo)
     let sideVideoDiv
-    call.once('stream', userVideoStream => {
 
-      //i decided to unmute these tracks becaise for some reason i was receiveing muted tracks
-      for (let i = 0; i < userVideoStream.getTracks().length; i++) {
-        const track = userVideoStream.getTracks()[i];
-        track.muted = false;
+    let participant = {
+      userInfo: userInfo,
+      peerId: peerId,
+      userMedia: {
+        stream: null,
+        callType: callType,
+        sideVideoDiv: sideVideoDiv,
+        callObject: null,
+        peerInitiatedByMe: true,
+        isOnMainVideo: false
+      },
+      screnMedia: {
+        stream: null,
+        callType: null,
+        sideVideoDiv: null,
+        callObject: null,
+        peerInitiatedByMe: true,
+        isOnMainVideo: false
       }
-      console.log('user responded with : ', userVideoStream.getTracks(), ' from ', userInfo)
-      updateAttendanceList(userInfo, 'present')
-
-      // display this user's video
-      sideVideoDiv = createSideVideo(callType, userVideoStream, userInfo)
-      rightCallParticipantsDiv.append(sideVideoDiv)
-
+    }
+    participant.userMedia.callObject = call // save the call Object
+    call.once('stream', userVideoStream => {
+      for (let i = 0; i < userVideoStream.getTracks().length; i++) { const track = userVideoStream.getTracks()[i]; track.muted = false; }//i decided to unmute these tracks becaise for some reason i was receiveing muted tracks
+      participant.userMedia.stream = userVideoStream
+      updateAttendanceList(userInfo, 'present') // update this user on attendance list
+      participant.userMedia.sideVideoDiv = createSideVideo(callType, userVideoStream, userInfo, 'userMedia') // create and save the side video element
+      rightCallParticipantsDiv.append(participant.userMedia.sideVideoDiv) // display this user's video
       stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
       if (videoCoverDiv_videoCoverDiv) videoCoverDiv_videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
-
-      receivedUsers = receivedUsers + 1;
-      let maindiv = document.getElementById('mainVideoDiv')
-
-      console.log(receivedUsers, 'receivedUsers')
-      if (receivedUsers < 2) {
+      let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element for potential future use
+      console.log('participants', participants.length)
+      if (participants.length <= 1) { // if this is the first user who is connecting to Us - Create a mainVideoDiv and store It
+        console.log('has happened')
         maindiv.textContent = '';
         let mainVideoDivContent = createMainVideoDiv(callType, userVideoStream, userInfo)
-        mainVideoDivContent.forEach(div => {
-          maindiv.append(div)
-        })
+        mainVideoDivContent.forEach(div => { maindiv.append(div) })
+        globalMainVideoDiv = maindiv
+        participant.userMedia.isOnMainVideo = true;
       }
     })
     call.once('close', () => {
-      console.log('user is closing after my call', userInfo)
-      updateAttendanceList(userInfo, 'absent')
-      // remove this user's video
-      sideVideoDiv.remove()
-    })
+      updateAttendanceList(userInfo, 'absent') // update the attendance list
+      for (let i = 0; i < participants.length; i++) {
+        if (participants[i].userInfo.userID == userInfo.userID) {
+          participants[i].userMedia.sideVideoDiv.remove() // remove this user's video
 
+          participants.splice(i, 1) // remove this participant
+        }
+      }
+    })
+    participants.push(participant) // push the participant to the Array
   })
 
   //for incoming Peer Calls
   myPeer.on('call', call => {
     let incomingPeerInfo = call.metadata.userInfo
     let callType = call.metadata.callType
-    console.log('incoming peer call type: ', callType)
-    call.answer(myStream)
-    console.log('I am sending back : ', myStream.getTracks(), ' to ', call.metadata)
+    let callMediaType = call.metadata.callMediaType
+    let callMediaTypeText = '';
+    if (callMediaType == 'userMedia') { call.answer(myStream); callMediaTypeText = callMediaType } // check if it is a screen share or a user video/audio share
+    if (callMediaType == 'screenMedia') { call.answer(); callMediaTypeText = callMediaType }
     let sideVideoDiv
+    let participant = {
+      userInfo: incomingPeerInfo,
+      peerId: call.peer,
+      userMedia: {
+        stream: null,
+        callType: callType,
+        sideVideoDiv: sideVideoDiv,
+        callObject: null,
+        peerInitiatedByMe: false,
+        isOnMainVideo: false
+      },
+      screnMedia: {
+        stream: null,
+        callType: null,
+        sideVideoDiv: null,
+        callObject: null,
+        peerInitiatedByMe: false,
+        isOnMainVideo: false
+      }
+    }
     call.once('stream', function (remoteStream) {
-      for (let i = 0; i < remoteStream.getTracks().length; i++) {
-        const track = remoteStream.getTracks()[i];
-        track.muted = false;
+      for (let i = 0; i < remoteStream.getTracks().length; i++) { const track = remoteStream.getTracks()[i]; track.muted = false; } //i decided to unmute these tracks becaise for some reason i was receiveing muted tracks
+      if (callMediaType == 'userMedia') { // if the presented media is userMedia
+        updateAttendanceList(incomingPeerInfo, 'present')
+        sideVideoDiv = createSideVideo(callType, remoteStream, incomingPeerInfo, callMediaTypeText)
+        rightCallParticipantsDiv.append(sideVideoDiv) //display this user's screen
+
+        let maindiv = document.getElementById('mainVideoDiv')
+        if (participants.length == 0) { // if it is the first user connection display on the main videoDiv
+          maindiv.textContent = '';
+          let mainVideoDivContent = createMainVideoDiv(callType, remoteStream, incomingPeerInfo)
+          mainVideoDivContent.forEach(div => { maindiv.append(div) }) // display the maindiv content
+          globalMainVideoDiv = maindiv // store the mainDiv
+          participant.userMedia.isOnMainVideo = true;
+        }
+        participant.userMedia.stream = remoteStream
+        participant.userMedia.callType = callType
+        participant.userMedia.sideVideoDiv = sideVideoDiv
+        participant.userMedia.callObject = call
+
+        participants.push(participant)
       }
-      console.log('I received : ', remoteStream.getTracks(), ' to ', call.metadata)
-      updateAttendanceList(incomingPeerInfo, 'present')
-
-      sideVideoDiv = createSideVideo(callType, remoteStream, incomingPeerInfo)
-      rightCallParticipantsDiv.append(sideVideoDiv) //display this user's video
-
-      receivedUsers = receivedUsers + 1;
-      let maindiv = document.getElementById('mainVideoDiv')
-
-      console.log(receivedUsers, 'receivedUsers')
-      if (receivedUsers < 2) {
-        maindiv.textContent = '';
-        let mainVideoDivContent = createMainVideoDiv(callType, remoteStream, incomingPeerInfo)
-        mainVideoDivContent.forEach(div => {
-          maindiv.append(div)
-        })
+      if (callMediaType == 'screenMedia') {
+        sideVideoDiv = createSideVideo(callType, remoteStream, incomingPeerInfo, callMediaTypeText)
+        rightCallParticipantsDiv.append(sideVideoDiv) //display this user's video
+        for (let i = 0; i < participants.length; i++) {
+          if (participants[i].userInfo.userID == incomingPeerInfo.userID) {
+            participants[i].screnMedia.stream = remoteStream
+            participants[i].screnMedia.callType = callType
+            participants[i].screnMedia.sideVideoDiv = sideVideoDiv
+            participants[i].screnMedia.callObject = call
+          }
+        }
       }
+      console.log('after call entrance participants', participants)
     })
-
   })
 
   function updateAttendanceNumbers() {
@@ -2287,42 +2358,60 @@ myPeer.on('open', myPeerId => {
     }
     let speakerBtn = createElement({ elementType: 'button', title: 'User is speaking', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-voice' })] })
     streamVolumeOnTreshold(stream, 20, speakerBtn)
-    let mainVideoFullscreenBtn = createElement({ elementType: 'button', class: 'mainVideoFullscreenBtn', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-fullscreen' })], onclick: () => { toggleFullscreen(mainVideoDiv) } })
+    let mainVideoFullscreenBtn = createElement({
+      elementType: 'button', class: 'mainVideoFullscreenBtn', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-fullscreen' })],
+      onclick: () => {
+        toggleFullscreen(mainVideoDiv)
+        tooggleFullScreenClass()
+      }
+    })
     let rightVideoControls = createElement({ elementType: 'div', class: 'rightVideoControls', childrenArray: [muteBtn, speakerBtn, mainVideoFullscreenBtn] })
     let callTopBar = createElement({ elementType: 'div', class: 'callTopBar', childrenArray: [leftUserIdentifiers, rightVideoControls] })
 
+    function tooggleFullScreenClass() {
+      mainVideoFullscreenBtn.classList.toggle('active')
+    }
     //call controls
     //let alwaysVisibleControls = createElement({ elementType: 'button', class: 'alwaysVisibleControls' })
     let fitToFrame = createElement({
       elementType: 'button', class: 'callControl', title: "Fit video to frame", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-collapse' })],
       onClick: () => {
-        mainVideoElement.classList.toggle('fitVideoToWindow') 
+        mainVideoElement.classList.toggle('fitVideoToWindow');
       }
     })
     let closeVideoBtn = createElement({
       elementType: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })],
       onclick: () => {
-
+        toggleDisableVideo(myStream)
+        determineStates()
       }
     })
     let HangUpBtn = createElement({
       elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })],
       onclick: () => {
-
+        if (screenSharing == true) stopScreenSharing(_callUniqueId)
       }
     })
     let muteMicrophone = createElement({
       elementType: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-microphone' })],
       onclick: () => {
-
+        toggleDisableAudio(myStream)
+        determineStates()
       }
     })
     let shareScreenBtn = createElement({
-      elementType: 'button', class: 'callControl', title: "Choose video output device", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-window-open' })],
-      onclick: () => {
-
-      }
+      elementType: 'button', class: 'callControl', title: "Share my screen", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-window-open' })],
+      onclick: helpToggleScreenShare    
     })
+    function helpToggleScreenShare(){
+      toggleScreenShare(_callUniqueId, shareScreenBtn)
+        console.log('screen share')
+    }
+    determineStates()
+
+    function determineStates() {
+      determineAudioVideoState(myStream, muteMicrophone, closeVideoBtn)
+    }
 
     let hiddableControls = createElement({ elementType: 'div', class: 'hiddableControls', childrenArray: [fitToFrame, closeVideoBtn, HangUpBtn, muteMicrophone, shareScreenBtn] })
     let callControls = createElement({ elementType: 'div', class: 'callControls', childrenArray: [hiddableControls] })
@@ -2340,7 +2429,153 @@ myPeer.on('open', myPeerId => {
 
     return [mainVideoElement, audioCallCover, callTopBar, callControls]
   }
+
+  function createSideVideo(type, stream, userInfo, callMediaType) {
+    let { userID, name, surname, profilePicture, role } = userInfo
+    let statement
+    if (callMediaType == 'userMedia') statement = ""
+    if (callMediaType == 'screenMedia') statement = "'s screen"
+    let videoElement = createElement({ elementType: 'video', srcObject: stream, class: 'callParticipant', autoPlay: "true" }); videoElement.play()
+
+    let miniVideowner = createElement({ elementType: 'div', class: 'miniVideowner', textContent: name + " " + surname + statement })
+    let muteBtn = createElement({ elementType: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })] })
+    let speakerBtn = createElement({ elementType: 'button', title: 'User is speaking', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-voice' })] })
+    let sideVideoControls = createElement({ elementType: 'div', class: 'sideVideoControls', childrenArray: [miniVideowner, muteBtn, speakerBtn] })
+
+    determinAudioState() // activate / deactivate mute button
+    // AudioCall Cover Div
+    let audioCallprofilePicture
+    if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+    else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
+    let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
+    let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
+
+    muteBtn.addEventListener('click', () => {
+      for (let index in stream.getAudioTracks()) {
+        let audioTrack = stream.getAudioTracks()[index]
+        audioTrack.enabled = !audioTrack.enabled
+      }
+      determinAudioState()
+    })
+
+    function determinAudioState() {
+      for (let index in stream.getAudioTracks()) {
+        let audioTrack = stream.getAudioTracks()[index]
+        if (audioTrack.enabled) {
+          muteBtn.classList.remove("active")
+        } else {
+          muteBtn.classList.add("active")
+        }
+      }
+    }
+    streamVolumeOnTreshold(stream, 20, speakerBtn)
+    console.log('stream', stream)
+    stream.getAudioTracks().forEach(track => {
+      console.log('Audio track', track)
+    })
+    stream.getVideoTracks().forEach(track => {
+      console.log('Video track', track)
+    })
+    // overall callParticipant Div
+    let callParticipantDiv
+    if (type == "audio") { audioCallCover.style.display = 'flex' }
+    else audioCallCover.style.display = 'none'
+    callParticipantDiv = createElement({ elementType: 'div', class: 'callParticipantDiv', childrenArray: [videoElement, audioCallCover, sideVideoControls] })
+
+    if (userID == mySavedID) { videoElement.muted = true; muteBtn.remove(); } // if this is my video no not put an event listener, and mute it, and remove unmute button
+    else {
+      callParticipantDiv.addEventListener("click", () => {
+        let maindiv = document.getElementById('mainVideoDiv')
+        maindiv.textContent = '' //empty the mainDiv
+        let mainVideoDivContent = createMainVideoDiv(type, stream, userInfo) // create main div contents
+        mainVideoDivContent.forEach(div => { maindiv.append(div) }) // apend main div contents to the mainDiv
+        globalMainVideoDiv = maindiv // register the mainDiv
+      })
+    }
+    return callParticipantDiv;
+  }
+
+  socket.on('userDisconnectedFromCall', disconnectionInfo => {
+    console.log('participants', participants)
+    let { id, room } = disconnectionInfo;
+    console.log('userDisconnected', id, room)
+
+    if (isNumeric(room)) setUserOffline(id, room)
+    if (!isNumeric(room) && room.includes('-allAnswered-sockets')) removePeer(id)
+  })
+
+  socket.on('stoppedScreenSharing', disconnectionInfo => {
+    let { userID, callUniqueId } = disconnectionInfo;
+    // close all of the the videos of the person qho quit
+    console.log('participants who quit', participants, userID)
+    for (let j = 0; j < participants.length; j++) {
+      if (participants[j].userInfo.userID == userID) {
+        if (participants[j].screnMedia.sideVideoDiv) participants[j].screnMedia.sideVideoDiv.remove(); // remove all the sidevideo of the disconnected user
+        if (typeof participants[j].screnMedia.callObject.destroy == 'function') participants[j].screnMedia.callObject.destroy(); // displose the call object
+      }
+    }
+  })
+
+  function removePeer(userId) {
+    // close all of the the videos of the person qho quit
+    for (let j = 0; j < participants.length; j++) {
+      if (participants[j].userInfo.userID == userId) {
+        participants[j].userMedia.sideVideoDiv.remove(); // remove all the sidevideo of the disconnected user
+        if (participants[j].screnMedia.sideVideoDiv) { participants[j].screnMedia.sideVideoDiv.remove(); } // remove all the sidevideo of the disconnected user
+        if (typeof participants[j].screnMedia.callObject.destroy == 'function') participants[j].screnMedia.callObject.destroy(); // displose the call object
+        participants.splice(j, 1); // remove the disconnected user
+        if (participants.length == 0) {
+          globalMainVideoDiv.textContent = '' // END the call
+        }// if we have only one user connected - remove the mail Video and end the call
+      }
+    }
+  }
+
+  function toggleScreenShare(callUniqueId, button) {
+    if (screenSharing == false) {
+      startScreenSharing(callUniqueId)
+      button.classList.add('active')
+    } else {
+      stopScreenSharing(callUniqueId)
+      button.classList.remove('active')
+    }
+  }
+  function startScreenSharing(callUniqueId) {
+    navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }).then((screenVideoStream) => {
+      screenVideoStream.onended = () => stopScreenSharing(callUniqueId)
+      myScreenStream = screenVideoStream
+      let callMediaType = 'screenMedia'
+      let options = { metadata: { userInfo: caller_me, callType: 'video', callMediaType: callMediaType } }
+      myScreenSideVideo = createSideVideo('video', myScreenStream, caller_me, callMediaType)
+      mySideVideoDiv.after(myScreenSideVideo)
+      for (let i = 0; i < participants.length; i++) {
+        console.log('checking all participants', 1)
+        const call = myPeer.call(participants[i].userMedia.callObject.peer, myScreenStream, options)
+        let myScreenViewer = {
+          userInfo: participants[i].userMedia.userInfo,
+          peerId: participants[i].userMedia.callObject.peer,
+          callObject: call,
+          peerInitiatedByMe: true
+        }
+        myScreenViewers.push(myScreenViewer)
+      }
+      screenSharing = true
+    })
+  }
+  function stopScreenSharing(callUniqueId) {
+    myScreenStream.getTracks().forEach(track => track.stop())
+    for (let i = 0; i < myScreenViewers.length; i++) {
+      myScreenSideVideo.remove();
+      myScreenViewers.splice(i, 1);
+    }
+    socket.emit('stopScreenSharing', callUniqueId)
+    screenSharing = false
+  }
 })
+
+function isNumeric(num) {
+  return !isNaN(num)
+}
 
 function convertToAudioOnlyStream(stream) {
   // remove all video tracks
@@ -2370,75 +2605,6 @@ function convertToAudioOnlyStream(stream) {
   return stream;
 }
 
-
-
-function createSideVideo(type, stream, userInfo) {
-  let { videoOwner } = userInfo;
-  let { userID, name, surname, profilePicture, role } = userInfo
-  let videoElement = createElement({ elementType: 'video', srcObject: stream, class: 'callParticipant', autoPlay: "true" }); videoElement.play()
-
-  let miniVideowner = createElement({ elementType: 'div', class: 'miniVideowner', textContent: name + " " + surname })
-  let muteBtn = createElement({ elementType: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })] })
-  let speakerBtn = createElement({ elementType: 'button', title: 'User is speaking', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-voice' })] })
-  let sideVideoControls = createElement({ elementType: 'div', class: 'sideVideoControls', childrenArray: [miniVideowner, muteBtn, speakerBtn] })
-
-  determinAudioState() // activate / deactivate mute button
-  // AudioCall Cover Div
-  let audioCallprofilePicture
-  if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-  else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
-  let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
-  let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
-
-  muteBtn.addEventListener('click', () => {
-    for (let index in stream.getAudioTracks()) {
-      let audioTrack = stream.getAudioTracks()[index]
-      audioTrack.enabled = !audioTrack.enabled
-    }
-    determinAudioState()
-  })
-  function determinAudioState() {
-    for (let index in stream.getAudioTracks()) {
-      let audioTrack = stream.getAudioTracks()[index]
-      if (audioTrack.enabled) {
-        muteBtn.classList.remove("active")
-      } else {
-        muteBtn.classList.add("active")
-      }
-    }
-  }
-  streamVolumeOnTreshold(stream, 20, speakerBtn)
-  console.log('stream', stream)
-  stream.getAudioTracks().forEach(track => {
-    console.log('Audio track', track)
-  })
-  stream.getVideoTracks().forEach(track => {
-    console.log('Video track', track)
-  })
-  // overall callParticipant Div
-  let callParticipantDiv
-  if (type == "audio") { audioCallCover.style.display = 'flex' }
-  else audioCallCover.style.display = 'none'
-  callParticipantDiv = createElement({ elementType: 'div', class: 'callParticipantDiv', childrenArray: [videoElement, audioCallCover, sideVideoControls] })
-
-  if (userID == mySavedID) {
-    videoElement.muted = true;
-    muteBtn.remove()
-
-  }
-  else {
-    callParticipantDiv.addEventListener("click", () => {
-      let maindiv = document.getElementById('mainVideoDiv')
-      maindiv.textContent = ''
-      let mainVideoDivContent = createMainVideoDiv(type, stream, userInfo)
-      mainVideoDivContent.forEach(div => {
-        maindiv.append(div)
-      })
-    })
-  }
-
-  return callParticipantDiv;
-}
 
 function createElement(configuration) {
   if (!configuration.elementType) return console.warn('no element type provided')
@@ -2482,6 +2648,7 @@ function userForAttendanceList(userInfo, actions) {
 }
 
 function streamVolumeOnTreshold(stream, threshold, outletEment) {
+  if (stream.getAudioTracks().length < 1) return;
   let audioContext = new AudioContext();
   let analyser = audioContext.createAnalyser();
   let microphone = audioContext.createMediaStreamSource(stream);

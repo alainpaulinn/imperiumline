@@ -3647,6 +3647,12 @@ body {
   background: rgba(0, 0, 0, 0.4);
 }
 
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .alwaysVisibleControls .callControl.active {
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
+          box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
+}
+
 .c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
@@ -3674,7 +3680,7 @@ body {
   font-size: 18px;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .callControl .active {
+.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .callControl.active {
   background-color: #003061;
   -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
           box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
