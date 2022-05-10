@@ -1621,7 +1621,8 @@ const myPeer = new Peer(undefined, {
     sdpSemantics: "unified-plan"
   }
 })
-const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+//const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 let videoSelectPopup = document.getElementById("videoDevicesPopup")
 let audioInSelectPopup = document.getElementById("audioInDevicesPopup")
@@ -2124,8 +2125,8 @@ myPeer.on('open', myPeerId => {
       for (let i = 0; i < participants.length; i++) {
         if (participants[i].userInfo.userID == userInfo.userID) {
           participants[i].userMedia.sideVideoDiv.remove() // remove this user's video
-          if(participants[i].screenMedia.sideVideoDiv) participants[i].screenMedia.sideVideoDiv.remove()
-          if( typeof participants[i].screenMedia.callObjectdestroy == 'function') participants[i].screenMedia.callObject.destroy()
+          if (participants[i].screenMedia.sideVideoDiv) participants[i].screenMedia.sideVideoDiv.remove()
+          if (typeof participants[i].screenMedia.callObjectdestroy == 'function') participants[i].screenMedia.callObject.destroy()
           participants.splice(i, 1) // remove this participant
         }
       }
@@ -2141,7 +2142,7 @@ myPeer.on('open', myPeerId => {
     let callMediaTypeText = '';
     if (callMediaType == 'userMedia') { call.answer(myStream); callMediaTypeText = callMediaType } // check if it is a screen share or a user video/audio share
     if (callMediaType == 'screenMedia') { call.answer(); callMediaTypeText = callMediaType }
-    
+
     call.once('stream', function (remoteStream) {
       for (let i = 0; i < remoteStream.getTracks().length; i++) { const track = remoteStream.getTracks()[i]; track.muted = false; } //i decided to unmute these tracks becaise for some reason i was receiveing muted tracks
       if (callMediaType == 'userMedia') { // if the presented media is userMedia
@@ -2179,7 +2180,7 @@ myPeer.on('open', myPeerId => {
         participants.push(participant)
       }
       if (callMediaType == 'screenMedia') {
-         //display this user's video
+        //display this user's video
         for (let i = 0; i < participants.length; i++) {
           if (participants[i].userInfo.userID == incomingPeerInfo.userID) {
             participants[i].screenMedia.stream = remoteStream
@@ -2544,13 +2545,13 @@ myPeer.on('open', myPeerId => {
       if (participants[j].userInfo.userID == userId) {
         participants[j].userMedia.sideVideoDiv.remove(); // remove all the sidevideo of the disconnected user
         if (participants[j].screenMedia.sideVideoDiv) { participants[j].screenMedia.sideVideoDiv.remove(); } // remove all the sidevideo of the disconnected user
-        
+
         participants.splice(j, 1); // remove the disconnected user
         if (participants.length == 0) { // if we have only one user connected - remove the mail Video and end the call
           globalMainVideoDiv.textContent = '' // END the call
         }
-        else{
-          let nextUser = isNegative(j - 1)? j+1 : j-1
+        else {
+          let nextUser = isNegative(j - 1) ? j + 1 : j - 1
           let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element
           maindiv.textContent = ''
           let mainVideoDivContent = createMainVideoDiv(participants[nextUser].userMedia.callType, participants[nextUser].userMedia.stream, participants[nextUser].userInfo, 'userMedia')
@@ -2607,7 +2608,8 @@ myPeer.on('open', myPeerId => {
 })
 
 function isNumeric(num) { return !isNaN(num) }
-function isNegative(num) { if (Math.sign(num) === -1) { return true; }
+function isNegative(num) {
+  if (Math.sign(num) === -1) { return true; }
 
   return false;
 }
