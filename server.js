@@ -515,13 +515,6 @@ io.on('connection', (socket) => {
               socket.emit('prepareCallingOthers', { callUniqueId, callType: videoPresentation === 1 ? "video" : "audio", groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall, callTitle: 'Untitled Call' });
               socket.join(callUniqueId + '');
 
-              socket.on('cancelCall', () => { // if the caller decides to close the call => end the call for everybody
-
-                console.log('canceled call ', callUniqueId);
-                socket.to(callUniqueId + '').emit('callCancelled');
-
-              })
-
               break;
 
             case 1:
@@ -569,6 +562,11 @@ io.on('connection', (socket) => {
         })
       console.log("initialting call", data)
     })
+
+    socket.on('cancelCall', (callUniqueId) => { // if the caller decides to close the call => end the call for everybody
+      socket.to(callUniqueId + '').emit('callCancelled');
+    })
+
     socket.on('answerCall', async data => {
       let { myPeerId, callUniqueId, callType } = data;
       console.log('user ', id, ' has joined the call ', callUniqueId, ' and requests to be called')
@@ -612,15 +610,10 @@ io.on('connection', (socket) => {
     })
 
     socket.on('leaveCall', async data => {
-      //{myPeerId, callUniqueId: currentCallInfo.callUniqueId}
-      socket.to(data.callUniqueId + '-allAnswered-sockets').emit('user-disconnected', data.myPeerId);
+      
+      socket.to(data.callUniqueId + '-allAnswered-sockets').emit('userLeftCall', id);
       setUserCallStatus(id, data.callUniqueId, 'offCall')
-
-      try {
-        socket.leave(data.callUniqueId + '-allAnswered-sockets');
-      } catch (e) {
-        console.log('[error]', 'leave room :', e);
-      }
+      try { socket.leave(data.callUniqueId + '-allAnswered-sockets'); } catch (e) { console.log('[error]', 'leave room :', e); }
 
       let thisCallparticipants = await getCallParticipants(data.callUniqueId)
       for (let i = 0; i < connectedUsers.length; i++) {
@@ -658,7 +651,7 @@ io.on('connection', (socket) => {
       
     })
     socket.on('addUserToCall', async identifications => {
-      let access = checkCallAccess(id, identifications.callUniqueId)
+      let access = await checkCallAccess(id, identifications.callUniqueId)
       if(access != true) { return console.log('User :', id, ' cannot add user :', identifications.userID, ' to call because he has no access to this call :', identifications.callUniqueId)}
       let { callUniqueId, userID, callType, callTitle } = identifications
 
@@ -757,20 +750,21 @@ io.on('connection', (socket) => {
       // socket.to(data.callUniqueId + '-allAnswered-sockets').emit('user-disconnected', data.myPeerId);
     })
 
-    socket.on('stopScreenSharing', async callUniqueId => {
-      let access = await checkCallAccess(id, callUniqueId)
-      if(access != true) { return console.log('User :', id, ' cannot leave because he has no access to this call :', callUniqueId)}
-      socket.to(callUniqueId + '-allAnswered-sockets').emit('userLeftCall', {userID: id, callUniqueId:callUniqueId})
-
-    })
+    
 
     ///////////////
     socket.on('disconnecting', () => {
       console.log('socket.roomsssssssssssssssssssssss', socket.rooms); // the Set contains at least the socket ID
       let roomsArray = Array.from(socket.rooms);
       roomsArray.forEach(function (room) {
-        socket.to(room).emit('userDisconnectedFromCall', {id: id, room: room})
-        console.log('userDisconnectedFromCall', id, room)
+        if(isNumeric(room) && !room.includes('-allAnswered-sockets')){
+          socket.to(room).emit('userDisconnected', {id: id, room: room})
+        }
+        if (!isNumeric(room) && room.includes('-allAnswered-sockets')) {
+          socket.to(room).emit('userDisconnectedFromCall', {id: id, room: room})
+          let callUniqueId = room.replace('-allAnswered-sockets','');
+          setUserCallStatus(id, callUniqueId, 'offCall')
+        }
       })
     })
 
@@ -791,6 +785,11 @@ io.on('connection', (socket) => {
   }
 
 });
+function isNumeric(num) { return !isNaN(num) }
+function isNegative(num) {
+  if (Math.sign(num) === -1) { return true; }
+  return false;
+}
 
 function getEvents(userId, initalDate, endDate) {
   return new Promise(function (resolve, reject) {
