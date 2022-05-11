@@ -2004,6 +2004,19 @@ myPeer.on('open', myPeerId => {
         globalMainVideoDiv = maindiv
         participant.userMedia.isOnMainVideo = true;
       }
+      // if i call a peer, while having shared my screen, i will need to include him in my screen viewers
+      if (screenSharing == true) {
+        let screenShare_options = { metadata: { userInfo: caller_me, callType: 'video', callMediaType: 'screenMedia' } }
+        const call = myPeer.call(peerId, myScreenStream, screenShare_options)
+        let myScreenViewer = {
+          userInfo: userInfo,
+          peerId: peerId,
+          callObject: call,
+          peerInitiatedByMe: true
+        }
+        myScreenViewers.push(myScreenViewer)
+      }
+      // --------------------------------------
     })
     call.once('close', () => {
       updateAttendanceList(userInfo, 'absent') // update the attendance list
@@ -2275,8 +2288,8 @@ myPeer.on('open', myPeerId => {
     let HangUpBtn = createElement({
       elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })],
       onclick: () => {
-        leaveCall(_callUniqueId)
-        if (screenSharing == true) stopScreenSharing(_callUniqueId, myScreenStream)
+        leaveCall()
+        if (screenSharing == true) stopScreenSharing()
       }
     })
     let muteMicrophone = createElement({
@@ -2291,7 +2304,7 @@ myPeer.on('open', myPeerId => {
       onclick: helpToggleScreenShare
     })
     function helpToggleScreenShare() {
-      toggleScreenShare(_callUniqueId, shareScreenBtn)
+      toggleScreenShare(shareScreenBtn)
       console.log('screen share')
     }
     determineStates()
@@ -2432,40 +2445,41 @@ myPeer.on('open', myPeerId => {
 
   function removePeer(userId) {
     // close all of the the videos of the person qho quit
+    let indexOfRemovedUser
+    let removedUser
     for (let j = 0; j < participants.length; j++) {
       if (participants[j].userInfo.userID == userId) {
+        indexOfRemovedUser = j
+        removedUser = participants[j]
         participants[j].userMedia.sideVideoDiv.remove(); // remove all the sidevideo of the disconnected user
         if (participants[j].screenMedia.sideVideoDiv) { participants[j].screenMedia.sideVideoDiv.remove(); } // remove all the sidevideo of the disconnected user
-
         participants.splice(j, 1); // remove the disconnected user
-        if (participants.length == 0) { // if we have only one user connected - remove the mail Video and end the call
-          globalMainVideoDiv.textContent = '' // END the call
-        }
-        else {
-          let nextUser = isNegative(j - 1) ? j + 1 : j - 1
-          let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element
-          maindiv.textContent = ''
-          let mainVideoDivContent = createMainVideoDiv(participants[nextUser].userMedia.callType, participants[nextUser].userMedia.stream, participants[nextUser].userInfo, 'userMedia')
-          mainVideoDivContent.forEach(div => { maindiv.append(div) })
-          globalMainVideoDiv = maindiv // store what is on main Div
-        }
       }
     }
+    if (participants.length >= 1) { // if we still have users on the call
+      if (removedUser.userMedia.isOnMainVideo == true || removedUser.screenMedia.isOnMainVideo == true) { //if the removed user
+        let nextOrPrevUser = participants[indexOfRemovedUser] || participants[indexOfRemovedUser - 1] || participants[indexOfRemovedUser + 1] // decide which user to put on main video
+        let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element
+        maindiv.textContent = ''
+        let mainVideoDivContent = createMainVideoDiv(nextOrPrevUser.userMedia.callType, nextOrPrevUser.userMedia.stream, nextOrPrevUser.userInfo, 'userMedia')
+        mainVideoDivContent.forEach(div => { maindiv.append(div) })
+        globalMainVideoDiv = maindiv // store what is on main Div
+      }
+    }
+    else { leaveCall() } // no longer have any user connected - remove the mail Video and end the call
   }
 
-  function toggleScreenShare(callUniqueId, button) {
+  function toggleScreenShare(triggerButton) {
     if (screenSharing == false) {
-      startScreenSharing(callUniqueId)
-      button.classList.add('active')
+      startScreenSharing(triggerButton)
     } else {
-      stopScreenSharing(callUniqueId)
-      button.classList.remove('active')
+      stopScreenSharing(triggerButton)
     }
   }
-  function startScreenSharing(callUniqueId) {
+  function startScreenSharing(triggerButton) {
     navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }).then((screenVideoStream) => {
-      screenVideoStream.onended = () => stopScreenSharing(callUniqueId, screenVideoStream)
-      myScreenStream = screenVideoStream
+      myScreenStream = screenVideoStream // store my screen stream
+      myScreenStream.getTracks().forEach(track => track.onended = () => stopScreenSharing(triggerButton)) // end screen sharing if the system ends the streaming or if the device is unplugged
       let callMediaType = 'screenMedia'
       let options = { metadata: { userInfo: caller_me, callType: 'video', callMediaType: callMediaType } }
       myScreenSideVideo = createSideVideo('video', myScreenStream, caller_me, callMediaType)
@@ -2481,63 +2495,37 @@ myPeer.on('open', myPeerId => {
         }
         myScreenViewers.push(myScreenViewer)
       }
+      triggerButton.classList.add('active')
       screenSharing = true
     })
   }
-  function stopScreenSharing(callUniqueId, mediaStream) {
-    mediaStream.getTracks().forEach(track => track.stop())
+  function stopScreenSharing(triggerButton) {
+    socket.emit('stopScreenSharing', _callUniqueId)
+    screenSharing = false
+    myScreenStream.getTracks().forEach(track => track.stop())
+    triggerButton.classList.remove('active')
     for (let i = 0; i < myScreenViewers.length; i++) {
       myScreenSideVideo.remove();
       myScreenViewers.splice(i, 1);
     }
-    socket.emit('stopScreenSharing', callUniqueId)
-    screenSharing = false
   }
-  socket.on('userLeftCall', disconnectionInfo => {
-    let { userID, callUniqueId } = disconnectionInfo;
-  })
-  function leaveCall(callUniqueId) {
-    socket.emit('leaveCall', callUniqueId)
-    if(myStream) myStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
-    if(myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
+
+  function leaveCall() {
+    socket.emit('leaveCall', { callUniqueId: _callUniqueId })
+    if (screenSharing == true) stopScreenSharing()
+    if (myStream) myStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
+    if (myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
     for (let i = 0; i < participants.length; i++) { removePeer(participants[i].userInfo.userID) }
     mySideVideoDiv.remove()
-    if(globalMainVideoDiv) globalMainVideoDiv.textContent = ''
+    if (globalMainVideoDiv) globalMainVideoDiv.textContent = ''
   }
 })
 
 function isNumeric(num) { return !isNaN(num) }
 function isNegative(num) { if (Math.sign(num) === -1) { return true; } return false; }
 
-function convertToAudioOnlyStream(stream) {
-  // remove all video tracks
-  stream.getVideoTracks().forEach(track => {
-    track.enabled = false;
-    // stream.removeTrack(track); 
-  });
-  // add a fake video track -> https://github.com/peers/peerjs/issues/435 
-
-
-  // var image = createElement({ elementType: 'img', src: '/images/audioCallInterface.png' })
-  // let canvas = Object.assign(document.createElement("canvas"), { w: 300, h: 300 });
-  // context = canvas.getContext('2d');
-  // drawImageScaled(image, context)
-  // function drawImageScaled(img, ctx) {
-  //   var canvas = ctx.canvas;
-  //   var hRatio = canvas.width / img.width;
-  //   var vRatio = canvas.height / img.height;
-  //   var ratio = Math.min(hRatio, vRatio);
-  //   var centerShift_x = (canvas.width - img.width * ratio) / 2;
-  //   var centerShift_y = (canvas.height - img.height * ratio) / 2;
-  //   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  //   ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
-  // }
-  // let blackStream = canvas.captureStream();
-  // stream.addTrack(blackStream.getVideoTracks()[0]);
-  return stream;
-}
-
-
+function convertToAudioOnlyStream(stream) { stream.getVideoTracks().forEach(track => { track.enabled = false; }); return stream; } // disable all video tracks
+  
 function createElement(configuration) {
   if (!configuration.elementType) return console.warn('no element type provided')
   let elementToReturn = document.createElement(configuration.elementType)
