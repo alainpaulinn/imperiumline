@@ -1319,7 +1319,9 @@ function buildTags(tagContentArray) {
   return tagTemplate;
 }
 
-
+socket.on('userDisconnected', disconnectionInfo => {
+  console.log('user disconnected', disconnectionInfo)
+})
 
 /////////////////////SIDEPANEL SWITCH///////////////////////////
 let time_scheduling_panel = document.getElementById("time-scheduling_panel")
@@ -1621,15 +1623,8 @@ const myPeer = new Peer(undefined, {
     sdpSemantics: "unified-plan"
   }
 })
-//const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-let videoSelectPopup = document.getElementById("videoDevicesPopup")
-let audioInSelectPopup = document.getElementById("audioInDevicesPopup")
-
-let videoDevicesPop = document.getElementById("videoDevicesPop")
-let audioInDevicesPop = document.getElementById("audioInDevicesPop")
-
 //ringtone preparation
 const ringtone = new Audio('/audio/imperiumLine.mp3')
 ringtone.addEventListener('ended', function () {
@@ -1642,15 +1637,6 @@ waitingTone.addEventListener('ended', function () {
   this.currentTime = 0;
   this.play();
 }, false);
-
-socket.on('user-disconnected', peerIdToRemove => {
-  removeUser(peerIdToRemove)
-})
-
-//for testing only
-function show_conncted_users() {
-  socket.emit('showConnectedUsers')
-}
 
 function showOngoingCallSection() {
   time_scheduling_panel.style.display = "none"
@@ -1680,85 +1666,11 @@ function showMessagesPanel() {
   document_title.innerText = "Messages";
 }
 
-//functional buttons//////////////////
-
-function removeVideo(stream, button) {
-  if (!stream) return;
-  for (let index in stream.getAudioTracks()) {
-    stream.getVideoTracks()[index].enabled = !stream.getVideoTracks()[index].enabled
-    stream.getVideoTracks()[index].enabled ? videoDevicesPop.classList.remove("red-bg") : videoDevicesPop.classList.add("red-bg")
-  }
-}
-
-// function toggleScreenSharing() {
-//   if (screenSharing) {
-//     stopScreenSharing()
-//     console.log("stopping screenshare")
-//   }
-//   else {
-//     startScreenShare()
-//     console.log("Initiating screenshare")
-//   }
-// }
-
-function startScreenShare() {
-  if (screenSharing) {
-    stopScreenSharing()
-  }
-  navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
-    screenStream = stream;
-    let videoTrack = screenStream.getVideoTracks()[0];
-    videoTrack.onended = () => {
-      stopScreenSharing()
-    }
-    if (myPeer) {
-
-      for (const property in peers) {
-        let currentPeer = peers[property];
-        let sender = currentPeer.peerConnection.getSenders().find(function (s) {
-          return s.track.kind == videoTrack.kind;
-        })
-        sender.replaceTrack(videoTrack)
-      }
-      screenSharing = true
-      document.getElementById("toggleScreenSharing").classList.add("red-bg")
-    }
-    console.log(screenStream)
-  })
-}
-
-function stopScreenSharing() {
-  if (!screenSharing) return;
-  let videoTrack = tream.getVideoTracks()[0];
-  if (myPeer) {
-
-    for (const property in peers) {
-      let currentPeer = peers[property];
-      let sender = currentPeer.peerConnection.getSenders().find(function (s) {
-        return s.track.kind == videoTrack.kind;
-      })
-      sender.replaceTrack(videoTrack)
-    }
-
-    document.getElementById("toggleScreenSharing").classList.remove("red-bg")
-  }
-  screenStream.getTracks().forEach(function (track) {
-    console.log('track', track);
-    track.stop();
-    stream.removeTrack(track);
-  });
-  screenSharing = false
-}
-
-
 ///////Video Sizing//////////////////////
 function toggleFullscreen(element) {
   if (!document.fullscreenElement) { element.requestFullscreen().catch(err => { alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`); }); }
   else { document.exitFullscreen(); }
 }
-
-
-//calls renovation -------------------------------------------------------------------------------------------------
 
 // when my peer is ready with an ID ---> this means that we cannot receive a call before a peer Id is opened
 myPeer.on('open', myPeerId => {
@@ -1773,7 +1685,8 @@ myPeer.on('open', myPeerId => {
   let mySideVideoDiv;
   let myScreenSideVideo;
   let myScreenViewers = [];
-
+  let caller_me, videoCoverDiv_videoCoverDiv
+  let optionalResolutions = [{ minWidth: 320 }, { minWidth: 640 }, { minWidth: 1024 }, { minWidth: 1280 }, { minWidth: 1920 }, { minWidth: 2560 }]
   let participants = []
   // let participant = {
   //   userInfo: userInfo,
@@ -1782,34 +1695,6 @@ myPeer.on('open', myPeerId => {
   //   screenMediaSideVideo: { stream, callType, userMediaSideVideo, callObject, isOnMainVideo }
   // }
 
-  let caller_me, videoCoverDiv_videoCoverDiv
-
-  let optionalResolutions = [
-    { minWidth: 320 },
-    { minWidth: 640 },
-    { minWidth: 1024 },
-    { minWidth: 1280 },
-    { minWidth: 1920 },
-    { minWidth: 2560 },
-  ]
-  let mainCallVariables;
-  // call bluePrint
-  /*
-  let mainCallVariables = {
-    myPeerId: myPeerId,
-    myStream: myStream,
-    myScreenStream: screenStream,
-    mainVideoDIv: { mainVideoDiv, mainVideoElement, audioCallCover, callTopBar, callControls},
-    callMemberObects: [
-      {
-        userInfo: userInfo,
-        mediaType: "video",
-        peerId: 'peer ID',
-        call: 'the call object',
-        sideVideoDiv: 'sideVideoDiv Element'
-      },
-    ]
-  }*/
 
   socket.on('prepareCallingOthers', initiatedCallInfo => {
     navigator.getUserMedia({ video: { optional: optionalResolutions }, audio: true }, stream => {
@@ -1873,7 +1758,7 @@ myPeer.on('open', myPeerId => {
 
       let { closeVideoBtn, HangUpBtn, muteMicrophoneBtn } = videoCoverDiv.controls
       HangUpBtn.addEventListener('click', () => {
-        socket.emit('cancelCall')
+        socket.emit('cancelCall', callUniqueId)
         mySideVideoDiv.remove();
         stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
         videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
@@ -2390,7 +2275,8 @@ myPeer.on('open', myPeerId => {
     let HangUpBtn = createElement({
       elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })],
       onclick: () => {
-        if (screenSharing == true) stopScreenSharing(_callUniqueId)
+        leaveCall(_callUniqueId)
+        if (screenSharing == true) stopScreenSharing(_callUniqueId, myScreenStream)
       }
     })
     let muteMicrophone = createElement({
@@ -2520,6 +2406,11 @@ myPeer.on('open', myPeerId => {
     if (!isNumeric(room) && room.includes('-allAnswered-sockets')) removePeer(id)
   })
 
+  socket.on('userLeftCall', id => {
+    removePeer(id)
+    console.log('userLeftCall', id)
+  })
+
   socket.on('stoppedScreenSharing', disconnectionInfo => {
     let { userID, callUniqueId } = disconnectionInfo;
     // close all of the the videos of the person qho quit
@@ -2573,7 +2464,7 @@ myPeer.on('open', myPeerId => {
   }
   function startScreenSharing(callUniqueId) {
     navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }).then((screenVideoStream) => {
-      screenVideoStream.onended = () => stopScreenSharing(callUniqueId)
+      screenVideoStream.onended = () => stopScreenSharing(callUniqueId, screenVideoStream)
       myScreenStream = screenVideoStream
       let callMediaType = 'screenMedia'
       let options = { metadata: { userInfo: caller_me, callType: 'video', callMediaType: callMediaType } }
@@ -2593,8 +2484,8 @@ myPeer.on('open', myPeerId => {
       screenSharing = true
     })
   }
-  function stopScreenSharing(callUniqueId) {
-    myScreenStream.getTracks().forEach(track => track.stop())
+  function stopScreenSharing(callUniqueId, mediaStream) {
+    mediaStream.getTracks().forEach(track => track.stop())
     for (let i = 0; i < myScreenViewers.length; i++) {
       myScreenSideVideo.remove();
       myScreenViewers.splice(i, 1);
@@ -2605,14 +2496,18 @@ myPeer.on('open', myPeerId => {
   socket.on('userLeftCall', disconnectionInfo => {
     let { userID, callUniqueId } = disconnectionInfo;
   })
+  function leaveCall(callUniqueId) {
+    socket.emit('leaveCall', callUniqueId)
+    if(myStream) myStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
+    if(myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
+    for (let i = 0; i < participants.length; i++) { removePeer(participants[i].userInfo.userID) }
+    mySideVideoDiv.remove()
+    if(globalMainVideoDiv) globalMainVideoDiv.textContent = ''
+  }
 })
 
 function isNumeric(num) { return !isNaN(num) }
-function isNegative(num) {
-  if (Math.sign(num) === -1) { return true; }
-
-  return false;
-}
+function isNegative(num) { if (Math.sign(num) === -1) { return true; } return false; }
 
 function convertToAudioOnlyStream(stream) {
   // remove all video tracks
@@ -2716,9 +2611,7 @@ function call(callTo, audio, video, group, fromChat, previousCallId) {
 
 function initiateCall(initiationInfo) {
   let { callTo, audio, video, group, fromChat, previousCallId } = initiationInfo
-  console.log('initiationInfo', initiationInfo)
   navigator.getUserMedia({ video: true, audio: true }, stream => {  //test user media accessibiity
-    console.log('Initial stream', stream)
     console.log('initial Media stream tracks', stream.getTracks())
     let modifiedStream = convertToAudioOnlyStream(stream)
     console.log('modified stream', modifiedStream)
