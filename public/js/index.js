@@ -520,7 +520,7 @@ function openChat(openChatInfo) {
     <div class="typingBox">
       <button class='chat-options' href='' title=''><i class='bx bxs-smile' ></i></i></button>
       <button class='chat-options' href='' title=''><i class='bx bx-paperclip' ></i></button>
-      <div id="w-input-container" onclick="setFocus()">
+      <div id="w-input-container" class="w-input-container"  onclick="setFocus()">
         <div class="w-input-text-group">
           <div id="w-input-text" class="w-input-text" contenteditable></div>
           <div class="w-placeholder">Type a message</div>
@@ -767,9 +767,7 @@ function openChat(openChatInfo) {
       socket.emit('message', message)
       taggedMessages = [];
       removeAllTags();
-
     }
-
   });
 
   //grab text message input and process it
@@ -1688,13 +1686,19 @@ myPeer.on('open', myPeerId => {
   let caller_me, videoCoverDiv_videoCoverDiv
   let optionalResolutions = [{ minWidth: 320 }, { minWidth: 640 }, { minWidth: 1024 }, { minWidth: 1280 }, { minWidth: 1920 }, { minWidth: 2560 }]
   let participants = []
-  // let participant = {
-  //   userInfo: userInfo,
-  //   peerId: peerId,
-  //   userMediaSideVideo: { stream, callType, userMediaSideVideo, callObject, isOnMainVideo },
-  //   screenMediaSideVideo: { stream, callType, userMediaSideVideo, callObject, isOnMainVideo }
-  // }
+  let callMessagePanel;
+  /* let participant = {
+    userInfo: userInfo,
+    peerId: peerId,
+    userMediaSideVideo: { stream, callType, userMediaSideVideo, callObject, isOnMainVideo },
+    screenMediaSideVideo: { stream, callType, userMediaSideVideo, callObject, isOnMainVideo }
+  }*/
 
+  /* messageBluePrint = {
+    userInfo: userInfo,
+    content: 'content',
+    time: 'time',
+  }*/
 
   socket.on('prepareCallingOthers', initiatedCallInfo => {
     navigator.getUserMedia({ video: { optional: optionalResolutions }, audio: true }, stream => {
@@ -1706,7 +1710,7 @@ myPeer.on('open', myPeerId => {
       caller_me = caller
       _callUniqueId = callUniqueId
       saveLocalMediaStream(callType, stream)
-
+      callMessagePanel = createRightPartPanel()
       // create topBar
       createTopBar({ callUniqueId: callUniqueId, callType: globalCallType, callTitle: callTitle, isTeam: 'isTeam' }, caller)
 
@@ -2519,13 +2523,137 @@ myPeer.on('open', myPeerId => {
     mySideVideoDiv.remove()
     if (globalMainVideoDiv) globalMainVideoDiv.textContent = ''
   }
+  function createRightPartPanel() {
+    let participantsCount = 0;
+    let unreadmessagesCount = 0;
+    // Header
+    let participantsSelectorBtn = createElement({ elementType: 'div', class: 'rightHeaderItem participants headerItemSelected', textContent: 'Participants ' + participantsCount })
+    let messagesSelectorbtn = createElement({ elementType: 'div', class: 'rightHeaderItem callChat', textContent: 'Messages ' + unreadmessagesCount })
+    let rightPartheaderVideoMessaging = createElement({ elementType: 'div', class: 'rightPartheaderVideoMessaging', childrenArray: [participantsSelectorBtn, messagesSelectorbtn] })
+    let callParticipantsDiv = createElement({ elementType: 'div', class: 'callParticipantsDiv' })
+    let c_openchat__box__info = createElement({
+      elementType: 'div', class: 'c-openchat__box__info', childrenArray: [
+        createElement({ elementType: 'div', class: 'push-down' }),
+        createElement({
+          elementType: 'div', class: 'message-separator', childrenArray: [
+            createElement({ elementType: 'span', textContent: 'You joined' })
+          ]
+        })
+      ]
+    })
+    let iconButton = createElement({ elementType: 'button', class: 'chat-options', title: 'Send a Sticker', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-smile' })] })
+    let inputText = createElement({ elementType: 'div', class: 'w-input-text', contentEditable: true })
+    let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeholder', textContent: 'Type a message' })
+    let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
+    let inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
+    let sendButton = createElement({ elementType: 'button', class: 'chat-options', title: 'Send Message', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
+    let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [iconButton, inputContainer, sendButton] })
+
+    let callMessagingDiv = createElement({ elementType: 'div', class: 'callMessagingDiv hideDivAside', childrenArray: [c_openchat__box__info, typingBox] })
+
+    // selectore Event listeners
+    participantsSelectorBtn.addEventListener('click', () => {
+      participantsSelectorBtn.classList.add('headerItemSelected');
+      messagesSelectorbtn.classList.remove('headerItemSelected');
+      callMessagingDiv.classList.add('hideDivAside')
+      callParticipantsDiv.classList.remove('hideDivAside')
+    })
+    messagesSelectorbtn.addEventListener('click', () => {
+      participantsSelectorBtn.classList.remove('headerItemSelected');
+      messagesSelectorbtn.classList.add('headerItemSelected');
+      callMessagingDiv.classList.remove('hideDivAside')
+      callParticipantsDiv.classList.add('hideDivAside')
+    })
+    sendButton.addEventListener('click', sendMessage)
+    inputText.addEventListener('keydown', function (e) { if (e.key == 'Enter' && !e.shiftKey) { sendMessage() } })
+    function sendMessage() {
+      if (inputText.textContent == '') return;
+      console.log(inputText.textContent)
+      socket.emit('new-incall-message', { callUniqueId: _callUniqueId, message: inputText.textContent })
+      inputText.textContent = '';
+    }
+
+    let rightPartContentDiv = createElement({ elementType: 'div', class: 'rightPartContentDiv', childrenArray: [callParticipantsDiv, callMessagingDiv] })
+
+    let ongoingCallRightPart = document.getElementById('ongoingCallRightPart')
+    ongoingCallRightPart.textContent = '';
+    ongoingCallRightPart.append(rightPartheaderVideoMessaging, rightPartContentDiv)
+
+    let previousMessage;
+    let previousMessageDiv;
+    let previousSentGroup;
+    let previousReceivedGroup;
+
+    c_openchat__box__info.addMessage = (message, event) => {
+      let { userInfo, content, time } = message
+      if (userInfo.userID == caller_me.userID)
+
+        if (event == 'join') {
+          let notificationElement = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: userInfo.userID == caller_me.userID ? 'You joined' : userInfo.name + ' ' + userInfo.surname + ' joined' })] })
+          c_openchat__box__info.append(notificationElement)
+        }
+      if (event == 'leave') {
+        let notificationElement = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: userInfo.userID == caller_me.userID ? 'You left' : userInfo.name + ' ' + userInfo.surname + ' left' })] })
+        c_openchat__box__info.append(notificationElement)
+      }
+      if (event == 'message') {
+        if(previousMessage){ // if we had a previous message
+          let prevDate = new Date(previousMessage.time)
+          let thisDate = new Date(message.time)
+          if(previousMessage.userInfo.userID == caller_me.userID){ // if the previous message was mine
+            let newMessage = createSentMessage(message)
+            if((prevDate - thisDate) > 60000){ // if greater than 1 minute
+              let anotherGroup = createElement({elementType:'div',class:'message-group-sent'})
+              anotherGroup.append(newMessage)
+              previousSentGroup = anotherGroup
+              c_openchat__box__info.append(previousSentGroup)
+            }
+            else{ // if less than 1 minute
+              previousSentGroup.append(newMessage)
+            }
+          }
+          else{ // if the previous message was not mine
+            
+            if(previousMessage.userInfo.userID == message.userinfo.userID && (prevDate - thisDate) < 60000){ // if it is from same user
+              let receivedMessage = createReceivedMessage(message)
+            }
+          }
+        }
+        else{
+          messageGroup
+        }
+        previousMessage = message
+      }
+
+      function createSentMessage(message){
+        let profileP;
+        if(message.userInfo.profilePicture == null) profileP = createElement({ elementType: 'div', textContent: message.userInfo.name.charAt(0)+ message.userInfo.surname.charAt(0)})
+        else profileP = createElement({ elementType: 'img', src: message.userInfo.profilePicture})
+        let message_sent = createElement({ elementType: 'div', class: 'message-received', childrenArray: [
+          createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24)}),
+          createElement({ elementType: 'div', class: 'message-sent-text', textContent: content}), 
+          createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [profileP]}), 
+          
+        ]})
+        return message_sent
+      }
+      function createReceivedMessage(message){
+        let message_received = createElement({ elementType: 'div', class: 'message-received', childrenArray: [
+          createElement({ elementType: 'div', class: 'message-received-text', textContent: content}), 
+          createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24)})
+        ]})
+        return message_received
+      }
+    }
+    return c_openchat__box__info
+  }
 })
 
 function isNumeric(num) { return !isNaN(num) }
 function isNegative(num) { if (Math.sign(num) === -1) { return true; } return false; }
 
 function convertToAudioOnlyStream(stream) { stream.getVideoTracks().forEach(track => { track.enabled = false; }); return stream; } // disable all video tracks
-  
+
 function createElement(configuration) {
   if (!configuration.elementType) return console.warn('no element type provided')
   let elementToReturn = document.createElement(configuration.elementType)
@@ -2540,6 +2668,7 @@ function createElement(configuration) {
   if (configuration.autoPlay) elementToReturn.setAttribute('autoplay', 'true')
   if (configuration.type) elementToReturn.setAttribute('type', configuration.type)
   if (configuration.placeHolder) elementToReturn.setAttribute('placeholder', configuration.placeHolder)
+  if (configuration.contentEditable) elementToReturn.setAttribute('contentEditable', configuration.contentEditable)
   return elementToReturn
 }
 
@@ -2838,6 +2967,8 @@ function createTopBar(callInfo, myInfo) {
   callScreenHeader.textContent = '';
   callScreenHeader.append(headerLeftPart, headerRightPart)
 }
+
+
 
 
 // window.onbeforeunload = function () {

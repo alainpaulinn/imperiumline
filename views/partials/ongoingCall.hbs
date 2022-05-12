@@ -1,7 +1,7 @@
 <div class="leftPart">
-    <div class="leftPartHeaderDivTitle">
+    {{!-- <div class="leftPartHeaderDivTitle">
         Attendance
-    </div>
+    </div> --}}
 
     <div class="attendanceTitleSection">
         <div id="presenceSelectorBtn" class="leftHeaderItem headerItemSelected">Present (0)</div>
@@ -156,7 +156,7 @@
         </div>
     </div>
 </div>
-<div class="rightPart">
+<div class="rightPart" id="ongoingCallRightPart">
     <div class="rightPartheaderVideoMessaging">
         <div id="participantsSelectorBtn" class="rightHeaderItem participants headerItemSelected">Participants(6)</div>
         <div id="messagesSelectorbtn" class="rightHeaderItem callChat">Messages(3)</div>
@@ -393,14 +393,12 @@
             </div>
             <div class="typingBox">
                 <button class="chat-options" href="" title=""><i class="bx bxs-smile"></i></button>
-                <button class="chat-options" href="" title=""><i class="bx bx-paperclip"></i></button>
-                <div id="w-input-container" onclick="setFocus()">
+                <div class="w-input-container" onclick="setFocus()">
                     <div class="w-input-text-group">
-                        <div id="w-input-text" class="w-input-text" contenteditable=""></div>
+                        <div class="w-input-text" contenteditable=""></div>
                         <div class="w-placeholder">Type a message</div>
                     </div>
                 </div>
-                <button class="chat-options" href="" title=""><i class="bx bxs-microphone"></i></button>
                 <button id="sendButton" class="chat-options" href="" title=""><i class="bx bxs-send"></i></button>
             </div>
         </div>
