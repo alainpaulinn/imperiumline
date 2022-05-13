@@ -1686,7 +1686,9 @@ myPeer.on('open', myPeerId => {
   let caller_me, videoCoverDiv_videoCoverDiv
   let optionalResolutions = [{ minWidth: 320 }, { minWidth: 640 }, { minWidth: 1024 }, { minWidth: 1280 }, { minWidth: 1920 }, { minWidth: 2560 }]
   let participants = []
-  let callMessagePanel;
+  let callParticipantsMessagePanel;
+  let rightPanel;
+  let topBar;
   /* let participant = {
     userInfo: userInfo,
     peerId: peerId,
@@ -1710,12 +1712,12 @@ myPeer.on('open', myPeerId => {
       caller_me = caller
       _callUniqueId = callUniqueId
       saveLocalMediaStream(callType, stream)
-      callMessagePanel = createRightPartPanel()
+      rightPanel = createRightPartPanel()
       // create topBar
-      createTopBar({ callUniqueId: callUniqueId, callType: globalCallType, callTitle: callTitle, isTeam: 'isTeam' }, caller)
+      topBar = createTopBar({ callUniqueId: callUniqueId, callType: globalCallType, callTitle: callTitle, isTeam: 'isTeam' }, caller)
 
       mySideVideoDiv = createSideVideo(globalCallType, myStream, caller, 'userMedia')
-      rightCallParticipantsDiv.prepend(mySideVideoDiv)
+      rightPanel.participantsBox.prepend(mySideVideoDiv)
       // create awaited users divs
       let awaitedUserDivs = allUsers.map(user => {
         //let { userID, name, surname, role, profilePicture, status } = user
@@ -1767,6 +1769,7 @@ myPeer.on('open', myPeerId => {
         stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
         videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
         updateAttendanceList(caller, 'absent')
+        topBar.textContent = ''
         stream.getTracks().forEach((track) => { console.log('track', track); track.stop(); stream.removeTrack(track); })
         myStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); myStream.removeTrack(track); })
       })
@@ -1783,8 +1786,8 @@ myPeer.on('open', myPeerId => {
         determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
         mySideVideoDiv.remove()
         mySideVideoDiv = createSideVideo(globalCallType, myStream, caller, 'userMedia')
-        rightCallParticipantsDiv.textContent = ''
-        rightCallParticipantsDiv.prepend(mySideVideoDiv)
+        rightPanel.participantsBox.textContent = ''
+        rightPanel.participantsBox.prepend(mySideVideoDiv)
       })
       determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
 
@@ -1885,13 +1888,7 @@ myPeer.on('open', myPeerId => {
         let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
         chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
 
-        //awaitedDiv.div.textContent = '';
-        console.log('additionDetails', additionDetails)
-        let addeduserDiv = createElement({
-          elementType: 'div', class: 'listMember', childrenArray: [
-            memberProfilePicture, memberNameRole, ringButton, chatButton
-          ]
-        })
+        let addeduserDiv = createElement({ elementType: 'div', class: 'listMember', childrenArray: [ memberProfilePicture, memberNameRole, ringButton, chatButton ] })
         videoCoverDiv.calleesDiv.prepend(addeduserDiv)
         awaitedUserDivs.push({ userID: userInfo.userID, div: addeduserDiv })
 
@@ -1948,12 +1945,12 @@ myPeer.on('open', myPeerId => {
       // let properStream = getStreamToUseLocally(answertype, myStream)
       callInfo = { callUniqueId, callType: globalCallType, callTitle: callTitle ? callTitle : 'Untitled Call', isTeam: false }
       socket.emit("answerCall", { myPeerId, callUniqueId, callType: answertype })
-      createTopBar(callInfo, myInfo) // create top bar
-
+      topBar = createTopBar(callInfo, myInfo) // create top bar
+      rightPanel = createRightPartPanel()
       // ut create and append my sidevideo
       mySideVideoDiv = createSideVideo(answertype, myStream, myInfo, 'userMedia')
-      rightCallParticipantsDiv.textContent = ''
-      rightCallParticipantsDiv.append(mySideVideoDiv)
+      rightPanel.participantsBox.textContent = ''
+      rightPanel.participantsBox.append(mySideVideoDiv)
 
       allInvitedUsers = setAllUsers(allUsers)
       updateAttendanceList(myInfo, 'present')
@@ -1995,7 +1992,7 @@ myPeer.on('open', myPeerId => {
       participant.userMedia.stream = userVideoStream
       updateAttendanceList(userInfo, 'present') // update this user on attendance list
       participant.userMedia.sideVideoDiv = createSideVideo(callType, userVideoStream, userInfo, 'userMedia') // create and save the side video element
-      rightCallParticipantsDiv.append(participant.userMedia.sideVideoDiv) // display this user's video
+      rightPanel.participantsBox.append(participant.userMedia.sideVideoDiv) // display this user's video
       stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
       if (videoCoverDiv_videoCoverDiv) videoCoverDiv_videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
       let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element for potential future use
@@ -2023,17 +2020,11 @@ myPeer.on('open', myPeerId => {
       // --------------------------------------
     })
     call.once('close', () => {
-      updateAttendanceList(userInfo, 'absent') // update the attendance list
-      for (let i = 0; i < participants.length; i++) {
-        if (participants[i].userInfo.userID == userInfo.userID) {
-          participants[i].userMedia.sideVideoDiv.remove() // remove this user's video
-          if (participants[i].screenMedia.sideVideoDiv) participants[i].screenMedia.sideVideoDiv.remove()
-          if (typeof participants[i].screenMedia.callObjectdestroy == 'function') participants[i].screenMedia.callObject.destroy()
-          participants.splice(i, 1) // remove this participant
-        }
-      }
+      removePeer(userInfo.userID)
     })
     participants.push(participant) // push the participant to the Array
+    rightPanel.setParticipantsCount(participants.length)
+    rightPanel.messagesBox.addMessage({userInfo: participant.userInfo, content: '', time: new Date()}, 'join')
   })
 
   //for incoming Peer Calls
@@ -2078,8 +2069,10 @@ myPeer.on('open', myPeerId => {
           }
         }
         updateAttendanceList(incomingPeerInfo, 'present')
-        rightCallParticipantsDiv.append(participant.userMedia.sideVideoDiv) //display this user's screen
+        rightPanel.participantsBox.append(participant.userMedia.sideVideoDiv) //display this user's screen
         participants.push(participant)
+        rightPanel.setParticipantsCount(participants.length)
+        rightPanel.messagesBox.addMessage({userInfo: incomingPeerInfo, content: '', time: new Date()}, 'join')
       }
       if (callMediaType == 'screenMedia') {
         //display this user's video
@@ -2089,7 +2082,7 @@ myPeer.on('open', myPeerId => {
             participants[i].screenMedia.callType = callType
             participants[i].screenMedia.sideVideoDiv = createSideVideo(callType, remoteStream, incomingPeerInfo, callMediaTypeText)
             participants[i].screenMedia.callObject = call
-            // rightCallParticipantsDiv.append(participants[i].screenMedia.sideVideoDiv)
+            // rightPanel.participantsBox.append(participants[i].screenMedia.sideVideoDiv)
             participants[i].userMedia.sideVideoDiv.after(participants[i].screenMedia.sideVideoDiv)
           }
         }
@@ -2223,8 +2216,7 @@ myPeer.on('open', myPeerId => {
     let { userID, name, surname, profilePicture, role } = userInfo;
 
     //main video element
-    let mainVideoElement = createElement({ elementType: 'video', class: 'mainVideoElement', srcObject: stream })
-    mainVideoElement.play();
+    let mainVideoElement = createElement({ elementType: 'video', class: 'mainVideoElement', srcObject: stream, autoplay: true });
 
     let statement = "";
     if (callMediaType == 'userMedia') statement = ""
@@ -2293,7 +2285,6 @@ myPeer.on('open', myPeerId => {
       elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })],
       onclick: () => {
         leaveCall()
-        if (screenSharing == true) stopScreenSharing()
       }
     })
     let muteMicrophone = createElement({
@@ -2414,6 +2405,12 @@ myPeer.on('open', myPeerId => {
     return callParticipantDiv;
   }
 
+  socket.on('new-incall-message', message => {
+    console.log(message)
+    rightPanel.messagesBox.addMessage(message, 'message')
+    
+  })
+
   socket.on('userDisconnectedFromCall', disconnectionInfo => {
     console.log('participants', participants)
     let { id, room } = disconnectionInfo;
@@ -2457,7 +2454,10 @@ myPeer.on('open', myPeerId => {
         removedUser = participants[j]
         participants[j].userMedia.sideVideoDiv.remove(); // remove all the sidevideo of the disconnected user
         if (participants[j].screenMedia.sideVideoDiv) { participants[j].screenMedia.sideVideoDiv.remove(); } // remove all the sidevideo of the disconnected user
+        updateAttendanceList(participants[j].userInfo, 'absent')
+        rightPanel.messagesBox.addMessage({userInfo: participants[j].userInfo, content: '', time: new Date()}, 'leave')
         participants.splice(j, 1); // remove the disconnected user
+        rightPanel.setParticipantsCount(participants.length)
       }
     }
     if (participants.length >= 1) { // if we still have users on the call
@@ -2519,9 +2519,12 @@ myPeer.on('open', myPeerId => {
     if (screenSharing == true) stopScreenSharing()
     if (myStream) myStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
     if (myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
+    console.log('participants before leaving the call', participants)
     for (let i = 0; i < participants.length; i++) { removePeer(participants[i].userInfo.userID) }
     mySideVideoDiv.remove()
+    rightPanel.participantsBox.textContent = ''
     if (globalMainVideoDiv) globalMainVideoDiv.textContent = ''
+    topBar.textContent = ''
   }
   function createRightPartPanel() {
     let participantsCount = 0;
@@ -2563,14 +2566,25 @@ myPeer.on('open', myPeerId => {
       messagesSelectorbtn.classList.add('headerItemSelected');
       callMessagingDiv.classList.remove('hideDivAside')
       callParticipantsDiv.classList.add('hideDivAside')
+      unreadmessagesCount = 0
+      messagesSelectorbtn.textContent = ('Messages ' + unreadmessagesCount)
     })
     sendButton.addEventListener('click', sendMessage)
-    inputText.addEventListener('keydown', function (e) { if (e.key == 'Enter' && !e.shiftKey) { sendMessage() } })
+    inputText.addEventListener('keydown', function (e) { if (e.key == 'Enter' && !e.shiftKey) { sendMessage(); e.preventDefault();} })
     function sendMessage() {
       if (inputText.textContent == '') return;
       console.log(inputText.textContent)
       socket.emit('new-incall-message', { callUniqueId: _callUniqueId, message: inputText.textContent })
       inputText.textContent = '';
+
+    }
+
+    function incrementUnreadCount() {
+      unreadmessagesCount = unreadmessagesCount + 1;
+      messagesSelectorbtn.textContent = ('Messages ' + unreadmessagesCount)
+    }
+    function setParticipantsCount(count) {
+      participantsSelectorBtn.textContent = ('Participants ' + count)
     }
 
     let rightPartContentDiv = createElement({ elementType: 'div', class: 'rightPartContentDiv', childrenArray: [callParticipantsDiv, callMessagingDiv] })
@@ -2586,66 +2600,113 @@ myPeer.on('open', myPeerId => {
 
     c_openchat__box__info.addMessage = (message, event) => {
       let { userInfo, content, time } = message
-      if (userInfo.userID == caller_me.userID)
-
-        if (event == 'join') {
-          let notificationElement = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: userInfo.userID == caller_me.userID ? 'You joined' : userInfo.name + ' ' + userInfo.surname + ' joined' })] })
-          c_openchat__box__info.append(notificationElement)
-        }
+      if (event == 'join') {
+        let notificationElement = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: userInfo.userID == caller_me.userID ? 'You joined' : userInfo.name + ' ' + userInfo.surname + ' joined' })] })
+        c_openchat__box__info.append(notificationElement)
+      }
       if (event == 'leave') {
         let notificationElement = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: userInfo.userID == caller_me.userID ? 'You left' : userInfo.name + ' ' + userInfo.surname + ' left' })] })
         c_openchat__box__info.append(notificationElement)
       }
       if (event == 'message') {
-        if(previousMessage){ // if we had a previous message
+        if (previousMessage != undefined) { // if we had a previous message
           let prevDate = new Date(previousMessage.time)
           let thisDate = new Date(message.time)
-          if(previousMessage.userInfo.userID == caller_me.userID){ // if the previous message was mine
+          if (previousMessage.userInfo.userID == caller_me.userID) { // if the previous message was mine
             let newMessage = createSentMessage(message)
-            if((prevDate - thisDate) > 60000){ // if greater than 1 minute
-              let anotherGroup = createElement({elementType:'div',class:'message-group-sent'})
-              anotherGroup.append(newMessage)
-              previousSentGroup = anotherGroup
-              c_openchat__box__info.append(previousSentGroup)
+            if ((prevDate - thisDate) > 60000) { // if greater than 1 minute
+              createNewSentGroup(newMessage)
             }
-            else{ // if less than 1 minute
-              previousSentGroup.append(newMessage)
+            else { // if less than 1 minute
+              // previousSentGroup.append(newMessage)
+              previousSentGroup.appendSentMessageDiv(newMessage)
             }
           }
-          else{ // if the previous message was not mine
-            
-            if(previousMessage.userInfo.userID == message.userinfo.userID && (prevDate - thisDate) < 60000){ // if it is from same user
-              let receivedMessage = createReceivedMessage(message)
+          else { // if the previous message was not mine
+            let newMessage = createReceivedMessage(message)
+            if (previousMessage.userInfo.userID == message.userinfo.userID) { // if it is from same user
+              if ((prevDate - thisDate) > 60000) { // if greater than 1 minute
+                createNewReceivedGroup(newMessage)
+              }
+              else { // if less than 1 minute
+                // previousSentGroup.append(newMessage)
+                previousSentGroup.appendSentMessageDiv(newMessage)
+              }
+            }
+            else { //if it is from different user
+              if ((prevDate - thisDate) > 60000) { // if greater than 1 minute
+                createNewReceivedGroup(newMessage)
+              }
             }
           }
         }
-        else{
-          messageGroup
+        else {
+          if (message.userInfo.userID == caller_me.userID) { // if it is my first message
+            let newMessage = createSentMessage(message)
+            createNewSentGroup(newMessage)
+          }
+          else { //if it is other's first message
+            let newMessage = createReceivedMessage(message)
+            createNewReceivedGroup(newMessage)
+          }
         }
         previousMessage = message
       }
 
-      function createSentMessage(message){
+      function createNewSentGroup(firstMessage) {
+        let anotherGroup = createElement({ elementType: 'div', class: 'message-group-sent' })
+        anotherGroup.append(firstMessage)
+        previousSentGroup = anotherGroup
+        previousSentGroup.appendSentMessageDiv = (sentMessageDiv)=> {
+          anotherGroup.append(sentMessageDiv)
+        }
+        c_openchat__box__info.append(previousSentGroup)
+      }
+      function createNewReceivedGroup(firstMessage) {
+        let receivedMessageProfile;
+        if(message.userInfo.profilePicture == null) receivedMessageProfile = createElement({ elementType: 'div', class:'receivedMessageProfile', textContent: message.userInfo.name.charAt(0)+message.userInfo.surname.charAt(0)})
+        else receivedMessageProfile = createElement({ elementType:'img', class:'receivedMessageProfile', src: profilePicture})
+
+        let receivedMessageProfileContainter = createElement({ elementType: 'div', childrenArray:[receivedMessageProfile]})
+        let receivedMessagesHolder = createElement({ elementType: 'div', childrenArray:[firstMessage]})
+
+        let anotherGroup = createElement({ elementType: 'div', class: 'message-group-received', childrenArray:[receivedMessageProfileContainter, receivedMessagesHolder] })
+        previousSentGroup = anotherGroup
+        previousSentGroup.appendReceivedMessageDiv = (sentMessageDiv) => {
+          receivedMessagesHolder.append(sentMessageDiv)
+        }
+        c_openchat__box__info.append(anotherGroup)
+      }
+      function createSentMessage(message) {
         let profileP;
-        if(message.userInfo.profilePicture == null) profileP = createElement({ elementType: 'div', textContent: message.userInfo.name.charAt(0)+ message.userInfo.surname.charAt(0)})
-        else profileP = createElement({ elementType: 'img', src: message.userInfo.profilePicture})
-        let message_sent = createElement({ elementType: 'div', class: 'message-received', childrenArray: [
-          createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24)}),
-          createElement({ elementType: 'div', class: 'message-sent-text', textContent: content}), 
-          createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [profileP]}), 
-          
-        ]})
+        if (message.userInfo.profilePicture == null) profileP = createElement({ elementType: 'div', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
+        else profileP = createElement({ elementType: 'img', src: message.userInfo.profilePicture })
+        let message_sent = createElement({
+          elementType: 'div', class: 'message-received', childrenArray: [
+            createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24) }),
+            createElement({ elementType: 'div', class: 'message-sent-text', textContent: content }),
+            createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [profileP] }),
+
+          ]
+        })
         return message_sent
       }
-      function createReceivedMessage(message){
-        let message_received = createElement({ elementType: 'div', class: 'message-received', childrenArray: [
-          createElement({ elementType: 'div', class: 'message-received-text', textContent: content}), 
-          createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24)})
-        ]})
+      function createReceivedMessage(message) {
+        let message_received = createElement({
+          elementType: 'div', class: 'message-received', childrenArray: [
+            createElement({ elementType: 'div', class: 'message-received-text', textContent: content }),
+            createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24) })
+          ]
+        })
         return message_received
       }
     }
-    return c_openchat__box__info
+    return {
+      messagesBox: c_openchat__box__info, // contains an addMessage(message) function to add messages to the conversation
+      incrementUnread: () => { if (callMessagingDiv.classList.contains('hideDivAside')) { incrementUnreadCount() } },
+      participantsBox: callParticipantsDiv,
+      setParticipantsCount: setParticipantsCount // accepts an integer
+    }
   }
 })
 
@@ -2669,6 +2730,7 @@ function createElement(configuration) {
   if (configuration.type) elementToReturn.setAttribute('type', configuration.type)
   if (configuration.placeHolder) elementToReturn.setAttribute('placeholder', configuration.placeHolder)
   if (configuration.contentEditable) elementToReturn.setAttribute('contentEditable', configuration.contentEditable)
+  if (configuration.autoplay) elementToReturn.autoplay = configuration.autoplay
   return elementToReturn
 }
 
@@ -2966,6 +3028,8 @@ function createTopBar(callInfo, myInfo) {
 
   callScreenHeader.textContent = '';
   callScreenHeader.append(headerLeftPart, headerRightPart)
+
+  return callScreenHeader
 }
 
 
