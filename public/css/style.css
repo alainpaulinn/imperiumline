@@ -3707,79 +3707,54 @@ body {
   opacity: 1;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .transcription {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  height: 8rem;
-  padding: 1rem;
-  margin-top: 1rem;
-  background-color: #ebf0f6;
-  border-radius: 15px;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .transcription .soundwaveSvg {
-  width: 6rem;
-  fill-rule: evenodd;
-  clip-rule: evenodd;
-  stroke-linejoin: round;
-  stroke-miterlimit: 2;
-  fill: #7a7a7a;
-  -webkit-box-shadow: white;
-          box-shadow: white;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .transcription .transcriptionContents {
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  overflow-y: auto;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .transcription .transcriptionContents .transcriptionContent {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  margin-bottom: 1rem;
-}
-
-.c-calls_panel .ongoingCallPage .call-container .transcription .transcriptionContents .transcriptionContent .profilepicture {
-  border: 1px solid #003061;
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
+.c-calls_panel .ongoingCallPage .call-container .availableScreens {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  gap: .5rem;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .availableScreens .screenItem {
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  border-radius: 100%;
+  height: 4rem;
+  width: 4rem;
+  background-color: #ebf0f6;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  cursor: pointer;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  color: white;
-  background-color: #003061;
-  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  font-weight: bold;
+  font-size: 1.5rem;
+  -webkit-box-shadow: 0px 0px 17px 0px rgba(0, 0, 0, 0.124);
+          box-shadow: 0px 0px 17px 0px rgba(0, 0, 0, 0.124);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .transcription .transcriptionContents .transcriptionContent .transcriptionWords {
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+.c-calls_panel .ongoingCallPage .call-container .availableScreens .screenItem.active {
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.719);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.719);
+}
+
+.c-calls_panel .ongoingCallPage .call-container .availableScreens .screenItem:hover {
+  background-color: #d9e3ee;
+}
+
+.c-calls_panel .ongoingCallPage .call-container .availableScreens .screenItem.screen {
+  border-radius: 5px;
 }
 
 .c-calls_panel .ongoingCallPage .rightPart {
@@ -4393,6 +4368,15 @@ body {
 
 .videoCoverDiv .calleesDiv {
   overflow-y: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  max-width: 100%;
+  gap: 0.5em;
   padding: 1rem;
   background-color: #f5f9fd;
   border-radius: 15px;
@@ -4408,7 +4392,6 @@ body {
       -ms-flex-align: center;
           align-items: center;
   border-radius: 15px;
-  margin-bottom: .5rem;
 }
 
 .videoCoverDiv .calleesDiv .listMember .memberProfilePicture {

@@ -818,8 +818,8 @@ function sameDay(d1, d2) {
 }
 function displayMessageOnChat(expectedUser, message) {
   console.log("received content: ", expectedUser, message)
-  //expectedUser{userID: 130, name: 'tes3Name', surname: 'tes3Surame', profilePicture: null} 
-  //message{toRoom: '106', message: 'test again', timeStamp: '2021-12-19T20:03:48.759Z'}
+  // expectedUser{userID: 130, name: 'tes3Name', surname: 'tes3Surame', profilePicture: null} 
+  // message{toRoom: '106', message: 'test again', timeStamp: '2021-12-19T20:03:48.759Z'}
 
   /*previous message{"id": 79,"message": "waiting","roomID": 107,"userID": "128","timeStamp": "2021-12-19T22:02:20.000Z",
         "userInfo": {
@@ -833,7 +833,7 @@ function displayMessageOnChat(expectedUser, message) {
   let selectedChatId;
   let mySavedID;
   let lastMessageInSelectedChat;*/
-  //buildReaction(message.reactions)
+  // buildReaction(message.reactions)
 
   console.log("Previous message", lastMessageInSelectedChat)
   console.log("new message", message)
@@ -1888,7 +1888,7 @@ myPeer.on('open', myPeerId => {
         let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
         chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
 
-        let addeduserDiv = createElement({ elementType: 'div', class: 'listMember', childrenArray: [ memberProfilePicture, memberNameRole, ringButton, chatButton ] })
+        let addeduserDiv = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole, ringButton, chatButton] })
         videoCoverDiv.calleesDiv.prepend(addeduserDiv)
         awaitedUserDivs.push({ userID: userInfo.userID, div: addeduserDiv })
 
@@ -2024,7 +2024,7 @@ myPeer.on('open', myPeerId => {
     })
     participants.push(participant) // push the participant to the Array
     rightPanel.setParticipantsCount(participants.length)
-    rightPanel.messagesBox.addMessage({userInfo: participant.userInfo, content: '', time: new Date()}, 'join')
+    rightPanel.messagesBox.addMessage({ userInfo: participant.userInfo, content: '', time: new Date() }, 'join')
   })
 
   //for incoming Peer Calls
@@ -2072,7 +2072,7 @@ myPeer.on('open', myPeerId => {
         rightPanel.participantsBox.append(participant.userMedia.sideVideoDiv) //display this user's screen
         participants.push(participant)
         rightPanel.setParticipantsCount(participants.length)
-        rightPanel.messagesBox.addMessage({userInfo: incomingPeerInfo, content: '', time: new Date()}, 'join')
+        rightPanel.messagesBox.addMessage({ userInfo: incomingPeerInfo, content: '', time: new Date() }, 'join')
       }
       if (callMediaType == 'screenMedia') {
         //display this user's video
@@ -2408,7 +2408,7 @@ myPeer.on('open', myPeerId => {
   socket.on('new-incall-message', message => {
     console.log(message)
     rightPanel.messagesBox.addMessage(message, 'message')
-    
+
   })
 
   socket.on('userDisconnectedFromCall', disconnectionInfo => {
@@ -2455,7 +2455,7 @@ myPeer.on('open', myPeerId => {
         participants[j].userMedia.sideVideoDiv.remove(); // remove all the sidevideo of the disconnected user
         if (participants[j].screenMedia.sideVideoDiv) { participants[j].screenMedia.sideVideoDiv.remove(); } // remove all the sidevideo of the disconnected user
         updateAttendanceList(participants[j].userInfo, 'absent')
-        rightPanel.messagesBox.addMessage({userInfo: participants[j].userInfo, content: '', time: new Date()}, 'leave')
+        rightPanel.messagesBox.addMessage({ userInfo: participants[j].userInfo, content: '', time: new Date() }, 'leave')
         participants.splice(j, 1); // remove the disconnected user
         rightPanel.setParticipantsCount(participants.length)
       }
@@ -2544,6 +2544,7 @@ myPeer.on('open', myPeerId => {
         })
       ]
     })
+    c_openchat__box__info.style.scrollBehavior = "smooth";
     let iconButton = createElement({ elementType: 'button', class: 'chat-options', title: 'Send a Sticker', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-smile' })] })
     let inputText = createElement({ elementType: 'div', class: 'w-input-text', contentEditable: true })
     let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeholder', textContent: 'Type a message' })
@@ -2570,7 +2571,7 @@ myPeer.on('open', myPeerId => {
       messagesSelectorbtn.textContent = ('Messages ' + unreadmessagesCount)
     })
     sendButton.addEventListener('click', sendMessage)
-    inputText.addEventListener('keydown', function (e) { if (e.key == 'Enter' && !e.shiftKey) { sendMessage(); e.preventDefault();} })
+    inputText.addEventListener('keydown', function (e) { if (e.key == 'Enter' && !e.shiftKey) { sendMessage(); e.preventDefault(); } })
     function sendMessage() {
       if (inputText.textContent == '') return;
       console.log(inputText.textContent)
@@ -2593,10 +2594,9 @@ myPeer.on('open', myPeerId => {
     ongoingCallRightPart.textContent = '';
     ongoingCallRightPart.append(rightPartheaderVideoMessaging, rightPartContentDiv)
 
-    let previousMessage;
-    let previousMessageDiv;
-    let previousSentGroup;
-    let previousReceivedGroup;
+    let prevMsg
+    let receivedGroup;
+    let sentGroup;
 
     c_openchat__box__info.addMessage = (message, event) => {
       let { userInfo, content, time } = message
@@ -2608,81 +2608,95 @@ myPeer.on('open', myPeerId => {
         let notificationElement = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: userInfo.userID == caller_me.userID ? 'You left' : userInfo.name + ' ' + userInfo.surname + ' left' })] })
         c_openchat__box__info.append(notificationElement)
       }
+
       if (event == 'message') {
-        if (previousMessage != undefined) { // if we had a previous message
-          let prevDate = new Date(previousMessage.time)
-          let thisDate = new Date(message.time)
-          if (previousMessage.userInfo.userID == caller_me.userID) { // if the previous message was mine
-            let newMessage = createSentMessage(message)
-            if ((prevDate - thisDate) > 60000) { // if greater than 1 minute
-              createNewSentGroup(newMessage)
-            }
-            else { // if less than 1 minute
-              // previousSentGroup.append(newMessage)
-              previousSentGroup.appendSentMessageDiv(newMessage)
-            }
+        // ------------------------------------------------------------------------------
+        if (!prevMsg) {
+          if (message.userInfo.userID == caller_me.userID) {
+            let msg = createSentMessage(message)
+            sentGroup = createNewSentGroup(msg)
+            c_openchat__box__info.append(sentGroup)
           }
-          else { // if the previous message was not mine
-            let newMessage = createReceivedMessage(message)
-            if (previousMessage.userInfo.userID == message.userinfo.userID) { // if it is from same user
-              if ((prevDate - thisDate) > 60000) { // if greater than 1 minute
-                createNewReceivedGroup(newMessage)
-              }
-              else { // if less than 1 minute
-                // previousSentGroup.append(newMessage)
-                previousSentGroup.appendSentMessageDiv(newMessage)
-              }
-            }
-            else { //if it is from different user
-              if ((prevDate - thisDate) > 60000) { // if greater than 1 minute
-                createNewReceivedGroup(newMessage)
-              }
-            }
+          else {
+            let msg = createReceivedMessage(message)
+            receivedGroup = createNewReceivedGroup(msg)
+            c_openchat__box__info.append(receivedGroup)
           }
         }
         else {
-          if (message.userInfo.userID == caller_me.userID) { // if it is my first message
-            let newMessage = createSentMessage(message)
-            createNewSentGroup(newMessage)
+          if (prevMsg.userInfo.userID == caller_me.userID) {
+            if (message.userInfo.userID == caller_me.userID) {
+              let msg = createSentMessage(message)
+              sentGroup.append(msg)
+            }
+            else {
+              if (prevMsg.userInfo.userID == message.userInfo.userID) {
+                let msg = createReceivedMessage(message)
+                receivedGroup.append(msg)
+              }
+              else {
+                let msg = createReceivedMessage(message)
+                let newReceivedGrp = createNewReceivedGroup(msg)
+                receivedGroup = newReceivedGrp
+                c_openchat__box__info.append(receivedGroup)
+              }
+            }
           }
-          else { //if it is other's first message
-            let newMessage = createReceivedMessage(message)
-            createNewReceivedGroup(newMessage)
+          else {
+            if (message.userInfo.userID == caller_me.userID) {
+              let msg = createSentMessage(message)
+              let newSentGroup = createNewSentGroup(msg)
+              sentGroup = newSentGroup
+              c_openchat__box__info.append(sentGroup)
+            }
+            else {
+              if (prevMsg.userInfo.userID == message.userInfo.userID) {
+                let msg = createReceivedMessage(message)
+                receivedGroup.append(msg)
+              }
+              else {
+                let msg = createReceivedMessage(message)
+                let newReceivedGrp = createNewReceivedGroup(msg)
+                receivedGroup = newReceivedGrp
+                c_openchat__box__info.append(receivedGroup)
+              }
+            }
           }
+
         }
-        previousMessage = message
+        
+        // -------------------------------------------------------------------------------
+        c_openchat__box__info.scrollTop = c_openchat__box__info.scrollHeight;
+        prevMsg = message
       }
+
+
 
       function createNewSentGroup(firstMessage) {
         let anotherGroup = createElement({ elementType: 'div', class: 'message-group-sent' })
         anotherGroup.append(firstMessage)
-        previousSentGroup = anotherGroup
-        previousSentGroup.appendSentMessageDiv = (sentMessageDiv)=> {
-          anotherGroup.append(sentMessageDiv)
-        }
-        c_openchat__box__info.append(previousSentGroup)
+        return anotherGroup
       }
       function createNewReceivedGroup(firstMessage) {
         let receivedMessageProfile;
-        if(message.userInfo.profilePicture == null) receivedMessageProfile = createElement({ elementType: 'div', class:'receivedMessageProfile', textContent: message.userInfo.name.charAt(0)+message.userInfo.surname.charAt(0)})
-        else receivedMessageProfile = createElement({ elementType:'img', class:'receivedMessageProfile', src: profilePicture})
+        if (message.userInfo.profilePicture == null) receivedMessageProfile = createElement({ elementType: 'div', class: 'receivedMessageProfile', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
+        else receivedMessageProfile = createElement({ elementType: 'img', class: 'receivedMessageProfile', src: message.userInfo.profilePicture })
 
-        let receivedMessageProfileContainter = createElement({ elementType: 'div', childrenArray:[receivedMessageProfile]})
-        let receivedMessagesHolder = createElement({ elementType: 'div', childrenArray:[firstMessage]})
+        let receivedMessageProfileContainter = createElement({ elementType: 'div', childrenArray: [receivedMessageProfile] })
+        let receivedMessagesHolder = createElement({ elementType: 'div', childrenArray: [firstMessage] })
 
-        let anotherGroup = createElement({ elementType: 'div', class: 'message-group-received', childrenArray:[receivedMessageProfileContainter, receivedMessagesHolder] })
-        previousSentGroup = anotherGroup
-        previousSentGroup.appendReceivedMessageDiv = (sentMessageDiv) => {
-          receivedMessagesHolder.append(sentMessageDiv)
+        let anotherGroup = createElement({ elementType: 'div', class: 'message-group-received', childrenArray: [receivedMessageProfileContainter, receivedMessagesHolder] })
+        anotherGroup.append = (childElement) => {
+          receivedMessagesHolder.append(childElement)
         }
-        c_openchat__box__info.append(anotherGroup)
+        return anotherGroup
       }
       function createSentMessage(message) {
         let profileP;
         if (message.userInfo.profilePicture == null) profileP = createElement({ elementType: 'div', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
         else profileP = createElement({ elementType: 'img', src: message.userInfo.profilePicture })
         let message_sent = createElement({
-          elementType: 'div', class: 'message-received', childrenArray: [
+          elementType: 'div', class: 'message-sent', childrenArray: [
             createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24) }),
             createElement({ elementType: 'div', class: 'message-sent-text', textContent: content }),
             createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [profileP] }),
@@ -2756,6 +2770,10 @@ function userForAttendanceList(userInfo, actions) {
 
   let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole].concat(actionElements) })
   return presentMember
+}
+
+function updateAttendaceList(){
+
 }
 
 function streamVolumeOnTreshold(stream, threshold, outletEment) {
