@@ -577,6 +577,7 @@ io.on('connection', (socket) => {
         if (thisCallparticipants[i].userID == id) { thisUsershouldbeinthiscall = true; break; }
       }
       if (thisUsershouldbeinthiscall == false) { return console.log("You are not allowed to answer this call", callUniqueId) }
+      socket.emit('updateAllParticipantsList', thisCallparticipants) // this is because if someone answers this call, while the called has added other users, the caller will not have a list
 
       //inform all users who accepted the call- to call me
       socket.to(callUniqueId + '-allAnswered-sockets').emit('connectUser', { peerId: myPeerId, userInfo: await getUserInfo(id), callType });
