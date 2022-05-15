@@ -1545,47 +1545,6 @@ let messagesSelectorbtn = document.getElementById("messagesSelectorbtn")
 let rightCallParticipantsDiv = document.getElementById("rightCallParticipantsDiv")
 let rightCallMessagesDiv = document.getElementById("rightCallMessagesDiv")
 
-participantsSelectorBtn.addEventListener("click", () => {
-  participantsSelectorBtn.classList.add("headerItemSelected")
-  messagesSelectorbtn.classList.remove("headerItemSelected")
-
-  rightCallMessagesDiv.classList.add("hideDivAside")
-  rightCallParticipantsDiv.classList.remove("hideDivAside")
-})
-messagesSelectorbtn.addEventListener("click", () => {
-  participantsSelectorBtn.classList.remove("headerItemSelected")
-  messagesSelectorbtn.classList.add("headerItemSelected")
-
-  rightCallMessagesDiv.classList.remove("hideDivAside")
-  rightCallParticipantsDiv.classList.add("hideDivAside")
-
-  messagesSelectorbtn.textContent = "Messages"
-})
-
-let presenceSelectorBtn = document.getElementById("presenceSelectorBtn")
-let absenceSelectorBtn = document.getElementById("absenceSelectorBtn")
-
-let presentMembersDiv = document.getElementById("presentMembersDiv")
-let absentMembersDiv = document.getElementById("absentMembersDiv")
-let mainVideoDiv = document.getElementById('mainVideoDiv')
-
-presenceSelectorBtn.addEventListener('click', (e) => {
-  presenceSelectorBtn.classList.add("headerItemSelected")
-  absenceSelectorBtn.classList.remove("headerItemSelected")
-
-  presentMembersDiv.style.display = "flex"
-  absentMembersDiv.style.display = "none"
-})
-
-absenceSelectorBtn.addEventListener('click', (e) => {
-  absenceSelectorBtn.classList.add('headerItemSelected')
-  presenceSelectorBtn.classList.remove("headerItemSelected")
-
-  presentMembersDiv.style.display = "none"
-  absentMembersDiv.style.display = "flex"
-})
-
-
 
 /////////////////////////////////CALL LOG END//////////////////////
 
@@ -1701,6 +1660,7 @@ myPeer.on('open', myPeerId => {
       _callUniqueId = callUniqueId
       saveLocalMediaStream(callType, stream)
       rightPanel = createRightPartPanel()
+      createLeftPanel()
       // create topBar
       topBar = createTopBar({ callUniqueId: callUniqueId, callType: globalCallType, callTitle: callTitle, isTeam: 'isTeam' }, caller)
       bottomPanel = createBottomPart()
@@ -1947,6 +1907,7 @@ myPeer.on('open', myPeerId => {
       allInvitedUsers = setAllUsers(allUsers)
       updateAttendanceList(myInfo, 'present')
       showOngoingCallSection()
+      createLeftPanel()
     }, (err) => { alert('Failed to get local media stream', err); });
   }
 
@@ -2283,10 +2244,6 @@ myPeer.on('open', myPeerId => {
       participant.userMedia.bubble = newBubble
     }
     if (subject == 'audio') {
-      let audioState;
-      if (state == 'enabled') audioState = 'video'
-      if (state == 'disabled') audioState = 'audio'
-
       let newSideVideoDiv = createSideVideo(participant.userMedia.callType, participant.userMedia.stream, participant.userInfo, 'userMedia', state)
       participant.userMedia.audioState = state
       participant.userMedia.sideVideoDiv.after(newSideVideoDiv)
@@ -2826,6 +2783,42 @@ myPeer.on('open', myPeerId => {
       incrementUnread: () => { if (callMessagingDiv.classList.contains('hideDivAside')) { incrementUnreadCount() } },
       participantsBox: callParticipantsDiv,
       setParticipantsCount: setParticipantsCount // a function that accepts an integer
+    }
+  }
+  function createLeftPanel() {
+    let ongoingCallLeftPart = document.getElementById('ongoingCallLeftPart')
+    ongoingCallLeftPart.textContent = '';
+    let presentCount = 1
+    let absentCount = 0;
+    let presenceSelectorBtn = createElement({ elementType: 'div', class:'leftHeaderItem headerItemSelected', textContent: 'Present ' + presentCount})
+    let absenceSelectorBtn = createElement({ elementType: 'div', class:'leftHeaderItem', textContent: 'Absent ' + absentCount})
+    let attendanceTitleSection = createElement({ elementType: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn]})
+
+    let presentMembersDiv = createElement({ elementType: 'div', class: 'presentMembersDiv'})
+    let absentMembersDiv = createElement({ elementType: 'div', class: 'absentMembersDiv hiddenDiv'})
+    let attendanceContentDiv = createElement({ elementType: 'div', class: 'attendanceContentDiv', childrenArray: [presentMembersDiv, absentMembersDiv]})
+
+    presenceSelectorBtn.addEventListener('click', ()=>{
+      presenceSelectorBtn.classList.add('headerItemSelected');
+      absenceSelectorBtn.classList.remove('headerItemSelected');
+      presentMembersDiv.classList.remove('hiddenDiv')
+      absentMembersDiv.classList.add('hiddenDiv')
+    })
+    absenceSelectorBtn.addEventListener('click', ()=>{
+      presenceSelectorBtn.classList.remove('headerItemSelected');
+      absenceSelectorBtn.classList.add('headerItemSelected');
+      presentMembersDiv.classList.add('hiddenDiv')
+      absentMembersDiv.classList.remove('hiddenDiv')
+    })
+    ongoingCallLeftPart.append(attendanceTitleSection, attendanceContentDiv)
+
+    function setUserPresent(userForAttendanceList, userInfo){
+      
+    }
+
+    return{
+      leftPanel: leftPanel,
+
     }
   }
   function createBottomPart() {

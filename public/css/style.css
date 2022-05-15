@@ -3109,6 +3109,10 @@ body {
   background-color: #d9e3ee;
 }
 
+.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .hiddenDiv {
+  display: none;
+}
+
 .c-calls_panel .ongoingCallPage .call-container {
   -webkit-box-flex: 1;
       -ms-flex: 1;
