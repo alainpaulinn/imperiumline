@@ -610,7 +610,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('leaveCall', async data => {
-      
+
       socket.to(data.callUniqueId + '-allAnswered-sockets').emit('userLeftCall', id);
       setUserCallStatus(id, data.callUniqueId, 'offCall')
       try { socket.leave(data.callUniqueId + '-allAnswered-sockets'); } catch (e) { console.log('[error]', 'leave room :', e); }
@@ -631,16 +631,16 @@ io.on('connection', (socket) => {
       console.log('callSearchData', callSearchData)
       db.query("SELECT `id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchText + '%', '%' + searchText + '%', '%' + searchText + '%'], async (err, userSearchResult) => {
         if (err) return console.log(err)
-      let thisCallparticipantsInFull = await getCallParticipants(callUniqueId)
-      let thisCallparticipants = thisCallparticipantsInFull.map(participant => {return participant.userID}) //get all people who are allowed in this call
+        let thisCallparticipantsInFull = await getCallParticipants(callUniqueId)
+        let thisCallparticipants = thisCallparticipantsInFull.map(participant => { return participant.userID }) //get all people who are allowed in this call
         // let foundUsers = thisCallparticipants.filter(user => {
         //   !(userSearchResult.map(result => { result.id }).includes(user.userID)) && user.userID != id
         // })
         foundUsers = []
         for (let i = 0; i < userSearchResult.length; i++) {
           const userID = userSearchResult[i].id;
-          if(!thisCallparticipants.includes(userID) && userID != id) {
-            foundUsers.push( await getUserInfo(userID))
+          if (!thisCallparticipants.includes(userID) && userID != id) {
+            foundUsers.push(await getUserInfo(userID))
           }
         }
         console.log('thisCallparticipants', thisCallparticipants)
@@ -648,19 +648,19 @@ io.on('connection', (socket) => {
         console.log('id', id)
         socket.emit('searchPeopleToInviteToCall', foundUsers)
       })
-      
+
     })
     socket.on('addUserToCall', async identifications => {
       let access = await checkCallAccess(id, identifications.callUniqueId)
-      if(access != true) { return console.log('User :', id, ' cannot add user :', identifications.userID, ' to call because he has no access to this call :', identifications.callUniqueId)}
+      if (access != true) { return console.log('User :', id, ' cannot add user :', identifications.userID, ' to call because he has no access to this call :', identifications.callUniqueId) }
       let { callUniqueId, userID, callType, callTitle } = identifications
 
       let thisCallparticipantsInFull = await getCallParticipants(callUniqueId)
-      let thisCallparticipants = thisCallparticipantsInFull.map(participant => {return participant.userID}) //get all people who are allowed in this call
-      thisCallparticipantsInFull.push( await getUserInfo(userID))
+      let thisCallparticipants = thisCallparticipantsInFull.map(participant => { return participant.userID }) //get all people who are allowed in this call
+      thisCallparticipantsInFull.push(await getUserInfo(userID))
       for (let j = 0; j < connectedUsers.length; j++) {
         //console.log("searching to add connectedUser", connectedUsers[j].id)
-        if(connectedUsers[j].id == userID && !thisCallparticipants.includes(userID)) {
+        if (connectedUsers[j].id == userID && !thisCallparticipants.includes(userID)) {
           connectedUsers[j].socket.join(callUniqueId + '');
           socket.to(connectedUsers[j].socket.id).emit('incomingCall', {
             callUniqueId: callUniqueId,
@@ -673,7 +673,7 @@ io.on('connection', (socket) => {
           socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id)); // update callee callog
         }
       }
-      socket.emit('userAddedToCall', { callUniqueId: callUniqueId, userInfo: await getUserInfo(userID)})
+      socket.emit('userAddedToCall', { callUniqueId: callUniqueId, userInfo: await getUserInfo(userID) })
       insertCallParticipant(callUniqueId, 1, userID, id) //  is a fictional ID
     })
 
@@ -742,19 +742,34 @@ io.on('connection', (socket) => {
           }
         })
     })
+
+
+    socket.on('videoStateChange', async changeData => {
+      let { callUniqueId, state } = changeData
+      let access = await checkCallAccess(id, callUniqueId)
+      if (access != true) { return console.log('User :', id, ' cannot Disable Video he has no access to this call :', callUniqueId) }
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('videoStateChange', { userID: id, state: state })
+    })
+
+    socket.on('audioStateChange', async changeData => {
+      let { callUniqueId, state } = changeData
+      let access = await checkCallAccess(id, callUniqueId)
+      if (access != true) { return console.log('User :', id, ' cannot Disable audio he has no access to this call :', callUniqueId) }
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('audioStateChange', { userID: id, state: state })
+    })
     socket.on('stopScreenSharing', async callUniqueId => {
       let access = await checkCallAccess(id, callUniqueId)
-      if(access != true) { return console.log('User :', id, ' cannot stop screen sharing because he has no access to this call :', callUniqueId)}
-      
-      socket.to(callUniqueId + '-allAnswered-sockets').emit('stoppedScreenSharing', {userID: id, callUniqueId:callUniqueId})
+      if (access != true) { return console.log('User :', id, ' cannot stop screen sharing because he has no access to this call :', callUniqueId) }
+
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('stoppedScreenSharing', { userID: id, callUniqueId: callUniqueId })
       // socket.to(data.callUniqueId + '-allAnswered-sockets').emit('user-disconnected', data.myPeerId);
     })
     socket.on('new-incall-message', async (messageData) => {
       let { callUniqueId, message } = messageData
       let access = await checkCallAccess(id, callUniqueId)
-      if(access != true) { return console.log('User :', id, ' text in this call because he has no access to this call :', callUniqueId)}
+      if (access != true) { return console.log('User :', id, ' text in this call because he has no access to this call :', callUniqueId) }
 
-      io.sockets.in(callUniqueId + '-allAnswered-sockets').emit('new-incall-message', {userInfo: await getUserInfo(id), content: message, time: new Date()});
+      io.sockets.in(callUniqueId + '-allAnswered-sockets').emit('new-incall-message', { userInfo: await getUserInfo(id), content: message, time: new Date() });
 
     })
     ///////////////
@@ -762,12 +777,12 @@ io.on('connection', (socket) => {
       console.log('socket.roomsssssssssssssssssssssss', socket.rooms); // the Set contains at least the socket ID
       let roomsArray = Array.from(socket.rooms);
       roomsArray.forEach(function (room) {
-        if(isNumeric(room) && !room.includes('-allAnswered-sockets')){
-          socket.to(room).emit('userDisconnected', {id: id, room: room})
+        if (isNumeric(room) && !room.includes('-allAnswered-sockets')) {
+          socket.to(room).emit('userDisconnected', { id: id, room: room })
         }
         if (!isNumeric(room) && room.includes('-allAnswered-sockets')) {
-          socket.to(room).emit('userDisconnectedFromCall', {id: id, room: room})
-          let callUniqueId = room.replace('-allAnswered-sockets','');
+          socket.to(room).emit('userDisconnectedFromCall', { id: id, room: room })
+          let callUniqueId = room.replace('-allAnswered-sockets', '');
           setUserCallStatus(id, callUniqueId, 'offCall')
         }
       })
