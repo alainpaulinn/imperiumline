@@ -611,8 +611,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('leaveCall', async data => {
-
-      socket.to(data.callUniqueId + '-allAnswered-sockets').emit('userLeftCall', id);
+      socket.to(data.callUniqueId + '-allAnswered-sockets').emit('userLeftCall', await getUserInfo(id));
       setUserCallStatus(id, data.callUniqueId, 'offCall')
       try { socket.leave(data.callUniqueId + '-allAnswered-sockets'); } catch (e) { console.log('[error]', 'leave room :', e); }
 
@@ -674,7 +673,7 @@ io.on('connection', (socket) => {
           socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id)); // update callee callog
         }
       }
-      socket.emit('userAddedToCall', { callUniqueId: callUniqueId, userInfo: await getUserInfo(userID) })
+      io.sockets.in(callUniqueId + '-allAnswered-sockets').emit('userAddedToCall', { callUniqueId: callUniqueId, userInfo: await getUserInfo(userID) })
       insertCallParticipant(callUniqueId, 1, userID, id) //  is a fictional ID
     })
 
@@ -777,12 +776,12 @@ io.on('connection', (socket) => {
     socket.on('disconnecting', () => {
       console.log('socket.roomsssssssssssssssssssssss', socket.rooms); // the Set contains at least the socket ID
       let roomsArray = Array.from(socket.rooms);
-      roomsArray.forEach(function (room) {
+      roomsArray.forEach(async function (room) {
         if (isNumeric(room) && !room.includes('-allAnswered-sockets')) {
           socket.to(room).emit('userDisconnected', { id: id, room: room })
         }
         if (!isNumeric(room) && room.includes('-allAnswered-sockets')) {
-          socket.to(room).emit('userDisconnectedFromCall', { id: id, room: room })
+          socket.to(room).emit('userDisconnectedFromCall', { userInfo: await getUserInfo(id), room: room })
           let callUniqueId = room.replace('-allAnswered-sockets', '');
           setUserCallStatus(id, callUniqueId, 'offCall')
         }
