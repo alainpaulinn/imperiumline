@@ -927,7 +927,7 @@ body {
 
   flex: 1;
   margin: 1rem;
-
+  overflow: hidden;
 
   &__selectConversation {
     display: flex;
@@ -2016,18 +2016,113 @@ body {
   background-color: $sidepanel;
 }
 
-.c-calls_panel {
+.c-call_log_panel{
   display: none;
   flex: 1;
   background-color: #ebf0f6;
   color: $body;
 
-  .callHistoryPage {
-    //display: none;
+  .callSearchSection{
+    width: 350px;
+    background-color: white;
+    border-radius: $borderRadius;
+    margin: 1rem 0rem 1rem 1rem;
+    overflow: hidden;
     display: flex;
-    display: none;
     flex-direction: column;
-    width: 100%;
+
+    .searchResultsDiv{
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 1rem;
+      background-color: white;
+      .listMember {
+        background-color: white;
+        display: flex;
+        padding: .5rem;
+        align-items: center;
+        height: 100%;
+
+
+        .memberProfilePicture {
+          border: 1px solid $notification;
+          width: 40px;
+          height: 40px;
+          margin-right: 10px;
+          border-radius: $borderRadius;
+          text-transform: uppercase;
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: white;
+          background-color: #003061;
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          transition: all 0.4s;
+          flex-shrink: 0;
+        }
+
+        .memberNameRole {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          overflow: hidden;
+
+          .memberName {
+            font-weight: bolder;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .memberRole {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+        }
+
+        button {
+          color: $body;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem;
+          transition: all 0.4s;
+          //margin: 0 0.5rem;
+          border-radius: $borderRadius;
+          background-color: $sidepanel;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          margin-left: .5rem;
+
+          i {
+            font-size: 18px;
+          }
+
+          p {
+            margin-left: .5rem;
+          }
+
+          &:hover {
+            background-color: darken($sidepanel, 5%)
+          }
+        }
+      }
+    }
+  }
+
+  .callHistoryPage {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background-color: white;
+    margin: 1rem;
+    border-radius: $borderRadius;
 
     .header {
       border-bottom: 1px solid #f1f4f6;
@@ -2075,8 +2170,9 @@ body {
         }
 
         .list-call-section-content {
-          padding: 0 1rem;
-          padding-right: 0.5rem;
+          // padding: 0 1rem;
+          // padding-right: 0.5rem;
+          padding: 1rem;
           width: 100%;
           overflow-y: auto;
 
@@ -2103,8 +2199,8 @@ body {
             .line1 {
               width: 100%;
               display: flex;
+              gap: 0.5rem;
               align-items: center;
-              padding-bottom: 1rem;
 
               .picture {
                 background-color: $notification;
@@ -2132,8 +2228,6 @@ body {
 
               .nameAndType {
                 flex: 1;
-                padding: 0 1rem;
-
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -2264,911 +2358,1015 @@ body {
               background-color: $notification; // status
             }
           }
+        }
+      }
+    }
+  }
+  .callDetails-section {
+    width: 350px;
+    margin: 1rem 1rem 1rem 0rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: $borderRadius;
 
-          // .call-log {
-          //   width: 100%;
-          //   display: flex;
-          //   align-items: center;
+    .section-header {
+      padding: 1rem;
 
-          //   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-          //   border-radius: 8px;
-          //   background-color: #fff;
-          //   margin-bottom: 1rem;
-          //   padding: 1rem;
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
 
-          //   .picture {
-          //     background-color: $notification;
-          //     height: 40px;
-          //     width: 40px;
-          //     border-radius: 100%;
-          //     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
-          //     display: flex;
-          //     justify-content: center;
-          //     align-items: center;
+    .details-section-content {
+      border-radius: $borderRadius;
 
-          //     img,
-          //     div {
-          //       height: 38px;
-          //       width: 38px;
-          //       border-radius: 100%;
-          //       object-fit: cover;
-          //     }
-          //   }
+      .topDetailsCard {
+        display: flex;
+        justify-content: center;
+        padding: 2rem 0;
 
-          //   .nameAndType {
-          //     flex: 1;
-          //     padding: 0 1rem;
+        .circle {
+          width: 100px;
+          height: 100px;
+          border-radius: $borderRadius;
+          background: $notification;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+          color: white;
 
-          //     white-space: nowrap;
-          //     overflow: hidden;
-          //     text-overflow: ellipsis;
-
-          //     .callMembers {
-          //       white-space: nowrap;
-          //       overflow: hidden;
-          //       text-overflow: ellipsis;
-
-          //       div {
-          //         white-space: nowrap;
-          //         overflow: hidden;
-          //         text-overflow: ellipsis;
-          //       }
-          //     }
-
-          //     .callType {
-          //       display: flex;
-          //       align-items: center;
-
-          //       i {
-          //         font-size: 18px;
-          //       }
-          //     }
-          //   }
-
-          //   .duration {}
-
-          // }
-
+          i {
+            font-size: 30px;
+          }
         }
       }
 
-      .callDetails-section {
-        width: 350px;
-        padding-right: 1rem;
-        padding-left: 0.5rem;
+      .callTitleContent {
         display: flex;
         flex-direction: column;
+        align-items: center;
 
-        .section-header {
-          padding: 1rem;
-
-          h1 {
-            font-size: 1.5rem;
-          }
+        h1 {
+          font-size: 18px;
+          padding: 0.5rem;
         }
 
-        .details-section-content {
-          margin-right: 1rem;
-          width: 100%;
-          flex: 1;
+        h2 {
+          font-size: 13px;
+          display: flex;
+          align-items: center;
 
+          i {
+            transform: rotate(45deg);
+            font-size: 18px;
+          }
+        }
+      }
+
+      .allPartifipantDiv {
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          width: 100%;
+          padding: .5rem;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
           border-radius: $borderRadius;
-          background-color: #fff;
-          margin-bottom: 1rem;
-          padding: 1rem;
 
-          .topDetailsCard {
-            display: flex;
-            justify-content: center;
-            padding: 2rem 0;
+          margin-top: .3rem;
 
-            .circle {
-              width: 100px;
-              height: 100px;
-              border-radius: $borderRadius;
-              background: $notification;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-              color: white;
-
-              i {
-                font-size: 30px;
-              }
-            }
+          h1 {
+            font-size: 18px;
           }
 
-          .callTitleContent {
+          button {
+            transition: all 0.4s;
+            border-radius: $borderRadius;
+            width: 2.5rem;
+            height: 2.5rem;
+            margin-left: 3px;
+
             display: flex;
-            flex-direction: column;
             align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: $body;
+            border: none;
+            outline: none;
+            background-color: $sidepanel;
 
-            h1 {
+            i {
               font-size: 18px;
-              padding: 0.5rem;
             }
 
-            h2 {
-              font-size: 13px;
-              display: flex;
-              align-items: center;
-
-              i {
-                transform: rotate(45deg);
-                font-size: 18px;
-              }
-            }
-          }
-
-          .allPartifipantDiv {
-            .header {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-
-              width: 100%;
-              padding: .5rem;
-              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-              border-radius: $borderRadius;
-
-              margin-top: .3rem;
-
-              h1 {
-                font-size: 18px;
-              }
-
-              button {
-                transition: all 0.4s;
-                border-radius: $borderRadius;
-                width: 2.5rem;
-                height: 2.5rem;
-                margin-left: 3px;
-
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                color: $body;
-                border: none;
-                outline: none;
-                background-color: $sidepanel;
-
-                i {
-                  font-size: 18px;
-                }
-
-                &:hover {
-                  color: $notification;
-                }
-              }
-            }
-          }
-
-          .callParticipants {
-            width: 100%;
-
-            .callParticipant {
-              width: 100%;
-              display: flex;
-              padding: .5rem;
-              align-items: center;
-              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-              border-radius: $borderRadius;
-
-              margin-top: .3rem;
-
-              .callpartifipants-header-text {}
-
-              .partifipantPicture {
-                color: white;
-                background-color: $notification;
-                width: 40px;
-                height: 40px;
-                border-radius: $borderRadius;
-                object-fit: cover;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-
-                img,
-                div {
-                  color: white;
-                  width: 38px;
-                  height: 38px;
-                  border-radius: $borderRadius;
-                }
-              }
-
-              .nameOnlineStatus {
-                flex: 1;
-                padding: 0 0.5rem;
-                display: flex;
-                flex-direction: column;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-
-                .name {
-                  max-width: 100%;
-                  white-space: nowrap;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                }
-
-                .onlineStatus {
-                  max-width: 100%;
-                  white-space: nowrap;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                }
-              }
+            &:hover {
+              color: $notification;
             }
           }
         }
       }
 
-    }
+      .callParticipants {
+        width: 100%;
 
+        .callParticipant {
+          width: 100%;
+          display: flex;
+          padding: .5rem;
+          align-items: center;
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+          border-radius: $borderRadius;
+
+          margin-top: .3rem;
+
+          .callpartifipants-header-text {}
+
+          .partifipantPicture {
+            color: white;
+            background-color: $notification;
+            width: 40px;
+            height: 40px;
+            border-radius: $borderRadius;
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+
+            img,
+            div {
+              color: white;
+              width: 38px;
+              height: 38px;
+              border-radius: $borderRadius;
+            }
+          }
+
+          .nameOnlineStatus {
+            flex: 1;
+            padding: 0 0.5rem;
+            display: flex;
+            flex-direction: column;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            .name {
+              max-width: 100%;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            .onlineStatus {
+              max-width: 100%;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+    }
   }
 
-  ////////////////////////////////////ONGOING CALL PAGE////////////////////
-  .ongoingCallPage {
+  
+  
+
+  
+}
+////////////////////////////////////ONGOING CALL PAGE////////////////////
+.c-ongoing_call_panel {
+  display: none;
+  width: 100%;
+  height: 100%;
+
+  .leftPart {
+    width: 350px;
+    background-color: white;
+    border-radius: $borderRadius;
+    margin: 1rem 0rem 1rem 1rem;
+    overflow: hidden;
+
+
+    // padding: 1rem;
     display: flex;
-    width: 100%;
-    height: 100%;
+    flex-direction: column;
 
-    .leftPart {
-      width: 350px;
-      background-color: white;
-      border-radius: $borderRadius;
-      margin: 1rem 0rem 1rem 1rem;
-      overflow: hidden;
+    .leftPartHeaderDivTitle {
+      padding: 1rem;
+      font-weight: bolder;
+      text-align: center;
+    }
 
 
-      // padding: 1rem;
+
+    .attendanceTitleSection {
+      padding: 1rem;
       display: flex;
-      flex-direction: column;
+      gap: .5rem;
+      width: 100%;
+      box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
 
-      .leftPartHeaderDivTitle {
+
+      .leftHeaderItem {
         padding: 1rem;
+        flex: 1;
         font-weight: bolder;
         text-align: center;
-      }
+        border-radius: $borderRadius;
+        cursor: pointer;
 
-
-
-      .attendanceTitleSection {
-        padding: 1rem;
-        display: flex;
-        width: 100%;
-        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
-
-
-        .leftHeaderItem {
-          padding: 1rem;
-          flex: 1;
-          font-weight: bolder;
-          text-align: center;
-          border-radius: $borderRadius;
-          cursor: pointer;
-
-          &:hover {
-            background-color: $sidepanel-bg;
-          }
-
-          &.headerItemSelected {
-            background-color: $sidepanel;
-          }
-        }
-      }
-
-      .attendanceContentDiv {
-        min-height: 0;
-        overflow-y: auto;
-
-        //display: static;
-        .presentMembersDiv {
-          display: flex;
-          flex-direction: column;
-          min-height: 0;
-          overflow-y: auto;
-          padding: 1rem;
-
-          .listMember {
-            background-color: white;
-            display: flex;
-            padding: .5rem;
-            align-items: center;
-            height: 100%;
-
-
-            .memberProfilePicture {
-              border: 1px solid $notification;
-              width: 40px;
-              height: 40px;
-              margin-right: 10px;
-              border-radius: $borderRadius;
-              text-transform: uppercase;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              color: white;
-              background-color: #003061;
-              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-              transition: all 0.4s;
-              flex-shrink: 0;
-            }
-
-            .memberNameRole {
-              display: flex;
-              flex-direction: column;
-              flex: 1;
-              overflow: hidden;
-
-              .memberName {
-                font-weight: bolder;
-                display: block;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              }
-
-              .memberRole {
-                display: block;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              }
-
-            }
-
-            button {
-              color: $body;
-              display: flex;
-              align-items: center;
-              padding: 1rem;
-              transition: all 0.4s;
-              //margin: 0 0.5rem;
-              border-radius: $borderRadius;
-              background-color: $sidepanel;
-              border: none;
-              outline: none;
-              cursor: pointer;
-              margin-left: .5rem;
-
-              i {
-                font-size: 18px;
-              }
-
-              p {
-                margin-left: .5rem;
-              }
-
-              &:hover {
-                background-color: darken($sidepanel, 5%)
-              }
-            }
-          }
+        &:hover {
+          background-color: $sidepanel-bg;
         }
 
-        .absentMembersDiv {
-          display: flex;
-          flex-direction: column;
-          overflow-y: auto;
-          padding: 1rem;
-
-          .listMember {
-            background-color: white;
-            display: flex;
-            padding: .5rem;
-            align-items: center;
-            height: 100%;
-
-
-            .memberProfilePicture {
-              border: 1px solid $notification;
-              width: 40px;
-              height: 40px;
-              margin-right: 10px;
-              border-radius: $borderRadius;
-              text-transform: uppercase;
-              display: -webkit-box;
-              display: -ms-flexbox;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              color: white;
-              background-color: #003061;
-              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-              transition: all 0.4s;
-              flex-shrink: 0;
-            }
-
-            .memberNameRole {
-              display: flex;
-              flex-direction: column;
-              flex: 1;
-              overflow: hidden;
-
-              .memberName {
-                font-weight: bolder;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              }
-
-              .memberRole {
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              }
-
-            }
-
-            button {
-              color: $body;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              padding: 1rem;
-              transition: all 0.4s;
-              //margin: 0 0.5rem;
-              border-radius: $borderRadius;
-              background-color: $sidepanel;
-              border: none;
-              outline: none;
-              cursor: pointer;
-              margin-left: .5rem;
-
-              i {
-                font-size: 18px;
-              }
-
-              p {
-                margin-left: .5rem;
-              }
-
-              &:hover {
-                background-color: darken($sidepanel, 5%)
-              }
-            }
-          }
-        }
-        .hiddenDiv{
-          display: none
+        &.headerItemSelected {
+          background-color: $sidepanel;
         }
       }
     }
 
-    .call-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin: 1rem;
-      padding: 1rem;
-      border-radius: $borderRadius;
-      background-color: white;
-      display: flex;
-      flex-direction: column;
+    .attendanceContentDiv {
+      min-height: 0;
+      overflow-y: auto;
 
-      .callScreenHeader {
+      //display: static;
+      .presentMembersDiv {
         display: flex;
-        //flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
+        flex-direction: column;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 1rem;
 
-        .headerLeftPart {
+        .listMember {
+          background-color: white;
           display: flex;
-          flex-direction: column;
-          flex: 1;
-          justify-content: space-between;
+          padding: .5rem;
+          align-items: center;
+          height: 100%;
 
-          .scheduledTimeContent {
-            font-size: 15px;
+
+          .memberProfilePicture {
+            border: 1px solid $notification;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: $borderRadius;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            background-color: #003061;
+            box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+            transition: all 0.4s;
+            flex-shrink: 0;
           }
 
-          .MeetingTitle {
-            font-size: 20px;
-            font-weight: bold;
-          }
-        }
-
-        .headerRightPart {
-          display: flex;
-          position: relative;
-
-          .meetingTimer {
-            padding: 1rem;
+          .memberNameRole {
             display: flex;
             flex-direction: column;
+            flex: 1;
+            overflow: hidden;
 
-            span {
-              display: flex;
-              align-items: center;
+            .memberName {
+              font-weight: bolder;
+              display: block;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
+
+            .memberRole {
+              display: block;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
           }
 
-          .inviteSomeone {
-            padding: 1rem;
-            flex: 1;
-            font-weight: bolder;
-            text-align: center;
-            border-radius: $borderRadius;
-            cursor: pointer;
-            background-color: $sidepanel;
-            outline: none;
-            border: none;
+          button {
             color: $body;
-            position: relative;
             display: flex;
             align-items: center;
+            padding: 1rem;
+            transition: all 0.4s;
+            //margin: 0 0.5rem;
+            border-radius: $borderRadius;
+            background-color: $sidepanel;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            margin-left: .5rem;
+
+            i {
+              font-size: 18px;
+            }
 
             p {
-              color: $body;
+              margin-left: .5rem;
             }
 
             &:hover {
               background-color: darken($sidepanel, 5%)
             }
           }
-
-          .popdown {
-            &:before {
-              content: "";
-              position: absolute;
-              width: 10px;
-              height: 10px;
-              transform: rotate(45deg);
-              background-color: white;
-              top: -0.4rem;
-              right: 1.5rem;
-            }
-
-            width: 350px;
-            max-height: 350px;
-            padding: 1rem;
-            position: absolute;
-            background-color: white;
-            border-radius: $borderRadius;
-            top: calc(100% + 0rem);
-            right: 0;
-            visibility: hidden;
-            opacity: 0;
-            transition: all 0.4s;
-            z-index: 2;
-            box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-            display: flex;
-            gap: 1rem;
-            flex-direction: column;
-
-            &.popdownDisplayed {
-              top: calc(100% + 1rem);
-              visibility: visible;
-              opacity: 1;
-            }
-
-            .searchField {
-              ////////////////border: 1px solid #f1f4f6;
-              border-radius: $borderRadius;
-              gap: 1rem;
-              display: flex;
-
-              input {
-                border-radius: $borderRadius;
-                outline: none;
-                background: white;
-                border: none;
-                flex: 1;
-                color: $body;
-                background: lighten($sidepanel, 3%);
-                padding: .5rem 1rem;
-              }
-
-              button {
-                background: $sidepanel;
-                border-radius: $borderRadius;
-                outline: none;
-                border: none;
-                padding: .5rem 1rem;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-
-                i {
-                  font-size: 1.5rem;
-                }
-
-                &:hover {
-                  background: darken($sidepanel, 5%)
-                }
-              }
-
-              // .searchField{
-              //   background-color: $sidepanel;
-              //   border-radius: $borderRadius;
-              // }
-            }
-
-            .invitedDiv {
-              overflow-y: auto;
-              border-radius: $borderRadius;
-              flex: 1;
-
-              .listMember {
-                background-color: white;
-                display: flex;
-                padding: .5rem;
-                align-items: center;
-                border-radius: $borderRadius;
-                margin-bottom: .5rem;
-
-                .memberProfilePicture {
-                  border: 1px solid $notification;
-                  width: 40px;
-                  height: 40px;
-                  margin-right: 10px;
-                  border-radius: $borderRadius;
-                  text-transform: uppercase;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  color: white;
-                  background-color: #003061;
-                  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-                  transition: all 0.4s;
-                  flex-shrink: 0;
-                }
-
-                .memberNameRole {
-                  display: flex;
-                  flex-direction: column;
-                  flex: 1;
-                  overflow: hidden;
-
-                  .memberName {
-                    font-weight: bolder;
-                    display: block;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                  }
-
-                  .memberRole {
-                    display: block;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                  }
-
-                }
-
-                button {
-                  color: $body;
-                  display: flex;
-                  align-items: center;
-                  padding: 1rem;
-                  transition: all 0.4s;
-                  //margin: 0 0.5rem;
-                  border-radius: $borderRadius;
-                  background-color: $sidepanel;
-                  border: none;
-                  outline: none;
-                  cursor: pointer;
-                  margin-left: .5rem;
-
-                  i {
-                    font-size: 18px;
-                  }
-
-                  p {
-                    margin-left: .5rem;
-                  }
-
-                  &:hover {
-                    background-color: darken($sidepanel, 5%)
-                  }
-                }
-              }
-            }
-          }
-
         }
       }
 
-      .mainVideoDiv {
-        border-radius: $borderRadius;
-        position: relative;
-        overflow: hidden;
-        flex: 1;
+      .absentMembersDiv {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        padding: 1rem;
 
-        .callTopBar {
-          color: white;
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          padding: 1rem;
+        .listMember {
+          background-color: white;
           display: flex;
-          flex-wrap: wrap;
-          background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+          padding: .5rem;
+          align-items: center;
+          height: 100%;
 
-          visibility: hidden;
-          opacity: 0;
 
-          transition: all 0.4s;
-
-          .leftUserIdentifiers {
-            flex: 1;
+          .memberProfilePicture {
+            border: 1px solid $notification;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: $borderRadius;
+            text-transform: uppercase;
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
-            flex-direction: row;
-
-            .mainVideoOwnerProfilePicture {
-              border: 1px solid $notification;
-              width: 40px;
-              height: 40px;
-              margin-right: 10px;
-              border-radius: $borderRadius;
-              text-transform: uppercase;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              color: white;
-              background-color: #003061;
-              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-              transition: all 0.4s;
-              object-fit: cover;
-            }
-
-            .mainVideoOwnerProfileNamePosition {
-              display: flex;
-              flex-direction: column;
-              transition: all 0.4s;
-
-              .videoOwnerName {
-                font-size: 15px;
-                font-weight: bolder;
-              }
-            }
+            justify-content: center;
+            align-items: center;
+            color: white;
+            background-color: #003061;
+            box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+            transition: all 0.4s;
+            flex-shrink: 0;
           }
 
-          .rightVideoControls {
+          .memberNameRole {
             display: flex;
-            gap: 0.5rem;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+
+            .memberName {
+              font-weight: bolder;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            .memberRole {
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+          }
+
+          button {
+            color: $body;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            transition: all 0.4s;
+            //margin: 0 0.5rem;
+            border-radius: $borderRadius;
+            background-color: $sidepanel;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            margin-left: .5rem;
+
+            i {
+              font-size: 18px;
+            }
+
+            p {
+              margin-left: .5rem;
+            }
+
+            &:hover {
+              background-color: darken($sidepanel, 5%)
+            }
+          }
+        }
+      }
+      .hiddenDiv{
+        display: none
+      }
+    }
+  }
+
+  .call-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: $borderRadius;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+
+    .callScreenHeader {
+      display: flex;
+      //flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .headerLeftPart {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: space-between;
+
+        .scheduledTimeContent {
+          font-size: 15px;
+        }
+
+        .MeetingTitle {
+          font-size: 20px;
+          font-weight: bold;
+        }
+      }
+
+      .headerRightPart {
+        display: flex;
+        position: relative;
+
+        .meetingTimer {
+          padding: 1rem;
+          display: flex;
+          flex-direction: column;
+
+          span {
+            display: flex;
+            align-items: center;
+          }
+        }
+
+        .inviteSomeone {
+          padding: 1rem;
+          flex: 1;
+          font-weight: bolder;
+          text-align: center;
+          border-radius: $borderRadius;
+          cursor: pointer;
+          background-color: $sidepanel;
+          outline: none;
+          border: none;
+          color: $body;
+          position: relative;
+          display: flex;
+          align-items: center;
+
+          p {
+            color: $body;
+          }
+
+          &:hover {
+            background-color: darken($sidepanel, 5%)
+          }
+        }
+
+        .popdown {
+          &:before {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            transform: rotate(45deg);
+            background-color: white;
+            top: -0.4rem;
+            right: 1.5rem;
+          }
+
+          width: 350px;
+          max-height: 350px;
+          padding: 1rem;
+          position: absolute;
+          background-color: white;
+          border-radius: $borderRadius;
+          top: calc(100% + 0rem);
+          right: 0;
+          visibility: hidden;
+          opacity: 0;
+          transition: all 0.4s;
+          z-index: 2;
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          display: flex;
+          gap: 1rem;
+          flex-direction: column;
+
+          &.popdownDisplayed {
+            top: calc(100% + 1rem);
+            visibility: visible;
+            opacity: 1;
+          }
+
+          .searchField {
+            ////////////////border: 1px solid #f1f4f6;
+            border-radius: $borderRadius;
+            gap: 1rem;
+            display: flex;
+
+            input {
+              border-radius: $borderRadius;
+              outline: none;
+              background: white;
+              border: none;
+              flex: 1;
+              color: $body;
+              background: lighten($sidepanel, 3%);
+              padding: .5rem 1rem;
+            }
 
             button {
-              transition: all 0.4s;
-              //margin: 0 0.5rem;
+              background: $sidepanel;
               border-radius: $borderRadius;
-              padding: 1rem;
-              border: none;
               outline: none;
-              background: rgba(0, 0, 0, 0.5);
-              color: white;
+              border: none;
+              padding: .5rem 1rem;
               cursor: pointer;
-              width: 40px;
-              height: 40px;
               display: flex;
               align-items: center;
-              justify-content: center;
 
               i {
-                //font-size: 15px;
+                font-size: 1.5rem;
               }
 
               &:hover {
-                background: rgb(0, 0, 0);
+                background: darken($sidepanel, 5%)
+              }
+            }
+
+            // .searchField{
+            //   background-color: $sidepanel;
+            //   border-radius: $borderRadius;
+            // }
+          }
+
+          .invitedDiv {
+            overflow-y: auto;
+            border-radius: $borderRadius;
+            flex: 1;
+
+            .listMember {
+              background-color: white;
+              display: flex;
+              padding: .5rem;
+              align-items: center;
+              border-radius: $borderRadius;
+              margin-bottom: .5rem;
+
+              .memberProfilePicture {
+                border: 1px solid $notification;
+                width: 40px;
+                height: 40px;
+                margin-right: 10px;
+                border-radius: $borderRadius;
+                text-transform: uppercase;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                background-color: #003061;
+                box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+                transition: all 0.4s;
+                flex-shrink: 0;
               }
 
-              &.active {
-                background-color: $notification;
-                box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .8);
+              .memberNameRole {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                overflow: hidden;
+
+                .memberName {
+                  font-weight: bolder;
+                  display: block;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                }
+
+                .memberRole {
+                  display: block;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                }
+
               }
 
-              &.isSpeaking {
-                background-color: $notification;
-                box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .8);
+              button {
+                color: $body;
+                display: flex;
+                align-items: center;
+                padding: 1rem;
+                transition: all 0.4s;
+                //margin: 0 0.5rem;
+                border-radius: $borderRadius;
+                background-color: $sidepanel;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                margin-left: .5rem;
 
+                i {
+                  font-size: 18px;
+                }
+
+                p {
+                  margin-left: .5rem;
+                }
+
+                &:hover {
+                  background-color: darken($sidepanel, 5%)
+                }
               }
             }
           }
         }
 
-        .mainVideoElement {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          border-radius: $borderRadius;
-          //border: solid 1px $body;
-          background-color: $sidepanel-bg;
+      }
+    }
 
-          &.fitVideoToWindow {
-            width: 100%;
-            height: unset;
-            object-fit: none;
-          }
-        }
+    .mainVideoDiv {
+      border-radius: $borderRadius;
+      position: relative;
+      overflow: hidden;
+      flex: 1;
 
-        .audioCallCover {
+      .callTopBar {
+        color: white;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+
+        visibility: hidden;
+        opacity: 0;
+
+        transition: all 0.4s;
+
+        .leftUserIdentifiers {
+          flex: 1;
           display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          justify-content: center;
-          align-items: center;
-          background-color: darken($sidepanel, 10%);
+          flex-direction: row;
 
-          .profilePicture {
+          .mainVideoOwnerProfilePicture {
             border: 1px solid $notification;
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             margin-right: 10px;
             border-radius: $borderRadius;
             text-transform: uppercase;
             display: flex;
             justify-content: center;
-            -ms-flex-align: center;
             align-items: center;
             color: white;
             background-color: #003061;
             box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+            transition: all 0.4s;
+            object-fit: cover;
           }
 
+          .mainVideoOwnerProfileNamePosition {
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s;
+
+            .videoOwnerName {
+              font-size: 15px;
+              font-weight: bolder;
+            }
+          }
         }
 
-        .callControls {
+        .rightVideoControls {
+          display: flex;
+          gap: 0.5rem;
+
+          button {
+            transition: all 0.4s;
+            //margin: 0 0.5rem;
+            border-radius: $borderRadius;
+            padding: 1rem;
+            border: none;
+            outline: none;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            i {
+              //font-size: 15px;
+            }
+
+            &:hover {
+              background: rgb(0, 0, 0);
+            }
+
+            &.active {
+              background-color: $notification;
+              box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .8);
+            }
+
+            &.isSpeaking {
+              background-color: $notification;
+              box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .8);
+
+            }
+          }
+        }
+      }
+
+      .mainVideoElement {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: $borderRadius;
+        //border: solid 1px $body;
+        background-color: $sidepanel-bg;
+
+        &.fitVideoToWindow {
+          width: 100%;
+          height: unset;
+          object-fit: none;
+        }
+      }
+
+      .audioCallCover {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        background-color: darken($sidepanel, 10%);
+
+        .profilePicture {
+          border: 1px solid $notification;
+          width: 50px;
+          height: 50px;
+          margin-right: 10px;
+          border-radius: $borderRadius;
+          text-transform: uppercase;
+          display: flex;
+          justify-content: center;
+          -ms-flex-align: center;
+          align-items: center;
+          color: white;
+          background-color: #003061;
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+        }
+
+      }
+
+      .callControls {
+        transition: all 0.4s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: absolute;
+        bottom: 1rem;
+        left: 50%;
+        transform: translate(-50%);
+
+        visibility: hidden;
+        opacity: 0;
+        width: 100%;
+
+        .alwaysVisibleControls {
+          .callControl {
+            transition: all 0.4s;
+            border-radius: $borderRadius;
+            padding: .5rem;
+            border: none;
+            outline: none;
+            background: rgba(0, 0, 0, 0.1);
+            color: white;
+            cursor: pointer;
+
+            &:hover {
+              background: rgba(0, 0, 0, 0.4);
+            }
+
+            &.active {
+              background-color: $notification;
+              box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
+            }
+          }
+        }
+
+        .hiddableControls {
           transition: all 0.4s;
           display: flex;
-          flex-direction: column;
-          align-items: center;
-          position: absolute;
-          bottom: 1rem;
-          left: 50%;
-          transform: translate(-50%);
 
-          visibility: hidden;
-          opacity: 0;
-          width: 100%;
+          .callControl {
+            //display: inline;
+            margin: 0 .5rem;
+            border-radius: $borderRadius;
+            padding: 1rem;
+            border: none;
+            outline: none;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            cursor: pointer;
+            //backdrop-filter: blur(5px);
 
-          .alwaysVisibleControls {
-            .callControl {
-              transition: all 0.4s;
-              border-radius: $borderRadius;
-              padding: .5rem;
-              border: none;
-              outline: none;
-              background: rgba(0, 0, 0, 0.1);
-              color: white;
-              cursor: pointer;
+            &:hover {
+              background: rgba(0, 0, 0, 0.795);
+            }
 
-              &:hover {
-                background: rgba(0, 0, 0, 0.4);
-              }
+            i {
+              font-size: 18px;
+            }
 
-              &.active {
-                background-color: $notification;
-                box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
-              }
+            &.active {
+              background-color: $notification;
+              box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
             }
           }
 
-          .hiddableControls {
-            transition: all 0.4s;
-            display: flex;
+          .hangupbtn {
+            color: red;
+          }
+        }
 
-            .callControl {
-              //display: inline;
-              margin: 0 .5rem;
+        .hideDown {
+          transform: translateY(100%);
+          display: none;
+        }
+
+      }
+
+      &:hover .callControls {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      &:hover .callTopBar {
+        visibility: visible;
+        opacity: 1;
+      }
+    }
+
+    .availableScreens {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: .5rem;
+      transition: all 0.4s;
+      scroll-behavior: smooth;
+
+      max-height: 5rem;
+
+      .screenItem {
+        transition: all 0.4s;
+        border-radius: 100%;
+        height: 4rem;
+        width: 4rem;
+        //border: 1px solid $notification;
+        background-color: $sidepanel;
+        display: flex;
+        cursor: pointer;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 1.5rem;
+        box-shadow: 0px 0px 17px 0px rgba(0, 0, 0, 0.124);
+
+        &.isSpeaking {
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.719);
+        }
+
+        &:hover {
+          background-color: darken($sidepanel, 5%)
+        }
+
+        &.screen {
+          border-radius: 5px;
+        }
+      }
+    }
+  }
+
+  .rightPart {
+    width: 350px;
+    background-color: white;
+    border-radius: $borderRadius;
+    margin: 1rem 1rem 1rem 0rem;
+    transition: all 0.4s;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    .rightPartheaderVideoMessaging {
+      padding: 1rem;
+      display: flex;
+      width: 100%;
+      box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
+
+      .rightHeaderItem {
+        padding: 1rem;
+        flex: 1;
+        gap: .5rem;
+        font-weight: bolder;
+        text-align: center;
+        border-radius: $borderRadius;
+        cursor: pointer;
+
+        &:hover {
+          background-color: $sidepanel-bg;
+        }
+
+        &.headerItemSelected {
+          background-color: $sidepanel;
+        }
+      }
+    }
+
+    .rightPartContentDiv {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      overflow: hidden;
+      transition: all 0.4s;
+
+      .callParticipantsDiv {
+        overflow-y: auto;
+        width: 100%;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        &.hideDivAside {
+          display: none;
+        }
+
+        .callParticipantDiv {
+          position: relative;
+          transition: all 0.4s;
+          border-radius: $borderRadius;
+          overflow: hidden;
+          cursor: pointer;
+          min-height: 180px;
+          max-height: 200px;
+
+          video {
+            width: 100%;
+            border-radius: $borderRadius;
+            object-fit: cover;
+            height: 100%;
+          }
+
+          .sideVideoControls {
+            transition: all 0.4s;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.3);
+
+            button {
+              transition: all 0.4s;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              margin: .5rem;
               border-radius: $borderRadius;
-              padding: 1rem;
+              padding: .5rem;
               border: none;
               outline: none;
               background: rgba(0, 0, 0, 0.5);
@@ -3178,6 +3376,7 @@ body {
 
               &:hover {
                 background: rgba(0, 0, 0, 0.795);
+
               }
 
               i {
@@ -3188,264 +3387,89 @@ body {
                 background-color: $notification;
                 box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
               }
+
+              &.isSpeaking {
+                background-color: $notification;
+                box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
+
+              }
+
             }
 
-            .hangupbtn {
-              color: red;
+            .miniVideowner {
+              flex: 1;
+              color: white;
+              padding: 1rem;
             }
           }
 
-          .hideDown {
-            transform: translateY(100%);
-            display: none;
-          }
+          .audioCallCover {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            background-color: darken($sidepanel, 10%);
 
-        }
-
-        &:hover .callControls {
-          visibility: visible;
-          opacity: 1;
-        }
-
-        &:hover .callTopBar {
-          visibility: visible;
-          opacity: 1;
-        }
-      }
-
-      .availableScreens {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: .5rem;
-        transition: all 0.4s;
-        scroll-behavior: smooth;
-
-        max-height: 5rem;
-
-        .screenItem {
-          transition: all 0.4s;
-          border-radius: 100%;
-          height: 4rem;
-          width: 4rem;
-          //border: 1px solid $notification;
-          background-color: $sidepanel;
-          display: flex;
-          cursor: pointer;
-          justify-content: center;
-          align-items: center;
-          font-weight: bold;
-          font-size: 1.5rem;
-          box-shadow: 0px 0px 17px 0px rgba(0, 0, 0, 0.124);
-
-          &.isSpeaking {
-            box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.719);
-          }
-
-          &:hover {
-            background-color: darken($sidepanel, 5%)
-          }
-
-          &.screen {
-            border-radius: 5px;
-          }
-        }
-      }
-    }
-
-    .rightPart {
-      width: 350px;
-      background-color: white;
-      border-radius: $borderRadius;
-      margin: 1rem 1rem 1rem 0rem;
-      transition: all 0.4s;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-
-      .rightPartheaderVideoMessaging {
-        padding: 1rem;
-        display: flex;
-        width: 100%;
-        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
-
-        .rightHeaderItem {
-          padding: 1rem;
-          flex: 1;
-          font-weight: bolder;
-          text-align: center;
-          border-radius: $borderRadius;
-          cursor: pointer;
-
-          &:hover {
-            background-color: $sidepanel-bg;
-          }
-
-          &.headerItemSelected {
-            background-color: $sidepanel;
-          }
-        }
-      }
-
-      .rightPartContentDiv {
-        flex: 1;
-        min-height: 0;
-        display: flex;
-        overflow: hidden;
-        transition: all 0.4s;
-
-        .callParticipantsDiv {
-          overflow-y: auto;
-          width: 100%;
-          padding: 1rem;
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-
-          &.hideDivAside {
-            display: none;
-          }
-
-          .callParticipantDiv {
-            position: relative;
-            transition: all 0.4s;
-            border-radius: $borderRadius;
-            overflow: hidden;
-            cursor: pointer;
-            min-height: 180px;
-            max-height: 200px;
-
-            video {
-              width: 100%;
+            .profilePicture {
+              border: 1px solid $notification;
+              width: 50px;
+              height: 50px;
+              margin-right: 10px;
               border-radius: $borderRadius;
-              object-fit: cover;
-              height: 100%;
-            }
-
-            .sideVideoControls {
-              transition: all 0.4s;
-              position: absolute;
-              width: 100%;
-              top: 0;
-              display: flex;
-              justify-content: flex-end;
-              align-items: center;
-              background-color: rgba(0, 0, 0, 0.3);
-
-              button {
-                transition: all 0.4s;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                margin: .5rem;
-                border-radius: $borderRadius;
-                padding: .5rem;
-                border: none;
-                outline: none;
-                background: rgba(0, 0, 0, 0.5);
-                color: white;
-                cursor: pointer;
-                //backdrop-filter: blur(5px);
-
-                &:hover {
-                  background: rgba(0, 0, 0, 0.795);
-
-                }
-
-                i {
-                  font-size: 18px;
-                }
-
-                &.active {
-                  background-color: $notification;
-                  box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
-                }
-
-                &.isSpeaking {
-                  background-color: $notification;
-                  box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
-
-                }
-
-              }
-
-              .miniVideowner {
-                flex: 1;
-                color: white;
-                padding: 1rem;
-              }
-            }
-
-            .audioCallCover {
-              display: flex;
-              flex-direction: column;
-              gap: 1rem;
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              justify-content: center;
-              align-items: center;
-              background-color: darken($sidepanel, 10%);
-
-              .profilePicture {
-                border: 1px solid $notification;
-                width: 50px;
-                height: 50px;
-                margin-right: 10px;
-                border-radius: $borderRadius;
-                text-transform: uppercase;
-                display: flex;
-                justify-content: center;
-                -ms-flex-align: center;
-                align-items: center;
-                color: white;
-                background-color: #003061;
-                box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-              }
-
-            }
-
-            .muteIndicator {
-              width: 100%;
+              text-transform: uppercase;
               display: flex;
               justify-content: center;
-
-              position: absolute;
-              bottom: 1rem;
-
-              .muteIndicatorContent {
-                padding: 0.5rem;
-                display: flex;
-                color: white;
-                background: black;
-                border-radius: 15px;
-              }
+              -ms-flex-align: center;
+              align-items: center;
+              color: white;
+              background-color: #003061;
+              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
             }
+
           }
-        }
 
-        .callMessagingDiv {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
+          .muteIndicator {
+            width: 100%;
+            display: flex;
+            justify-content: center;
 
-          &.hideDivAside {
-            display: none;
+            position: absolute;
+            bottom: 1rem;
+
+            .muteIndicatorContent {
+              padding: 0.5rem;
+              display: flex;
+              color: white;
+              background: black;
+              border-radius: 15px;
+            }
           }
         }
       }
+
+      .callMessagingDiv {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        &.hideDivAside {
+          display: none;
+        }
+      }
     }
-
-    //overflow: hidden;
-    .call-container {}
-
   }
-
-  ////////////////////FINIFSH ONGOING CALL PAGE///////////
+  //overflow: hidden;
+  .call-container {}
 }
+
+////////////////////FINIFSH ONGOING CALL PAGE///////////
 
 
 .blue {
@@ -3511,7 +3535,7 @@ body {
     align-items: center;
     flex-direction: row-reverse;
     height: 3rem;
-    background: white;
+    background: $sidepanel;
     color: $body;
     padding: 0 0.75rem 0 1.5rem;
     margin-left: 0.5rem;
@@ -3532,7 +3556,7 @@ body {
     }
 
     &:hover {
-      background-color: lighten($notification, 88%);
+      background-color: darken($sidepanel, 5%);
 
       .pill-label {
         color: $notification;
@@ -3709,6 +3733,7 @@ body {
 .is-visible {
   display: block !important;
 }
+
 
 //loader
 .spinner {

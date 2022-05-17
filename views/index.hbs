@@ -1,14 +1,16 @@
 <main class='c-app'>
   <div class='c-application'>
-    <aside class='c-sidepanel expanded'>
+    <aside class='c-sidepanel expanded' id='c-sidepanel'>
       {{> sidePanel}}
     </aside>
     <section id="messages_panel" class="c-messages_panel">
       {{> messagesPanel}}
     </section>
-
-    <section class="c-calls_panel" id="calls_panel">
+    <section class="c-call_log_panel" id="call_log_panel">
       {{> callsPanel}}
+    </section>
+    <section class="c-ongoing_call_panel" id="ongoing_call_panel">
+      {{> ongoingCall}}
     </section>
     <section class="c-time-scheduling_panel" id="time-scheduling_panel">
       {{> timeSchedulingPanel}}

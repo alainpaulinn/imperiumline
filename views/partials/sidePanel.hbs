@@ -1,4 +1,4 @@
-<div class='c-sidepanel__app-header'>
+{{!-- <div class='c-sidepanel__app-header'>
     <div class='c-sidepanel__app-header__hamburger'>
         <ul id='mainMenuToggle'>
             <li></li>
@@ -7,7 +7,7 @@
         </ul>
     </div>
     <h1>Imperium Line</h1>
-</div>
+</div> --}}
 <nav class='c-sidepanel__nav c-sidepanel__nav--spacer'>
     <div class='c-sidepanel__nav__li'>
         <div class='c-sidepanel__nav__link remove-rightpadding' id="messages-option" title='Messaging'>
@@ -35,7 +35,7 @@
 
 <nav class='c-sidepanel__nav c-sidepanel__nav--spacer'>
     <div class='c-sidepanel__nav__li'>
-        <div class='c-sidepanel__nav__link remove-rightpadding' id="calls-option" title='Calls'>
+        <div class='c-sidepanel__nav__link remove-rightpadding' id="call-log-option" title='Calls'>
             <i class='bx bxs-phone'></i>
             <p>Calls</p>
             <button id="calls-btn"><i class='bx bx-chevron-down'></i></button>
@@ -53,6 +53,17 @@
         </ul>
     </div>
 </nav>
+
+<nav class='c-sidepanel__nav c-sidepanel__nav--spacer'>
+    <div class='c-sidepanel__nav__li'>
+        <div class='c-sidepanel__nav__link remove-rightpadding' id="ongoing-call-option" title='Ongoing call'>
+            <i class='bx bxs-phone-call bx-flashing' ></i>
+            <p>Ongoing call</p>
+            <button id="calls-btn"><i class='bx bx-chevron-down'></i></button>
+        </div>
+    </div>
+</nav>
+
 <nav class='c-sidepanel__nav c-sidepanel__nav--spacer'>
     <div class='c-sidepanel__nav__li'>
         <div class='c-sidepanel__nav__link remove-rightpadding' id="time_scheduling-option" title='Time Scheduling'>
@@ -101,11 +112,11 @@
 
         <ul id="projects-div" class='undropped-down droppable'>
             <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
-                    title=''><i class='bx bxs-category' ></i>
+                    title=''><i class='bx bxs-category'></i>
                     <p>Overview</p>
                 </a></li>
             <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
-                    title=''><i class='bx bxl-algolia' ></i>
+                    title=''><i class='bx bxl-algolia'></i>
                     <p>behind schedule</p><span class='c-notification c-notification--nav'>1</span>
                 </a></li>
         </ul>

@@ -1018,6 +1018,7 @@ body {
       -ms-flex: 1;
           flex: 1;
   margin: 1rem;
+  overflow: hidden;
 }
 
 .c-openchat__selectConversation {
@@ -2266,7 +2267,7 @@ body {
   background-color: #ebf0f6;
 }
 
-.c-calls_panel {
+.c-call_log_panel {
   display: none;
   -webkit-box-flex: 1;
       -ms-flex: 1;
@@ -2275,19 +2276,150 @@ body {
   color: #5b5e61;
 }
 
-.c-calls_panel .callHistoryPage {
+.c-call_log_panel .callSearchSection {
+  width: 350px;
+  background-color: white;
+  border-radius: 15px;
+  margin: 1rem 0rem 1rem 1rem;
+  overflow: hidden;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  display: none;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  width: 100%;
 }
 
-.c-calls_panel .callHistoryPage .header {
+.c-call_log_panel .callSearchSection .searchResultsDiv {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  overflow-y: auto;
+  padding: 1rem;
+  background-color: white;
+}
+
+.c-call_log_panel .callSearchSection .searchResultsDiv .listMember {
+  background-color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: .5rem;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+}
+
+.c-call_log_panel .callSearchSection .searchResultsDiv .listMember .memberProfilePicture {
+  border: 1px solid #003061;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 15px;
+  text-transform: uppercase;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: white;
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
+
+.c-call_log_panel .callSearchSection .searchResultsDiv .listMember .memberNameRole {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  overflow: hidden;
+}
+
+.c-call_log_panel .callSearchSection .searchResultsDiv .listMember .memberNameRole .memberName {
+  font-weight: bolder;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-call_log_panel .callSearchSection .searchResultsDiv .listMember .memberNameRole .memberRole {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-call_log_panel .callSearchSection .searchResultsDiv .listMember button {
+  color: #5b5e61;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 1rem;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  border-radius: 15px;
+  background-color: #ebf0f6;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin-left: .5rem;
+}
+
+.c-call_log_panel .callSearchSection .searchResultsDiv .listMember button i {
+  font-size: 18px;
+}
+
+.c-call_log_panel .callSearchSection .searchResultsDiv .listMember button p {
+  margin-left: .5rem;
+}
+
+.c-call_log_panel .callSearchSection .searchResultsDiv .listMember button:hover {
+  background-color: #d9e3ee;
+}
+
+.c-call_log_panel .callHistoryPage {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  background-color: white;
+  margin: 1rem;
+  border-radius: 15px;
+}
+
+.c-call_log_panel .callHistoryPage .header {
   border-bottom: 1px solid #f1f4f6;
   padding: 1rem 1rem;
   display: -webkit-box;
@@ -2303,11 +2435,11 @@ body {
           box-shadow: 3px 3px 10px -2px rgba(204, 197, 197, 0.5);
 }
 
-.c-calls_panel .callHistoryPage .header h1 {
+.c-call_log_panel .callHistoryPage .header h1 {
   font-size: 2rem;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -2321,7 +2453,7 @@ body {
   overflow: auto;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -2329,19 +2461,18 @@ body {
   overflow: auto;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .section-header {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .section-header {
   padding: 1rem;
   top: 0;
   width: 100%;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .section-header h1 {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .section-header h1 {
   font-size: 1.5rem;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content {
-  padding: 0 1rem;
-  padding-right: 0.5rem;
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content {
+  padding: 1rem;
   width: 100%;
   overflow-y: auto;
   -ms-flex-negative: 0;
@@ -2353,7 +2484,7 @@ body {
   min-height: 0px;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log {
   width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2372,18 +2503,18 @@ body {
   transition: all 0.4s;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 {
   width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  gap: 0.5rem;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  padding-bottom: 1rem;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture {
   background-color: #003061;
   height: 40px;
   width: 40px;
@@ -2401,8 +2532,8 @@ body {
           align-items: center;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture img,
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture div {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture img,
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture div {
   height: 38px;
   width: 38px;
   border-radius: 15px;
@@ -2419,29 +2550,28 @@ body {
           align-items: center;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .nameAndType {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .nameAndType {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
-  padding: 0 1rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .nameAndType .callMembers {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .nameAndType .callMembers {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .nameAndType .callMembers div {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .nameAndType .callMembers div {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .nameAndType .callType {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .nameAndType .callType {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2450,11 +2580,11 @@ body {
           align-items: center;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .nameAndType .callType i {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .nameAndType .callType i {
   font-size: 18px;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2462,7 +2592,7 @@ body {
       flex-wrap: wrap;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 .picture {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 .picture {
   height: 40px;
   width: 40px;
   border-radius: 15px;
@@ -2479,8 +2609,8 @@ body {
           align-items: center;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 .picture img,
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 .picture div {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 .picture img,
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 .picture div {
   height: 38px;
   width: 38px;
   border-radius: 15px;
@@ -2498,19 +2628,19 @@ body {
   background-color: #003061;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log:hover {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log:hover {
   background-color: #ebf0f6;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .missed {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .missed {
   background-color: #ffe0e0;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .ongoing {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .ongoing {
   background-color: #bed6ff;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons {
   min-width: 0;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2524,7 +2654,7 @@ body {
           align-items: flex-end;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   border-radius: 15px;
@@ -2546,15 +2676,15 @@ body {
   background-color: #ebf0f6;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button i {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button i {
   font-size: 18px;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button:hover {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button:hover {
   color: dark(#ebf0f6);
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .picture {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .picture {
   background-color: light(#003061);
   height: 40px;
   width: 40px;
@@ -2573,8 +2703,8 @@ body {
   margin-right: .3rem;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .picture img,
-.c-calls_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .picture div {
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .picture img,
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .picture div {
   height: 38px;
   width: 38px;
   border-radius: 15px;
@@ -2592,10 +2722,10 @@ body {
   background-color: #003061;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section {
+.c-call_log_panel .callDetails-section {
   width: 350px;
-  padding-right: 1rem;
-  padding-left: 0.5rem;
+  margin: 1rem 1rem 1rem 0rem;
+  padding: 1rem;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2603,31 +2733,23 @@ body {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  background-color: white;
+  border-radius: 15px;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .section-header {
+.c-call_log_panel .callDetails-section .section-header {
   padding: 1rem;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .section-header h1 {
+.c-call_log_panel .callDetails-section .section-header h1 {
   font-size: 1.5rem;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content {
-  margin-right: 1rem;
-  width: 100%;
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
-  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+.c-call_log_panel .callDetails-section .details-section-content {
   border-radius: 15px;
-  background-color: #fff;
-  margin-bottom: 1rem;
-  padding: 1rem;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .topDetailsCard {
+.c-call_log_panel .callDetails-section .details-section-content .topDetailsCard {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2637,7 +2759,7 @@ body {
   padding: 2rem 0;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .topDetailsCard .circle {
+.c-call_log_panel .callDetails-section .details-section-content .topDetailsCard .circle {
   width: 100px;
   height: 100px;
   border-radius: 15px;
@@ -2656,11 +2778,11 @@ body {
   color: white;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .topDetailsCard .circle i {
+.c-call_log_panel .callDetails-section .details-section-content .topDetailsCard .circle i {
   font-size: 30px;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callTitleContent {
+.c-call_log_panel .callDetails-section .details-section-content .callTitleContent {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2673,12 +2795,12 @@ body {
           align-items: center;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callTitleContent h1 {
+.c-call_log_panel .callDetails-section .details-section-content .callTitleContent h1 {
   font-size: 18px;
   padding: 0.5rem;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callTitleContent h2 {
+.c-call_log_panel .callDetails-section .details-section-content .callTitleContent h2 {
   font-size: 13px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2688,13 +2810,13 @@ body {
           align-items: center;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callTitleContent h2 i {
+.c-call_log_panel .callDetails-section .details-section-content .callTitleContent h2 i {
   -webkit-transform: rotate(45deg);
           transform: rotate(45deg);
   font-size: 18px;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .allPartifipantDiv .header {
+.c-call_log_panel .callDetails-section .details-section-content .allPartifipantDiv .header {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2712,11 +2834,11 @@ body {
   margin-top: .3rem;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .allPartifipantDiv .header h1 {
+.c-call_log_panel .callDetails-section .details-section-content .allPartifipantDiv .header h1 {
   font-size: 18px;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .allPartifipantDiv .header button {
+.c-call_log_panel .callDetails-section .details-section-content .allPartifipantDiv .header button {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   border-radius: 15px;
@@ -2739,19 +2861,19 @@ body {
   background-color: #ebf0f6;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .allPartifipantDiv .header button i {
+.c-call_log_panel .callDetails-section .details-section-content .allPartifipantDiv .header button i {
   font-size: 18px;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .allPartifipantDiv .header button:hover {
+.c-call_log_panel .callDetails-section .details-section-content .allPartifipantDiv .header button:hover {
   color: #003061;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callParticipants {
+.c-call_log_panel .callDetails-section .details-section-content .callParticipants {
   width: 100%;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callParticipants .callParticipant {
+.c-call_log_panel .callDetails-section .details-section-content .callParticipants .callParticipant {
   width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2766,7 +2888,7 @@ body {
   margin-top: .3rem;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callParticipants .callParticipant .partifipantPicture {
+.c-call_log_panel .callDetails-section .details-section-content .callParticipants .callParticipant .partifipantPicture {
   color: white;
   background-color: #003061;
   width: 40px;
@@ -2787,15 +2909,15 @@ body {
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callParticipants .callParticipant .partifipantPicture img,
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callParticipants .callParticipant .partifipantPicture div {
+.c-call_log_panel .callDetails-section .details-section-content .callParticipants .callParticipant .partifipantPicture img,
+.c-call_log_panel .callDetails-section .details-section-content .callParticipants .callParticipant .partifipantPicture div {
   color: white;
   width: 38px;
   height: 38px;
   border-radius: 15px;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callParticipants .callParticipant .nameOnlineStatus {
+.c-call_log_panel .callDetails-section .details-section-content .callParticipants .callParticipant .nameOnlineStatus {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -2812,29 +2934,27 @@ body {
   text-overflow: ellipsis;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callParticipants .callParticipant .nameOnlineStatus .name {
+.c-call_log_panel .callDetails-section .details-section-content .callParticipants .callParticipant .nameOnlineStatus .name {
   max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.c-calls_panel .callHistoryPage .callHistoryPageBody .callDetails-section .details-section-content .callParticipants .callParticipant .nameOnlineStatus .onlineStatus {
+.c-call_log_panel .callDetails-section .details-section-content .callParticipants .callParticipant .nameOnlineStatus .onlineStatus {
   max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.c-calls_panel .ongoingCallPage {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+.c-ongoing_call_panel {
+  display: none;
   width: 100%;
   height: 100%;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart {
+.c-ongoing_call_panel .leftPart {
   width: 350px;
   background-color: white;
   border-radius: 15px;
@@ -2849,23 +2969,24 @@ body {
           flex-direction: column;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .leftPartHeaderDivTitle {
+.c-ongoing_call_panel .leftPart .leftPartHeaderDivTitle {
   padding: 1rem;
   font-weight: bolder;
   text-align: center;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceTitleSection {
+.c-ongoing_call_panel .leftPart .attendanceTitleSection {
   padding: 1rem;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  gap: .5rem;
   width: 100%;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceTitleSection .leftHeaderItem {
+.c-ongoing_call_panel .leftPart .attendanceTitleSection .leftHeaderItem {
   padding: 1rem;
   -webkit-box-flex: 1;
       -ms-flex: 1;
@@ -2876,20 +2997,20 @@ body {
   cursor: pointer;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceTitleSection .leftHeaderItem:hover {
+.c-ongoing_call_panel .leftPart .attendanceTitleSection .leftHeaderItem:hover {
   background-color: #f5f9fd;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceTitleSection .leftHeaderItem.headerItemSelected {
+.c-ongoing_call_panel .leftPart .attendanceTitleSection .leftHeaderItem.headerItemSelected {
   background-color: #ebf0f6;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv {
   min-height: 0;
   overflow-y: auto;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2902,7 +3023,7 @@ body {
   padding: 1rem;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember {
   background-color: white;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2914,7 +3035,7 @@ body {
   height: 100%;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberProfilePicture {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberProfilePicture {
   border: 1px solid #003061;
   width: 40px;
   height: 40px;
@@ -2940,7 +3061,7 @@ body {
       flex-shrink: 0;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2954,7 +3075,7 @@ body {
   overflow: hidden;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole .memberName {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole .memberName {
   font-weight: bolder;
   display: block;
   white-space: nowrap;
@@ -2962,14 +3083,14 @@ body {
   text-overflow: ellipsis;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole .memberRole {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole .memberRole {
   display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember button {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember button {
   color: #5b5e61;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2988,19 +3109,19 @@ body {
   margin-left: .5rem;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember button i {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember button i {
   font-size: 18px;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember button p {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember button p {
   margin-left: .5rem;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .presentMembersDiv .listMember button:hover {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember button:hover {
   background-color: #d9e3ee;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3012,7 +3133,7 @@ body {
   padding: 1rem;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember {
   background-color: white;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -3024,7 +3145,7 @@ body {
   height: 100%;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberProfilePicture {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberProfilePicture {
   border: 1px solid #003061;
   width: 40px;
   height: 40px;
@@ -3050,7 +3171,7 @@ body {
       flex-shrink: 0;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3064,20 +3185,20 @@ body {
   overflow: hidden;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole .memberName {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole .memberName {
   font-weight: bolder;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole .memberRole {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole .memberRole {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember button {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember button {
   color: #5b5e61;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -3099,23 +3220,23 @@ body {
   margin-left: .5rem;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember button i {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember button i {
   font-size: 18px;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember button p {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember button p {
   margin-left: .5rem;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .absentMembersDiv .listMember button:hover {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember button:hover {
   background-color: #d9e3ee;
 }
 
-.c-calls_panel .ongoingCallPage .leftPart .attendanceContentDiv .hiddenDiv {
+.c-ongoing_call_panel .leftPart .attendanceContentDiv .hiddenDiv {
   display: none;
 }
 
-.c-calls_panel .ongoingCallPage .call-container {
+.c-ongoing_call_panel .call-container {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -3135,7 +3256,7 @@ body {
   flex-direction: column;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader {
+.c-ongoing_call_panel .call-container .callScreenHeader {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3149,7 +3270,7 @@ body {
       flex-wrap: wrap;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerLeftPart {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerLeftPart {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3165,23 +3286,23 @@ body {
           justify-content: space-between;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerLeftPart .scheduledTimeContent {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerLeftPart .scheduledTimeContent {
   font-size: 15px;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerLeftPart .MeetingTitle {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerLeftPart .MeetingTitle {
   font-size: 20px;
   font-weight: bold;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   position: relative;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .meetingTimer {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .meetingTimer {
   padding: 1rem;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -3192,7 +3313,7 @@ body {
           flex-direction: column;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .meetingTimer span {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .meetingTimer span {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3201,7 +3322,7 @@ body {
           align-items: center;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .inviteSomeone {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .inviteSomeone {
   padding: 1rem;
   -webkit-box-flex: 1;
       -ms-flex: 1;
@@ -3223,15 +3344,15 @@ body {
           align-items: center;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .inviteSomeone p {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .inviteSomeone p {
   color: #5b5e61;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .inviteSomeone:hover {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .inviteSomeone:hover {
   background-color: #d9e3ee;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown {
   width: 350px;
   max-height: 350px;
   padding: 1rem;
@@ -3257,7 +3378,7 @@ body {
           flex-direction: column;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown:before {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown:before {
   content: "";
   position: absolute;
   width: 10px;
@@ -3269,13 +3390,13 @@ body {
   right: 1.5rem;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown.popdownDisplayed {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown.popdownDisplayed {
   top: calc(100% + 1rem);
   visibility: visible;
   opacity: 1;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .searchField {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .searchField {
   border-radius: 15px;
   gap: 1rem;
   display: -webkit-box;
@@ -3283,7 +3404,7 @@ body {
   display: flex;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .searchField input {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .searchField input {
   border-radius: 15px;
   outline: none;
   background: white;
@@ -3296,7 +3417,7 @@ body {
   padding: .5rem 1rem;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .searchField button {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .searchField button {
   background: #ebf0f6;
   border-radius: 15px;
   outline: none;
@@ -3311,15 +3432,15 @@ body {
           align-items: center;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .searchField button i {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .searchField button i {
   font-size: 1.5rem;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .searchField button:hover {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .searchField button:hover {
   background: #d9e3ee;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv {
   overflow-y: auto;
   border-radius: 15px;
   -webkit-box-flex: 1;
@@ -3327,7 +3448,7 @@ body {
           flex: 1;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember {
   background-color: white;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -3340,7 +3461,7 @@ body {
   margin-bottom: .5rem;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberProfilePicture {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberProfilePicture {
   border: 1px solid #003061;
   width: 40px;
   height: 40px;
@@ -3366,7 +3487,7 @@ body {
       flex-shrink: 0;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberNameRole {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberNameRole {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3380,7 +3501,7 @@ body {
   overflow: hidden;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberNameRole .memberName {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberNameRole .memberName {
   font-weight: bolder;
   display: block;
   white-space: nowrap;
@@ -3388,14 +3509,14 @@ body {
   text-overflow: ellipsis;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberNameRole .memberRole {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberNameRole .memberRole {
   display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember button {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember button {
   color: #5b5e61;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -3414,19 +3535,19 @@ body {
   margin-left: .5rem;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember button i {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember button i {
   font-size: 18px;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember button p {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember button p {
   margin-left: .5rem;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember button:hover {
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember button:hover {
   background-color: #d9e3ee;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv {
+.c-ongoing_call_panel .call-container .mainVideoDiv {
   border-radius: 15px;
   position: relative;
   overflow: hidden;
@@ -3435,7 +3556,7 @@ body {
           flex: 1;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callTopBar {
   color: white;
   position: absolute;
   top: 0;
@@ -3455,7 +3576,7 @@ body {
   transition: all 0.4s;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .leftUserIdentifiers {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callTopBar .leftUserIdentifiers {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -3468,7 +3589,7 @@ body {
           flex-direction: row;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .leftUserIdentifiers .mainVideoOwnerProfilePicture {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callTopBar .leftUserIdentifiers .mainVideoOwnerProfilePicture {
   border: 1px solid #003061;
   width: 40px;
   height: 40px;
@@ -3494,7 +3615,7 @@ body {
      object-fit: cover;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .leftUserIdentifiers .mainVideoOwnerProfileNamePosition {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callTopBar .leftUserIdentifiers .mainVideoOwnerProfileNamePosition {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3506,19 +3627,19 @@ body {
   transition: all 0.4s;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .leftUserIdentifiers .mainVideoOwnerProfileNamePosition .videoOwnerName {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callTopBar .leftUserIdentifiers .mainVideoOwnerProfileNamePosition .videoOwnerName {
   font-size: 15px;
   font-weight: bolder;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .rightVideoControls {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callTopBar .rightVideoControls {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   gap: 0.5rem;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .rightVideoControls button {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callTopBar .rightVideoControls button {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   border-radius: 15px;
@@ -3541,23 +3662,23 @@ body {
           justify-content: center;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .rightVideoControls button:hover {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callTopBar .rightVideoControls button:hover {
   background: black;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .rightVideoControls button.active {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callTopBar .rightVideoControls button.active {
   background-color: #003061;
   -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.8);
           box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.8);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callTopBar .rightVideoControls button.isSpeaking {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callTopBar .rightVideoControls button.isSpeaking {
   background-color: #003061;
   -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.8);
           box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.8);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .mainVideoElement {
+.c-ongoing_call_panel .call-container .mainVideoDiv .mainVideoElement {
   width: 100%;
   height: 100%;
   -o-object-fit: cover;
@@ -3566,14 +3687,14 @@ body {
   background-color: #f5f9fd;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .mainVideoElement.fitVideoToWindow {
+.c-ongoing_call_panel .call-container .mainVideoDiv .mainVideoElement.fitVideoToWindow {
   width: 100%;
   height: unset;
   -o-object-fit: none;
      object-fit: none;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .audioCallCover {
+.c-ongoing_call_panel .call-container .mainVideoDiv .audioCallCover {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3596,7 +3717,7 @@ body {
   background-color: #c8d6e6;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .audioCallCover .profilePicture {
+.c-ongoing_call_panel .call-container .mainVideoDiv .audioCallCover .profilePicture {
   border: 1px solid #003061;
   width: 50px;
   height: 50px;
@@ -3618,7 +3739,7 @@ body {
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callControls {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   display: -webkit-box;
@@ -3641,7 +3762,7 @@ body {
   width: 100%;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .alwaysVisibleControls .callControl {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callControls .alwaysVisibleControls .callControl {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   border-radius: 15px;
@@ -3653,17 +3774,17 @@ body {
   cursor: pointer;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .alwaysVisibleControls .callControl:hover {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callControls .alwaysVisibleControls .callControl:hover {
   background: rgba(0, 0, 0, 0.4);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .alwaysVisibleControls .callControl.active {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callControls .alwaysVisibleControls .callControl.active {
   background-color: #003061;
   -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
           box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callControls .hiddableControls {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   display: -webkit-box;
@@ -3671,7 +3792,7 @@ body {
   display: flex;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .callControl {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callControls .hiddableControls .callControl {
   margin: 0 .5rem;
   border-radius: 15px;
   padding: 1rem;
@@ -3682,41 +3803,41 @@ body {
   cursor: pointer;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .callControl:hover {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callControls .hiddableControls .callControl:hover {
   background: rgba(0, 0, 0, 0.795);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .callControl i {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callControls .hiddableControls .callControl i {
   font-size: 18px;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .callControl.active {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callControls .hiddableControls .callControl.active {
   background-color: #003061;
   -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
           box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hiddableControls .hangupbtn {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callControls .hiddableControls .hangupbtn {
   color: red;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv .callControls .hideDown {
+.c-ongoing_call_panel .call-container .mainVideoDiv .callControls .hideDown {
   -webkit-transform: translateY(100%);
           transform: translateY(100%);
   display: none;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv:hover .callControls {
+.c-ongoing_call_panel .call-container .mainVideoDiv:hover .callControls {
   visibility: visible;
   opacity: 1;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .mainVideoDiv:hover .callTopBar {
+.c-ongoing_call_panel .call-container .mainVideoDiv:hover .callTopBar {
   visibility: visible;
   opacity: 1;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .availableScreens {
+.c-ongoing_call_panel .call-container .availableScreens {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3732,7 +3853,7 @@ body {
   max-height: 5rem;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .availableScreens .screenItem {
+.c-ongoing_call_panel .call-container .availableScreens .screenItem {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   border-radius: 100%;
@@ -3755,20 +3876,20 @@ body {
           box-shadow: 0px 0px 17px 0px rgba(0, 0, 0, 0.124);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .availableScreens .screenItem.isSpeaking {
+.c-ongoing_call_panel .call-container .availableScreens .screenItem.isSpeaking {
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.719);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.719);
 }
 
-.c-calls_panel .ongoingCallPage .call-container .availableScreens .screenItem:hover {
+.c-ongoing_call_panel .call-container .availableScreens .screenItem:hover {
   background-color: #d9e3ee;
 }
 
-.c-calls_panel .ongoingCallPage .call-container .availableScreens .screenItem.screen {
+.c-ongoing_call_panel .call-container .availableScreens .screenItem.screen {
   border-radius: 5px;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart {
+.c-ongoing_call_panel .rightPart {
   width: 350px;
   background-color: white;
   border-radius: 15px;
@@ -3785,7 +3906,7 @@ body {
           flex-direction: column;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartheaderVideoMessaging {
+.c-ongoing_call_panel .rightPart .rightPartheaderVideoMessaging {
   padding: 1rem;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -3795,26 +3916,27 @@ body {
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartheaderVideoMessaging .rightHeaderItem {
+.c-ongoing_call_panel .rightPart .rightPartheaderVideoMessaging .rightHeaderItem {
   padding: 1rem;
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
+  gap: .5rem;
   font-weight: bolder;
   text-align: center;
   border-radius: 15px;
   cursor: pointer;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartheaderVideoMessaging .rightHeaderItem:hover {
+.c-ongoing_call_panel .rightPart .rightPartheaderVideoMessaging .rightHeaderItem:hover {
   background-color: #f5f9fd;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartheaderVideoMessaging .rightHeaderItem.headerItemSelected {
+.c-ongoing_call_panel .rightPart .rightPartheaderVideoMessaging .rightHeaderItem.headerItemSelected {
   background-color: #ebf0f6;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -3827,7 +3949,7 @@ body {
   transition: all 0.4s;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv {
   overflow-y: auto;
   width: 100%;
   padding: 1rem;
@@ -3841,11 +3963,11 @@ body {
   gap: 1rem;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv.hideDivAside {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv.hideDivAside {
   display: none;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv {
   position: relative;
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
@@ -3856,7 +3978,7 @@ body {
   max-height: 200px;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv video {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv video {
   width: 100%;
   border-radius: 15px;
   -o-object-fit: cover;
@@ -3864,7 +3986,7 @@ body {
   height: 100%;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   position: absolute;
@@ -3882,7 +4004,7 @@ body {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button {
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   display: -webkit-box;
@@ -3904,27 +4026,27 @@ body {
   cursor: pointer;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button:hover {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button:hover {
   background: rgba(0, 0, 0, 0.795);
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button i {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button i {
   font-size: 18px;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button.active {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button.active {
   background-color: #003061;
   -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
           box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button.isSpeaking {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button.isSpeaking {
   background-color: #003061;
   -webkit-box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
           box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls .miniVideowner {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls .miniVideowner {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -3932,7 +4054,7 @@ body {
   padding: 1rem;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .audioCallCover {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .audioCallCover {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -3955,7 +4077,7 @@ body {
   background-color: #c8d6e6;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .audioCallCover .profilePicture {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .audioCallCover .profilePicture {
   border: 1px solid #003061;
   width: 50px;
   height: 50px;
@@ -3977,7 +4099,7 @@ body {
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .muteIndicator {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .muteIndicator {
   width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -3989,7 +4111,7 @@ body {
   bottom: 1rem;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .muteIndicator .muteIndicatorContent {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .muteIndicator .muteIndicatorContent {
   padding: 0.5rem;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -3999,7 +4121,7 @@ body {
   border-radius: 15px;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callMessagingDiv {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callMessagingDiv {
   width: 100%;
   height: 100%;
   display: -webkit-box;
@@ -4011,7 +4133,7 @@ body {
           flex-direction: column;
 }
 
-.c-calls_panel .ongoingCallPage .rightPart .rightPartContentDiv .callMessagingDiv.hideDivAside {
+.c-ongoing_call_panel .rightPart .rightPartContentDiv .callMessagingDiv.hideDivAside {
   display: none;
 }
 
@@ -4091,7 +4213,7 @@ body {
       -ms-flex-direction: row-reverse;
           flex-direction: row-reverse;
   height: 3rem;
-  background: white;
+  background: #ebf0f6;
   color: #5b5e61;
   padding: 0 0.75rem 0 1.5rem;
   margin-left: 0.5rem;
@@ -4117,7 +4239,7 @@ body {
 }
 
 .pillsContainer .pill:hover {
-  background-color: white;
+  background-color: #d9e3ee;
 }
 
 .pillsContainer .pill:hover .pill-label {

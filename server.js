@@ -288,126 +288,7 @@ io.on('connection', (socket) => {
         }
       })
 
-
-
     })
-
-
-    /*
-    function makeGroupCall(config){
-      console.log("call a group", config)
-      
-    }
-    function makePrivateCall(data){
-      console.log("call a person", data)
-      let calleeConnections = connectedUsers.filter(connectedUser => {
-        return connectedUser.id === data.calleeIdentification.callTo;
-      })
-      calleeConnections.forEach(calleeConnection => {
-        socket.to(calleeConnection.socket.id).emit("incomingCallRequest", {
-            caller: id,
-            rtcMessage: data.rtcMessage
-        });
-      })
-    }
-    */
-    /*
-     socket.on('requestCall', async data => {
-       let { callTo, audio, video, group } = data.calleeIdentification;
-       let rtcMessage = data.rtcMessage;
-       let callerIdentification = { "caller": await getUserInfo(id), audio, video, group }
- 
-       console.log("requesting call to: ", callTo, audio, video, group, rtcMessage)
-       console.log("callerIdentification: ", await getUserInfo(id), audio, video, group, rtcMessage)
-       
-       if(group == true){
-         makeGroupCall(data)
-       }
-       if(group == false){
-         makePrivateCall(data)
-       }
-       let calleeConnections = connectedUsers.filter(connectedUser => {
-         return connectedUser.id === callTo;
-       })
-       console.log("calleeConnections", calleeConnections)
-       calleeConnections.forEach(calleeConnection => {
-         socket.to(calleeConnection.socket.id).emit("incomingCallRequest", {
-           callerIdentification: callerIdentification,
-           rtcMessage: rtcMessage
-         });
-       })
-     })
-     socket.on('ICEcandidate', (datainf) => {
-       console.log("ICEcandidateoooooooooooooo", datainf)
-       //let otherUser = datainf.calleeIdentification.callTo;
-       let rtcMessage = datainf.rtcMessage;
- 
- 
-       //i will later put select only the answered socket instead of all connected sockets on one user 
-       let calleeConnections = connectedUsers.filter(connectedUser => {
-         return connectedUser.id === datainf.calleeIdentification.callTo;
-       })
-       calleeConnections.forEach(calleeConnection => {
-         socket.to(calleeConnection.socket.id).emit("ICEcandidate", {
-           sender: id,
-           rtcMessage: rtcMessage
-         });
-       })
-     })
- 
-     socket.on('answerCall', (data) => {
-       let caller = data.caller;
-       rtcMessage = data.rtcMessage
- 
-       socket.to(caller).emit("callAnswered", {
-         callee: socket.user,
-         rtcMessage: rtcMessage
-       })
- 
-     })*/
-
-    /////////////Call Handling//////////
-    /*
-    console.log(socket.user, "Connected");
-    socket.join(socket.user);
-
-    socket.on('call', (data) => {
-        let callee = data.name;
-        let rtcMessage = data.rtcMessage;
-
-        socket.to(callee).emit("newCall", {
-            caller: socket.user,
-            rtcMessage: rtcMessage
-        })
-
-    })
-
-    socket.on('answerCall', (data) => {
-        let caller = data.caller;
-        rtcMessage = data.rtcMessage
-
-        socket.to(caller).emit("callAnswered", {
-            callee: socket.user,
-            rtcMessage: rtcMessage
-        })
-
-    })
-
-    socket.on('ICEcandidate', (data) => {
-        let otherUser = data.user;
-        let rtcMessage = data.rtcMessage;
-
-        socket.to(otherUser).emit("ICEcandidate", {
-            sender: socket.user,
-            rtcMessage: rtcMessage
-        })
-    })
-    */
-    //////////////////////////////////////
-
-    function initializeCall(callMembersArray) {
-
-    }
 
     function makeid(length) {
       var result = '';
@@ -420,6 +301,20 @@ io.on('connection', (socket) => {
       return result;
     }
 
+    socket.on('callLogContactSearch', (searchPeople) => {
+      db.query("SELECT `id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchPeople + '%', '%' + searchPeople + '%', '%' + searchPeople + '%'], async (err, userSearchResult) => {
+        if (err) return console.log(err)
+        let foundUsers = []
+        for (let i = 0; i < userSearchResult.length; i++) {
+          const userID = userSearchResult[i].id;
+          if (id != userID) foundUsers.push(await getUserInfo(userID))
+        }
+        socket.emit('callLogContactSearch', foundUsers)
+      })
+    })
+
+
+    
     socket.on("initiateCall", async data => {
 
       let { callTo, audio, video, group, fromChat, previousCallId } = data;

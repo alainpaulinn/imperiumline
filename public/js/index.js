@@ -2,76 +2,347 @@
 var socket = io();
 
 /////////////////////SIDEPANEL SWITCH///////////////////////////
+
+let messages_panel = document.getElementById("messages_panel")
+let call_log_panel = document.getElementById("call_log_panel")
+let ongoing_call_panel = document.getElementById("ongoing_call_panel")
 let time_scheduling_panel = document.getElementById("time-scheduling_panel")
 let work_shift_panel = document.getElementById("work_shifts_Panel")
-let messages_panel = document.getElementById("messages_panel")
-let calls_panel = document.getElementById("calls_panel")
 
 let document_title = document.getElementsByTagName("title")[0]
 
+let message_button = document.getElementById("messages-option")
+let call_log_option = document.getElementById("call-log-option")
+let ongoing_call_option = document.getElementById("ongoing-call-option")
 let time_scheduling_button = document.getElementById("time_scheduling-option")
 let work_shifts_button = document.getElementById("work_shifts-option")
-let message_button = document.getElementById("messages-option")
-let calls_button = document.getElementById("calls-option")
-
-let callHistoryPage = document.getElementById("callHistoryPage")
-let ongoingCallPage = document.getElementById("ongoingCallPage")
 
 let functionalityOptionsArray = [
+
   {
     functionalityId: 1,
-    panel: time_scheduling_panel,
-    triggerButton: time_scheduling_button,
-    title: "Calendar",
-    subMenu: []
-  },
-  {
-    functionalityId: 2,
-    panel: work_shift_panel,
-    triggerButton: work_shifts_button,
-    title: "Work Shifts",
-    subMenu: []
-  },
-  {
-    functionalityId: 3,
     panel: messages_panel,
     triggerButton: message_button,
     title: "Messages",
     subMenu: []
   },
   {
-    functionalityId: 4,
-    panel: calls_panel,
-    triggerButton: calls_button,
+    functionalityId: 2,
+    panel: call_log_panel,
+    triggerButton: call_log_option,
     title: "Calls",
     subMenu: []
   },
-]
-setSidepanelEventlisteners(functionalityOptionsArray)
-function setSidepanelEventlisteners(optionsArray) {
-  optionsArray.forEach((option) => {
-    let {functionalityId, panel, triggerButton, title} = option
+  {
+    functionalityId: 3,
+    panel: ongoing_call_panel,
+    triggerButton: ongoing_call_option,
+    title: "Calls",
+    subMenu: []
+  },
+  {
+    functionalityId: 4,
+    panel: time_scheduling_panel,
+    triggerButton: time_scheduling_button,
+    title: "Calendar",
+    subMenu: []
+  },
+  {
+    functionalityId: 5,
+    panel: work_shift_panel,
+    triggerButton: work_shifts_button,
+    title: "Work Shifts",
+    subMenu: []
+  },
+];
+((serverOptions) => {
+  let sidePanelDiv = document.getElementById('c-sidepanel')
+  // construct sidepanel
+  let hamburger = createElement({ elementType: 'ul', childrenArray: [createElement({ elementType: 'li' }), createElement({ elementType: 'li' }), createElement({ elementType: 'li' })] })
+  let logo = createElement({ elementType: 'div', class: 'c-sidepanel__app-header', childrenArray: [createElement({ elementType: 'div', class: 'c-sidepanel__app-header__hamburger', childrenArray: [hamburger] }), createElement({ elementType: 'h1', textContent: 'Imperium Line' })] })
+  sidePanelDiv.prepend(logo)
+  hamburger.addEventListener('click', () => {
+    if (hamburger.classList.contains("active")) {
+      sidePanelDiv.classList.add("expanded"); hamburger.classList.remove("active");
+      var droppedElements = document.querySelectorAll(".droppable")
+      droppedElements.forEach(function (element) {
+        element.classList.add("undropped-down")
+        timeScheduling_btn.firstChild.classList.remove("rotate180")
+        messaging_btn.firstChild.classList.remove("rotate180")
+        preferences_btn.firstChild.classList.remove("rotate180")
+        profile_btn.firstChild.classList.remove("rotate180")
+      })
+    }
+    else { hamburger.classList.add("active"); sidePanelDiv.classList.remove("expanded"); }
+  })
+
+  for (let o = 0; o < serverOptions.length; o++) {
+    const option = serverOptions[o];
+    console.log(option.functionalityId)
+
+    let { functionalityId, panel, triggerButton, title } = option
     triggerButton.addEventListener("click", () => {
-      for (let i = 0; i < optionsArray.length; i++) {
-        if (optionsArray[i].functionalityId != functionalityId) {
-          optionsArray[i].panel.style.display = "none";
+      for (let i = 0; i < serverOptions.length; i++) {
+        if (serverOptions[i].functionalityId != functionalityId) {
+          serverOptions[i].panel.style.display = "none";
         }
         panel.style.display = "flex";
         document_title.innerText = title;
       }
     })
-  })
+  }
+
+
+  // call-log-section ------ createCallLogContactSearch
+  (() => {
+    let call_log_contact_search_panel = document.getElementById('call_log_contact_search_panel');
+    call_log_contact_search_panel.textContent = '';
+    let input = createElement({ elementType: 'input', type: 'text', placeholder: 'Search contacts' })
+    let header = createElement({ elementType: 'div', class: 'c-chats__header', childrenArray: [createElement({ elementType: 'div', class: 'chatSearch displayed', childrenArray: [createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), input] })] })
+    input.addEventListener('input', () => { if (input.value != '') { socket.emit('callLogContactSearch', input.value); } })
+    let searchResultsDiv = createElement({ elementType: 'div', class: 'searchResultsDiv' })
+    call_log_contact_search_panel.append(header, searchResultsDiv)
+    socket.on('callLogContactSearch', searchPeople => {
+      console.log(searchPeople)
+      if (searchPeople.length == 0) { return topBar.invitedDiv.textContent = 'No user found.' }
+      searchResultsDiv.textContent = ''
+      searchPeople.forEach((searchPerson) => {
+        let searchPersonElement;
+        let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+        let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+        let actions = [
+          { element: audioButton, functionCall: () => { call(searchPerson.userID, true, false, false, false, null) } },
+          { element: videoButton, functionCall: () => { call(searchPerson.userID, true, true, false, false, null) } },
+        ];
+        searchPersonElement = userForAttendanceList(searchPerson, actions)
+        searchResultsDiv.append(searchPersonElement)
+      })
+    })
+  })();
+  (() => {
+    let callHistoryPage = document.getElementById("callHistoryPage")
+    callHistoryPage.textContent = ''
+    let callHistoryArray = []
+
+    let incominPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [ createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [ createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Incoming' })] }) ]});
+    let outgoingPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [ createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [ createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Outgoing' })] }) ]});
+    let missedPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [ createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [ createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Missed' })] }) ]});
+    let header = createElement({ elementType: 'div', class: 'header', childrenArray: [ createElement({ elementType: 'div', class: 'pillsContainer', childrenArray: [incominPill, outgoingPill, missedPill] }) ] })
+    
+    let section_header = createElement({ elementType: 'div', class: 'section-header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Calls'})]})
+    let list_call_section_content = createElement({ elementType: 'div', class: 'list-call-section-content'})
+    let callHistoryPageBody = createElement({ elementType: 'div', class: 'callHistoryPageBody', childrenArray: [ createElement({ elementType: 'div', class: 'list-call-section', childrenArray: [section_header, list_call_section_content]})]})
+    
+    callHistoryPage.append(header,callHistoryPageBody)
+    socket.on('updateCallLog', (calls) => {
+      list_call_section_content.textContent = ''
+      calls.forEach(call => {
+        let callogClass = "";
+        let callDirection;
+        if (call.participantsOnCall.length > 0) callogClass = "ongoing";
+        let profilePicture;
+        if(call.initiator.profilePicture == null) profilePicture = createElement({ elementType: 'div', textContent:call.initiator.name.charAt(0) + call.initiator.surname.charAt(0)})
+        else profilePicture = createElement({ elementType: 'img', src: call.initiator.profilePicture})
+
+        if (call.missed == 1) { callogClass = "missed";
+          callDirection = createElement({ elementType: 'div', class:'callType red', childrenArray:[ createElement({ elementType: 'i', class: 'bx bxs-phone-off'}), createElement({ elementType: 'p', textContent:'Missed call'})]})
+        }
+
+        let audioAgainButton = createElement({ elementType: 'button', childrenArray:[createElement({ elementType: 'i', class: 'bx bxs-phone'})], onClick: () =>{ call(searchPerson.userID, true, false, true, false, call.callUniqueId) }})
+        let videoAgainButton = createElement({ elementType: 'button', childrenArray:[createElement({ elementType: 'i', class: 'bx bxs-video'})], onClick: () =>{ call(searchPerson.userID, true, true, true, false, call.callUniqueId) }})
+        let moreButton = createElement({ elementType: 'button', childrenArray:[createElement({ elementType: 'i', class: 'bx bx-chevron-right'})], onClick: () =>{
+
+        }})
+
+        let call_log = createElement({ elementType: 'div', class: 'call-log '+ callogClass, childrenArray:[
+          createElement({elementType: 'div', class: 'line1', childrenArray: [
+            createElement({elementType: 'div', class: 'picture', childrenArray: [profilePicture]}),
+            createElement({elementType: 'div', class: 'nameAndType', childrenArray: [
+              createElement({elementType: 'div', class: 'callMembers', textContent: call.initiator.name + ' ' + call.initiator.surname}),
+              callDirection
+            ]}), 
+            createElement({ elementType: 'div', class:'dateTime', textContent: new Date(call.startDate).toString('YYYY-MM-dd').substring(0, 24)}),
+            createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [audioAgainButton, videoAgainButton, moreButton]})
+          ]})
+        ]})
+        list_call_section_content.append(call_log)
+      })
+      
+    })
+
+    // socket.on('updateCallLog', (initialCallLog) => {
+    //   /**
+    //    * 
+    //    * {
+    //     "id": 490,
+    //     "callUniqueId": "I2bB39xUKy4x8eWzg6o5",
+    //     "callId": 289,
+    //     "participantId": 3,
+    //     "stillParticipating": 0,
+    //     "initiatorId": 0,
+    //     "startDate": "2022-02-28T17:03:42.000Z",
+    //     "initiator": {
+    //         "userID": 1,
+    //         "name": "Test1Name",
+    //         "surname": "Test1Surname",
+    //         "profilePicture": "/private/profiles/user-128.png"
+    //     },
+    //     "participantsOnCall": [],
+    //     "participantsOffCall": [
+    //         {
+    //             "userID": 3,
+    //             "name": "Test3Name",
+    //             "surname": "Test3Surname",
+    //             "profilePicture": null
+    //         },
+    //         {
+    //             "userID": 7,
+    //             "name": "Test",
+    //             "surname": "User7",
+    //             "profilePicture": null
+    //         }
+    //     ]
+    //   }
+    //    */
+    //   let callLogDiv = document.getElementById('list-call-section-content')
+    //   callLogDiv.innerHTML = ``;
+    //   initialCallLog.forEach(callLog => {
+    
+    //     let uniqueId_call = callLog.callUniqueId;
+    //     let callogClass = "";
+    //     if (callLog.participantsOnCall.length > 0) callogClass = "ongoing";
+    
+    //     let callDate = new Date(callLog.startDate)
+    //     let prPicture = callLog.initiator.profilePicture ? "<img src='" + callLog.initiator.profilePicture + "'alt='" + callLog.initiator.name.charAt(0) + callLog.initiator.surname.charAt(0) + "'>" : "<div>" + callLog.initiator.name.charAt(0) + callLog.initiator.surname.charAt(0) + "</div>"
+    //     let callDirection = callLog.initiator.userID == mySavedID ? "<div class='callType green'><i class='bx bxs-phone-outgoing'></i>Outgoing</div>" : "<div class='callType blue'><i class='bx bxs-phone-incoming'></i>Incoming</div>";
+    //     if (callLog.missed == 1) {
+    //       callDirection = "<div class='callType red'><i class='bx bxs-phone-off'></i>Missed</div>"
+    //       callogClass = "missed";
+    //     }
+    //     let template = `
+    //     <div class="call-log ${callogClass}" id="log${callLog.callUniqueId}" >
+    //         <div class="line1">
+    //             <div class="picture">
+    //               ${prPicture}
+    //             </div>
+    //             <div class="nameAndType">
+    //                 <div class="callMembers">${callLog.initiator.name + ' ' + callLog.initiator.surname}</div>
+    //                 ${//<div class="callType blue"><i class='bx bxs-phone-incoming'></i>Incoming</div>
+    //             callDirection
+    //             }
+    //             </div>
+    //             <div class="dateTime">${callDate.toString('YYYY-MM-dd').substring(0, 24)}</div>
+    //             <!--<div class="duration">&bull; 12 min</div>-->
+    //             <div class="universalCallButtons">
+    //                 <button class="audioFromCallog" data-id="${callLog.callUniqueId}"><i class="bx bxs-phone"></i></button>
+    //                 <button class="videoFromCallog" data-id="${callLog.callUniqueId}"><i class="bx bxs-video-recording"></i></button>
+    //                 <button class="detailsFromCallog" data-id="${callLog.callUniqueId}"><i class='bx bx-chevron-right'></i></button>
+    //             </div>
+    //         </div>
+    //     </div>`
+    //     callLogDiv.innerHTML += template;
+    //   })
+    //   function listOfParticipants(participantsArray, backgroundClass) {
+    //     let userTemplate = ``;
+    //     participantsArray.forEach(participant => {
+    //       if (participant.profilePicture == null) userTemplate += `
+    //       <div class="picture ${backgroundClass}" title='${participant.name + ' ' + participant.surname}'>
+    //         <div>${participant.name.charAt(0) + participant.surname.charAt(0)}</div>
+    //       </div>`
+    //       else {
+    //         userTemplate += `
+    //         <div class="picture ${backgroundClass}" title='${participant.name + ' ' + participant.surname}'>
+    //           <img src="${participant.profilePicture}"alt="${participant.name.charAt(0) + participant.surname.charAt(0)}">
+    //         </div>`
+    //       }
+    //     })
+    
+    //     return userTemplate;
+    //   }
+    //   document.querySelectorAll(".audioFromCallog").forEach(log => {
+    //     log.addEventListener('click', (e) => {
+    //       let logId = log.getAttribute('data-id');
+    //       console.log(logId)
+    //       //call(callTo, audio, video, group, fromChat, previousCallId)
+    //       call(logId, true, false, true, false, logId)
+    //       showOngoingCallSection()
+    //     })
+    //   })
+    //   document.querySelectorAll(".videoFromCallog").forEach(log => {
+    //     log.addEventListener('click', (e) => {
+    //       let logId = log.getAttribute('data-id');
+    //       console.log(logId)
+    //       //call(callTo, audio, video, group, fromChat, previousCallId)
+    //       call(logId, true, true, true, false, logId)
+    //       showOngoingCallSection()
+    //     })
+    //   })
+    //   document.querySelectorAll(".detailsFromCallog").forEach(log => {
+    //     log.addEventListener('click', (e) => {
+    //       let logId = log.getAttribute('data-id');
+    //       console.log(logId)
+    //       socket.emit('callDetails', callUniqueId)
+    //     })
+    //   })
+    // })
+
+    function callHistoryrefresh(){
+      for (let i = callHistoryArray.length; i < callHistoryArray.length; i--) {
+        const call = callHistoryArray[i];
+        
+      }
+    }
+    $(".pill").click(function () { $(this).toggleClass("selectedPill"); });
+  })()
+
+})(functionalityOptionsArray);
+function showMessagesPanel() {
+  messages_panel.style.display = "flex";
+  call_log_panel.style.display = "none";
+  ongoing_call_panel.style.display = "none";
+  time_scheduling_panel.style.display = "none";
+  work_shift_panel.style.display = "none";
+
+  document_title.innerText = "Messages";
+}
+function showCallHistoryPanel() {
+  messages_panel.style.display = "none";
+  call_log_panel.style.display = "flex";
+  ongoing_call_panel.style.display = "none";
+  time_scheduling_panel.style.display = "none";
+  work_shift_panel.style.display = "none";
+
+  document_title.innerText = "Calls";
+}
+function showOngoingCallSection() {
+  messages_panel.style.display = "none";
+  call_log_panel.style.display = "none";
+  ongoing_call_panel.style.display = "flex";
+  time_scheduling_panel.style.display = "none";
+  work_shift_panel.style.display = "none";
+
+  document_title.innerText = "ongoing call";
+}
+function showTimeSchedulingSection() {
+  messages_panel.style.display = "none";
+  call_log_panel.style.display = "none";
+  ongoing_call_panel.style.display = "none";
+  time_scheduling_panel.style.display = "flex";
+  work_shift_panel.style.display = "none";
+
+  document_title.innerText = "ongoing call";
+}
+function showWorkShiftsSection() {
+  messages_panel.style.display = "none";
+  call_log_panel.style.display = "none";
+  ongoing_call_panel.style.display = "none";
+  time_scheduling_panel.style.display = "none";
+  work_shift_panel.style.display = "flex";
+
+  document_title.innerText = "work shifts";
 }
 
-function main(serverOptions){
-
-}
-(() => {
-  
-})()
 ///////////////
-
-
 let timeScheduling_btn = document.getElementById("timeScheduling-btn")
 let workShifts_btn = document.getElementById("workShifts-btn")
 let messaging_btn = document.getElementById("messaging-btn")
@@ -119,28 +390,6 @@ logout_button.addEventListener("click", function () {
   document.getElementById("logoutForm").submit();
 });
 
-
-document.getElementById("mainMenuToggle").addEventListener("click", () => {
-  let hamburger = document.getElementById("mainMenuToggle")
-  let hamburgerIsOpen = hamburger.classList.contains("active")
-  if (hamburgerIsOpen) {
-    document.getElementsByClassName("c-sidepanel")[0].classList.add("expanded")
-    hamburger.classList.remove("active");
-    var droppedElements = document.querySelectorAll(".droppable")
-    droppedElements.forEach(function (element) {
-      element.classList.add("undropped-down")
-
-      timeScheduling_btn.firstChild.classList.remove("rotate180")
-      messaging_btn.firstChild.classList.remove("rotate180")
-      preferences_btn.firstChild.classList.remove("rotate180")
-      profile_btn.firstChild.classList.remove("rotate180")
-    })
-  }
-  else {
-    hamburger.classList.add("active");
-    document.getElementsByClassName("c-sidepanel")[0].classList.remove("expanded")
-  }
-})
 let taggedMessages = [];
 
 let selectedChatId;
@@ -371,31 +620,14 @@ function buildChat(chat, exists) {
     "unreadCount": 0
     }*/
 
-  let {
-    roomID,
-    users,
-    roomName,
-    profilePicture,
-    type,
-    lastmessage,
-    from,
-    myID,
-    timestamp,
-    unreadCount //tobe done later
-  } = chat;
+  let { roomID, users, roomName, profilePicture, type, lastmessage, from, myID, timestamp, unreadCount } = chat;
   if (!myID) { myID = mySavedID }
-
   let chatDate = new Date(timestamp)
-
   // make the Display picture
   let avatar;
-  if (profilePicture.length == 2) {
-    avatar = `<div>${profilePicture}</div>`
-  } else {
-    avatar = `<img src='${profilePicture}' alt=''>`
-  }
+  if (profilePicture.length == 2) { avatar = `<div>${profilePicture}</div>` }
+  else { avatar = `<img src='${profilePicture}' alt=''>` }
 
-  //  
   let writenBy = '';
   switch (type) {
     case 0:
@@ -411,7 +643,6 @@ function buildChat(chat, exists) {
     default:
       break;
   }
-
 
   let newChatTemplate = `<li class='c-chats__list' id='${roomID}msg'><button data-id='${roomID
     }' class='c-chats__link' href='' title=''><div class='c-chats__image-container'>${avatar
@@ -1371,9 +1602,7 @@ function setUserOffline(id, room) {
 }
 
 /////////////////////Call filtering////////////////////////
-$(".pill").click(function () {
-  $(this).toggleClass("selectedPill");
-});
+
 
 const callParticipantsBtn = document.getElementById("callParticipantsBtn")
 const callParticipantsDiv = document.getElementById("callParticipantsDiv")
@@ -1383,130 +1612,7 @@ callParticipantsBtn.addEventListener("click", () => {
 })
 
 /////////////////////////////Call LOG/////////////////////
-socket.on('updateCallLog', (initialCallLog) => {
-  /**
-   * 
-   * {
-    "id": 490,
-    "callUniqueId": "I2bB39xUKy4x8eWzg6o5",
-    "callId": 289,
-    "participantId": 3,
-    "stillParticipating": 0,
-    "initiatorId": 0,
-    "startDate": "2022-02-28T17:03:42.000Z",
-    "initiator": {
-        "userID": 1,
-        "name": "Test1Name",
-        "surname": "Test1Surname",
-        "profilePicture": "/private/profiles/user-128.png"
-    },
-    "participantsOnCall": [],
-    "participantsOffCall": [
-        {
-            "userID": 3,
-            "name": "Test3Name",
-            "surname": "Test3Surname",
-            "profilePicture": null
-        },
-        {
-            "userID": 7,
-            "name": "Test",
-            "surname": "User7",
-            "profilePicture": null
-        }
-    ]
-  }
-   */
-  let callLogDiv = document.getElementById('list-call-section-content')
-  callLogDiv.innerHTML = ``;
-  initialCallLog.forEach(callLog => {
 
-    let uniqueId_call = callLog.callUniqueId;
-    let callogClass = "";
-    if (callLog.participantsOnCall.length > 0) callogClass = "ongoing";
-
-    let callDate = new Date(callLog.startDate)
-    let prPicture = callLog.initiator.profilePicture ? "<img src='" + callLog.initiator.profilePicture + "'alt='" + callLog.initiator.name.charAt(0) + callLog.initiator.surname.charAt(0) + "'>" : "<div>" + callLog.initiator.name.charAt(0) + callLog.initiator.surname.charAt(0) + "</div>"
-    let callDirection = callLog.initiator.userID == mySavedID ? "<div class='callType green'><i class='bx bxs-phone-outgoing'></i>Outgoing</div>" : "<div class='callType blue'><i class='bx bxs-phone-incoming'></i>Incoming</div>";
-    if (callLog.missed == 1) {
-      callDirection = "<div class='callType red'><i class='bx bxs-phone-off'></i>Missed</div>"
-      callogClass = "missed";
-    }
-    let template = `
-    <div class="call-log ${callogClass}" id="log${callLog.callUniqueId}" >
-        <div class="line1">
-            <div class="picture">
-              ${prPicture}
-            </div>
-            <div class="nameAndType">
-                <div class="callMembers">${callLog.initiator.name + ' ' + callLog.initiator.surname}</div>
-                ${//<div class="callType blue"><i class='bx bxs-phone-incoming'></i>Incoming</div>
-      callDirection
-      }
-            </div>
-            <div class="dateTime">${callDate.toString('YYYY-MM-dd').substring(0, 24)}</div>
-            <!--<div class="duration">&bull; 12 min</div>-->
-            <div class="universalCallButtons">
-                <button class="audioFromCallog" data-id="${callLog.callUniqueId}"><i class="bx bxs-phone"></i></button>
-                <button class="videoFromCallog" data-id="${callLog.callUniqueId}"><i class="bx bxs-video-recording"></i></button>
-                <button class="detailsFromCallog" data-id="${callLog.callUniqueId}"><i class='bx bx-chevron-right'></i></button>
-            </div>
-        </div>
-        <div class="line2">
-            ${listOfParticipants(callLog.participantsOnCall, "green-bg")}
-            ${listOfParticipants(callLog.participantsOffCall, "orange-bg")}
-        </div>
-    </div>
-    `
-
-    callLogDiv.innerHTML += template;
-
-  })
-
-
-  function listOfParticipants(participantsArray, backgroundClass) {
-    let userTemplate = ``;
-    participantsArray.forEach(participant => {
-      if (participant.profilePicture == null) userTemplate += `
-      <div class="picture ${backgroundClass}" title='${participant.name + ' ' + participant.surname}'>
-        <div>${participant.name.charAt(0) + participant.surname.charAt(0)}</div>
-      </div>`
-      else {
-        userTemplate += `
-        <div class="picture ${backgroundClass}" title='${participant.name + ' ' + participant.surname}'>
-          <img src="${participant.profilePicture}"alt="${participant.name.charAt(0) + participant.surname.charAt(0)}">
-        </div>`
-      }
-    })
-
-    return userTemplate;
-  }
-  document.querySelectorAll(".audioFromCallog").forEach(log => {
-    log.addEventListener('click', (e) => {
-      let logId = log.getAttribute('data-id');
-      console.log(logId)
-      //call(callTo, audio, video, group, fromChat, previousCallId)
-      call(logId, true, false, true, false, logId)
-      showOngoingCallSection()
-    })
-  })
-  document.querySelectorAll(".videoFromCallog").forEach(log => {
-    log.addEventListener('click', (e) => {
-      let logId = log.getAttribute('data-id');
-      console.log(logId)
-      //call(callTo, audio, video, group, fromChat, previousCallId)
-      call(logId, true, true, true, false, logId)
-      showOngoingCallSection()
-    })
-  })
-  document.querySelectorAll(".detailsFromCallog").forEach(log => {
-    log.addEventListener('click', (e) => {
-      let logId = log.getAttribute('data-id');
-      console.log(logId)
-      socket.emit('callDetails', callUniqueId)
-    })
-  })
-})
 /////////////////////////////////in call controls//////////////////
 
 let participantsSelectorBtn = document.getElementById("participantsSelectorBtn")
@@ -1564,33 +1670,7 @@ waitingTone.addEventListener('ended', function () {
   this.play();
 }, false);
 
-function showOngoingCallSection() {
-  time_scheduling_panel.style.display = "none"
-  messages_panel.style.display = "none";
-  calls_panel.style.display = "flex";
-  callHistoryPage.style.display = "none";
-  ongoingCallPage.style.display = "flex";
 
-  document_title.innerText = "Calls";
-}
-function showCallHistory() {
-  time_scheduling_panel.style.display = "none"
-  messages_panel.style.display = "none";
-  calls_panel.style.display = "flex";
-  callHistoryPage.style.display = "flex";
-  ongoingCallPage.style.display = "none";
-
-  document_title.innerText = "Calls";
-}
-function showMessagesPanel() {
-  time_scheduling_panel.style.display = "none"
-  messages_panel.style.display = "flex";
-  calls_panel.style.display = "none";
-  callHistoryPage.style.display = "none";
-  ongoingCallPage.style.display = "none";
-
-  document_title.innerText = "Messages";
-}
 
 ///////Video Sizing//////////////////////
 function toggleFullscreen(element) {
@@ -1815,8 +1895,8 @@ myPeer.on('open', myPeerId => {
     chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
 
     let addeduserDiv = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole, ringButton, chatButton] })
-    if(videoCoverDiv.calleesDiv) videoCoverDiv.calleesDiv.prepend(addeduserDiv)
-    if(awaitedUserDivs) awaitedUserDivs.push({ userID: userInfo.userID, div: addeduserDiv })
+    if (videoCoverDiv.calleesDiv) videoCoverDiv.calleesDiv.prepend(addeduserDiv)
+    if (awaitedUserDivs) awaitedUserDivs.push({ userID: userInfo.userID, div: addeduserDiv })
 
     //add this new users to the attendance list
     allUsersArray.push(userInfo)
@@ -1928,7 +2008,7 @@ myPeer.on('open', myPeerId => {
       bottomPanel.availableScreensDiv.append(participant.userMedia.bubble) // display bubble
       stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
       leftPanel.updateUserStatus(userInfo, 'present')
-      if(videoCoverDiv) if (videoCoverDiv.videoCoverDiv) videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
+      if (videoCoverDiv) if (videoCoverDiv.videoCoverDiv) videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
       let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element for potential future use
       console.log('participants', participants.length)
       if (participants.length <= 1) { // if this is the first user who is connecting to Us - Create a mainVideoDiv and store It
@@ -2448,7 +2528,7 @@ myPeer.on('open', myPeerId => {
 
     if (isNumeric(room)) setUserOffline(userInfo.userID, room)
     if (!isNumeric(room) && room.includes('-allAnswered-sockets')) {
-      removePeer(userInfo.userID); 
+      removePeer(userInfo.userID);
       leftPanel.updateUserStatus(userInfo, 'offline')
     }
   })
@@ -2706,7 +2786,7 @@ myPeer.on('open', myPeerId => {
         if (message.userInfo.profilePicture == null) receivedMessageProfile = createElement({ elementType: 'div', class: 'receivedMessageProfile', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
         else receivedMessageProfile = createElement({ elementType: 'img', class: 'receivedMessageProfile', src: message.userInfo.profilePicture })
         let receivedMessageProfileContainter = createElement({ elementType: 'div', childrenArray: [receivedMessageProfile] })
-        let senderOriginName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname})
+        let senderOriginName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
         let receivedMessagesHolder = createElement({ elementType: 'div', childrenArray: [firstMessage, senderOriginName] })
         let anotherGroup = createElement({ elementType: 'div', class: 'message-group-received', childrenArray: [receivedMessageProfileContainter, receivedMessagesHolder] })
         anotherGroup.append = (childElement) => { receivedMessagesHolder.append(childElement) }
@@ -2767,7 +2847,7 @@ myPeer.on('open', myPeerId => {
     })
     ongoingCallLeftPart.append(attendanceTitleSection, attendanceContentDiv)
 
-    function updateNumbers(){
+    function updateNumbers() {
       presenceSelectorBtn.textContent = 'Present ' + presentMembersDiv.childElementCount
       absenceSelectorBtn.textContent = 'Absent ' + absentMembersDiv.childElementCount
     }
@@ -2999,7 +3079,7 @@ myPeer.on('open', myPeerId => {
         }
       })
       streamVolumeOnTreshold(stream, 20, bubble)
-      if(callMediaType == 'screenMedia') bubble.classList.add('screen')
+      if (callMediaType == 'screenMedia') bubble.classList.add('screen')
       return bubble
     }
     return {
@@ -3019,7 +3099,7 @@ myPeer.on('open', myPeerId => {
           element, functionCall: () => {
             console.log('add user; ', searchPerson.userID)
             searchPersonElement.remove()
-            socket.emit('addUserToCall', { callUniqueId: _callUniqueId, userID: searchPerson.userID, callType: globalCallType, callTitle:_callTitle });
+            socket.emit('addUserToCall', { callUniqueId: _callUniqueId, userID: searchPerson.userID, callType: globalCallType, callTitle: _callTitle });
           }
         }
       ];
@@ -3300,7 +3380,7 @@ function createTopBar(callInfo, myInfo) {
   callScreenHeader.textContent = '';
   callScreenHeader.append(headerLeftPart, headerRightPart)
 
-  return {callScreenHeader, invitedDiv}
+  return { callScreenHeader, invitedDiv }
 }
 
 
