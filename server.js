@@ -314,10 +314,31 @@ io.on('connection', (socket) => {
     })
 
 
-    
-    socket.on("initiateCall", async data => {
 
+    socket.on("initiateCall", async data => {
       let { callTo, audio, video, group, fromChat, previousCallId } = data;
+
+      // check if this user is already on another call, and end that call before starting a new one
+      let currentOngoingCalls = await getStillParticipatingCalls(id)
+      for (let c = 0; c < currentOngoingCalls.length; c++) {
+        const callUniqueId = currentOngoingCalls[c];
+        socket.to(callUniqueId + '').emit('callCancelled', { callUniqueId: callUniqueId });
+        socket.to(callUniqueId + '-allAnswered-sockets').emit('userLeftCall', await getUserInfo(id));
+        setUserCallStatus(id, callUniqueId, 'offCall')
+        try { socket.leave(callUniqueId + '-allAnswered-sockets'); } catch (e) { console.log('[error]', 'leave room :', e); }
+        try { socket.leave(callUniqueId); } catch (e) { console.log('[error]', 'leave room :', e); }
+        let thisCallparticipants = await getCallParticipants(callUniqueId)
+        for (let i = 0; i < connectedUsers.length; i++) {
+          for (let j = 0; j < thisCallparticipants.length; j++) {
+            if (connectedUsers[i].id == thisCallparticipants[j].userID) {
+              connectedUsers[i].socket.emit
+              socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
+            }
+          }
+        }
+      }
+      ///////////////////////
+
       console.log(data)
       if (callTo === undefined || audio === undefined || video === undefined || group === undefined || fromChat === undefined) return console.log("invalid call performed by user ID:", id)
 
@@ -333,133 +354,69 @@ io.on('connection', (socket) => {
       let callUniqueId = makeid(20)
       db.query("INSERT INTO `calls`(`callUniqueId`, `initiatorId`, `destinationId`, `destinationType`, `endTime`, `callChatId`) VALUES (?,?,?,?,?,?)",
         [callUniqueId, id, callTo, groupPresentation, null, chatPresentation], async (err, callInserted) => {
-
           if (err) return console.log("Unable to register the call in Database", err)
           let insertedCallId = callInserted.insertId
-
-          let groupMembersToCall_fullInfo = []
           //call from individual call buttons(outside callog and outside chat)
-          if (group === false && fromChat === false) {
-            let oneToCall = await getUserInfo(callTo)
-            //callUniqueId, callId, ParticipantId, initiatorId
-            insertCallParticipant(callUniqueId, insertedCallId, callTo, id)
-            insertCallParticipant(callUniqueId, insertedCallId, id, id)
-            setUserCallStatus(id, callUniqueId, 'onCall')
-            socket.join(callUniqueId + '-allAnswered-sockets');
-            socket.emit('updateCallLog', await getCallLog(id));
-
-            for (let i = 0; i < connectedUsers.length; i++) {
-              console.log("connectedUsers--", connectedUsers[i].id)
-              if (connectedUsers[i].id == callTo && connectedUsers[i].id != id) {
-                connectedUsers[i].socket.join(callUniqueId + '');
-                console.log("--->connectedUser identified", connectedUsers[i].id)
-              }
-              if (connectedUsers[i].id == callTo) {
-                socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
-              }
-            }
-            //send to all other connected users an incoming call
-            socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: [oneToCall, await getUserInfo(id)] });
-            socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: [oneToCall, await getUserInfo(id)] });
-            socket.join(callUniqueId + '');
-
-            return;
-          }
+          if (group === false && fromChat === false) { let oneToCall = await getUserInfo(callTo); initiateCall([oneToCall, await getUserInfo(id)]); return; }
           switch (chatPresentation) {
-            //call from Chat
-            case 0:
+            case 0:  //call from Chat
               let groupMembersToCall = await getParticipantArray(callTo)
-
-              groupMembersToCall.forEach(callParticipant => {
-                insertCallParticipant(callUniqueId, insertedCallId, callParticipant.userID, id)
-              })
-
-              socket.join(callUniqueId + '-allAnswered-sockets'); //join a room for answered call people
-              setUserCallStatus(id, callUniqueId, 'onCall') //register myself in the database that i am on this call
-              socket.emit('updateCallLog', await getCallLog(id)); //send myself an update in the call log
-
-              for (let i = 0; i < groupMembersToCall.length; i++) {
-                console.log("groupMembersToCall", groupMembersToCall[i].userID)
-
-                for (let j = 0; j < connectedUsers.length; j++) {
-                  console.log("connectedUsers", connectedUsers[j].id)
-                  if (groupMembersToCall[i].userID == connectedUsers[j].id && groupMembersToCall[i].userID != id) { //&& groupMembersToCall[i].userID != id will eliminate my other onnected computers from reciving my call
-                    socket.to(connectedUsers[j].socket.id).emit('incomingCall', {
-                      callUniqueId: callUniqueId,
-                      callType: videoPresentation === 1 ? "video" : "audio",
-                      caller: await getUserInfo(id),
-                      allUsers: groupMembersToCall,
-                      myInfo: await getUserInfo(connectedUsers[j].id),
-                      callTitle: 'Untitled Call'
-                    });
-                    console.log("--->connectedUser identified", connectedUsers[j].id)
-                    groupMembersToCall_fullInfo.push({
-                      peerId: connectedUsers[j].callId,
-                      userProfileIdentifier: groupMembersToCall[i]
-                    })
-                    connectedUsers[j].socket.join(callUniqueId + '');
-                  }
-                  //update callog for each connected user
-                  if (groupMembersToCall[i].userID == connectedUsers[j].id) {
-                    socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id));
-                  }
-                }
-              }
-              //send to all other connected users an incoming call
-              //socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall });
-              socket.emit('prepareCallingOthers', { callUniqueId, callType: videoPresentation === 1 ? "video" : "audio", groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall, callTitle: 'Untitled Call' });
-              socket.join(callUniqueId + '');
-
+              initiateCall(groupMembersToCall)
               break;
-
-            case 1:
-              //call from callogs
+            case 1: //call from callogs
               let existingCallParticipants = await getCallParticipants(previousCallId)
-
-              existingCallParticipants.forEach(callParticipant => {
-                insertCallParticipant(callUniqueId, insertedCallId, callParticipant.userID, id)
-              })
-
-              socket.join(callUniqueId + '-allAnswered-sockets'); //caller join the place for answered members
-              setUserCallStatus(id, callUniqueId, 'onCall') //register the caller in the database that he is on call
-              socket.emit('updateCallLog', await getCallLog(id)); //update caller's callog
-
-              for (let i = 0; i < existingCallParticipants.length; i++) {
-                console.log("groupMembersToCall", existingCallParticipants[i].userID)
-                for (let j = 0; j < connectedUsers.length; j++) {
-                  console.log("connectedUsers", connectedUsers[j].id)
-
-                  if (existingCallParticipants[i].userID == connectedUsers[j].id && existingCallParticipants[i].userID != id) { //&& existingCallParticipants[i].userID != id will eliminate my other onnected computers from reciving my call
-                    console.log("--->connectedUser identified", connectedUsers[j].id)
-                    groupMembersToCall_fullInfo.push(
-                      {
-                        peerId: connectedUsers[j].callId,
-                        userProfileIdentifier: existingCallParticipants[i]
-                      }
-                    )
-                    connectedUsers[j].socket.join(callUniqueId + '');
-                  }
-                  if (existingCallParticipants[i].userID == connectedUsers[j].id) {
-                    socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id)); // update callee callog
-                  }
-                }
-              }
-              socket.to(callUniqueId + '').emit('incomingCall', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: existingCallParticipants });
-              socket.emit('prepareCallingOthers', { callUniqueId, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: existingCallParticipants });
-              socket.join(callUniqueId + '');
-
-
-
+              initiateCall(existingCallParticipants)
               break;
             default:
+              let thisUser = await getCallParticipants(id)
+              initiateCall([thisUser])
               break;
           }
+          async function initiateCall(groupMembersToCall) {
+            let groupMembersToCall_fullInfo = []
+            groupMembersToCall.forEach(callParticipant => { insertCallParticipant(callUniqueId, insertedCallId, callParticipant.userID, id) })
+            socket.join(callUniqueId + '-allAnswered-sockets'); //join a room for answered call people
+            socket.join(callUniqueId + '');
+            setUserCallStatus(id, callUniqueId, 'onCall') //register myself in the database that i am on this call
+            for (let j = 0; j < connectedUsers.length; j++) { if (connectedUsers[j].id == id) { socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id)); } } //send myself an update in the call log
+            for (let i = 0; i < groupMembersToCall.length; i++) {
+              console.log("groupMembersToCall", groupMembersToCall[i].userID)
+              for (let j = 0; j < connectedUsers.length; j++) {
+                console.log("connectedUsers", connectedUsers[j].id)
+                if (groupMembersToCall[i].userID == connectedUsers[j].id && groupMembersToCall[i].userID != id) { //&& groupMembersToCall[i].userID != id will eliminate my other onnected computers from reciving my call
+                  socket.to(connectedUsers[j].socket.id).emit('incomingCall', {
+                    callUniqueId: callUniqueId,
+                    callType: video == true ? "video" : "audio",
+                    caller: await getUserInfo(id),
+                    allUsers: groupMembersToCall,
+                    myInfo: await getUserInfo(connectedUsers[j].id),
+                    callTitle: 'Untitled Call'
+                  });
+                  console.log("--->connectedUser identified", connectedUsers[j].id)
+                  groupMembersToCall_fullInfo.push({ peerId: connectedUsers[j].callId, userProfileIdentifier: groupMembersToCall[i] })
+                  connectedUsers[j].socket.join(callUniqueId + '');
+                }
+                if (groupMembersToCall[i].userID == connectedUsers[j].id) { socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id)); } //update callog for each connected user
+              }
+            }
+            socket.emit('prepareCallingOthers', { callUniqueId, callType: videoPresentation == 1 ? "video" : "audio", groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall, callTitle: 'Untitled Call' });
+          }
         })
-      console.log("initialting call", data)
     })
 
-    socket.on('cancelCall', (callUniqueId) => { // if the caller decides to close the call => end the call for everybody
-      socket.to(callUniqueId + '').emit('callCancelled');
+    socket.on('cancelCall', async (callUniqueId) => { // if the caller decides to close the call => end the call for everybody
+      let access = await checkCallAccess(id, callUniqueId)
+      if (access != true) { return console.log('User :', id, ' cannot cancel call because he has no access to this call :', callUniqueId) }
+
+      socket.to(callUniqueId + '').emit('callCancelled', { callUniqueId: callUniqueId });
+      setUserCallStatus(id, callUniqueId, 'offCall')
+      let consernedMembers = await getCallParticipants(callUniqueId)
+      let memberIDArray = consernedMembers.map(member => member.userID)
+      for (let j = 0; j < connectedUsers.length; j++) {
+        if (memberIDArray.includes(connectedUsers[j].id)) {
+          socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id));
+        }
+      } //send myself an update in the call log
     })
 
     socket.on('answerCall', async data => {
@@ -496,6 +453,13 @@ io.on('connection', (socket) => {
 
       setCallAsMissed(id, callUniqueId)
       socket.to(callUniqueId + '-allAnswered-sockets').emit('callNotAnswered', { callUniqueId: callUniqueId, userInfo: await getUserInfo(id) });
+      let consernedMembers = await getCallParticipants(callUniqueId)
+      let memberIDArray = consernedMembers.map(member => member.userID)
+      for (let j = 0; j < connectedUsers.length; j++) {
+        if (memberIDArray.includes(connectedUsers[j].id)) {
+          socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id));
+        }
+      } //send myself an update in the call log
     })
     socket.on('callRejected', async callUniqueId => {
       let callAccess = await checkCallAccess(id, callUniqueId)
@@ -506,10 +470,13 @@ io.on('connection', (socket) => {
     })
 
     socket.on('leaveCall', async data => {
+      let access = await checkCallAccess(id, data.callUniqueId)
+      if (access != true) { return console.log('User :', id, ' cannot leave the call because he has no access to this call :', data.callUniqueId) }
+
       socket.to(data.callUniqueId + '-allAnswered-sockets').emit('userLeftCall', await getUserInfo(id));
       setUserCallStatus(id, data.callUniqueId, 'offCall')
       try { socket.leave(data.callUniqueId + '-allAnswered-sockets'); } catch (e) { console.log('[error]', 'leave room :', e); }
-
+      try { socket.leave(data.callUniqueId); } catch (e) { console.log('[error]', 'leave room :', e); }
       let thisCallparticipants = await getCallParticipants(data.callUniqueId)
       for (let i = 0; i < connectedUsers.length; i++) {
         for (let j = 0; j < thisCallparticipants.length; j++) {
@@ -521,29 +488,22 @@ io.on('connection', (socket) => {
       }
     })
     // search to add new users to call
-    socket.on('searchPeopleToInviteToCall', (callSearchData) => {
+    socket.on('searchPeopleToInviteToCall', async (callSearchData) => {
+      let access = await checkCallAccess(id, callSearchData.callUniqueId)
+      if (access != true) { return console.log('User :', id, ' cannot search to add a person to call because he has no access to this call :', identifications.callUniqueId) }
       let { callUniqueId, searchText } = callSearchData
       console.log('callSearchData', callSearchData)
       db.query("SELECT `id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchText + '%', '%' + searchText + '%', '%' + searchText + '%'], async (err, userSearchResult) => {
         if (err) return console.log(err)
         let thisCallparticipantsInFull = await getCallParticipants(callUniqueId)
         let thisCallparticipants = thisCallparticipantsInFull.map(participant => { return participant.userID }) //get all people who are allowed in this call
-        // let foundUsers = thisCallparticipants.filter(user => {
-        //   !(userSearchResult.map(result => { result.id }).includes(user.userID)) && user.userID != id
-        // })
         foundUsers = []
         for (let i = 0; i < userSearchResult.length; i++) {
           const userID = userSearchResult[i].id;
-          if (!thisCallparticipants.includes(userID) && userID != id) {
-            foundUsers.push(await getUserInfo(userID))
-          }
+          if (!thisCallparticipants.includes(userID) && userID != id) { foundUsers.push(await getUserInfo(userID)) }
         }
-        console.log('thisCallparticipants', thisCallparticipants)
-        console.log('userSearchResult', userSearchResult)
-        console.log('id', id)
         socket.emit('searchPeopleToInviteToCall', foundUsers)
       })
-
     })
     socket.on('addUserToCall', async identifications => {
       let access = await checkCallAccess(id, identifications.callUniqueId)
@@ -614,7 +574,6 @@ io.on('connection', (socket) => {
           }
           insertEventParticipant(EventInsertResult.insertId, id)
 
-
           let today = new Date()
 
           let lastYear = new Date()
@@ -645,7 +604,6 @@ io.on('connection', (socket) => {
       if (access != true) { return console.log('User :', id, ' cannot Disable Video he has no access to this call :', callUniqueId) }
       socket.to(callUniqueId + '-allAnswered-sockets').emit('videoStateChange', { userID: id, state: state })
     })
-
     socket.on('audioStateChange', async changeData => {
       let { callUniqueId, state } = changeData
       let access = await checkCallAccess(id, callUniqueId)
@@ -655,17 +613,13 @@ io.on('connection', (socket) => {
     socket.on('stopScreenSharing', async callUniqueId => {
       let access = await checkCallAccess(id, callUniqueId)
       if (access != true) { return console.log('User :', id, ' cannot stop screen sharing because he has no access to this call :', callUniqueId) }
-
       socket.to(callUniqueId + '-allAnswered-sockets').emit('stoppedScreenSharing', { userID: id, callUniqueId: callUniqueId })
-      // socket.to(data.callUniqueId + '-allAnswered-sockets').emit('user-disconnected', data.myPeerId);
     })
     socket.on('new-incall-message', async (messageData) => {
       let { callUniqueId, message } = messageData
       let access = await checkCallAccess(id, callUniqueId)
       if (access != true) { return console.log('User :', id, ' text in this call because he has no access to this call :', callUniqueId) }
-
       io.sockets.in(callUniqueId + '-allAnswered-sockets').emit('new-incall-message', { userInfo: await getUserInfo(id), content: message, time: new Date() });
-
     })
     ///////////////
     socket.on('disconnecting', () => {
@@ -679,6 +633,14 @@ io.on('connection', (socket) => {
           socket.to(room).emit('userDisconnectedFromCall', { userInfo: await getUserInfo(id), room: room })
           let callUniqueId = room.replace('-allAnswered-sockets', '');
           setUserCallStatus(id, callUniqueId, 'offCall')
+
+          let consernedMembers = await getCallParticipants(callUniqueId)
+          let memberIDArray = consernedMembers.map(member => member.userID)
+          for (let j = 0; j < connectedUsers.length; j++) {
+            if (memberIDArray.includes(connectedUsers[j].id)) {
+              socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id));
+            }
+          } //send myself an update in the call log
         }
       })
     })
@@ -926,8 +888,8 @@ const insertCallParticipant = (callUniqueId, callId, ParticipantId, initiatorId)
     })
 }
 const setCallAsMissed = (userId, callUniqueId) => {
-  db.query("UPDATE `callparticipants` SET `missed`=? WHERE `callUniqueId` = ?",
-    [userId, callUniqueId], async (err, changeResult) => {
+  db.query("UPDATE `callparticipants` SET `missed`=? WHERE `callUniqueId` = ? AND participantId = ?",
+    [1, callUniqueId, userId], async (err, changeResult) => {
       if (err) return console.log(err)
     })
 }
@@ -950,6 +912,7 @@ function getCallLog(userId) {
       if (err) return console.log(err)
       let callsArray = myCallResults.map(async call => ({
         ...call,
+        callTitle: 'Untitled call',
         initiator: await getUserInfo(call.initiatorId),
         participantsOnCall: await getOnCallPeopleByStatus(call.callUniqueId, 1),
         participantsOffCall: await getOnCallPeopleByStatus(call.callUniqueId, 0)
@@ -984,6 +947,17 @@ function getOnCallPeopleByStatus(callUniqueId, status) {
           return await getUserInfo(participant.participantId)
         })
         const resolved = await Promise.all(unresolvedUsersArr)
+        resolve(resolved)
+      });
+  })
+}
+
+function getStillParticipatingCalls(userId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `callUniqueId` FROM `callparticipants` WHERE `participantId` = ? AND `stillParticipating` = ?',
+      [userId, 1], async (err, callParticipants) => {
+        if (err) return console.log(err)
+        const resolved = callParticipants.map(participant => participant.callUniqueId)
         resolve(resolved)
       });
   })

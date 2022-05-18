@@ -120,54 +120,117 @@ let functionalityOptionsArray = [
     })
   })();
   (() => {
+    //------------------------ Call Details - 
+    let callDetailsPanel = document.getElementById('callDetails-section')
+    callDetailsPanel.textContent = ''
+
+    //-----------------------
     let callHistoryPage = document.getElementById("callHistoryPage")
     callHistoryPage.textContent = ''
     let callHistoryArray = []
 
-    let incominPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [ createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [ createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Incoming' })] }) ]});
-    let outgoingPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [ createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [ createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Outgoing' })] }) ]});
-    let missedPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [ createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [ createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Missed' })] }) ]});
-    let header = createElement({ elementType: 'div', class: 'header', childrenArray: [ createElement({ elementType: 'div', class: 'pillsContainer', childrenArray: [incominPill, outgoingPill, missedPill] }) ] })
-    
-    let section_header = createElement({ elementType: 'div', class: 'section-header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Calls'})]})
-    let list_call_section_content = createElement({ elementType: 'div', class: 'list-call-section-content'})
-    let callHistoryPageBody = createElement({ elementType: 'div', class: 'callHistoryPageBody', childrenArray: [ createElement({ elementType: 'div', class: 'list-call-section', childrenArray: [section_header, list_call_section_content]})]})
-    
-    callHistoryPage.append(header,callHistoryPageBody)
+    let incominPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Incoming' })] })] });
+    let outgoingPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Outgoing' })] })] });
+    let missedPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Missed' })] })] });
+    let header = createElement({ elementType: 'div', class: 'header', childrenArray: [createElement({ elementType: 'div', class: 'pillsContainer', childrenArray: [incominPill, outgoingPill, missedPill] })] })
+
+    let section_header = createElement({ elementType: 'div', class: 'section-header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Calls' })] })
+    let list_call_section_content = createElement({ elementType: 'div', class: 'list-call-section-content' })
+    let callHistoryPageBody = createElement({ elementType: 'div', class: 'callHistoryPageBody', childrenArray: [createElement({ elementType: 'div', class: 'list-call-section', childrenArray: [section_header, list_call_section_content] })] })
+
+    callHistoryPage.append(header, callHistoryPageBody)
     socket.on('updateCallLog', (calls) => {
       list_call_section_content.textContent = ''
-      calls.forEach(call => {
+      calls.forEach(logUpdate => {
         let callogClass = "";
         let callDirection;
-        if (call.participantsOnCall.length > 0) callogClass = "ongoing";
+        if (logUpdate.participantsOnCall.length > 0) callogClass = "ongoing";
         let profilePicture;
-        if(call.initiator.profilePicture == null) profilePicture = createElement({ elementType: 'div', textContent:call.initiator.name.charAt(0) + call.initiator.surname.charAt(0)})
-        else profilePicture = createElement({ elementType: 'img', src: call.initiator.profilePicture})
+        if (logUpdate.initiator.profilePicture == null) profilePicture = createElement({ elementType: 'div', textContent: logUpdate.initiator.name.charAt(0) + logUpdate.initiator.surname.charAt(0) })
+        else profilePicture = createElement({ elementType: 'img', src: logUpdate.initiator.profilePicture })
 
-        if (call.missed == 1) { callogClass = "missed";
-          callDirection = createElement({ elementType: 'div', class:'callType red', childrenArray:[ createElement({ elementType: 'i', class: 'bx bxs-phone-off'}), createElement({ elementType: 'p', textContent:'Missed call'})]})
+        if (logUpdate.missed == 1) {
+          callDirection = createElement({ elementType: 'div', class: 'callType red', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Missed call' })] })
+        }
+        else if (logUpdate.participantId == logUpdate.initiatorId) {
+          callDirection = createElement({ elementType: 'div', class: 'callType green', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-outgoing' }), createElement({ elementType: 'p', textContent: 'Outgoing call' })] })
+        }
+        else {
+          callDirection = createElement({ elementType: 'div', class: 'callType blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Incoming call' })] })
         }
 
-        let audioAgainButton = createElement({ elementType: 'button', childrenArray:[createElement({ elementType: 'i', class: 'bx bxs-phone'})], onClick: () =>{ call(searchPerson.userID, true, false, true, false, call.callUniqueId) }})
-        let videoAgainButton = createElement({ elementType: 'button', childrenArray:[createElement({ elementType: 'i', class: 'bx bxs-video'})], onClick: () =>{ call(searchPerson.userID, true, true, true, false, call.callUniqueId) }})
-        let moreButton = createElement({ elementType: 'button', childrenArray:[createElement({ elementType: 'i', class: 'bx bx-chevron-right'})], onClick: () =>{
+        let audioAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(logUpdate.callUniqueId, true, false, true, false, logUpdate.callUniqueId) } })
+        let videoAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(logUpdate.callUniqueId, true, true, true, false, logUpdate.callUniqueId) } })
 
-        }})
+        let moreIcon = createElement({ elementType: 'i', class: 'bx bx-chevron-right' })
+        let moreButton = createElement({
+          elementType: 'button', childrenArray: [moreIcon], onclick: () => {
+            callDetailsPanel.textContent = ''
+            let callDirectionIcon;
+            if (logUpdate.missed == 1) { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-off' }) }
+            else if (logUpdate.participantId == logUpdate.initiatorId) { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-outgoing' }) }
+            else { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }) }
 
-        let call_log = createElement({ elementType: 'div', class: 'call-log '+ callogClass, childrenArray:[
-          createElement({elementType: 'div', class: 'line1', childrenArray: [
-            createElement({elementType: 'div', class: 'picture', childrenArray: [profilePicture]}),
-            createElement({elementType: 'div', class: 'nameAndType', childrenArray: [
-              createElement({elementType: 'div', class: 'callMembers', textContent: call.initiator.name + ' ' + call.initiator.surname}),
-              callDirection
-            ]}), 
-            createElement({ elementType: 'div', class:'dateTime', textContent: new Date(call.startDate).toString('YYYY-MM-dd').substring(0, 24)}),
-            createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [audioAgainButton, videoAgainButton, moreButton]})
-          ]})
-        ]})
+            let detailsPanel_header = createElement({ elementType: 'div', class: 'section-header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Call details' })] })
+            let topDetailsCard = createElement({ elementType: 'div', class: 'topDetailsCard', childrenArray: [createElement({ elementType: 'div', class: 'circle', childrenArray: [callDirectionIcon] })] })
+            let callTitleContent = createElement({
+              elementType: 'div', class: 'callTitleContent', childrenArray: [
+                createElement({ elementType: 'h1', textContent: logUpdate.callTitle })]
+            })
+            let drop_button = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })] })
+            let allPartifipantDiv = createElement({
+              elementType: 'div', class: 'allPartifipantDiv', childrenArray: [
+                createElement({ elementType: 'div', class: 'header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Participants' }), drop_button] })
+              ]
+            })
+            let callParticipantsDiv = createElement({ elementType: 'div', class: 'callParticipants' })
+            let details_section_content = createElement({ elementType: 'div', class: 'details-section-content', childrenArray: [topDetailsCard, callTitleContent, allPartifipantDiv, callParticipantsDiv] })
+            callDetailsPanel.append(detailsPanel_header, details_section_content)
+            logUpdate.participantsOnCall.forEach(participant => {
+              let participantElement;
+              let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+              let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+              let actions = [
+                { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null) } },
+                { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null) } },
+              ];
+              participantElement = userForAttendanceList(participant, actions)
+              callParticipantsDiv.append(participantElement)
+            })
+            logUpdate.participantsOffCall.forEach(participant => {
+              let participantElement;
+              let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+              let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+              let actions = [
+                { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null) } },
+                { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null) } },
+              ];
+              participantElement = userForAttendanceList(participant, actions)
+              callParticipantsDiv.append(participantElement)
+            })
+          }
+        })
+
+        let call_log = createElement({
+          elementType: 'div', class: 'call-log ' + callogClass, childrenArray: [
+            createElement({
+              elementType: 'div', class: 'line1', childrenArray: [
+                createElement({ elementType: 'div', class: 'picture', childrenArray: [profilePicture] }),
+                createElement({
+                  elementType: 'div', class: 'nameAndType', childrenArray: [
+                    createElement({ elementType: 'div', class: 'callMembers', textContent: logUpdate.initiator.name + ' ' + logUpdate.initiator.surname }),
+                    callDirection
+                  ]
+                }),
+                createElement({ elementType: 'div', class: 'dateTime', textContent: new Date(logUpdate.startDate).toString('YYYY-MM-dd').substring(0, 24) }),
+                createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [audioAgainButton, videoAgainButton, moreButton] })
+              ]
+            })
+          ]
+        })
         list_call_section_content.append(call_log)
       })
-      
+
     })
 
     // socket.on('updateCallLog', (initialCallLog) => {
@@ -207,11 +270,11 @@ let functionalityOptionsArray = [
     //   let callLogDiv = document.getElementById('list-call-section-content')
     //   callLogDiv.innerHTML = ``;
     //   initialCallLog.forEach(callLog => {
-    
+
     //     let uniqueId_call = callLog.callUniqueId;
     //     let callogClass = "";
     //     if (callLog.participantsOnCall.length > 0) callogClass = "ongoing";
-    
+
     //     let callDate = new Date(callLog.startDate)
     //     let prPicture = callLog.initiator.profilePicture ? "<img src='" + callLog.initiator.profilePicture + "'alt='" + callLog.initiator.name.charAt(0) + callLog.initiator.surname.charAt(0) + "'>" : "<div>" + callLog.initiator.name.charAt(0) + callLog.initiator.surname.charAt(0) + "</div>"
     //     let callDirection = callLog.initiator.userID == mySavedID ? "<div class='callType green'><i class='bx bxs-phone-outgoing'></i>Outgoing</div>" : "<div class='callType blue'><i class='bx bxs-phone-incoming'></i>Incoming</div>";
@@ -256,7 +319,7 @@ let functionalityOptionsArray = [
     //         </div>`
     //       }
     //     })
-    
+
     //     return userTemplate;
     //   }
     //   document.querySelectorAll(".audioFromCallog").forEach(log => {
@@ -286,10 +349,10 @@ let functionalityOptionsArray = [
     //   })
     // })
 
-    function callHistoryrefresh(){
+    function callHistoryrefresh() {
       for (let i = callHistoryArray.length; i < callHistoryArray.length; i--) {
         const call = callHistoryArray[i];
-        
+
       }
     }
     $(".pill").click(function () { $(this).toggleClass("selectedPill"); });
@@ -1003,7 +1066,7 @@ function openChat(openChatInfo) {
   if (messagesArray.length < 1) {
     messagescontainer.innerHTML = `
     <div class="c-openchat__selectConversation">
-      <img src="/images/yourMessagesWillAppearHere.jpeg" alt="">
+      <img src="/images/createChat.png" alt="">
       <h3> Start typing <i class='bx bxs-keyboard'></i> </br> Your messages will appear here ...</h3>
     </div>
     `
@@ -1366,9 +1429,9 @@ socket.on('searchPerson', (searchPeople) => {
             <p class="resultsquote">${searchPerson.role}</p>
           </div>
           <div class="universalCallButtons">
-            <button id="${searchPerson.userID}chatButton" class='searchChatButton'><i class='bx bxs-message-square-add' ></i></button>
+            <button id="${searchPerson.userID}chatButton" class='searchChatButton'><i class='bx bxs-message-square-dots' ></i></button>
             <button id="${searchPerson.userID}audioButton" class='searchAudioButton'><i class='bx bxs-phone' ></i></button>
-            <button id="${searchPerson.userID}videoButton" class='searchVideoButton'><i class='bx bxs-video-recording' ></i></button>
+            <button id="${searchPerson.userID}videoButton" class='searchVideoButton'><i class='bx bxs-video' ></i></button>
           </div>
         </div>
       </div>
@@ -1603,14 +1666,6 @@ function setUserOffline(id, room) {
 
 /////////////////////Call filtering////////////////////////
 
-
-const callParticipantsBtn = document.getElementById("callParticipantsBtn")
-const callParticipantsDiv = document.getElementById("callParticipantsDiv")
-callParticipantsBtn.addEventListener("click", () => {
-  callParticipantsDiv.classList.toggle("displayNoneToggle")
-  callParticipantsBtn.classList.toggle("rotate90")
-})
-
 /////////////////////////////Call LOG/////////////////////
 
 /////////////////////////////////in call controls//////////////////
@@ -1695,13 +1750,14 @@ myPeer.on('open', myPeerId => {
   let myScreenViewers = [];
   let caller_me;
   let videoCoverDiv;
-  let awaitedUserDivs;
+  let awaitedUserDivs = [];
   let optionalResolutions = [{ minWidth: 320 }, { minWidth: 640 }, { minWidth: 1024 }, { minWidth: 1280 }, { minWidth: 1920 }, { minWidth: 2560 }];
   let participants = [];
   let rightPanel;
   let leftPanel;
   let topBar;
   let bottomPanel;
+  let callNotifications = []
 
   socket.on('prepareCallingOthers', initiatedCallInfo => {
     navigator.getUserMedia({ video: { optional: optionalResolutions }, audio: true }, stream => {
@@ -1729,14 +1785,17 @@ myPeer.on('open', myPeerId => {
         if (targetedUser == undefined) {
           let ringTextForMe = user.userID === caller.userID ? 'Waiting ...' : 'Offline';
           let ringIconForMe = user.userID === caller.userID ? 'bx bxs-hourglass' : 'bx bxs-phone-off';
+
           let offlineIcon = createElement({ elementType: 'i', class: ringIconForMe })
           let offlineText = createElement({ elementType: 'p', textContent: ringTextForMe })
           let offlineButton = createElement({ elementType: 'button', childrenArray: [offlineIcon, offlineText] })
           let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
           let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
-          let actions = [
-            { element: offlineButton, functionCall: () => { } },
-            { element: chatButton, functionCall: () => { console.log('chat with user', userID) } }]
+
+          let actions
+          if (user.userID === caller.userID) actions = [{ element: offlineButton, functionCall: () => { } }]
+          else actions = [{ element: offlineButton, functionCall: () => { } }, { element: chatButton, functionCall: () => { console.log('chat with user', userID) } }]
+
           return { userID: user.userID, div: userForAttendanceList(user, actions) }
         }
         else {
@@ -1755,7 +1814,6 @@ myPeer.on('open', myPeerId => {
           return { userID: user.userID, div: userForAttendanceList(user, actions) }
         }
       })
-      console.log("awaitedUserDivs", awaitedUserDivs)
       //create Cover waiting
       videoCoverDiv = videoConnectingScreen(prepareVideoCoverDiv(allUsers, caller, 'Dialling...', awaitedUserDivs))
       mainVideoDiv.prepend(videoCoverDiv.videoCoverDiv)
@@ -1895,7 +1953,7 @@ myPeer.on('open', myPeerId => {
     chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
 
     let addeduserDiv = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole, ringButton, chatButton] })
-    if (videoCoverDiv.calleesDiv) videoCoverDiv.calleesDiv.prepend(addeduserDiv)
+    if (videoCoverDiv) if (videoCoverDiv.calleesDiv) videoCoverDiv.calleesDiv.prepend(addeduserDiv)
     if (awaitedUserDivs) awaitedUserDivs.push({ userID: userInfo.userID, div: addeduserDiv })
 
     //add this new users to the attendance list
@@ -1935,8 +1993,18 @@ myPeer.on('open', myPeerId => {
       delay: 60000,
       tone: 'call'
     })
-    socket.on('callCancelled', () => { notification.notificationStop(); receivedUsers = 0; })
-
+    notification.callUniqueId = callUniqueId
+    callNotifications.push(notification)
+  })
+  socket.on('callCancelled', (callInfo) => {
+    console.log('call cancelled', callInfo)
+    let callUniqueId = callInfo.callUniqueId
+    for (let i = 0; i < callNotifications.length; i++) {
+      if (callNotifications[i].callUniqueId == callUniqueId) {
+        callNotifications[i].notificationStop()
+        callNotifications.splice(i, 1)
+      }
+    }
   })
 
   function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers, callTitle) {
@@ -2637,11 +2705,14 @@ myPeer.on('open', myPeerId => {
     if (myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
     console.log('participants before leaving the call', participants)
     for (let i = 0; i < participants.length; i++) { removePeer(participants[i].userInfo.userID) }
-    mySideVideoDiv.remove()
-    rightPanel.participantsBox.textContent = ''
-    if (globalMainVideoDiv) globalMainVideoDiv.textContent = ''
-    topBar.callScreenHeader.textContent = ''
-    bottomPanel.textContent = ''
+    mySideVideoDiv.remove();
+    rightPanel.participantsBox.textContent = '';
+    if (globalMainVideoDiv) globalMainVideoDiv.textContent = '';
+    awaitedUserDivs = [];
+    topBar.callScreenHeader.textContent = '';
+    bottomPanel.textContent = '';
+    allUsersArray = []
+    leftPanel.clearAttendanceList()
   }
   function createRightPartPanel() {
     let participantsCount = 0;
@@ -3047,11 +3118,20 @@ myPeer.on('open', myPeerId => {
       refreshAttendaceList()
       updateNumbers()
     }
+    function clearAttendanceList() {
+      allUsersArray = []
+      componentsArray = []
+      refreshAttendaceList()
+      updateNumbers()
+      presentMembersDiv.textContent = ''
+      absentMembersDiv.textContent = ''
+    }
     return {
       leftPanel: ongoingCallLeftPart,
       addUser: addUser, // function that accepts (userInfo)
       updateUserStatus: updateUserStatus, // function accepts(userInfo, userStatus) as arguments
-      updateComponentsArray: updateComponentsArray
+      updateComponentsArray: updateComponentsArray,
+      clearAttendanceList: clearAttendanceList
     }
   }
   function createBottomPart() {

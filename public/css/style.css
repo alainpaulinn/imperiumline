@@ -2530,6 +2530,7 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  color: white;
 }
 
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture img,
@@ -2637,7 +2638,12 @@ body {
 }
 
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .ongoing {
-  background-color: #bed6ff;
+  background-color: #003061;
+  color: white;
+}
+
+.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .ongoing:hover {
+  background-color: #002348;
 }
 
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons {
@@ -2678,10 +2684,14 @@ body {
 
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button i {
   font-size: 18px;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
 }
 
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button:hover {
   color: dark(#ebf0f6);
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
 }
 
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .picture {
@@ -2747,6 +2757,13 @@ body {
 
 .c-call_log_panel .callDetails-section .details-section-content {
   border-radius: 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
 .c-call_log_panel .callDetails-section .details-section-content .topDetailsCard {
@@ -2871,6 +2888,14 @@ body {
 
 .c-call_log_panel .callDetails-section .details-section-content .callParticipants {
   width: 100%;
+  overflow-y: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
 .c-call_log_panel .callDetails-section .details-section-content .callParticipants .callParticipant {
@@ -2952,6 +2977,7 @@ body {
   display: none;
   width: 100%;
   height: 100%;
+  background-color: #ebf0f6;
 }
 
 .c-ongoing_call_panel .leftPart {
@@ -3912,6 +3938,7 @@ body {
   display: -ms-flexbox;
   display: flex;
   width: 100%;
+  gap: 0.5rem;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
 }
@@ -4137,6 +4164,104 @@ body {
   display: none;
 }
 
+.listMember {
+  background-color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: .5rem;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+}
+
+.listMember .memberProfilePicture {
+  border: 1px solid #003061;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 15px;
+  text-transform: uppercase;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: white;
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
+
+.listMember .memberNameRole {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  overflow: hidden;
+}
+
+.listMember .memberNameRole .memberName {
+  font-weight: bolder;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listMember .memberNameRole .memberRole {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listMember button {
+  color: #5b5e61;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 1rem;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  border-radius: 15px;
+  background-color: #ebf0f6;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin-left: .5rem;
+}
+
+.listMember button i {
+  font-size: 18px;
+}
+
+.listMember button p {
+  margin-left: .5rem;
+}
+
+.listMember button:hover {
+  background-color: #d9e3ee;
+}
+
 .blue {
   color: #0069FF;
 }
@@ -4178,6 +4303,11 @@ body {
 
 .white {
   color: white !important;
+}
+
+.rotate180 {
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
 }
 
 .noSelect, .pillsContainer .pill, .pillsContainer .pill .pill-label, .pillsContainer .pill .pill-icon {
@@ -4369,6 +4499,7 @@ body {
       -ms-flex-align: end;
           align-items: flex-end;
   gap: 0.5rem;
+  transition: all 0.4s;
 }
 
 .universalCallButtons button {

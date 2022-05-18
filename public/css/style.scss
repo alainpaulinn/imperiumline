@@ -2211,6 +2211,7 @@ body {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                color: white;
 
                 img,
                 div {
@@ -2297,7 +2298,11 @@ body {
           }
 
           .ongoing {
-            background-color: #bed6ff;
+            background-color: $notification;
+            color: white;
+            &:hover {
+              background-color: darken($notification,5%)
+            }
           }
 
           .universalCallButtons {
@@ -2326,10 +2331,12 @@ body {
 
               i {
                 font-size: 18px;
+                transition: all 0.4s;
               }
 
               &:hover {
                 color: dark($sidepanel);
+                transition: all 0.4s;
               }
             }
           }
@@ -2381,7 +2388,8 @@ body {
 
     .details-section-content {
       border-radius: $borderRadius;
-
+      display: flex;
+      flex-direction: column;
       .topDetailsCard {
         display: flex;
         justify-content: center;
@@ -2472,6 +2480,9 @@ body {
 
       .callParticipants {
         width: 100%;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
 
         .callParticipant {
           width: 100%;
@@ -2544,6 +2555,7 @@ body {
   display: none;
   width: 100%;
   height: 100%;
+  background-color: $sidepanel;
 
   .leftPart {
     width: 350px;
@@ -3293,6 +3305,7 @@ body {
       padding: 1rem;
       display: flex;
       width: 100%;
+      gap: 0.5rem;
       box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
 
       .rightHeaderItem {
@@ -3470,6 +3483,81 @@ body {
 }
 
 ////////////////////FINIFSH ONGOING CALL PAGE///////////
+.listMember {
+  background-color: white;
+  display: flex;
+  padding: .5rem;
+  align-items: center;
+  height: 100%;
+
+
+  .memberProfilePicture {
+    border: 1px solid $notification;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    border-radius: $borderRadius;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: #003061;
+    box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+    transition: all 0.4s;
+    flex-shrink: 0;
+  }
+
+  .memberNameRole {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+
+    .memberName {
+      font-weight: bolder;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .memberRole {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+  }
+
+  button {
+    color: $body;
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    transition: all 0.4s;
+    //margin: 0 0.5rem;
+    border-radius: $borderRadius;
+    background-color: $sidepanel;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    margin-left: .5rem;
+
+    i {
+      font-size: 18px;
+    }
+
+    p {
+      margin-left: .5rem;
+    }
+
+    &:hover {
+      background-color: darken($sidepanel, 5%)
+    }
+  }
+}
 
 
 .blue {
@@ -3513,6 +3601,10 @@ body {
 
 .white {
   color: white !important;
+}
+
+.rotate180 {
+  transform: rotate(180deg)
 }
 
 .noSelect {
@@ -3690,6 +3782,7 @@ body {
   margin-left: 5px;
   align-items: flex-end;
   gap: 0.5rem;
+  transition: all 0.4s;
 
   button {
     transition: all 0.4s;
