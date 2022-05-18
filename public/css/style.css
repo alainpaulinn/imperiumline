@@ -2630,7 +2630,7 @@ body {
 }
 
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log:hover {
-  background-color: #ebf0f6;
+  background-color: #f5f9fd;
 }
 
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .missed {
@@ -2764,6 +2764,7 @@ body {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  overflow-y: auto;
 }
 
 .c-call_log_panel .callDetails-section .details-section-content .topDetailsCard {

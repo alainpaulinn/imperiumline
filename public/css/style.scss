@@ -2289,7 +2289,7 @@ body {
             }
 
             &:hover {
-              background-color: $sidepanel;
+              background-color: $sidepanel-bg;
             }
           }
 
@@ -2390,6 +2390,7 @@ body {
       border-radius: $borderRadius;
       display: flex;
       flex-direction: column;
+      overflow-y: auto;
       .topDetailsCard {
         display: flex;
         justify-content: center;
