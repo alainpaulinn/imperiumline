@@ -742,6 +742,7 @@ body {
 }
 
 .c-chats {
+  height: calc(100vh - 2rem);
   margin: 1rem 0rem 1rem 1rem;
   border-radius: 15px;
   overflow: hidden;
@@ -1014,6 +1015,7 @@ body {
 }
 
 .c-openchat {
+  height: calc(100vh - 2rem);
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
@@ -2278,6 +2280,7 @@ body {
 
 .c-call_log_panel .callSearchSection {
   width: 350px;
+  height: calc(100vh - 2rem);
   background-color: white;
   border-radius: 15px;
   margin: 1rem 0rem 1rem 1rem;
@@ -2404,6 +2407,7 @@ body {
 }
 
 .c-call_log_panel .callHistoryPage {
+  height: calc(100vh - 2rem);
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2733,6 +2737,7 @@ body {
 }
 
 .c-call_log_panel .callDetails-section {
+  height: calc(100vh - 2rem);
   width: 350px;
   margin: 1rem 1rem 1rem 0rem;
   padding: 1rem;
@@ -5111,6 +5116,7 @@ body {
   margin: 1rem 0rem 1rem 1rem;
   border-radius: 15px;
   overflow: hidden;
+  height: calc(100vh - 2rem);
 }
 
 .schedule-container .selectionPanel .card {
@@ -5518,6 +5524,7 @@ body {
 .schedule-container .scheduleDetailsSection,
 .schedule-container .newScheduleDetailsSection {
   width: 350px;
+  height: calc(100vh - 2rem);
   background-color: #ebf0f6;
   margin: 1rem 1rem 1rem 0rem;
   display: -webkit-box;

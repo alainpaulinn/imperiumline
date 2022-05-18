@@ -679,6 +679,7 @@ body {
 
 .c-chats {
   //padding: 1rem 0;
+  height: calc(100vh - 2rem);
   margin: 1rem 0rem 1rem 1rem;
   border-radius: $borderRadius;
   overflow: hidden;
@@ -924,7 +925,7 @@ body {
 
 
 .c-openchat {
-
+  height: calc(100vh - 2rem);
   flex: 1;
   margin: 1rem;
   overflow: hidden;
@@ -2024,6 +2025,7 @@ body {
 
   .callSearchSection{
     width: 350px;
+    height: calc(100vh - 2rem);
     background-color: white;
     border-radius: $borderRadius;
     margin: 1rem 0rem 1rem 1rem;
@@ -2117,6 +2119,7 @@ body {
   }
 
   .callHistoryPage {
+    height: calc(100vh - 2rem);
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -2370,6 +2373,7 @@ body {
     }
   }
   .callDetails-section {
+    height: calc(100vh - 2rem);
     width: 350px;
     margin: 1rem 1rem 1rem 0rem;
     padding: 1rem;
@@ -4313,7 +4317,7 @@ body {
     margin: 1rem 0rem 1rem 1rem;
     border-radius: $borderRadius;
     overflow: hidden;
-
+    height: calc(100vh - 2rem);
     .card {
       width: 100%;
       //height: fit-content;
@@ -4661,6 +4665,7 @@ body {
   .scheduleDetailsSection,
   .newScheduleDetailsSection {
     width: 350px;
+    height: calc(100vh - 2rem);
     background-color: $sidepanel;
     // padding: 1rem;
     margin:   1rem 1rem 1rem 0rem;

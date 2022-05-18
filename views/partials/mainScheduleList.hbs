@@ -46,19 +46,6 @@
     </div>
 </div>
 <div class="app__content js-app-content">
-    <header class="app__header header">
-        <button class="header__button header__button-nav" type="button" aria-label="Open navigation"
-            data-micromodal-trigger="offcanvas"><span class="header__button-icon burger"><span
-                    class="burger__bar"></span></span></button>
-        <button class="header__button header__button-search" type="button" aria-label="Open search field">
-            <svg class="header__button-icon" width="16" height="16" viewBox="0 0 512 512" aria-hidden="true">
-                <path
-                    d="M508.5 468.9L387.1 347.5c-2.3-2.3-5.3-3.5-8.5-3.5h-13.2c31.5-36.5 50.6-84 50.6-136C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c52 0 99.5-19.1 136-50.6v13.2c0 3.2 1.3 6.2 3.5 8.5l121.4 121.4c4.7 4.7 12.3 4.7 17 0l22.6-22.6c4.7-4.7 4.7-12.3 0-17zM208 368c-88.4 0-160-71.6-160-160S119.6 48 208 48s160 71.6 160 160-71.6 160-160 160z">
-                </path>
-            </svg>
-        </button>
-        <h1 class="header__title">Schedule</h1>
-    </header>
     <div class="content__schedule schedule">
         <section class="section-day">
             <h2 class="section-day__title">
@@ -1060,21 +1047,14 @@
         overflow: hidden;
     }
 
+    .mainScheduleList{
+        height: calc(100vh - 2rem);
+    }
     /* --- app --- */
 
     .app__content {
         height: 100%;
-        -webkit-transition-property: border-radius, background-color, opacity, -webkit-box-shadow, -webkit-transform;
-        transition-property: border-radius, background-color, opacity, -webkit-box-shadow, -webkit-transform;
-        -o-transition-property: border-radius, background-color, box-shadow, opacity, transform;
-        transition-property: border-radius, background-color, box-shadow, opacity, transform;
-        transition-property: border-radius, background-color, box-shadow, opacity, transform, -webkit-box-shadow, -webkit-transform;
-        -webkit-transition-duration: .3s;
-        -o-transition-duration: .3s;
-        transition-duration: .3s;
-        -webkit-transition-timing-function: cubic-bezier(.215, .61, .355, 1);
-        -o-transition-timing-function: cubic-bezier(.215, .61, .355, 1);
-        transition-timing-function: cubic-bezier(.215, .61, .355, 1);
+        overflow-y: auto;
     }
 
     /* offcanvas */
@@ -1443,185 +1423,9 @@
         grid-area: button-search;
     }
 
-    .header__title {
-        grid-area: title;
-        font-weight: 700;
-        font-size: 1.25rem;
-        line-height: 1;
-        text-align: center;
-        overflow: hidden;
-        -o-text-overflow: ellipsis;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    /* --- burger --- */
-
-    .burger {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-align: center;
-        -ms-flex-align: center;
-        align-items: center;
-    }
-
-    .burger--active .burger__bar {
-        -webkit-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-        transform: rotate(45deg);
-    }
-
-    .burger--active .burger__bar::before {
-        -webkit-transform: rotate(-90deg) translateX(-.5rem);
-        -ms-transform: rotate(-90deg) translateX(-.5rem);
-        transform: rotate(-90deg) translateX(-.5rem);
-    }
-
-    .burger--active .burger__bar::after {
-        opacity: 0;
-    }
-
-    .burger__bar,
-    .burger__bar::before,
-    .burger__bar::after {
-        display: block;
-        width: 100%;
-        height: .125rem;
-        border-radius: .25rem;
-        background-color: currentColor;
-    }
-
-    .burger__bar {
-        position: relative;
-    }
-
-    .burger__bar::before,
-    .burger__bar::after {
-        content: "";
-        position: absolute;
-    }
-
-    .burger__bar::before {
-        top: -.5rem;
-    }
-
-    .burger__bar::after {
-        bottom: -.5rem;
-    }
-
-    /* --- filter --- */
-
-    .filters {
-        position: relative;
-        min-width: 0;
-        padding: 0;
-        margin: 0;
-        border: 0;
-        -webkit-transition-property: background-color, opacity, -webkit-backdrop-filter;
-        transition-property: background-color, opacity, -webkit-backdrop-filter;
-        -o-transition-property: background-color, opacity, backdrop-filter;
-        transition-property: background-color, opacity, backdrop-filter;
-        transition-property: background-color, opacity, backdrop-filter, -webkit-backdrop-filter;
-        -webkit-transition-duration: .3s;
-        -o-transition-duration: .3s;
-        transition-duration: .3s;
-        -webkit-transition-timing-function: cubic-bezier(.215, .61, .355, 1);
-        -o-transition-timing-function: cubic-bezier(.215, .61, .355, 1);
-        transition-timing-function: cubic-bezier(.215, .61, .355, 1);
-    }
-
-    .filters::before,
-    .filters::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        z-index: 1;
-        width: 1rem;
-        height: 100%;
-    }
-
-    .filters::before {
-        left: 0;
-        background-image: -webkit-gradient(linear, right top, left top, from(rgba(255, 255, 255, 0)), to(rgb(242, 243, 250)));
-        background-image: -o-linear-gradient(right, rgba(255, 255, 255, 0), rgb(242, 243, 250));
-        background-image: linear-gradient(to left, rgba(255, 255, 255, 0), rgb(242, 243, 250));
-        background-image: -webkit-gradient(linear, right top, left top, from(rgba(255, 255, 255, 0)), to(var(--bg-secondary)));
-        background-image: -o-linear-gradient(right, rgba(255, 255, 255, 0), var(--bg-secondary));
-        background-image: linear-gradient(to left, rgba(255, 255, 255, 0), var(--bg-secondary));
-    }
-
-    .filters::after {
-        right: 0;
-        background-image: -webkit-gradient(linear, left top, right top, from(rgba(255, 255, 255, 0)), to(rgb(242, 243, 250)));
-        background-image: -o-linear-gradient(left, rgba(255, 255, 255, 0), rgb(242, 243, 250));
-        background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgb(242, 243, 250));
-        background-image: -webkit-gradient(linear, left top, right top, from(rgba(255, 255, 255, 0)), to(var(--bg-secondary)));
-        background-image: -o-linear-gradient(left, rgba(255, 255, 255, 0), var(--bg-secondary));
-        background-image: linear-gradient(to right, rgba(255, 255, 255, 0), var(--bg-secondary));
-    }
-
-    .filters--sticky {
-        position: -webkit-sticky;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background-color: rgba(242, 243, 250, 0.88);
-        background-color: var(--bg-secondary-blur);
-        opacity: 0;
-        -webkit-backdrop-filter: blur(4px);
-        backdrop-filter: blur(4px);
-        -webkit-transform: translateY(-100%);
-        -ms-transform: translateY(-100%);
-        transform: translateY(-100%);
-        -webkit-transition-property: opacity, -webkit-transform;
-        transition-property: opacity, -webkit-transform;
-        -o-transition-property: opacity, transform;
-        transition-property: opacity, transform;
-        transition-property: opacity, transform, -webkit-transform;
-        -webkit-animation: filtersSlideDown .3s cubic-bezier(.215, .61, .355, 1);
-        animation: filtersSlideDown .3s cubic-bezier(.215, .61, .355, 1);
-    }
-
-    .filters--sticky.filters--visible {
-        opacity: 1;
-        -webkit-transform: translateY(0);
-        -ms-transform: translateY(0);
-        transform: translateY(0);
-    }
-
-    @-webkit-keyframes filtersSlideDown {
-        from {
-            opacity: 0;
-            -webkit-transform: translateY(-100%);
-            transform: translateY(-100%);
-        }
-
-        to {
-            opacity: 1;
-            -webkit-transform: translateY(0);
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes filtersSlideDown {
-        from {
-            opacity: 0;
-            -webkit-transform: translateY(-100%);
-            transform: translateY(-100%);
-        }
-
-        to {
-            opacity: 1;
-            -webkit-transform: translateY(0);
-            transform: translateY(0);
-        }
-    }
-
     /* --- schedule --- */
-
     .schedule {
-
+        overflow-y: auto;
         padding-right: .5rem;
         padding-bottom: .5rem;
     }
@@ -1646,10 +1450,11 @@
         display: inline-block;
         padding: .25em .5em;
         border-radius: 1em;
-        background-color: rgba(242, 243, 250, 0.88);
-        background-color: var(--bg-secondary-blur);
+        background-color: #003061;
+        color: white;
+        /* background-color: var(--bg-secondary-blur);
         -webkit-backdrop-filter: blur(4px);
-        backdrop-filter: blur(4px);
+        backdrop-filter: blur(4px); */
     }
 
     .section-day__content {
@@ -1767,7 +1572,7 @@
         position: relative;
         display: grid;
         max-width: 25rem;
-        min-width: 23rem;
+        min-width: 25rem;
         grid-template-areas:
             "meta   meta"
             "title  title"
