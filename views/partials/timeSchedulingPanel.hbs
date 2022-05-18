@@ -215,7 +215,11 @@
         </div>
         <div class="pannedItems">
             <div class="pannedItems-Header" id="scheduleTitle">
-                <div class="spinner"> <div></div>  <div></div>  <div></div>  </div>
+                <div class="spinner">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
             </div>
             <div class="planneditemsContent" id="selectedScheduledItemsDiv">
 
@@ -264,11 +268,18 @@
             </div>
         </div>
     </div>
+    <div class="mainScheduleList">
+        {{>mainScheduleList}}
+    </div>
     <div class="scheduleDetailsSection" id="scheduleDetailsSectionDiv">
         <div class="header">
             <div class="rightPart">
-                <div class="title"> <i class='bx bxs-calendar-event'></i><h1 id="eventTitle"></h1></div>
-                <div class="duration"><i class='bx bxs-time'></i><p id="eventOcurence"></p></div>
+                <div class="title"> <i class='bx bxs-calendar-event'></i>
+                    <h1 id="eventTitle"></h1>
+                </div>
+                <div class="duration"><i class='bx bxs-time'></i>
+                    <p id="eventOcurence"></p>
+                </div>
             </div>
             <div class="leftPart">
                 <div class="meetingType" id="eventTypediv"></div>
@@ -286,19 +297,25 @@
             -->
             <div class="detailSection alignItems remTop">
                 <i class='bx bx-user-circle'></i>
-                <p><strong>Created by:&nbsp;</strong> <p id="eventOwner"></p></p>
+                <p><strong>Created by:&nbsp;</strong>
+                <p id="eventOwner"></p>
+                </p>
             </div>
             <div class="detailSection alignItems remTop">
-                <i class='bx bxs-user-account' ></i>
+                <i class='bx bxs-user-account'></i>
                 <p id="eventParticipantsDivResult"></p>
             </div>
             <div class="detailSection alignItems">
                 <i class='bx bxs-map-pin'></i>
-                <p> <strong>Location:&nbsp;</strong> <p id="eventlocationDiv"></p></p>
+                <p> <strong>Location:&nbsp;</strong>
+                <p id="eventlocationDiv"></p>
+                </p>
             </div>
             <div class="detailSection alignItems">
                 <i class='bx bxs-tag-alt'></i>
-                <p> <strong>Context:&nbsp;</strong> <p id="eventContextDiv"></p></p>
+                <p> <strong>Context:&nbsp;</strong>
+                <p id="eventContextDiv"></p>
+                </p>
             </div>
             <div class="detailSection alignItems">
                 <i class='bx bx-link'></i>
@@ -309,7 +326,8 @@
             </div>
             <div class="detailSection">
                 <i class='bx bx-detail'></i>
-                <p id="eventDetailsDiv">Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem, eius. Adipisci maiores iste deserunt ex
+                <p id="eventDetailsDiv">Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem, eius. Adipisci
+                    maiores iste deserunt ex
                     libero doloribus accusamus quae commodi temporibus molestias, ipsam consequuntur quas tenetur ab
                     illo perspiciatis non saepe, doloremque quidem rem. Incidunt, expedita sint temporibus non natus cum
                     animi nisi aperiam voluptate assumenda voluptas laudantium ea, omnis cupiditate nulla fugit amet
@@ -321,7 +339,8 @@
             </div>
 
             <div class="attending">
-                <div class="attendingTitle">Are you attending? &nbsp;<p id="attendingAnswer"></p></div>
+                <div class="attendingTitle">Are you attending? &nbsp;<p id="attendingAnswer"></p>
+                </div>
                 <div class="attendingResponse" id="attendingChoices">
                     <button class="positive">Yes</button>
                     <button class="certain">Not Sure</button>
@@ -374,7 +393,7 @@
             <div class="detailSection alignItems">
                 <i class='bx bxs-user-circle'></i>
                 <div class="selectedUsersDiv" id="selectedUsersDiv">
-                    
+
                     {{!-- <div class="invitedMemberDiv" style="cursor: default;">
                         <div data-id="" class="resultItemBundle" href="" title="">
                             <div class="containerImage">
@@ -384,7 +403,7 @@
                                 <div class="nameScopeTime">
                                     <p class="meetingName">Alain Paulin Niyonkuru</p>
                                 </div>
-                                <button class="removePerson"><i class='bx bx-x-circle' ></i></button>
+                                <button class="removePerson"><i class='bx bx-x-circle'></i></button>
                             </div>
                         </div>
                     </div>
@@ -397,7 +416,7 @@
                                 <div class="nameScopeTime">
                                     <p class="meetingName">Alain Paulin Niyonkuru</p>
                                 </div>
-                                <button class="removePerson"><i class='bx bx-x-circle' ></i></button>
+                                <button class="removePerson"><i class='bx bx-x-circle'></i></button>
                             </div>
                         </div>
                     </div> --}}
@@ -419,9 +438,9 @@
                                 <div class="nameScopeTime">
                                     <p class="meetingName">Team Meeting</p>
                                     <p class="scope">DESIGN</p>
-                                    
+
                                 </div>
-                                <button class="addPerson"><i class='bx bx-plus-circle' ></i></button>
+                                <button class="addPerson"><i class='bx bx-plus-circle'></i></button>
                             </div>
                         </div>
                     </div>
@@ -434,9 +453,9 @@
                                 <div class="nameScopeTime">
                                     <p class="meetingName">Team Meeting</p>
                                     <p class="scope">DESIGN</p>
-                                    
+
                                 </div>
-                                <button class="addPerson"><i class='bx bx-plus-circle' ></i></button>
+                                <button class="addPerson"><i class='bx bx-plus-circle'></i></button>
                             </div>
                         </div>
                     </div> --}}
