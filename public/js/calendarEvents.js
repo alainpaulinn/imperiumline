@@ -214,21 +214,21 @@ goodselect(recurrenceGoodSelectJs, {
             recurrenceTypeDiv.id = "recurrenceTypeDiv";
             goodselect(recurrenceTypeDiv, {
                 availableOptions: [{
-                        id: 1,
-                        name: "Every Day"
-                    },
-                    {
-                        id: 2,
-                        name: "Every Week"
-                    },
-                    {
-                        id: 3,
-                        name: "Monday - Friday"
-                    },
-                    {
-                        id: 4,
-                        name: "Weekend"
-                    },
+                    id: 1,
+                    name: "Every Day"
+                },
+                {
+                    id: 2,
+                    name: "Every Week"
+                },
+                {
+                    id: 3,
+                    name: "Monday - Friday"
+                },
+                {
+                    id: 4,
+                    name: "Weekend"
+                },
                 ],
                 placeHolder: "Recurrence",
                 selectorWidth: "150px",
@@ -1009,4 +1009,8 @@ function createMyElement(elementType, classList, textContent) {
     })
 
     return newElem;
+}
+
+function createmainEventsScreen(callObject){
+    
 }

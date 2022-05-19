@@ -1,6 +1,19 @@
 //Get data from the chatsFromDataServer
 var socket = io();
 
+let taggedMessages = [];
+let selectedChatId;
+let selectedReactionId;
+let mySavedID;
+let myName, Mysurname;
+let lastMessageInSelectedChat;
+let friends = [];
+let chats = [];
+let ITriggeredChatCreation = false;
+
+let openChatInfo;
+let chatEventListenings = [];
+let chatContainer = document.querySelector("#place_for_chats")
 /////////////////////SIDEPANEL SWITCH///////////////////////////
 
 let messages_panel = document.getElementById("messages_panel")
@@ -47,13 +60,13 @@ let functionalityOptionsArray = [
     title: "Calendar",
     subMenu: []
   },
-  {
-    functionalityId: 5,
-    panel: work_shift_panel,
-    triggerButton: work_shifts_button,
-    title: "Work Shifts",
-    subMenu: []
-  },
+  // {
+  //   functionalityId: 5,
+  //   panel: work_shift_panel,
+  //   triggerButton: work_shifts_button,
+  //   title: "Work Shifts",
+  //   subMenu: []
+  // },
 ];
 ((serverOptions) => {
   let sidePanelDiv = document.getElementById('c-sidepanel')
@@ -194,6 +207,8 @@ let functionalityOptionsArray = [
                 { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null) } },
                 { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null) } },
               ];
+              
+              if(participant.userID == mySavedID) actions = []
               participantElement = userForAttendanceList(participant, actions)
               callParticipantsDiv.append(participantElement)
             })
@@ -205,6 +220,8 @@ let functionalityOptionsArray = [
                 { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null) } },
                 { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null) } },
               ];
+
+              if(participant.userID == mySavedID) actions = []
               participantElement = userForAttendanceList(participant, actions)
               callParticipantsDiv.append(participantElement)
             })
@@ -407,7 +424,7 @@ function showWorkShiftsSection() {
 
 ///////////////
 let timeScheduling_btn = document.getElementById("timeScheduling-btn")
-let workShifts_btn = document.getElementById("workShifts-btn")
+// let workShifts_btn = document.getElementById("workShifts-btn")
 let messaging_btn = document.getElementById("messaging-btn")
 let calls_btn = document.getElementById("calls-btn")
 let preferences_btn = document.getElementById("preferences-btn")
@@ -424,10 +441,10 @@ document.getElementById("timeScheduling-btn").addEventListener('click', () => {
   timeScheduling_div.classList.toggle("undropped-down")
   timeScheduling_btn.firstChild.classList.toggle("rotate180")
 })
-document.getElementById("workShifts-btn").addEventListener('click', () => {
-  workShifts_div.classList.toggle("undropped-down")
-  workShifts_btn.firstChild.classList.toggle("rotate180")
-})
+// document.getElementById("workShifts-btn").addEventListener('click', () => {
+//   workShifts_div.classList.toggle("undropped-down")
+//   workShifts_btn.firstChild.classList.toggle("rotate180")
+// })
 document.getElementById("messaging-btn").addEventListener('click', () => {
   messaging_div.classList.toggle("undropped-down")
   messaging_btn.firstChild.classList.toggle("rotate180")
@@ -453,20 +470,7 @@ logout_button.addEventListener("click", function () {
   document.getElementById("logoutForm").submit();
 });
 
-let taggedMessages = [];
 
-let selectedChatId;
-let selectedReactionId;
-let mySavedID;
-let myName, Mysurname;
-let lastMessageInSelectedChat;
-let friends = [];
-let chats = [];
-let ITriggeredChatCreation = false;
-
-let openChatInfo;
-let chatEventListenings = [];
-let chatContainer = document.querySelector("#place_for_chats")
 
 socket.on('redirect', function (destination) {
   window.location.href = destination;
@@ -2222,6 +2226,7 @@ myPeer.on('open', myPeerId => {
 
     isGroup = allUsers.length > 2 ? true : false
     callees = allUsers.filter(user => { return user.userID != caller.userID })
+    console.log(allUsers)
     firstCallee = callees[0]
     displayInitials = isGroup == true ? 'Grp' : firstCallee.name.charAt(0) + firstCallee.surname.charAt(0)
     profilePicture = isGroup == true ? '/private/profiles/group.jpeg' : firstCallee.profilePicture
