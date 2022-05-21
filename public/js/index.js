@@ -117,7 +117,7 @@ let functionalityOptionsArray = [
     call_log_contact_search_panel.append(header, searchResultsDiv)
     socket.on('callLogContactSearch', searchPeople => {
       console.log(searchPeople)
-      if (searchPeople.length == 0) { return topBar.invitedDiv.textContent = 'No user found.' }
+      if (searchPeople.length == 0) { return searchResultsDiv.textContent = 'No user found.' }
       searchResultsDiv.textContent = ''
       searchPeople.forEach((searchPerson) => {
         let searchPersonElement;

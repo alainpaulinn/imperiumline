@@ -1001,13 +1001,12 @@ function formatDate(date) {
 }
 
 function createMyElement(elementType, classList, textContent) {
-    //elementType: string, classList: array of strings, textContent: string
+    // elementType: string, classList: array of strings, textContent: string
     let newElem = document.createElement(elementType + "")
     newElem.textContent = textContent
     classList.forEach(classString => {
         newElem.classList.add(classString)
     })
-
     return newElem;
 }
 
