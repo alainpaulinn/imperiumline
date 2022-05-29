@@ -77,7 +77,6 @@ io.on('connection', (socket) => {
         console.log("Connected user's cookie's email does not exist in the database!! Modified cookie");
         return;
       }
-
       id = result[0].id;
       let randomPeerId = makeid(25)
       connectedUsers.push({ id: id, email: email, socket: socket, callId: randomPeerId })
