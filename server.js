@@ -38,7 +38,6 @@ db.connect((err) => {
 })
 
 const port = process.env.PORT || 3600;
-
 app.use(express.static(path.join(__dirname, './public')));
 
 //Session & cookie configuration
@@ -74,8 +73,7 @@ io.on('connection', (socket) => {
     let id;
     db.query('SELECT id, name, surname FROM user WHERE email = ?', [email], async (err, result) => {
       if (result.length < 1) {
-        console.log("Connected user's cookie's email does not exist in the database!! Modified cookie");
-        return;
+        return console.log("Connected user's cookie's email does not exist in the database!! Modified cookie");
       }
       id = result[0].id;
       let randomPeerId = makeid(25)
@@ -117,8 +115,6 @@ io.on('connection', (socket) => {
         taggedMessages: taggedMessages
       };
       */
-      console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMESSAGE", message)
-      console.log(message.taggedMessages)
       let roomUsersInfo = await getRoomInfo(message.toRoom, id)
       let expectedUser = roomUsersInfo.users.find(user => user.userID == id)
 

@@ -42,22 +42,23 @@ id: 130
 
 #########################################################################################################
 TODO:
-- message separations 
-- shouldemoji support
 - ONLINE or not
-- important chats
-- Draft messages
+- Handling of the deleted users
 - 
 
 
 
+IMPORTANT NOTES:
+ - Congratulations! Your certificate and chain have been saved at:
+   /etc/letsencrypt/live/stun.imperiumline.com/fullchain.pem
+   Your key file has been saved at:
+   /etc/letsencrypt/live/stun.imperiumline.com/privkey.pem
+   Your cert will expire on 2022-08-30. To obtain a new or tweaked
+   version of this certificate in the future, simply run certbot again
+   with the "certonly" option. To non-interactively renew *all* of
+   your certificates, run "certbot renew"
+ - If you like Certbot, please consider supporting our work by:
 
-
-#cookie_message .rf-btn:hover{box-shadow: 0 3px 16px 0 rgba(56,125,255,0.5);background-image: linear-gradient(-179deg, #6EA0FF 5%, #518DFF 97%);color: #ffffff}#cookie_message.rf-ar{padding: 14px 114px 14px 30px;}#cookie_message.rf-ar .cookie-icon{left: auto;right: 14px;transform: scaleX(-1);}#cookie_message.rf-ar .rf-btn{margin: 0 30px 0 0;}#cookie_message {display:none;z-index:100;width:86%;padding: 14px 30px 14px 114px;background-color: #ffffff;color: #2B344D;align-items: center;position: fixed;bottom: 0;left: 50%;transform: translateX(-50%);max-width: 886px;border: 1px solid #F4F6FF;border-radius: 10px 10px 0 0;-webkit-box-shadow: 0 3px 6px 0 rgba(0, 82, 224, 0.2);-moz-box-shadow: 0 3px 6px 0 rgba(0, 82, 224, 0.2);box-shadow: 0 3px 6px 0 rgba(0, 82, 224, 0.2);box-sizing: border-box;}#cookie_message .rf-btn {background-image: linear-gradient(-179deg, #5690FF 0%, #387DFF 97%);box-shadow: 0 3px 16px 0 rgba(56, 125, 255, 0.5);flex-shrink: 0;cursor:pointer;margin: 0 0 0 30px;height: 40px;line-height: 40px;font-size: 14px;border-radius: 30px;padding: 0 25px;display: inline-block;text-align: center;transition: all 0.1s linear;letter-spacing: 1px;border: none;font-weight: 400;background-color: #0684ED;color: #ffffff;} .rf-btn:focus #cookie_message {display: none} #cookie_message .cookie-msg {margin: 0;text-align: initial;font-weight:500;font-size:14px;line-height:16px;}#cookie_message .cookie-icon {position: absolute;top: -6px;left: 14px;}@media only screen and (max-width: 600px) {#cookie_message {flex-direction: column;padding: 66px 20px 20px !important;}#cookie_message .cookie-msg {text-align: center;font-size: 12px;}#cookie_message .rf-btn {margin: 12px 0 0 0 !important;}#cookie_message .cookie-icon {left: 50%;transform: translateX(-50%);}#cookie_message.rf-ar .cookie-icon {right: auto;left: 50%;transform: translateX(-50%) scaleX(-1);}}
-
-<div class="rf-en" id="cookie_message" style="display: flex;"><style>#cookie_message .rf-btn:hover{box-shadow: 0 3px 16px 0 rgba(56,125,255,0.5);background-image: linear-gradient(-179deg, #6EA0FF 5%, #518DFF 97%);color: #ffffff}#cookie_message.rf-ar{padding: 14px 114px 14px 30px;}#cookie_message.rf-ar .cookie-icon{left: auto;right: 14px;transform: scaleX(-1);}#cookie_message.rf-ar .rf-btn{margin: 0 30px 0 0;}#cookie_message {display:none;z-index:100;width:86%;padding: 14px 30px 14px 114px;background-color: #ffffff;color: #2B344D;align-items: center;position: fixed;bottom: 0;left: 50%;transform: translateX(-50%);max-width: 886px;border: 1px solid #F4F6FF;border-radius: 10px 10px 0 0;-webkit-box-shadow: 0 3px 6px 0 rgba(0, 82, 224, 0.2);-moz-box-shadow: 0 3px 6px 0 rgba(0, 82, 224, 0.2);box-shadow: 0 3px 6px 0 rgba(0, 82, 224, 0.2);box-sizing: border-box;}#cookie_message .rf-btn {background-image: linear-gradient(-179deg, #5690FF 0%, #387DFF 97%);box-shadow: 0 3px 16px 0 rgba(56, 125, 255, 0.5);flex-shrink: 0;cursor:pointer;margin: 0 0 0 30px;height: 40px;line-height: 40px;font-size: 14px;border-radius: 30px;padding: 0 25px;display: inline-block;text-align: center;transition: all 0.1s linear;letter-spacing: 1px;border: none;font-weight: 400;background-color: #0684ED;color: #ffffff;} .rf-btn:focus #cookie_message {display: none} #cookie_message .cookie-msg {margin: 0;text-align: initial;font-weight:500;font-size:14px;line-height:16px;}#cookie_message .cookie-icon {position: absolute;top: -6px;left: 14px;}@media only screen and (max-width: 600px) {#cookie_message {flex-direction: column;padding: 66px 20px 20px !important;}#cookie_message .cookie-msg {text-align: center;font-size: 12px;}#cookie_message .rf-btn {margin: 12px 0 0 0 !important;}#cookie_message .cookie-icon {left: 50%;transform: translateX(-50%);}#cookie_message.rf-ar .cookie-icon {right: auto;left: 50%;transform: translateX(-50%) scaleX(-1);}}</style><img class="cookie-icon" src="https://static.rfstat.com/renderforest/images/v2/icons/cookie_img.svg" width="84" height="63" alt="Cookie icon"><p class="cookie-msg">We use cookies to improve your experience. By clicking agree, you allow us such use.</p><button class="rf-btn blue" onclick="hideMsg()">AGREE</button></div>
-
-
-Choose a unique database cluster name
-db-mysql-fra1-01134
+   Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+   Donating to EFF:                    https://eff.org/donate-le
 
