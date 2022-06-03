@@ -119,6 +119,17 @@ CREATE TABLE `room` (
   PRIMARY KEY (`chatID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `participants` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userID` int(11) NOT NULL,
+  `roomID` int(11) NOT NULL,
+  `dateGotAccess` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`userID`) REFERENCES user(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`roomID`) REFERENCES room(`chatID`) ON DELETE CASCADE,
+  UNIQUE KEY `userID` (`userID`,`roomID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `message` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `message` text NOT NULL,
