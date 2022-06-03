@@ -81,7 +81,7 @@ io.on('connection', (socket) => {
       socket.emit('myId', { id: id, name: result[0].name, surname: result[0].surname, callId: randomPeerId });
 
       db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess`, room.chatID, room.name, room.type, room.profilePicture, room.creationDate, room.lastActionDate FROM `participants` JOIN room ON room.chatID = participants.roomID WHERE participants.userID = ? ORDER BY `room`.`lastActionDate` DESC', [id], async (err, mychatResults) => {
-
+        if (err) return console.log(err)
         mychatResults.forEach(async myChat => {
           let roomID = myChat.roomID + '';
           socket.join(roomID)
