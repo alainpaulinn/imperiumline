@@ -142,6 +142,15 @@ CREATE TABLE `message` (
   FOREIGN KEY (`userID`) REFERENCES user(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `messagetags` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `messageId` int(11) NOT NULL,
+  `tagMessageId` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`messageId`) REFERENCES message(`id`),
+  FOREIGN KEY (`tagMessageId`) REFERENCES message(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `reactionoptions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `icon` text NOT NULL,

@@ -143,8 +143,7 @@ io.on('connection', (socket) => {
                   //console.log(referencedMessageResult)
                   if (referencedMessageResult.length > 0) {
                     if (referencedMessageResult[0].roomID == message.toRoom) {
-                      console.log("Valuessssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", participantResult.insertId, taggedMessage)
-                      db.query("INSERT INTO `messagetags`(`id`,`messageId`, `tagMessageId`) VALUES (null,'?','?')", [participantResult.insertId, taggedMessage], async (err, insertedTag) => {
+                      db.query("INSERT INTO `messagetags`(`messageId`, `tagMessageId`) VALUES ('?','?')", [participantResult.insertId, taggedMessage], async (err, insertedTag) => {
                         if (err) return console.log(err)
                         console.log(`Tag ${insertedTag.insertId} is inserted`)
                       })
