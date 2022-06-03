@@ -321,22 +321,6 @@ let calls_div = document.getElementById("calls-div")
 let preferences_div = document.getElementById("preferences-div")
 let profile_div = document.getElementById("profile-div")
 
-document.getElementById("timeScheduling-btn").addEventListener('click', () => {
-  timeScheduling_div.classList.toggle("undropped-down")
-  timeScheduling_btn.firstChild.classList.toggle("rotate180")
-})
-// document.getElementById("workShifts-btn").addEventListener('click', () => {
-//   workShifts_div.classList.toggle("undropped-down")
-//   workShifts_btn.firstChild.classList.toggle("rotate180")
-// })
-document.getElementById("messaging-btn").addEventListener('click', () => {
-  messaging_div.classList.toggle("undropped-down")
-  messaging_btn.firstChild.classList.toggle("rotate180")
-})
-document.getElementById("calls-btn").addEventListener('click', () => {
-  calls_div.classList.toggle("undropped-down")
-  calls_btn.firstChild.classList.toggle("rotate180")
-})
 document.getElementById("preferences-btn").addEventListener('click', () => {
   preferences_div.classList.toggle("undropped-down")
   preferences_btn.firstChild.classList.toggle("rotate180")
@@ -345,8 +329,6 @@ document.getElementById("profile-btn").addEventListener('click', () => {
   profile_div.classList.toggle("undropped-down")
   profile_btn.firstChild.classList.toggle("rotate180")
 })
-
-
 
 //Logout Button
 var logout_button = document.getElementById("logout-button");

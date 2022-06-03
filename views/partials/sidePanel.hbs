@@ -13,23 +13,7 @@
         <div class='c-sidepanel__nav__link remove-rightpadding' id="messages-option" title='Messaging'>
             <i class='bx bxs-message-square-dots'></i>
             <p>Messaging</p>
-            <button id="messaging-btn"><i class='bx bx-chevron-down'></i></button>
         </div>
-
-        <ul id="messaging-div" class='undropped-down droppable'>
-            <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
-                    title=''><i class='bx bxs-inbox'></i>
-                    <p>Unread Conversations</p><span class='c-notification c-notification--nav'>3</span>
-                </a></li>
-            <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
-                    title=''><i class='bx bxs-edit-alt'></i>
-                    <p>Drafts</p> <span class='c-notification c-notification--nav'>1</span>
-                </a></li>
-            <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
-                    title=''><i class='bx bxs-star'></i>
-                    <p>Important Chats</p>
-                </a></li>
-        </ul>
     </div>
 </nav>
 
@@ -38,19 +22,7 @@
         <div class='c-sidepanel__nav__link remove-rightpadding' id="call-log-option" title='Calls'>
             <i class='bx bxs-phone'></i>
             <p>Calls</p>
-            <button id="calls-btn"><i class='bx bx-chevron-down'></i></button>
         </div>
-
-        <ul id="calls-div" class='undropped-down droppable'>
-            <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
-                    title=''><i class='bx bx-history'></i>
-                    <p>History</p><span class='c-notification c-notification--nav'>3</span>
-                </a></li>
-            <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
-                    title=''><i class='bx bxs-phone-off'></i>
-                    <p>Missed Calls</p><span class='c-notification c-notification--nav'>1</span>
-                </a></li>
-        </ul>
     </div>
 </nav>
 
@@ -59,7 +31,6 @@
         <div class='c-sidepanel__nav__link remove-rightpadding' id="ongoing-call-option" title='Ongoing call'>
             <i class='bx bxs-phone-call bx-flashing' ></i>
             <p>Ongoing call</p>
-            <button id="calls-btn"><i class='bx bx-chevron-down'></i></button>
         </div>
     </div>
 </nav>
@@ -69,45 +40,21 @@
         <div class='c-sidepanel__nav__link remove-rightpadding' id="time_scheduling-option" title='Time Scheduling'>
             <i class='bx bxs-calendar'></i>
             <p>Time Scheduling</p>
-            <button id="timeScheduling-btn"><i class='bx bx-chevron-down'></i></button>
         </div>
-
-        <ul id="timeScheduling-div" class='undropped-down droppable'>
-            <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
-                    title=''><i class='bx bxs-coffee'></i>
-                    <p>Private Breaks</p> <span class='c-notification c-notification--nav'>1</span>
-                </a></li>
-            <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
-                    title=''><i class='bx bxs-hourglass-top'></i>
-                    <p>Requests</p>
-                </a></li>
-        </ul>
     </div>
 </nav>
 
-{{!-- <nav class='c-sidepanel__nav c-sidepanel__nav--spacer'>
+<nav class='c-sidepanel__nav c-sidepanel__nav--spacer'>
     <div class='c-sidepanel__nav__li'>
-        <div class='c-sidepanel__nav__link remove-rightpadding' id="work_shifts-option" title='Working ShiftS'>
-            <i class='bx bxs-timer'></i>
-            <p>WorkShifts</p>
-            <button id="workShifts-btn"><i class='bx bx-chevron-down'></i></button>
+        <div class='c-sidepanel__nav__link remove-rightpadding' id="ongoing-call-option" title='Ongoing call'>
+            <i class='bx bx-shield-quarter'></i>
+            <p>Admin Panel</p>
         </div>
-
-        <ul id="workShifts-div" class='undropped-down droppable'>
-            <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
-                    title=''><i class='bx bxs-bar-chart-square'></i>
-                    <p>Working ShiftS</p><span class='c-notification c-notification--nav'>3</span>
-                </a></li>
-        </ul>
     </div>
-</nav> --}}
+</nav>
 
 <nav class='c-sidepanel__nav c-sidepanel__nav--spacer c-friends'>
-    <div class='c-sidepanel__header c-sidepanel__nav__link'>
-        {{!-- <i class='bx bxs-magic-wand'></i>
-        <p>Quick Actions</p>
-        <button><i class='bx bx-list-plus'></i></button> --}}
-    </div>
+
 </nav>
 <nav class='c-sidepanel__nav c-sidepanel__nav--spacer'>
     <div class='c-sidepanel__nav__li'>
@@ -131,15 +78,18 @@
             <li class='c-sidepanel__nav__li left-spacer'>
                 <a class='c-sidepanel__nav__link' href='javascript:void(0);' title=''>
                     <i class='bx bxs-bell-off'></i>
-                    <p>notification/Call Ring</p>
-                    <span class='c-notification c-notification--nav'>1</span>
+                    <p>Silent notifications</p>
+                    <div class="switch">
+                        <input type="checkbox" id="toggleAll" />
+                        <label for="toggleAll"></label>
+                    </div>
                 </a>
             </li>
-            <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
-                    title=''><i class='bx bxs-video-recording'></i>Audio/Video input</a>
-            </li>
-            <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
-                    title=''><i class='bx bx-dots-horizontal-rounded'></i>Advanced</a>
+            <li class='c-sidepanel__nav__li left-spacer'>
+                <a class='c-sidepanel__nav__link' href='javascript:void(0);' title=''>
+                    <i class='bx bxs-video-recording'></i>
+                    Audio/Video input
+                </a>
             </li>
         </ul>
     </div>
@@ -157,7 +107,6 @@
             <li class='c-sidepanel__nav__li left-spacer' id="logout-button"><a class='c-sidepanel__nav__link'
                     title=''><i class='bx bx-log-out-circle'></i>
                     <p>Logout</p>
-                    <!--<span class='c-notification c-notification--nav'>3</span>-->
                 </a></li>
             <form id="logoutForm" action="/auth/logout" method="post">
                 <input type="text" name="logout" hidden="true" />
@@ -165,7 +114,6 @@
             <li class='c-sidepanel__nav__li left-spacer'><a class='c-sidepanel__nav__link' href='javascript:void(0);'
                     title=''><i class='bx bxs-user-detail'></i>
                     <p>Edit profile</p>
-                    <!--<span class='c-notification c-notification--nav'>1</span>-->
                 </a></li>
         </ul>
     </div>

@@ -182,7 +182,7 @@ body {
       flex-basis: 20%;
   height: 100%;
   background-color: #f5f9fd;
-  padding: 1.5rem;
+  padding: 1rem;
   min-width: 300px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -478,6 +478,10 @@ body {
   display: none;
 }
 
+.expanded .c-sidepanel__nav {
+  min-width: 45px;
+}
+
 .expanded .c-sidepanel__nav .c-sidepanel__nav__li .c-sidepanel__nav__link {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -510,6 +514,7 @@ body {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+  background-color: transparent;
 }
 
 .c-friends ul {
@@ -518,6 +523,7 @@ body {
   padding-bottom: 10px;
   height: 400px;
   overflow-y: scroll;
+  cursor: normal;
 }
 
 .c-friends ul :hover {
@@ -883,7 +889,7 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  padding: 10px 0;
+  padding: 10px 5px;
   -webkit-transition: -webkit-transform 0.5s;
   transition: -webkit-transform 0.5s;
   transition: transform 0.5s;
@@ -895,9 +901,6 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
   position: relative;
 }
 

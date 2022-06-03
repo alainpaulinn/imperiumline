@@ -174,7 +174,7 @@ body {
   flex-basis: 20%;
   height: 100%;
   background-color: $sidepanel-bg;
-  padding: 1.5rem;
+  padding: 1rem;
   min-width: 300px;
   display: flex;
   flex-direction: column;
@@ -441,7 +441,7 @@ body {
   }
 
   .c-sidepanel__nav {
-
+    min-width: 45px;
     .c-sidepanel__nav__li {
       .c-sidepanel__nav__link {
         display: flex;
@@ -469,13 +469,14 @@ body {
   //flex: 1 1 1;
   display: flex;
   flex-direction: column;
+  background-color: transparent;
 
   ul {
     transition: all 0.4s;
     padding-bottom: 10px;
     height: 400px;
     overflow-y: scroll;
-
+    cursor: normal;
     :hover {
       background-color: #e7e7e7;
     }
@@ -805,14 +806,14 @@ body {
   &__link {
     text-decoration: none;
     display: flex;
-    padding: 10px 0;
+    padding: 10px 5px;
     transition: transform 0.5s;
     width: 100%;
     border: none !important;
     background-color: transparent;
     text-align: left;
     align-items: center;
-    justify-content: center;
+    // justify-content: center;
     position: relative;
 
     &:before {
