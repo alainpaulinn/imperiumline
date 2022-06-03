@@ -10,6 +10,9 @@ CREATE TABLE `companies` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `companies` (`comanyname`, `description`) VALUES
+('Test company', 'This is the initial company to test if the application works well')
+
 CREATE TABLE `positions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `position` text NOT NULL,
