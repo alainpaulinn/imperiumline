@@ -31,12 +31,12 @@ let time_scheduling_button = document.getElementById("time_scheduling-option")
 let work_shifts_button = document.getElementById("work_shifts-option")
 
 let functionalityOptionsArray = [
-
   {
     functionalityId: 1,
     panel: messages_panel,
     triggerButton: message_button,
     title: "Messages",
+    icon: "bx bxs-message-square-dots",
     subMenu: []
   },
   {
@@ -44,13 +44,15 @@ let functionalityOptionsArray = [
     panel: call_log_panel,
     triggerButton: call_log_option,
     title: "Calls",
+    icon: "bx bxs-phone",
     subMenu: []
   },
   {
     functionalityId: 3,
     panel: ongoing_call_panel,
     triggerButton: ongoing_call_option,
-    title: "Calls",
+    title: "Ongoing Call",
+    icon: "bx bxs-phone-call bx-flashing",
     subMenu: []
   },
   {
@@ -58,18 +60,73 @@ let functionalityOptionsArray = [
     panel: time_scheduling_panel,
     triggerButton: time_scheduling_button,
     title: "Calendar",
+    icon: "bx bxs-calendar",
     subMenu: []
   },
-  // {
-  //   functionalityId: 5,
-  //   panel: work_shift_panel,
-  //   triggerButton: work_shifts_button,
-  //   title: "Work Shifts",
-  //   subMenu: []
-  // },
+];
+let defaultOptions = [
+  {
+    title: "Preferences",
+    icon: "bx bx-slider-alt",
+    subMenu: [
+      {
+        text: "Dark mode",
+        icon: "bx bxs-moon",
+        actions: [
+          {
+            element: createElement({
+              elementType: 'div', class: 'switch', childrenArray: [
+                createElement({ elementType: 'input', type: 'checkbox', id: 'toggle1' }),
+                createElement({ elementType: 'label', for: 'toggle1' })
+              ],
+              onclick: () => { document.getElementsByName("boddy")[0].classList.toggle("dark") }
+            })
+          }
+        ]
+      },
+      {
+        text: "Silent notifications",
+        icon: "bx bxs-bell-off",
+        actions: [
+          {
+            element: createElement({
+              elementType: 'div', class: 'switch', childrenArray: [
+                createElement({ elementType: 'input', type: 'checkbox', id: 'toggle2' }),
+                createElement({ elementType: 'label', for: 'toggle2' })
+              ],
+              onclick: () => { console.log("silensing notifications") }
+            })
+          }
+        ]
+      },
+      {
+        text: "Audio/Video input",
+        icon: "bx bxs-video-recording",
+        actions: []
+      },
+    ]
+  },
+  {
+    triggerButton: time_scheduling_button,
+    title: "Profile",
+    icon: "bx bxs-user-circle",
+    subMenu: [
+      {
+        text: "Logout",
+        icon: "bx bx-log-out-circle",
+        actions: []
+      },
+      {
+        text: "Edit profile",
+        icon: "bx bxs-user-detail",
+        actions: []
+      },
+    ]
+  },
 ];
 ((serverOptions) => {
   let sidePanelDiv = document.getElementById('c-sidepanel')
+  let sidepanelElements = []
   // construct sidepanel
   let hamburger = createElement({ elementType: 'ul', childrenArray: [createElement({ elementType: 'li' }), createElement({ elementType: 'li' }), createElement({ elementType: 'li' })] })
   let logo = createElement({ elementType: 'div', class: 'c-sidepanel__app-header', childrenArray: [createElement({ elementType: 'div', class: 'c-sidepanel__app-header__hamburger', childrenArray: [hamburger] }), createElement({ elementType: 'h1', textContent: 'Imperium Line' })] })
@@ -88,22 +145,67 @@ let functionalityOptionsArray = [
     }
     else { hamburger.classList.add("active"); sidePanelDiv.classList.remove("expanded"); }
   })
-
+  const showSection = index => () => {
+    for (let i = 0; i < sidepanelElements.length; i++) {
+      if (sidepanelElements[i].index != index) {
+        sidepanelElements[i].panel.style.display = "none";
+      }
+      else {
+        sidepanelElements[i].panel.style.display = "flex";
+        document_title.innerText = sidepanelElements[i].title;
+        console.log(sidepanelElements[i])
+      }
+    }
+    console.log('Hello', index)
+  }
   for (let o = 0; o < serverOptions.length; o++) {
     const option = serverOptions[o];
     console.log(option.functionalityId)
 
-    let { functionalityId, panel, triggerButton, title } = option
-    triggerButton.addEventListener("click", () => {
-      for (let i = 0; i < serverOptions.length; i++) {
-        if (serverOptions[i].functionalityId != functionalityId) {
-          serverOptions[i].panel.style.display = "none";
-        }
-        panel.style.display = "flex";
-        document_title.innerText = title;
+    let { functionalityId, panel, title, icon, subMenu } = option
+    let iconElement = createElement({ elementType: 'i', class: icon })
+    let textElement = createElement({ elementType: 'p', textContent: title })
+    let dropIcon = createElement({ elementType: 'i', class: 'bx bx-chevron-down' })
+    let dropElement = createElement({ elementType: 'button', childrenArray: [dropIcon] })
+
+    let subMenuDiv = createElement({ elementType: 'ul', class: 'droppable' })
+    for (let i = 0; i < subMenu.length; i++) {
+      const subMenuElement = subMenu[i];
+      let submenuText = createElement({ elementType: 'p', textContent: subMenuElement.text })
+      let subMenuIcon = createElement({ elementType: 'i', class: subMenuElement.icon })
+      let submenuLink = createElement({ elementType: 'a', class: 'c-sidepanel__nav__link', childrenArray: [subMenuIcon, submenuText] })
+      subMenuElement.actions.forEach(action => { submenuLink.append(action.element) })
+      let listitems = createElement({ elementType: 'li', class: 'c-sidepanel__nav__li left-spacer', childrenArray: [submenuLink] })
+      subMenuDiv.append(listitems)
+    }
+
+    dropElement.addEventListener('click', () => {
+      dropIcon.classList.toggle('rotate180')
+      if (subMenu.length > 0) {
+        subMenuDiv.classList.toggle('undropped-down')
       }
     })
+    let childrenArray = [iconElement, textElement]
+    if (subMenu.length > 0) { childrenArray.push(dropElement) }
+
+    let triggerButton = createElement({ elementType: 'div', class: 'c-sidepanel__nav__link remove-rightpadding', childrenArray: childrenArray })
+    let optionListitem = createElement({ elementType: 'div', class: 'c-sidepanel__nav__li', childrenArray: [triggerButton] })
+    let optionContainer = createElement({ elementType: 'nav', class: 'c-sidepanel__nav c-sidepanel__nav--spacer', childrenArray: [optionListitem] })
+
+    sidePanelDiv.append(optionContainer)
+    sidepanelElements.push({
+      index: o,
+      panel: panel,
+      title: title,
+      triggerButton: triggerButton,
+      subMenuDiv: subMenuDiv,
+      dropIcon: dropIcon
+    })
+
+    triggerButton.addEventListener("click", showSection(o))
   }
+  console.log('sidepanelElements', sidepanelElements);
+
 
 
   // call-log-section ------ createCallLogContactSearch
@@ -207,8 +309,8 @@ let functionalityOptionsArray = [
                 { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null) } },
                 { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null) } },
               ];
-              
-              if(participant.userID == mySavedID) actions = []
+
+              if (participant.userID == mySavedID) actions = []
               participantElement = userForAttendanceList(participant, actions)
               callParticipantsDiv.append(participantElement)
             })
@@ -221,7 +323,7 @@ let functionalityOptionsArray = [
                 { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null) } },
               ];
 
-              if(participant.userID == mySavedID) actions = []
+              if (participant.userID == mySavedID) actions = []
               participantElement = userForAttendanceList(participant, actions)
               callParticipantsDiv.append(participantElement)
             })
@@ -335,8 +437,6 @@ var logout_button = document.getElementById("logout-button");
 logout_button.addEventListener("click", function () {
   document.getElementById("logoutForm").submit();
 });
-
-
 
 socket.on('redirect', function (destination) {
   window.location.href = destination;
@@ -3080,6 +3180,7 @@ function createElement(configuration) {
   if (configuration.type) elementToReturn.setAttribute('type', configuration.type)
   if (configuration.placeHolder) elementToReturn.setAttribute('placeholder', configuration.placeHolder)
   if (configuration.contentEditable) elementToReturn.setAttribute('contentEditable', configuration.contentEditable)
+  if (configuration.for) elementToReturn.setAttribute('for', configuration.for)
   if (configuration.autoplay) elementToReturn.autoplay = configuration.autoplay
   return elementToReturn
 }

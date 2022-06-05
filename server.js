@@ -72,9 +72,7 @@ io.on('connection', (socket) => {
     var email = socket.request.session.email;
     let id;
     db.query('SELECT id, name, surname FROM user WHERE email = ?', [email], async (err, result) => {
-      if (result.length < 1) {
-        return console.log("Connected user's cookie's email does not exist in the database!! Modified cookie");
-      }
+      if (result.length < 1) return console.log("Connected user's cookie's email does not exist in the database!! Modified cookie");
       id = result[0].id;
       let randomPeerId = makeid(25)
       connectedUsers.push({ id: id, email: email, socket: socket, callId: randomPeerId })
@@ -97,7 +95,6 @@ io.on('connection', (socket) => {
       let lastYear = new Date()
       lastYear.setFullYear(today.getFullYear() - 1)
       let nextYear = new Date()
-      console.log("Lasttttttttttttttttt Yearr", lastYear)
       nextYear.setFullYear(today.getFullYear() + 1)
       socket.emit('updateCalendar', await getEvents(id, lastYear, nextYear))
 
@@ -106,15 +103,7 @@ io.on('connection', (socket) => {
       socket.emit('chatContent', await getChatInfo(chatIdentification, id))
     });
     socket.on('message', async (message) => {
-      /* 
-      message = 
-      {
-        toRoom: selectedChatId,
-        message: messageContent.innerText.trim(),
-        timeStamp: new Date().toISOString(),
-        taggedMessages: taggedMessages
-      };
-      */
+      /* message = { toRoom: selectedChatId, message: messageContent.innerText.trim(), timeStamp: new Date().toISOString(), taggedMessages: taggedMessages }; */
       let roomUsersInfo = await getRoomInfo(message.toRoom, id)
       let expectedUser = roomUsersInfo.users.find(user => user.userID == id)
 
