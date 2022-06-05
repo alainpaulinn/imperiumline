@@ -134,4 +134,10 @@ exports.logout = (req, res) => {
         req.session.destroy();
         res.redirect('/')
     }
+    else{
+        res.render('connect', {
+            login_message_failure: 'Not Logged in',
+            email: email
+        })
+    }
 }

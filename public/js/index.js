@@ -24,17 +24,10 @@ let work_shift_panel = document.getElementById("work_shifts_Panel")
 
 let document_title = document.getElementsByTagName("title")[0]
 
-let message_button = document.getElementById("messages-option")
-let call_log_option = document.getElementById("call-log-option")
-let ongoing_call_option = document.getElementById("ongoing-call-option")
-let time_scheduling_button = document.getElementById("time_scheduling-option")
-let work_shifts_button = document.getElementById("work_shifts-option")
-
 let functionalityOptionsArray = [
   {
     functionalityId: 1,
     panel: messages_panel,
-    triggerButton: message_button,
     title: "Messages",
     icon: "bx bxs-message-square-dots",
     subMenu: []
@@ -42,7 +35,6 @@ let functionalityOptionsArray = [
   {
     functionalityId: 2,
     panel: call_log_panel,
-    triggerButton: call_log_option,
     title: "Calls",
     icon: "bx bxs-phone",
     subMenu: []
@@ -50,7 +42,6 @@ let functionalityOptionsArray = [
   {
     functionalityId: 3,
     panel: ongoing_call_panel,
-    triggerButton: ongoing_call_option,
     title: "Ongoing Call",
     icon: "bx bxs-phone-call bx-flashing",
     subMenu: []
@@ -58,12 +49,44 @@ let functionalityOptionsArray = [
   {
     functionalityId: 4,
     panel: time_scheduling_panel,
-    triggerButton: time_scheduling_button,
     title: "Calendar",
     icon: "bx bxs-calendar",
     subMenu: []
   },
 ];
+
+let darkModeCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle1' })
+darkModeCheckBox.addEventListener('change', (event) => {
+  let body = document.getElementsByTagName('body')[0]
+  let darkClass = 'dark';
+  if (darkModeCheckBox.checked) {
+    body.classList.add(darkClass);
+    alert('darkClass activated');
+  }
+  else {
+    body.classList.remove(darkClass);
+    alert('darkClass deactivated');
+  }
+})
+let darkmodeActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [darkModeCheckBox, createElement({ elementType: 'label', for: 'toggle1' })] })
+
+let silenceCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle2' })
+silenceCheckBox.addEventListener('change', (event) => {
+  let body = document.getElementsByTagName('body')[0]
+  let darkClass = 'dark';
+  if (silenceCheckBox.checked) {
+    body.classList.add(darkClass);
+    alert('notifications Ring deactivated');
+  }
+  else {
+    body.classList.remove(darkClass);
+    alert('notifications Ring activated');
+  }
+})
+let silenceActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [silenceCheckBox, createElement({ elementType: 'label', for: 'toggle2' })] })
+
+let logoutForm = createElement({ elementType: 'form', action: './auth/logout', method: "post", childrenArray: [createElement({ elementType: 'input', type:'text', name: 'logout', hidden:"true"})]})
+let audioVideoChoicebtn = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Logout', childrenArray:[logoutForm],onclick: () => { logoutForm.submit();}})
 let defaultOptions = [
   {
     title: "Preferences",
@@ -73,31 +96,13 @@ let defaultOptions = [
         text: "Dark mode",
         icon: "bx bxs-moon",
         actions: [
-          {
-            element: createElement({
-              elementType: 'div', class: 'switch', childrenArray: [
-                createElement({ elementType: 'input', type: 'checkbox', id: 'toggle1' }),
-                createElement({ elementType: 'label', for: 'toggle1' })
-              ],
-              onclick: () => { document.getElementsByName("boddy")[0].classList.toggle("dark") }
-            })
-          }
+          { element: darkmodeActionSwitch }
         ]
       },
       {
         text: "Silent notifications",
         icon: "bx bxs-bell-off",
-        actions: [
-          {
-            element: createElement({
-              elementType: 'div', class: 'switch', childrenArray: [
-                createElement({ elementType: 'input', type: 'checkbox', id: 'toggle2' }),
-                createElement({ elementType: 'label', for: 'toggle2' })
-              ],
-              onclick: () => { console.log("silensing notifications") }
-            })
-          }
-        ]
+        actions: [{ element: silenceActionSwitch }]
       },
       {
         text: "Audio/Video input",
@@ -107,14 +112,13 @@ let defaultOptions = [
     ]
   },
   {
-    triggerButton: time_scheduling_button,
     title: "Profile",
     icon: "bx bxs-user-circle",
     subMenu: [
       {
-        text: "Logout",
+        text: "Quit the app",
         icon: "bx bx-log-out-circle",
-        actions: []
+        actions: [{ element: audioVideoChoicebtn }]
       },
       {
         text: "Edit profile",
@@ -127,87 +131,136 @@ let defaultOptions = [
 ((serverOptions) => {
   let sidePanelDiv = document.getElementById('c-sidepanel')
   let sidepanelElements = []
+  let defaultElements = []
   // construct sidepanel
   let hamburger = createElement({ elementType: 'ul', childrenArray: [createElement({ elementType: 'li' }), createElement({ elementType: 'li' }), createElement({ elementType: 'li' })] })
   let logo = createElement({ elementType: 'div', class: 'c-sidepanel__app-header', childrenArray: [createElement({ elementType: 'div', class: 'c-sidepanel__app-header__hamburger', childrenArray: [hamburger] }), createElement({ elementType: 'h1', textContent: 'Imperium Line' })] })
   sidePanelDiv.prepend(logo)
-  hamburger.addEventListener('click', () => {
+  hamburger.addEventListener('click', toggleExpandSidePanel)
+  function toggleExpandSidePanel() {
     if (hamburger.classList.contains("active")) {
-      sidePanelDiv.classList.add("expanded"); hamburger.classList.remove("active");
-      var droppedElements = document.querySelectorAll(".droppable")
-      droppedElements.forEach(function (element) {
-        element.classList.add("undropped-down")
-        timeScheduling_btn.firstChild.classList.remove("rotate180")
-        messaging_btn.firstChild.classList.remove("rotate180")
-        preferences_btn.firstChild.classList.remove("rotate180")
-        profile_btn.firstChild.classList.remove("rotate180")
-      })
+      sidePanelDiv.classList.add("expanded");
+      hamburger.classList.remove("active");
+      for (let i = 0; i < defaultElements.length; i++) {
+        defaultElements[i].subMenuDiv.classList.add('undropped-down')
+        defaultElements[i].dropIcon.classList.remove('rotate180');
+        sidepanelElements[i].subMenuDiv.classList.add('undropped-down')
+        sidepanelElements[i].dropIcon.classList.remove('rotate180');
+      }
     }
-    else { hamburger.classList.add("active"); sidePanelDiv.classList.remove("expanded"); }
-  })
+    else {
+      hamburger.classList.add("active");
+      sidePanelDiv.classList.remove("expanded");
+    }
+  }
+
   const showSection = index => () => {
     for (let i = 0; i < sidepanelElements.length; i++) {
       if (sidepanelElements[i].index != index) {
         sidepanelElements[i].panel.style.display = "none";
+        sidepanelElements[i].subMenuDiv.classList.add('undropped-down')
+        sidepanelElements[i].dropIcon.classList.remove('rotate180');
       }
       else {
         sidepanelElements[i].panel.style.display = "flex";
+        sidepanelElements[i].subMenuDiv.classList.remove('undropped-down')
+        sidepanelElements[i].dropIcon.classList.add('rotate180');
         document_title.innerText = sidepanelElements[i].title;
         console.log(sidepanelElements[i])
       }
     }
-    console.log('Hello', index)
   }
-  for (let o = 0; o < serverOptions.length; o++) {
-    const option = serverOptions[o];
-    console.log(option.functionalityId)
 
+  const showDefSection = index => () => {
+    for (let i = 0; i < defaultElements.length; i++) {
+      if (defaultElements[i].index != index) {
+        if (defaultElements[i].panel) defaultElements[i].panel.style.display = "none";
+        defaultElements[i].subMenuDiv.classList.add('undropped-down')
+        defaultElements[i].dropIcon.classList.remove('rotate180');
+      }
+      else {
+        document_title.innerText = defaultElements[i].title;
+        if (defaultElements[i].panel) { defaultElements[i].panel.style.display = "flex"; }
+        if (defaultElements[i].subMenuDiv.classList.contains('undropped-down') == true) {
+          defaultElements[i].subMenuDiv.classList.add('undropped-down');
+          defaultElements[i].dropIcon.classList.remove('rotate180');
+        } else {
+          defaultElements[i].subMenuDiv.classList.remove('undropped-down');
+          defaultElements[i].dropIcon.classList.add('rotate180');
+        }
+      }
+    }
+  }
+
+  sidepanelElements = serverOptions.map((option, o) => {
     let { functionalityId, panel, title, icon, subMenu } = option
+    let builtOption = createSidePanelElement(title, icon, subMenu)
+    sidePanelDiv.append(builtOption.optionContainer)
+    builtOption.triggerButton.addEventListener("click", showSection(o))
+    return {
+      index: o,
+      panel: panel,
+      title: title,
+      triggerButton: builtOption.triggerButton,
+      subMenuDiv: builtOption.subMenuDiv,
+      dropIcon: builtOption.dropIcon
+    }
+  });
+
+  let spacer = createElement({ elementType: 'nav', class: 'c-sidepanel__nav c-sidepanel__nav--spacer c-friends' })
+  sidePanelDiv.append(spacer)
+
+  defaultElements = defaultOptions.map((option, o) => {
+    let { panel, title, icon, subMenu } = option;
+    let builtOption = createSidePanelElement(title, icon, subMenu)
+    sidePanelDiv.append(builtOption.optionContainer)
+    builtOption.triggerButton.addEventListener("click", showDefSection(o))
+    return {
+      index: o,
+      panel: panel ? panel : null,
+      title: title,
+      triggerButton: builtOption.triggerButton,
+      subMenuDiv: builtOption.subMenuDiv,
+      dropIcon: builtOption.dropIcon
+    }
+  });
+
+  function createSidePanelElement(title, icon, subMenu) {
     let iconElement = createElement({ elementType: 'i', class: icon })
     let textElement = createElement({ elementType: 'p', textContent: title })
     let dropIcon = createElement({ elementType: 'i', class: 'bx bx-chevron-down' })
     let dropElement = createElement({ elementType: 'button', childrenArray: [dropIcon] })
 
-    let subMenuDiv = createElement({ elementType: 'ul', class: 'droppable' })
+    let subMenuDiv = createElement({ elementType: 'ul', class: 'droppable undropped-down' })
     for (let i = 0; i < subMenu.length; i++) {
       const subMenuElement = subMenu[i];
       let submenuText = createElement({ elementType: 'p', textContent: subMenuElement.text })
       let subMenuIcon = createElement({ elementType: 'i', class: subMenuElement.icon })
       let submenuLink = createElement({ elementType: 'a', class: 'c-sidepanel__nav__link', childrenArray: [subMenuIcon, submenuText] })
-      subMenuElement.actions.forEach(action => { submenuLink.append(action.element) })
+      subMenuElement.actions.forEach(action => { submenuLink.append(action.element); console.log('action.element', action.element) })
       let listitems = createElement({ elementType: 'li', class: 'c-sidepanel__nav__li left-spacer', childrenArray: [submenuLink] })
       subMenuDiv.append(listitems)
     }
 
     dropElement.addEventListener('click', () => {
       dropIcon.classList.toggle('rotate180')
-      if (subMenu.length > 0) {
-        subMenuDiv.classList.toggle('undropped-down')
-      }
+      subMenuDiv.classList.toggle('undropped-down')
+      console.log(dropElement, 'dropElement')
     })
     let childrenArray = [iconElement, textElement]
     if (subMenu.length > 0) { childrenArray.push(dropElement) }
 
     let triggerButton = createElement({ elementType: 'div', class: 'c-sidepanel__nav__link remove-rightpadding', childrenArray: childrenArray })
-    let optionListitem = createElement({ elementType: 'div', class: 'c-sidepanel__nav__li', childrenArray: [triggerButton] })
+    let optionListitem = createElement({ elementType: 'div', class: 'c-sidepanel__nav__li', childrenArray: [triggerButton, subMenuDiv] })
     let optionContainer = createElement({ elementType: 'nav', class: 'c-sidepanel__nav c-sidepanel__nav--spacer', childrenArray: [optionListitem] })
 
-    sidePanelDiv.append(optionContainer)
-    sidepanelElements.push({
-      index: o,
-      panel: panel,
-      title: title,
+    return {
+      optionContainer: optionContainer,
       triggerButton: triggerButton,
       subMenuDiv: subMenuDiv,
       dropIcon: dropIcon
-    })
-
-    triggerButton.addEventListener("click", showSection(o))
+    }
   }
-  console.log('sidepanelElements', sidepanelElements);
-
-
-
   // call-log-section ------ createCallLogContactSearch
   (() => {
     let call_log_contact_search_panel = document.getElementById('call_log_contact_search_panel');
@@ -234,6 +287,7 @@ let defaultOptions = [
       })
     })
   })();
+
   (() => {
     //------------------------ Call Details - 
     let callDetailsPanel = document.getElementById('callDetails-section')
@@ -408,35 +462,12 @@ function showWorkShiftsSection() {
   document_title.innerText = "work shifts";
 }
 
-///////////////
-let timeScheduling_btn = document.getElementById("timeScheduling-btn")
-// let workShifts_btn = document.getElementById("workShifts-btn")
-let messaging_btn = document.getElementById("messaging-btn")
-let calls_btn = document.getElementById("calls-btn")
-let preferences_btn = document.getElementById("preferences-btn")
-let profile_btn = document.getElementById("profile-btn")
-
-let timeScheduling_div = document.getElementById("timeScheduling-div")
-let workShifts_div = document.getElementById("workShifts-div")
-let messaging_div = document.getElementById("messaging-div")
-let calls_div = document.getElementById("calls-div")
-let preferences_div = document.getElementById("preferences-div")
-let profile_div = document.getElementById("profile-div")
-
-document.getElementById("preferences-btn").addEventListener('click', () => {
-  preferences_div.classList.toggle("undropped-down")
-  preferences_btn.firstChild.classList.toggle("rotate180")
-})
-document.getElementById("profile-btn").addEventListener('click', () => {
-  profile_div.classList.toggle("undropped-down")
-  profile_btn.firstChild.classList.toggle("rotate180")
-})
 
 //Logout Button
 var logout_button = document.getElementById("logout-button");
-logout_button.addEventListener("click", function () {
-  document.getElementById("logoutForm").submit();
-});
+// logout_button.addEventListener("click", function () {
+//   document.getElementById("logoutForm").submit();
+// });
 
 socket.on('redirect', function (destination) {
   window.location.href = destination;
@@ -446,7 +477,7 @@ socket.on('myId', function (myId) {
   mySavedID = myId.id;
   myName = myId.name;
   Mysurname = myId.surname;
-  document.getElementById("my-name-surname").innerHTML = myName + ' ' + Mysurname;
+  // document.getElementById("my-name-surname").innerHTML = myName + ' ' + Mysurname;
 });
 
 
@@ -3181,6 +3212,9 @@ function createElement(configuration) {
   if (configuration.placeHolder) elementToReturn.setAttribute('placeholder', configuration.placeHolder)
   if (configuration.contentEditable) elementToReturn.setAttribute('contentEditable', configuration.contentEditable)
   if (configuration.for) elementToReturn.setAttribute('for', configuration.for)
+  if (configuration.method) elementToReturn.setAttribute('method', configuration.method)
+  if (configuration.hidden) elementToReturn.setAttribute('hidden', configuration.hidden)
+  if (configuration.name) elementToReturn.setAttribute('name', configuration.name)
   if (configuration.autoplay) elementToReturn.autoplay = configuration.autoplay
   return elementToReturn
 }

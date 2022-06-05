@@ -3566,6 +3566,12 @@ body {
   }
 }
 
+.importantButton{
+  color: white;
+  border-radius: $borderRadius;
+  background-color: $notification;
+  padding: 1rem !important;
+}
 
 .blue {
   color: #0069FF;

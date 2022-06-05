@@ -4267,6 +4267,13 @@ body {
   background-color: #d9e3ee;
 }
 
+.importantButton {
+  color: white;
+  border-radius: 15px;
+  background-color: #003061;
+  padding: 1rem !important;
+}
+
 .blue {
   color: #0069FF;
 }
