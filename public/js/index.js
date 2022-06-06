@@ -14,6 +14,7 @@ let ITriggeredChatCreation = false;
 let openChatInfo;
 let chatEventListenings = [];
 let chatContainer = document.querySelector("#place_for_chats")
+let body = document.getElementsByTagName('body')[0]
 /////////////////////SIDEPANEL SWITCH///////////////////////////
 
 let messages_panel = document.getElementById("messages_panel")
@@ -55,9 +56,10 @@ let functionalityOptionsArray = [
   },
 ];
 
+// dark theme switch
 let darkModeCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle1' })
 darkModeCheckBox.addEventListener('change', (event) => {
-  let body = document.getElementsByTagName('body')[0]
+
   let darkClass = 'dark';
   if (darkModeCheckBox.checked) {
     body.classList.add(darkClass);
@@ -70,9 +72,9 @@ darkModeCheckBox.addEventListener('change', (event) => {
 })
 let darkmodeActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [darkModeCheckBox, createElement({ elementType: 'label', for: 'toggle1' })] })
 
+// silence audio switch
 let silenceCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle2' })
 silenceCheckBox.addEventListener('change', (event) => {
-  let body = document.getElementsByTagName('body')[0]
   let darkClass = 'dark';
   if (silenceCheckBox.checked) {
     body.classList.add(darkClass);
@@ -85,8 +87,69 @@ silenceCheckBox.addEventListener('change', (event) => {
 })
 let silenceActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [silenceCheckBox, createElement({ elementType: 'label', for: 'toggle2' })] })
 
-let logoutForm = createElement({ elementType: 'form', action: './auth/logout', method: "post", childrenArray: [createElement({ elementType: 'input', type:'text', name: 'logout', hidden:"true"})]})
-let audioVideoChoicebtn = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Logout', childrenArray:[logoutForm],onclick: () => { logoutForm.submit();}})
+// choose Audio/video output
+let popupTitle = createElement({ elementType: 'div', class: 'popupTitle', textContent: "Choose Media Devices" })
+let videoInputSelection = createElement({ elementType: 'div'})
+let audioInputSelection = createElement({ elementType: 'div'})
+let audioOutputSelection = createElement({ elementType: 'div'})
+let popupBody = createElement({ elementType: 'div', class: 'popupBody', childrenArray:[videoInputSelection, audioInputSelection, audioOutputSelection] })
+let popupConfirmButton = createElement({ elementType: 'button', class: 'positive', textContent: 'Confirm' })
+let popupCancelButton = createElement({ elementType: 'button', class: 'negative', textContent: 'Cancel' })
+let popupBottom = createElement({ elementType: 'div', class: 'popupBottom', childrenArray: [popupCancelButton, popupConfirmButton] })
+let audioVideochoicePanel = createElement({ elementType: 'div', class: 'audioVideochoicePanel', childrenArray: [popupTitle, popupBody, popupBottom] })
+body.append(audioVideochoicePanel)
+let availableDevices = { videoInput: [], audioInput: [], audioOutput: [], }
+let chosenDevices = localStorage.getItem('chosenDevices')
+navigator.mediaDevices.enumerateDevices()
+  .then(devices => {
+    console.log(devices)
+    devices.forEach(device => {
+      if (device.kind == 'videoinput') { availableDevices.videoInput.push(device) }
+      if (device.kind == 'audioinput') { availableDevices.audioInput.push(device) }
+      if (device.kind == 'audiooutput') { availableDevices.audioOutput.push(device) }
+    });
+
+    goodselect(videoInputSelection, {
+      availableOptions: availableDevices.videoInput.map((device, index) => {return {id: index, name: device.label, deviceId: device.deviceId}}),
+      placeHolder: "Select Camera",
+      selectorWidth: "300px",
+      marginRight: '0rem',
+      onOptionChange: (option) => {
+        // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
+        // newEventCreation.recurrenceType = option.id;
+        console.log('Camera changed to :', option )
+      }
+    })
+    goodselect(audioInputSelection, {
+      availableOptions: availableDevices.audioInput.map((device, index) => {return {id: index, name: device.label, deviceId: device.deviceId}}),
+      placeHolder: "Select Microphone",
+      selectorWidth: "300px",
+      marginRight: '0rem',
+      onOptionChange: (option) => {
+        // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
+        // newEventCreation.recurrenceType = option.id;
+        console.log('Microphone changed to :', option )
+      }
+    })
+    goodselect(audioOutputSelection, {
+      availableOptions: availableDevices.audioOutput.map((device, index) => {return {id: index, name: device.label, deviceId: device.deviceId}}),
+      placeHolder: "Select Speaker",
+      selectorWidth: "300px",
+      marginRight: '0rem',
+      onOptionChange: (option) => {
+        // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
+        // newEventCreation.recurrenceType = option.id;
+        console.log('Speaker changed to :', option )
+      }
+    })
+  });
+let audioVideoInOutBtn = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Chose', onclick: () => { audioVideochoicePanel.classList.toggle('visible') } })
+
+// logout form
+let logoutForm = createElement({ elementType: 'form', action: "/auth/logout", method: "post", childrenArray: [createElement({ elementType: 'input', type: 'text', name: 'logout', hidden: "true" })] })
+let logoutButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Logout', onclick: () => { logoutForm.submit(); } })
+
+
 let defaultOptions = [
   {
     title: "Preferences",
@@ -107,7 +170,7 @@ let defaultOptions = [
       {
         text: "Audio/Video input",
         icon: "bx bxs-video-recording",
-        actions: []
+        actions: [{ element: audioVideoInOutBtn }]
       },
     ]
   },
@@ -118,7 +181,7 @@ let defaultOptions = [
       {
         text: "Quit the app",
         icon: "bx bx-log-out-circle",
-        actions: [{ element: audioVideoChoicebtn }]
+        actions: [{ element: logoutButton }, { element: logoutForm }]
       },
       {
         text: "Edit profile",
@@ -237,7 +300,7 @@ let defaultOptions = [
       let submenuText = createElement({ elementType: 'p', textContent: subMenuElement.text })
       let subMenuIcon = createElement({ elementType: 'i', class: subMenuElement.icon })
       let submenuLink = createElement({ elementType: 'a', class: 'c-sidepanel__nav__link', childrenArray: [subMenuIcon, submenuText] })
-      subMenuElement.actions.forEach(action => { submenuLink.append(action.element); console.log('action.element', action.element) })
+      subMenuElement.actions.forEach(action => { submenuLink.append(action.element); })
       let listitems = createElement({ elementType: 'li', class: 'c-sidepanel__nav__li left-spacer', childrenArray: [submenuLink] })
       subMenuDiv.append(listitems)
     }
@@ -3215,6 +3278,7 @@ function createElement(configuration) {
   if (configuration.method) elementToReturn.setAttribute('method', configuration.method)
   if (configuration.hidden) elementToReturn.setAttribute('hidden', configuration.hidden)
   if (configuration.name) elementToReturn.setAttribute('name', configuration.name)
+  if (configuration.action) elementToReturn.setAttribute('action', configuration.action)
   if (configuration.autoplay) elementToReturn.autoplay = configuration.autoplay
   return elementToReturn
 }

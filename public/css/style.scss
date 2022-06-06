@@ -286,9 +286,7 @@ body {
         opacity: 1;
       }
 
-      .droppable {
-
-      }
+      .droppable {}
 
       .undropped-down {
         height: 0;
@@ -401,6 +399,65 @@ body {
 
 }
 
+.audioVideochoicePanel {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: $borderRadius;
+  box-shadow: 0px 0px 100000px 7000000px rgba(0, 0, 0, 0.753);
+  transition: all 0.4s;
+  min-width: 200px;
+  min-height: 300px;
+  max-height: calc(100% - 2rem);
+  max-width: calc(100% - 2rem);
+  z-index: 3;
+
+  &.visible {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .popupTitle {
+    border-bottom: 1px solid #f1f4f6;
+    padding: 1rem;
+    font-size: 18px;
+  }
+
+  .popupBody {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    
+  }
+
+  .popupBottom {
+    border-top: 1px solid #f1f4f6;
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+
+    button {
+      padding: 1rem;
+      outline: none;
+      border: none;
+      border-radius: $borderRadius;
+      background-color: white;
+      box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+      cursor: pointer;
+    }
+  }
+
+}
+
 ///////////////////////////////////////////////////////////////////////Repeat begin
 .expanded {
   flex-basis: 5%;
@@ -443,6 +500,7 @@ body {
 
   .c-sidepanel__nav {
     min-width: 45px;
+
     .c-sidepanel__nav__li {
       .c-sidepanel__nav__link {
         display: flex;
@@ -478,6 +536,7 @@ body {
     height: 400px;
     overflow-y: scroll;
     cursor: normal;
+
     :hover {
       background-color: #e7e7e7;
     }
@@ -2019,13 +2078,13 @@ body {
   background-color: $sidepanel;
 }
 
-.c-call_log_panel{
+.c-call_log_panel {
   display: none;
   flex: 1;
   background-color: #ebf0f6;
   color: $body;
 
-  .callSearchSection{
+  .callSearchSection {
     width: 350px;
     height: calc(100vh - 2rem);
     background-color: white;
@@ -2035,12 +2094,13 @@ body {
     display: flex;
     flex-direction: column;
 
-    .searchResultsDiv{
+    .searchResultsDiv {
       display: flex;
       flex-direction: column;
       overflow-y: auto;
       padding: 1rem;
       background-color: white;
+
       .listMember {
         background-color: white;
         display: flex;
@@ -2305,8 +2365,9 @@ body {
           .ongoing {
             background-color: $notification;
             color: white;
+
             &:hover {
-              background-color: darken($notification,5%)
+              background-color: darken($notification, 5%)
             }
           }
 
@@ -2374,6 +2435,7 @@ body {
       }
     }
   }
+
   .callDetails-section {
     height: calc(100vh - 2rem);
     width: 350px;
@@ -2397,6 +2459,7 @@ body {
       display: flex;
       flex-direction: column;
       overflow-y: auto;
+
       .topDetailsCard {
         display: flex;
         justify-content: center;
@@ -2552,11 +2615,12 @@ body {
     }
   }
 
-  
-  
 
-  
+
+
+
 }
+
 ////////////////////////////////////ONGOING CALL PAGE////////////////////
 .c-ongoing_call_panel {
   display: none;
@@ -2782,7 +2846,8 @@ body {
           }
         }
       }
-      .hiddenDiv{
+
+      .hiddenDiv {
         display: none
       }
     }
@@ -3485,6 +3550,7 @@ body {
       }
     }
   }
+
   //overflow: hidden;
   .call-container {}
 }
@@ -3566,7 +3632,7 @@ body {
   }
 }
 
-.importantButton{
+.importantButton {
   color: white;
   border-radius: $borderRadius;
   background-color: $notification;
@@ -3884,6 +3950,30 @@ body {
   animation-delay: -0.2s;
 }
 
+.positive {
+  color: green;
+
+  &:hover {
+    background-color: rgb(188, 255, 188);
+  }
+}
+
+.certain {
+  color: orange;
+
+  &:hover {
+    background-color: rgb(255, 240, 211);
+  }
+}
+
+.negative {
+  color: red;
+
+  &:hover {
+    background-color: $warning-bg;
+  }
+}
+
 @-webkit-keyframes sk-bouncedelay {
 
   0%,
@@ -4170,149 +4260,6 @@ body {
   }
 }
 
-/*
-////////////////////////Time SCHEDULING//////////////////
-.c-time-scheduling_panel {
-  //flex: 0 0 1;
-  flex-grow: 1;
-  flex-shrink: 0;
-  overflow: auto;
-
-  .schedule-container {
-    overflow: auto;
-    width: 100%;
-
-    h1 {
-      font-size: 4rem;
-    }
-
-    h3 {
-      font-size: 2.8rem;
-    }
-
-    .heading {
-      line-height: 2;
-      font-weight: 900;
-    }
-
-    .section-container {
-      padding: 4rem;
-
-      a {
-        color: #ffffff;
-      }
-    }
-
-
-
-    .schedule-stage__wrapper {
-      display: inline-block;
-      width: 100%;
-      overflow: auto;
-    }
-
-    .schedule-stage {
-      
-      //display: flex;
-      //grid-auto-columns: max-content;
-      // grid-auto-flow: column;
-      // grid-gap: 2rem;
-      padding-bottom: 2rem;
-      padding-top: 2rem;
-      //min-width: 100vw;
-      width: 100%;
-      overflow: auto;
-
-      &::after {
-        content: "";
-        width: 4rem;
-      }
-    }
-
-    .divider {
-      position: sticky;
-      left: 0;
-      border: none;
-      border-bottom: 1px solid hsl(0, 0%, 20%);
-      //width: 100%;
-    }
-
-    .schedule-stage__title {
-      position: sticky;
-      left: 0;
-      padding-right: 5rem;
-      height: 100%;
-      padding-left: 4rem;
-      background: linear-gradient(to right, #ffffff 30%, hsla(0, 0%, 0%, 0));
-
-      &>h3 {
-        font-weight: 900;
-      }
-    }
-
-    .schedule-stage_guide-container {
-      display: flex;
-      flex-wrap: wrap;
-      flex-grow: 0;
-      flex-shrink: 1;
-      gap: 2rem;
-      width: 100%;
-    }
-
-    .guide-slot {
-      color: hsl(0, 0%, 50%);
-      max-width: 280px;
-      &>p {
-        margin-bottom: 1rem;
-      }
-    }
-
-    .guide-slot_card {
-      background: white;
-      //border: 1px solid #e6e6e6;
-      border-radius: 0.8rem;
-      font-size: 1.4rem;
-      margin-bottom: 2rem;
-      padding: 1.6rem;
-      cursor: pointer;
-      box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
-      transition: all 0.4s;
-
-      &:hover {
-        box-shadow: 0px 0px 20px -7px rgba(0, 0, 0, 0.7);
-      }
-
-      &>h4 {
-        margin-right: 5rem;
-        font-size: 1.4rem;
-        color: $body;
-      }
-    }
-
-    .author-wrapper {
-      display: flex;
-      align-items: center;
-      margin-top: 1rem;
-
-      &>picture {
-        display: inline-block;
-        inline-size: 2.6rem;
-        block-size: 2.6rem;
-        border-radius: 50%;
-        overflow: hidden;
-        margin-right: 1rem;
-
-        //border: 1px solid hsl(0, 0%, 20%);
-        &>img {
-          inline-size: 100%;
-          block-size: 100%;
-          object-fit: cover;
-        }
-      }
-    }
-  }
-}
-*/
 .schedule-container {
   display: flex;
   flex: 1;
@@ -4326,6 +4273,7 @@ body {
     border-radius: $borderRadius;
     overflow: hidden;
     height: calc(100vh - 2rem);
+
     .card {
       width: 100%;
       //height: fit-content;
@@ -4662,7 +4610,8 @@ body {
     }
 
   }
-  .mainScheduleList{
+
+  .mainScheduleList {
     flex: 1;
     background-color: white;
     margin: 1rem;
@@ -4676,7 +4625,7 @@ body {
     height: calc(100vh - 2rem);
     background-color: $sidepanel;
     // padding: 1rem;
-    margin:   1rem 1rem 1rem 0rem;
+    margin: 1rem 1rem 1rem 0rem;
     display: flex;
     flex-direction: column;
     //justify-content: center;
@@ -4698,6 +4647,7 @@ body {
         display: flex;
         flex-direction: column;
         gap: 1rem;
+
         .title,
         .title>* {
           font-weight: bold;

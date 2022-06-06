@@ -414,6 +414,83 @@ body {
           transform: rotate(180deg);
 }
 
+.audioVideochoicePanel {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  background-color: white;
+  border-radius: 15px;
+  -webkit-box-shadow: 0px 0px 100000px 7000000px rgba(0, 0, 0, 0.753);
+          box-shadow: 0px 0px 100000px 7000000px rgba(0, 0, 0, 0.753);
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  min-width: 200px;
+  min-height: 300px;
+  max-height: calc(100% - 2rem);
+  max-width: calc(100% - 2rem);
+  z-index: 3;
+}
+
+.audioVideochoicePanel.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.audioVideochoicePanel .popupTitle {
+  border-bottom: 1px solid #f1f4f6;
+  padding: 1rem;
+  font-size: 18px;
+}
+
+.audioVideochoicePanel .popupBody {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  padding: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 1rem;
+}
+
+.audioVideochoicePanel .popupBottom {
+  border-top: 1px solid #f1f4f6;
+  padding: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 1rem;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+}
+
+.audioVideochoicePanel .popupBottom button {
+  padding: 1rem;
+  outline: none;
+  border: none;
+  border-radius: 15px;
+  background-color: white;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+  cursor: pointer;
+}
+
 .expanded {
   -ms-flex-preferred-size: 5%;
       flex-basis: 5%;
@@ -4610,6 +4687,30 @@ body {
   animation-delay: -0.2s;
 }
 
+.positive {
+  color: green;
+}
+
+.positive:hover {
+  background-color: #bcffbc;
+}
+
+.certain {
+  color: orange;
+}
+
+.certain:hover {
+  background-color: #fff0d3;
+}
+
+.negative {
+  color: red;
+}
+
+.negative:hover {
+  background-color: #ffd4d4;
+}
+
 @-webkit-keyframes sk-bouncedelay {
   0%,
   80%,
@@ -4957,149 +5058,6 @@ body {
   background-color: rgba(0, 0, 0, 0.76);
 }
 
-/*
-////////////////////////Time SCHEDULING//////////////////
-.c-time-scheduling_panel {
-  //flex: 0 0 1;
-  flex-grow: 1;
-  flex-shrink: 0;
-  overflow: auto;
-
-  .schedule-container {
-    overflow: auto;
-    width: 100%;
-
-    h1 {
-      font-size: 4rem;
-    }
-
-    h3 {
-      font-size: 2.8rem;
-    }
-
-    .heading {
-      line-height: 2;
-      font-weight: 900;
-    }
-
-    .section-container {
-      padding: 4rem;
-
-      a {
-        color: #ffffff;
-      }
-    }
-
-
-
-    .schedule-stage__wrapper {
-      display: inline-block;
-      width: 100%;
-      overflow: auto;
-    }
-
-    .schedule-stage {
-      
-      //display: flex;
-      //grid-auto-columns: max-content;
-      // grid-auto-flow: column;
-      // grid-gap: 2rem;
-      padding-bottom: 2rem;
-      padding-top: 2rem;
-      //min-width: 100vw;
-      width: 100%;
-      overflow: auto;
-
-      &::after {
-        content: "";
-        width: 4rem;
-      }
-    }
-
-    .divider {
-      position: sticky;
-      left: 0;
-      border: none;
-      border-bottom: 1px solid hsl(0, 0%, 20%);
-      //width: 100%;
-    }
-
-    .schedule-stage__title {
-      position: sticky;
-      left: 0;
-      padding-right: 5rem;
-      height: 100%;
-      padding-left: 4rem;
-      background: linear-gradient(to right, #ffffff 30%, hsla(0, 0%, 0%, 0));
-
-      &>h3 {
-        font-weight: 900;
-      }
-    }
-
-    .schedule-stage_guide-container {
-      display: flex;
-      flex-wrap: wrap;
-      flex-grow: 0;
-      flex-shrink: 1;
-      gap: 2rem;
-      width: 100%;
-    }
-
-    .guide-slot {
-      color: hsl(0, 0%, 50%);
-      max-width: 280px;
-      &>p {
-        margin-bottom: 1rem;
-      }
-    }
-
-    .guide-slot_card {
-      background: white;
-      //border: 1px solid #e6e6e6;
-      border-radius: 0.8rem;
-      font-size: 1.4rem;
-      margin-bottom: 2rem;
-      padding: 1.6rem;
-      cursor: pointer;
-      box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
-      transition: all 0.4s;
-
-      &:hover {
-        box-shadow: 0px 0px 20px -7px rgba(0, 0, 0, 0.7);
-      }
-
-      &>h4 {
-        margin-right: 5rem;
-        font-size: 1.4rem;
-        color: $body;
-      }
-    }
-
-    .author-wrapper {
-      display: flex;
-      align-items: center;
-      margin-top: 1rem;
-
-      &>picture {
-        display: inline-block;
-        inline-size: 2.6rem;
-        block-size: 2.6rem;
-        border-radius: 50%;
-        overflow: hidden;
-        margin-right: 1rem;
-
-        //border: 1px solid hsl(0, 0%, 20%);
-        &>img {
-          inline-size: 100%;
-          block-size: 100%;
-          object-fit: cover;
-        }
-      }
-    }
-  }
-}
-*/
 .schedule-container {
   display: -webkit-box;
   display: -ms-flexbox;
