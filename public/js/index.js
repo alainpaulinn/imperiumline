@@ -89,17 +89,20 @@ let silenceActionSwitch = createElement({ elementType: 'div', class: 'switch', c
 
 // choose Audio/video output
 let popupTitle = createElement({ elementType: 'div', class: 'popupTitle', textContent: "Choose Media Devices" })
-let videoInputSelection = createElement({ elementType: 'div'})
-let audioInputSelection = createElement({ elementType: 'div'})
-let audioOutputSelection = createElement({ elementType: 'div'})
-let popupBody = createElement({ elementType: 'div', class: 'popupBody', childrenArray:[videoInputSelection, audioInputSelection, audioOutputSelection] })
-let popupConfirmButton = createElement({ elementType: 'button', class: 'positive', textContent: 'Confirm' })
-let popupCancelButton = createElement({ elementType: 'button', class: 'negative', textContent: 'Cancel' })
-let popupBottom = createElement({ elementType: 'div', class: 'popupBottom', childrenArray: [popupCancelButton, popupConfirmButton] })
+let videoInputSelection = createElement({ elementType: 'div' })
+let audioInputSelection = createElement({ elementType: 'div' })
+let audioOutputSelection = createElement({ elementType: 'div' })
+let popupBody = createElement({ elementType: 'div', class: 'popupBody', childrenArray: [videoInputSelection, audioInputSelection, audioOutputSelection] })
+let popupFinishButton = createElement({ elementType: 'button', class: 'positive', textContent: 'Done' })
+let popupBottom = createElement({ elementType: 'div', class: 'popupBottom', childrenArray: [popupFinishButton] })
 let audioVideochoicePanel = createElement({ elementType: 'div', class: 'audioVideochoicePanel', childrenArray: [popupTitle, popupBody, popupBottom] })
 body.append(audioVideochoicePanel)
-let availableDevices = { videoInput: [], audioInput: [], audioOutput: [], }
-let chosenDevices = localStorage.getItem('chosenDevices')
+popupFinishButton.addEventListener('click', () => {
+  audioVideochoicePanel.classList.remove('visible')
+})
+let availableDevices = { videoInput: [], audioInput: [], audioOutput: [] }
+let chosenDevices = localStorage.getItem('chosenDevices') || { videoInput: null, audioInput: null, audioOutput: null }
+function savePreferedDevices(){localStorage.setItem('chosenDevices', chosenDevices )}
 navigator.mediaDevices.enumerateDevices()
   .then(devices => {
     console.log(devices)
@@ -110,36 +113,36 @@ navigator.mediaDevices.enumerateDevices()
     });
 
     goodselect(videoInputSelection, {
-      availableOptions: availableDevices.videoInput.map((device, index) => {return {id: index, name: device.label, deviceId: device.deviceId}}),
+      availableOptions: availableDevices.videoInput.map((device, index) => { return { id: index, name: device.label, deviceId: device.deviceId } }),
       placeHolder: "Select Camera",
       selectorWidth: "300px",
       marginRight: '0rem',
       onOptionChange: (option) => {
         // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
         // newEventCreation.recurrenceType = option.id;
-        console.log('Camera changed to :', option )
+        console.log('Camera changed to :', option)
       }
     })
     goodselect(audioInputSelection, {
-      availableOptions: availableDevices.audioInput.map((device, index) => {return {id: index, name: device.label, deviceId: device.deviceId}}),
+      availableOptions: availableDevices.audioInput.map((device, index) => { return { id: index, name: device.label, deviceId: device.deviceId } }),
       placeHolder: "Select Microphone",
       selectorWidth: "300px",
       marginRight: '0rem',
       onOptionChange: (option) => {
         // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
         // newEventCreation.recurrenceType = option.id;
-        console.log('Microphone changed to :', option )
+        console.log('Microphone changed to :', option)
       }
     })
     goodselect(audioOutputSelection, {
-      availableOptions: availableDevices.audioOutput.map((device, index) => {return {id: index, name: device.label, deviceId: device.deviceId}}),
+      availableOptions: availableDevices.audioOutput.map((device, index) => { return { id: index, name: device.label, deviceId: device.deviceId } }),
       placeHolder: "Select Speaker",
       selectorWidth: "300px",
       marginRight: '0rem',
       onOptionChange: (option) => {
         // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
         // newEventCreation.recurrenceType = option.id;
-        console.log('Speaker changed to :', option )
+        console.log('Speaker changed to :', option)
       }
     })
   });
