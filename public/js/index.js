@@ -101,9 +101,14 @@ popupFinishButton.addEventListener('click', () => {
   audioVideochoicePanel.classList.remove('visible')
 })
 let availableDevices = { videoInput: [], audioInput: [], audioOutput: [] }
-let chosenDevices = localStorage.getItem('chosenDevices') || { videoInput: null, audioInput: null, audioOutput: null }
-function savePreferedDevices(){localStorage.setItem('chosenDevices', chosenDevices )}
+let chosenDevices = { videoInput: null, audioInput: null, audioOutput: null }
+if (localStorage.getItem("chosenDevices") != null) chosenDevices = JSON.parse(localStorage.getItem("chosenDevices"))
+function savePreferedDevices() {
+  localStorage.setItem('chosenDevices', JSON.stringify(chosenDevices));
+  console.log('chosenDevices', JSON.parse(localStorage.getItem('chosenDevices')));
+}
 navigator.mediaDevices.enumerateDevices()
+
   .then(devices => {
     console.log(devices)
     devices.forEach(device => {
@@ -111,16 +116,49 @@ navigator.mediaDevices.enumerateDevices()
       if (device.kind == 'audioinput') { availableDevices.audioInput.push(device) }
       if (device.kind == 'audiooutput') { availableDevices.audioOutput.push(device) }
     });
+    function chooseSelection(deviceType) {
+      let foundDevice
+      switch (deviceType) {
+        case 'videoinput':
+          // choose which videoinput to use
+          let videoInputDeviceChoice1 = chosenDevices.videoInput;
+          let videoInputDeviceChoice2 = availableDevices.videoInput.find(device => { return device.label.toLowerCase().includes('default') })
+          let videoInputDeviceChoice3 = availableDevices.videoInput[0]
+          foundDevice = findNonNullNonUndefined([videoInputDeviceChoice1, videoInputDeviceChoice2, videoInputDeviceChoice3]);
+          break;
+        case 'audioinput':
+          // choose which audioinput to use
+          let audioInputDeviceChoice1 = chosenDevices.audioInput;
+          let audioInputDeviceChoice2 = availableDevices.audioInput.find(device => { return device.label.toLowerCase().includes('default') })
+          let audioInputDeviceChoice3 = availableDevices.audioInput[0]
+          foundDevice = findNonNullNonUndefined([audioInputDeviceChoice1, audioInputDeviceChoice2, audioInputDeviceChoice3]);
+          break;
+        case 'audiooutput':
+          // choose which audioOutput to use
+          let audioOutputDeviceChoice1 = chosenDevices.audioOutput;
+          let audioOutputDeviceChoice2 = availableDevices.audioOutput.find(device => { return device.label.toLowerCase().includes('default') })
+          let audioOutputDeviceChoice3 = availableDevices.audioOutput[0]
+          foundDevice = findNonNullNonUndefined([audioOutputDeviceChoice1, audioOutputDeviceChoice2, audioOutputDeviceChoice3]);
+          break;
+      }
+      return foundDevice;
+    }
 
+    console.log('chooseSelection(videoinput)', chooseSelection('videoinput'))
+    console.log('chooseSelection(audioinput)', chooseSelection('audioinput'))
+    console.log('chooseSelection(audiooutput)', chooseSelection('audiooutput'))
     goodselect(videoInputSelection, {
       availableOptions: availableDevices.videoInput.map((device, index) => { return { id: index, name: device.label, deviceId: device.deviceId } }),
       placeHolder: "Select Camera",
       selectorWidth: "300px",
       marginRight: '0rem',
+      selectedOption: chosenDevices.videoInput.id || availableDevices.videoInput.find(device => { return device.label.toLowerCase().includes('default') }).id || availableDevices.videoInput[0].id || null,
       onOptionChange: (option) => {
         // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
         // newEventCreation.recurrenceType = option.id;
         console.log('Camera changed to :', option)
+        chosenDevices.videoInput = option
+        savePreferedDevices()
       }
     })
     goodselect(audioInputSelection, {
@@ -128,6 +166,8 @@ navigator.mediaDevices.enumerateDevices()
       placeHolder: "Select Microphone",
       selectorWidth: "300px",
       marginRight: '0rem',
+      selectedOption: chosenDevices.audioInput.id || availableDevices.audioInput.find(device => { return device.label.toLowerCase().includes('default') }).id || availableDevices.audioInput[0].id || null,
+
       onOptionChange: (option) => {
         // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
         // newEventCreation.recurrenceType = option.id;
@@ -3536,7 +3576,15 @@ function createTopBar(callInfo, myInfo) {
   return { callScreenHeader, invitedDiv }
 }
 
-
+function findNonNullNonUndefined(array){
+  let firstBestValue = null;
+  for (let i = 0; i < array.length; i++) {
+    if(array[i] != undefined && array[i] != null) {
+      return array[i]
+    }
+  }
+  return firstBestValue;
+}
 
 
 // window.onbeforeunload = function () {
