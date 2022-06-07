@@ -89,10 +89,14 @@ let silenceActionSwitch = createElement({ elementType: 'div', class: 'switch', c
 
 // choose Audio/video output
 let popupTitle = createElement({ elementType: 'div', class: 'popupTitle', textContent: "Choose Media Devices" })
+let cameraLabel = createElement({ elementType: 'p', textContent: "Cameras: " })
 let videoInputSelection = createElement({ elementType: 'div' })
+let microphoneLabel = createElement({ elementType: 'p', textContent: "Microphone: " })
 let audioInputSelection = createElement({ elementType: 'div' })
+let speakerLabel = createElement({ elementType: 'p', textContent: "Speaker: " })
 let audioOutputSelection = createElement({ elementType: 'div' })
-let popupBody = createElement({ elementType: 'div', class: 'popupBody', childrenArray: [videoInputSelection, audioInputSelection, audioOutputSelection] })
+let importantInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions is required"})
+let popupBody = createElement({ elementType: 'div', class: 'popupBody', childrenArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, importantInfo] })
 let popupFinishButton = createElement({ elementType: 'button', class: 'positive', textContent: 'Done' })
 let popupBottom = createElement({ elementType: 'div', class: 'popupBottom', childrenArray: [popupFinishButton] })
 let audioVideochoicePanel = createElement({ elementType: 'div', class: 'audioVideochoicePanel', childrenArray: [popupTitle, popupBody, popupBottom] })
@@ -107,85 +111,94 @@ function savePreferedDevices() {
   localStorage.setItem('chosenDevices', JSON.stringify(chosenDevices));
   console.log('chosenDevices', JSON.parse(localStorage.getItem('chosenDevices')));
 }
-navigator.mediaDevices.enumerateDevices()
-
-  .then(devices => {
-    console.log(devices)
-    devices.forEach(device => {
-      if (device.kind == 'videoinput') { availableDevices.videoInput.push(device) }
-      if (device.kind == 'audioinput') { availableDevices.audioInput.push(device) }
-      if (device.kind == 'audiooutput') { availableDevices.audioOutput.push(device) }
-    });
-    function chooseSelection(deviceType) {
-      let foundDevice
-      switch (deviceType) {
-        case 'videoinput':
-          // choose which videoinput to use
-          let videoInputDeviceChoice1 = chosenDevices.videoInput;
-          let videoInputDeviceChoice2 = availableDevices.videoInput.find(device => { return device.label.toLowerCase().includes('default') })
-          let videoInputDeviceChoice3 = availableDevices.videoInput[0]
-          foundDevice = findNonNullNonUndefined([videoInputDeviceChoice1, videoInputDeviceChoice2, videoInputDeviceChoice3]);
-          break;
-        case 'audioinput':
-          // choose which audioinput to use
-          let audioInputDeviceChoice1 = chosenDevices.audioInput;
-          let audioInputDeviceChoice2 = availableDevices.audioInput.find(device => { return device.label.toLowerCase().includes('default') })
-          let audioInputDeviceChoice3 = availableDevices.audioInput[0]
-          foundDevice = findNonNullNonUndefined([audioInputDeviceChoice1, audioInputDeviceChoice2, audioInputDeviceChoice3]);
-          break;
-        case 'audiooutput':
-          // choose which audioOutput to use
-          let audioOutputDeviceChoice1 = chosenDevices.audioOutput;
-          let audioOutputDeviceChoice2 = availableDevices.audioOutput.find(device => { return device.label.toLowerCase().includes('default') })
-          let audioOutputDeviceChoice3 = availableDevices.audioOutput[0]
-          foundDevice = findNonNullNonUndefined([audioOutputDeviceChoice1, audioOutputDeviceChoice2, audioOutputDeviceChoice3]);
-          break;
-      }
-      return foundDevice;
-    }
-
-    console.log('chooseSelection(videoinput)', chooseSelection('videoinput'))
-    console.log('chooseSelection(audioinput)', chooseSelection('audioinput'))
-    console.log('chooseSelection(audiooutput)', chooseSelection('audiooutput'))
-    goodselect(videoInputSelection, {
-      availableOptions: availableDevices.videoInput.map((device, index) => { return { id: index, name: device.label, deviceId: device.deviceId } }),
-      placeHolder: "Select Camera",
-      selectorWidth: "300px",
-      marginRight: '0rem',
-      selectedOption: chosenDevices.videoInput.id || availableDevices.videoInput.find(device => { return device.label.toLowerCase().includes('default') }).id || availableDevices.videoInput[0].id || null,
-      onOptionChange: (option) => {
-        // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
-        // newEventCreation.recurrenceType = option.id;
-        console.log('Camera changed to :', option)
-        chosenDevices.videoInput = option
-        savePreferedDevices()
-      }
-    })
-    goodselect(audioInputSelection, {
-      availableOptions: availableDevices.audioInput.map((device, index) => { return { id: index, name: device.label, deviceId: device.deviceId } }),
-      placeHolder: "Select Microphone",
-      selectorWidth: "300px",
-      marginRight: '0rem',
-      selectedOption: chosenDevices.audioInput.id || availableDevices.audioInput.find(device => { return device.label.toLowerCase().includes('default') }).id || availableDevices.audioInput[0].id || null,
-
-      onOptionChange: (option) => {
-        // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
-        // newEventCreation.recurrenceType = option.id;
-        console.log('Microphone changed to :', option)
-      }
-    })
-    goodselect(audioOutputSelection, {
-      availableOptions: availableDevices.audioOutput.map((device, index) => { return { id: index, name: device.label, deviceId: device.deviceId } }),
-      placeHolder: "Select Speaker",
-      selectorWidth: "300px",
-      marginRight: '0rem',
-      onOptionChange: (option) => {
-        // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
-        // newEventCreation.recurrenceType = option.id;
-        console.log('Speaker changed to :', option)
-      }
-    })
+navigator.mediaDevices.enumerateDevices().then(devices => {
+  console.log(devices)
+  devices.forEach(device => {
+    if (device.kind == 'videoinput') { availableDevices.videoInput.push(device) }
+    if (device.kind == 'audioinput') { availableDevices.audioInput.push(device) }
+    if (device.kind == 'audiooutput') { availableDevices.audioOutput.push(device) }
   });
+  function chooseSelection(deviceType) {
+    let foundDevice
+    switch (deviceType) {
+      case 'videoinput':
+        // choose which videoinput to use
+        let videoInputDeviceChoice1 = chosenDevices.videoInput;
+        let videoInputDeviceChoice2 = availableDevices.videoInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
+        let videoInputDeviceChoice3 = availableDevices.videoInput[0]
+        foundDevice = findNonNullNonUndefined([videoInputDeviceChoice1, videoInputDeviceChoice2, videoInputDeviceChoice3]);
+        break;
+      case 'audioinput':
+        // choose which audioinput to use
+        let audioInputDeviceChoice1 = chosenDevices.audioInput;
+        let audioInputDeviceChoice2 = availableDevices.audioInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
+        let audioInputDeviceChoice3 = availableDevices.audioInput[0]
+        foundDevice = findNonNullNonUndefined([audioInputDeviceChoice1, audioInputDeviceChoice2, audioInputDeviceChoice3]);
+        break;
+      case 'audiooutput':
+        // choose which audioOutput to use
+        let audioOutputDeviceChoice1 = chosenDevices.audioOutput;
+        let audioOutputDeviceChoice2 = availableDevices.audioOutput.find(device => { return device.deviceId.toLowerCase().includes('default') })
+        let audioOutputDeviceChoice3 = availableDevices.audioOutput[0]
+        foundDevice = findNonNullNonUndefined([audioOutputDeviceChoice1, audioOutputDeviceChoice2, audioOutputDeviceChoice3]);
+        break;
+    }
+    if(foundDevice == null) foundDevice = {id: null, name: null, deviceId: null, groupId: null, kind: null, label: null}
+    return foundDevice;
+  }
+
+  console.log('chooseSelection(videoinput)', chooseSelection('videoinput'))
+  console.log('chooseSelection(audioinput)', chooseSelection('audioinput'))
+  console.log('chooseSelection(audiooutput)', chooseSelection('audiooutput'))
+
+  let availableVideoInputOptions = addIndexAndLabelAsName(availableDevices.videoInput)
+  goodselect(videoInputSelection, {
+    availableOptions: availableVideoInputOptions,
+    placeHolder: "Select Camera",
+    selectorWidth: "300px",
+    marginRight: '0rem',
+    selectedOptionId: availableVideoInputOptions.findIndex(device => device.deviceId == chooseSelection('videoinput').deviceId),
+    onOptionChange: (option) => {
+      // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
+      // newEventCreation.recurrenceType = option.id;
+      console.log('Camera changed to :', option)
+      chosenDevices.videoInput = option
+      savePreferedDevices()
+    }
+  })
+  let availableAudioInputOptions = addIndexAndLabelAsName(availableDevices.audioInput)
+  goodselect(audioInputSelection, {
+    availableOptions: availableAudioInputOptions,
+    placeHolder: "Select Microphone",
+    selectorWidth: "300px",
+    marginRight: '0rem',
+    selectedOptionId: availableAudioInputOptions.findIndex(device => device.deviceId == chooseSelection('audioinput').deviceId),
+    onOptionChange: (option) => {
+      // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
+      // newEventCreation.recurrenceType = option.id;
+      console.log('Microphone changed to :', option)
+      chosenDevices.audioInput = option
+      savePreferedDevices()
+    }
+  })
+
+  let availableAudioOutputOptions = addIndexAndLabelAsName(availableDevices.audioOutput)
+  goodselect(audioOutputSelection, {
+    availableOptions: availableAudioOutputOptions,
+    placeHolder: "Select Speaker",
+    selectorWidth: "300px",
+    marginRight: '0rem',
+    selectedOptionId: availableAudioOutputOptions.findIndex(device => device.deviceId == chooseSelection('audioOutput').deviceId),
+    onOptionChange: (option) => {
+      // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
+      // newEventCreation.recurrenceType = option.id;
+      console.log('Speaker changed to :', option)
+      console.log('test to :', addIndexAndLabelAsName(availableDevices.audioOutput))
+      chosenDevices.audioOutput = option
+      savePreferedDevices()
+    }
+  })
+});
 let audioVideoInOutBtn = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Chose', onclick: () => { audioVideochoicePanel.classList.toggle('visible') } })
 
 // logout form
@@ -3576,14 +3589,19 @@ function createTopBar(callInfo, myInfo) {
   return { callScreenHeader, invitedDiv }
 }
 
-function findNonNullNonUndefined(array){
+// Array manipulators
+function findNonNullNonUndefined(array) {
   let firstBestValue = null;
-  for (let i = 0; i < array.length; i++) {
-    if(array[i] != undefined && array[i] != null) {
-      return array[i]
-    }
-  }
+  for (let i = 0; i < array.length; i++) { if (array[i] != undefined && array[i] != null) { return array[i] } }
   return firstBestValue;
+}
+
+function addIndexAndLabelAsName(array) {
+  for (let i = 0; i < array.length; i++) {
+    array[i].id = i;
+    array[i].name = array[i].label;
+  }
+  return array;
 }
 
 
