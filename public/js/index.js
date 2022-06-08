@@ -56,197 +56,7 @@ let functionalityOptionsArray = [
   },
 ];
 
-// dark theme switch
-let darkModeCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle1' })
-darkModeCheckBox.addEventListener('change', (event) => {
 
-  let darkClass = 'dark';
-  if (darkModeCheckBox.checked) {
-    body.classList.add(darkClass);
-    alert('darkClass activated');
-  }
-  else {
-    body.classList.remove(darkClass);
-    alert('darkClass deactivated');
-  }
-})
-let darkmodeActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [darkModeCheckBox, createElement({ elementType: 'label', for: 'toggle1' })] })
-
-// silence audio switch
-let silenceCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle2' })
-silenceCheckBox.addEventListener('change', (event) => {
-  let darkClass = 'dark';
-  if (silenceCheckBox.checked) {
-    body.classList.add(darkClass);
-    alert('notifications Ring deactivated');
-  }
-  else {
-    body.classList.remove(darkClass);
-    alert('notifications Ring activated');
-  }
-})
-let silenceActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [silenceCheckBox, createElement({ elementType: 'label', for: 'toggle2' })] })
-
-// choose Audio/video output
-let popupTitle = createElement({ elementType: 'div', class: 'popupTitle', textContent: "Choose Media Devices" })
-let cameraLabel = createElement({ elementType: 'p', textContent: "Cameras: " })
-let videoInputSelection = createElement({ elementType: 'div' })
-let microphoneLabel = createElement({ elementType: 'p', textContent: "Microphone: " })
-let audioInputSelection = createElement({ elementType: 'div' })
-let speakerLabel = createElement({ elementType: 'p', textContent: "Speaker: " })
-let audioOutputSelection = createElement({ elementType: 'div' })
-let importantInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions is required"})
-let popupBody = createElement({ elementType: 'div', class: 'popupBody', childrenArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, importantInfo] })
-let popupFinishButton = createElement({ elementType: 'button', class: 'positive', textContent: 'Done' })
-let popupBottom = createElement({ elementType: 'div', class: 'popupBottom', childrenArray: [popupFinishButton] })
-let audioVideochoicePanel = createElement({ elementType: 'div', class: 'audioVideochoicePanel', childrenArray: [popupTitle, popupBody, popupBottom] })
-body.append(audioVideochoicePanel)
-popupFinishButton.addEventListener('click', () => {
-  audioVideochoicePanel.classList.remove('visible')
-})
-let availableDevices = { videoInput: [], audioInput: [], audioOutput: [] }
-let chosenDevices = { videoInput: null, audioInput: null, audioOutput: null }
-if (localStorage.getItem("chosenDevices") != null) chosenDevices = JSON.parse(localStorage.getItem("chosenDevices"))
-function savePreferedDevices() {
-  localStorage.setItem('chosenDevices', JSON.stringify(chosenDevices));
-  console.log('chosenDevices', JSON.parse(localStorage.getItem('chosenDevices')));
-}
-navigator.mediaDevices.enumerateDevices().then(devices => {
-  console.log(devices)
-  devices.forEach(device => {
-    if (device.kind == 'videoinput') { availableDevices.videoInput.push(device) }
-    if (device.kind == 'audioinput') { availableDevices.audioInput.push(device) }
-    if (device.kind == 'audiooutput') { availableDevices.audioOutput.push(device) }
-  });
-  function chooseSelection(deviceType) {
-    let foundDevice
-    switch (deviceType) {
-      case 'videoinput':
-        // choose which videoinput to use
-        let videoInputDeviceChoice1 = chosenDevices.videoInput;
-        let videoInputDeviceChoice2 = availableDevices.videoInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
-        let videoInputDeviceChoice3 = availableDevices.videoInput[0]
-        foundDevice = findNonNullNonUndefined([videoInputDeviceChoice1, videoInputDeviceChoice2, videoInputDeviceChoice3]);
-        break;
-      case 'audioinput':
-        // choose which audioinput to use
-        let audioInputDeviceChoice1 = chosenDevices.audioInput;
-        let audioInputDeviceChoice2 = availableDevices.audioInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
-        let audioInputDeviceChoice3 = availableDevices.audioInput[0]
-        foundDevice = findNonNullNonUndefined([audioInputDeviceChoice1, audioInputDeviceChoice2, audioInputDeviceChoice3]);
-        break;
-      case 'audiooutput':
-        // choose which audioOutput to use
-        let audioOutputDeviceChoice1 = chosenDevices.audioOutput;
-        let audioOutputDeviceChoice2 = availableDevices.audioOutput.find(device => { return device.deviceId.toLowerCase().includes('default') })
-        let audioOutputDeviceChoice3 = availableDevices.audioOutput[0]
-        foundDevice = findNonNullNonUndefined([audioOutputDeviceChoice1, audioOutputDeviceChoice2, audioOutputDeviceChoice3]);
-        break;
-    }
-    if(foundDevice == null) foundDevice = {id: null, name: null, deviceId: null, groupId: null, kind: null, label: null}
-    return foundDevice;
-  }
-
-  console.log('chooseSelection(videoinput)', chooseSelection('videoinput'))
-  console.log('chooseSelection(audioinput)', chooseSelection('audioinput'))
-  console.log('chooseSelection(audiooutput)', chooseSelection('audiooutput'))
-
-  let availableVideoInputOptions = addIndexAndLabelAsName(availableDevices.videoInput)
-  goodselect(videoInputSelection, {
-    availableOptions: availableVideoInputOptions,
-    placeHolder: "Select Camera",
-    selectorWidth: "300px",
-    marginRight: '0rem',
-    selectedOptionId: availableVideoInputOptions.findIndex(device => device.deviceId == chooseSelection('videoinput').deviceId),
-    onOptionChange: (option) => {
-      // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
-      // newEventCreation.recurrenceType = option.id;
-      console.log('Camera changed to :', option)
-      chosenDevices.videoInput = option
-      savePreferedDevices()
-    }
-  })
-  let availableAudioInputOptions = addIndexAndLabelAsName(availableDevices.audioInput)
-  goodselect(audioInputSelection, {
-    availableOptions: availableAudioInputOptions,
-    placeHolder: "Select Microphone",
-    selectorWidth: "300px",
-    marginRight: '0rem',
-    selectedOptionId: availableAudioInputOptions.findIndex(device => device.deviceId == chooseSelection('audioinput').deviceId),
-    onOptionChange: (option) => {
-      // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
-      // newEventCreation.recurrenceType = option.id;
-      console.log('Microphone changed to :', option)
-      chosenDevices.audioInput = option
-      savePreferedDevices()
-    }
-  })
-
-  let availableAudioOutputOptions = addIndexAndLabelAsName(availableDevices.audioOutput)
-  goodselect(audioOutputSelection, {
-    availableOptions: availableAudioOutputOptions,
-    placeHolder: "Select Speaker",
-    selectorWidth: "300px",
-    marginRight: '0rem',
-    selectedOptionId: availableAudioOutputOptions.findIndex(device => device.deviceId == chooseSelection('audioOutput').deviceId),
-    onOptionChange: (option) => {
-      // !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
-      // newEventCreation.recurrenceType = option.id;
-      console.log('Speaker changed to :', option)
-      console.log('test to :', addIndexAndLabelAsName(availableDevices.audioOutput))
-      chosenDevices.audioOutput = option
-      savePreferedDevices()
-    }
-  })
-});
-let audioVideoInOutBtn = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Chose', onclick: () => { audioVideochoicePanel.classList.toggle('visible') } })
-
-// logout form
-let logoutForm = createElement({ elementType: 'form', action: "/auth/logout", method: "post", childrenArray: [createElement({ elementType: 'input', type: 'text', name: 'logout', hidden: "true" })] })
-let logoutButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Logout', onclick: () => { logoutForm.submit(); } })
-
-
-let defaultOptions = [
-  {
-    title: "Preferences",
-    icon: "bx bx-slider-alt",
-    subMenu: [
-      {
-        text: "Dark mode",
-        icon: "bx bxs-moon",
-        actions: [
-          { element: darkmodeActionSwitch }
-        ]
-      },
-      {
-        text: "Silent notifications",
-        icon: "bx bxs-bell-off",
-        actions: [{ element: silenceActionSwitch }]
-      },
-      {
-        text: "Audio/Video input",
-        icon: "bx bxs-video-recording",
-        actions: [{ element: audioVideoInOutBtn }]
-      },
-    ]
-  },
-  {
-    title: "Profile",
-    icon: "bx bxs-user-circle",
-    subMenu: [
-      {
-        text: "Quit the app",
-        icon: "bx bx-log-out-circle",
-        actions: [{ element: logoutButton }, { element: logoutForm }]
-      },
-      {
-        text: "Edit profile",
-        icon: "bx bxs-user-detail",
-        actions: []
-      },
-    ]
-  },
-];
 ((serverOptions) => {
   let sidePanelDiv = document.getElementById('c-sidepanel')
   let sidepanelElements = []
@@ -272,6 +82,185 @@ let defaultOptions = [
       sidePanelDiv.classList.remove("expanded");
     }
   }
+
+  // dark theme switch
+  let darkModeCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle1' })
+  darkModeCheckBox.addEventListener('change', (event) => {
+
+    let darkClass = 'dark';
+    if (darkModeCheckBox.checked) {
+      body.classList.add(darkClass);
+      alert('darkClass activated');
+    }
+    else {
+      body.classList.remove(darkClass);
+      alert('darkClass deactivated');
+    }
+  })
+  let darkmodeActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [darkModeCheckBox, createElement({ elementType: 'label', for: 'toggle1' })] })
+
+  // silence audio switch
+  let silenceCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle2' })
+  silenceCheckBox.addEventListener('change', (event) => {
+    let darkClass = 'dark';
+    if (silenceCheckBox.checked) {
+      body.classList.add(darkClass);
+      alert('notifications Ring deactivated');
+    }
+    else {
+      body.classList.remove(darkClass);
+      alert('notifications Ring activated');
+    }
+  })
+  let silenceActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [silenceCheckBox, createElement({ elementType: 'label', for: 'toggle2' })] })
+
+  // choose Audio/video output
+  let cameraLabel = createElement({ elementType: 'p', textContent: "Cameras: " })
+  let videoInputSelection = createElement({ elementType: 'div' })
+  let microphoneLabel = createElement({ elementType: 'p', textContent: "Microphone: " })
+  let audioInputSelection = createElement({ elementType: 'div' })
+  let speakerLabel = createElement({ elementType: 'p', textContent: "Speaker: " })
+  let audioOutputSelection = createElement({ elementType: 'div' })
+  let importantInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions is required" })
+
+  let devicePopForm = createInScreenPopup({ title: "Choose Media Devices", contentElementsArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, importantInfo] })
+
+  let availableDevices = { videoInput: [], audioInput: [], audioOutput: [] }
+  let chosenDevices = { videoInput: null, audioInput: null, audioOutput: null }
+  if (localStorage.getItem("chosenDevices") != null) chosenDevices = JSON.parse(localStorage.getItem("chosenDevices"))
+  function savePreferedDevices() {
+    localStorage.setItem('chosenDevices', JSON.stringify(chosenDevices));
+    console.log('chosenDevices', JSON.parse(localStorage.getItem('chosenDevices')));
+  }
+  navigator.mediaDevices.enumerateDevices().then(devices => {
+    console.log(devices)
+    devices.forEach(device => {
+      if (device.kind == 'videoinput') { availableDevices.videoInput.push(device) }
+      if (device.kind == 'audioinput') { availableDevices.audioInput.push(device) }
+      if (device.kind == 'audiooutput') { availableDevices.audioOutput.push(device) }
+    });
+    function chooseSelection(deviceType) {
+      let foundDevice
+      switch (deviceType) {
+        case 'videoinput':
+          // choose which videoinput to use
+          let videoInputDeviceChoice1 = chosenDevices.videoInput;
+          let videoInputDeviceChoice2 = availableDevices.videoInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
+          let videoInputDeviceChoice3 = availableDevices.videoInput[0]
+          foundDevice = findNonNullNonUndefined([videoInputDeviceChoice1, videoInputDeviceChoice2, videoInputDeviceChoice3]);
+          break;
+        case 'audioinput':
+          // choose which audioinput to use
+          let audioInputDeviceChoice1 = chosenDevices.audioInput;
+          let audioInputDeviceChoice2 = availableDevices.audioInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
+          let audioInputDeviceChoice3 = availableDevices.audioInput[0]
+          foundDevice = findNonNullNonUndefined([audioInputDeviceChoice1, audioInputDeviceChoice2, audioInputDeviceChoice3]);
+          break;
+        case 'audiooutput':
+          // choose which audioOutput to use
+          let audioOutputDeviceChoice1 = chosenDevices.audioOutput;
+          let audioOutputDeviceChoice2 = availableDevices.audioOutput.find(device => { return device.deviceId.toLowerCase().includes('default') })
+          let audioOutputDeviceChoice3 = availableDevices.audioOutput[0]
+          foundDevice = findNonNullNonUndefined([audioOutputDeviceChoice1, audioOutputDeviceChoice2, audioOutputDeviceChoice3]);
+          break;
+      }
+      if (foundDevice == null) foundDevice = { id: null, name: null, deviceId: null, groupId: null, kind: null, label: null }
+      return foundDevice;
+    }
+
+    console.log('chooseSelection(videoinput)', chooseSelection('videoinput'))
+    console.log('chooseSelection(audioinput)', chooseSelection('audioinput'))
+    console.log('chooseSelection(audiooutput)', chooseSelection('audiooutput'))
+
+    let availableVideoInputOptions = addIndexAndLabelAsName(availableDevices.videoInput)
+    goodselect(videoInputSelection, {
+      availableOptions: availableVideoInputOptions,
+      placeHolder: "Select Camera",
+      selectorWidth: "300px",
+      marginRight: '0rem',
+      selectedOptionId: availableVideoInputOptions.findIndex(device => device.deviceId == chooseSelection('videoinput').deviceId),
+      onOptionChange: (option) => {
+        chosenDevices.videoInput = option
+        savePreferedDevices()
+      }
+    })
+    let availableAudioInputOptions = addIndexAndLabelAsName(availableDevices.audioInput)
+    goodselect(audioInputSelection, {
+      availableOptions: availableAudioInputOptions,
+      placeHolder: "Select Microphone",
+      selectorWidth: "300px",
+      marginRight: '0rem',
+      selectedOptionId: availableAudioInputOptions.findIndex(device => device.deviceId == chooseSelection('audioinput').deviceId),
+      onOptionChange: (option) => {
+        chosenDevices.audioInput = option
+        savePreferedDevices()
+      }
+    })
+
+    let availableAudioOutputOptions = addIndexAndLabelAsName(availableDevices.audioOutput)
+    goodselect(audioOutputSelection, {
+      availableOptions: availableAudioOutputOptions,
+      placeHolder: "Select Speaker",
+      selectorWidth: "300px",
+      marginRight: '0rem',
+      selectedOptionId: availableAudioOutputOptions.findIndex(device => device.deviceId == chooseSelection('audiooutput').deviceId),
+      onOptionChange: (option) => {
+        chosenDevices.audioOutput = option
+        savePreferedDevices()
+      }
+    })
+  });
+  let audioVideoInOutBtn = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Choose', onclick: () => { devicePopForm.classList.toggle('visible') } })
+
+  // logout form
+  let logoutForm = createElement({ elementType: 'form', action: "/auth/logout", method: "post", childrenArray: [createElement({ elementType: 'input', type: 'text', name: 'logout', hidden: "true" })] })
+  let logoutButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Logout', onclick: () => { logoutForm.submit(); } })
+
+  // edit profile form
+  let editProfilePanel = createInScreenPopup({ title: "Edit Profile", contentElementsArray: [] })
+  let editProfileButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Edit', onclick: () => { editProfilePanel.classList.toggle('visible') } })
+
+  let defaultOptions = [
+    {
+      title: "Preferences",
+      icon: "bx bx-slider-alt",
+      subMenu: [
+        {
+          text: "Dark mode",
+          icon: "bx bxs-moon",
+          actions: [
+            { element: darkmodeActionSwitch }
+          ]
+        },
+        {
+          text: "Silent notifications",
+          icon: "bx bxs-bell-off",
+          actions: [{ element: silenceActionSwitch }]
+        },
+        {
+          text: "Audio/Video input",
+          icon: "bx bxs-video-recording",
+          actions: [{ element: audioVideoInOutBtn }]
+        },
+      ]
+    },
+    {
+      title: "Profile",
+      icon: "bx bxs-user-circle",
+      subMenu: [
+        {
+          text: "Quit the app",
+          icon: "bx bx-log-out-circle",
+          actions: [{ element: logoutButton }, { element: logoutForm }]
+        },
+        {
+          text: "Edit profile",
+          icon: "bx bxs-user-detail",
+          actions: [{ element: editProfileButton }]
+        },
+      ]
+    },
+  ];
 
   const showSection = index => () => {
     for (let i = 0; i < sidepanelElements.length; i++) {
@@ -1562,8 +1551,10 @@ socket.on('searchPerson', (searchPeople) => {
     searchChatButton.addEventListener('click', function () {
       chatSearchToogle();
       console.log("CHAT", this.id)
-      socket.emit('makeChat', this.id.slice(0, -10))
+      chat(this.id.slice(0, -10))
+      
       ITriggeredChatCreation = true;
+      
     })
   })
   let searchAudioButtons = document.querySelectorAll('.searchAudioButton')
@@ -1818,8 +1809,6 @@ const myPeer = new Peer(undefined, {
         credential: 'muazkh',
         username: 'webrtc@live.com'
       },
-      { "url": "stun:stun.l.google.com:19302" },
-
       {
         "url": "turn:stun.imperiumline.com:5349",
         credential: 'guest',
@@ -3335,6 +3324,8 @@ function createElement(configuration) {
   if (configuration.hidden) elementToReturn.setAttribute('hidden', configuration.hidden)
   if (configuration.name) elementToReturn.setAttribute('name', configuration.name)
   if (configuration.action) elementToReturn.setAttribute('action', configuration.action)
+  if (configuration.tabIndex) elementToReturn.setAttribute('tabindex', configuration.tabIndex)
+  if (configuration.href) elementToReturn.setAttribute('href', configuration.href)
   if (configuration.autoplay) elementToReturn.autoplay = configuration.autoplay
   return elementToReturn
 }
@@ -3398,6 +3389,9 @@ function streamVolumeOnTreshold(stream, threshold, outletEment) {
 
 function call(callTo, audio, video, group, fromChat, previousCallId) {
   initiateCall({ callTo, audio, video, group, fromChat, previousCallId })
+}
+function chat(corespondantId){
+  socket.emit('makeChat', corespondantId)
 }
 
 function initiateCall(initiationInfo) {
@@ -3589,6 +3583,111 @@ function createTopBar(callInfo, myInfo) {
   return { callScreenHeader, invitedDiv }
 }
 
+function createInScreenPopup(constraints) {
+  let { title, contentElementsArray } = constraints
+  let popupTitle = createElement({ elementType: 'div', class: 'popupTitle', textContent: title })
+  let popupBody = createElement({ elementType: 'div', class: 'popupBody', childrenArray: contentElementsArray })
+  let popupFinishButton = createElement({ elementType: 'button', class: 'positive', textContent: 'Done' })
+  let popupBottom = createElement({ elementType: 'div', class: 'popupBottom', childrenArray: [popupFinishButton] })
+  let inScreenPanel = createElement({ elementType: 'div', class: 'inScreenPanel', childrenArray: [popupTitle, popupBody, popupBottom] })
+  body.append(inScreenPanel)
+  popupFinishButton.addEventListener('click', () => {
+    inScreenPanel.classList.remove('visible')
+  })
+  return inScreenPanel
+}
+
+async function createProfilePopup(userInfo, editProfile = false) {
+  //coverPhotoDiv
+  let coverPhoto;
+  if (userInfo.cover == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) }) }
+  else { coverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: userInfo.cover }) }
+  // close div button
+  let closeButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
+  let photoActionClose = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [closeButton] })
+  let coverPhotoActions = createElement({ elementType: 'div', class: 'photoActions', childrenArray: [photoActionClose] })
+  let coverPhotoDiv = createElement({ elementType: 'div', class: 'coverPhotoDiv', childrenArray: [coverPhoto, coverPhotoActions] })
+
+  let profilePicture;
+  if (userInfo.profilePicture == null) { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) }) }
+  else { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: userInfo.profilePicture }) }
+
+  let userProfileDiv = createElement({ elementType: 'div', class: 'userProfileDiv', childrenArray: [profilePicture] })
+  // if user is online
+  if (userInfo.status != 'offline') {
+    let onlineIndicator = createElement({ elementType: 'div', class: 'onlineIndicator' })
+    userProfileDiv.append(onlineIndicator)
+  }
+
+  // userPrimaryInfo
+  let name = createElement({ elementType: 'div', class: 'name', textContent: userInfo.name + ' ' + userInfo.surname })
+  let email = createElement({ elementType: 'a', class: 'email', href: "mailto:" + userInfo.email , textContent:userInfo.email})
+  let position = createElement({ elementType: 'div', class: 'position', textContent: userInfo.role })
+  let userPrimaryInfo = createElement({ elementType: 'div', class: 'userPrimaryInfo', childrenArray: [name, email, position] })
+
+  // organization
+  let memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: 'OR' })
+  let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: 'Organization' })
+  let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: 'this place will be filled with organization info' })
+  let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+  let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole] })
+  let presentMembersDiv = createElement({ elementType: 'div', class: 'presentMembersDiv', childrenArray: [presentMember] })
+
+  let userSecondaryInfo = createElement({
+    elementType: 'div', class: 'userSecondaryInfo', childrenArray: [ presentMembersDiv]
+  })
+  // userDataDiv
+  let userDataDiv = createElement({ elementType: 'div', class: 'userDataDiv', childrenArray: [userProfileDiv, userPrimaryInfo, userSecondaryInfo] })
+
+  //combine cover with user profile
+  let mainCentralProfileDiv = createElement({ elementType: 'div', class: 'mainCentralProfileDiv', childrenArray: [coverPhotoDiv, userDataDiv] })
+
+
+  if (editProfile == true) {
+    // cover edit - buttons
+    let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+    let deleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
+    let changePictureBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
+    let editControls = createElement({ elementType: 'div', class: 'editControls', tabIndex:"0", childrenArray: [deleteBtn, changePictureBtn] })
+    let photoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [editButton, editControls] })
+    coverPhotoActions.prepend(photoActionEdit)
+    editButton.addEventListener('click', () =>{ editControls.classList.toggle('visible'); editControls.focus() })
+    editControls.addEventListener('blur', () =>{ editControls.classList.remove('visible')})
+    changePictureBtn.addEventListener('click', () =>{
+
+    })
+
+    // profile edit Buttons
+    let profileEditButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+    let profileDeleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
+    let profileChangePictureBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
+    let profileEditControls = createElement({ elementType: 'div', class: 'editControls',tabIndex:"0", childrenArray: [profileDeleteBtn, profileChangePictureBtn] })
+    let profilePhotoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [profileEditButton, profileEditControls] })
+    let profilePhotoActions = createElement({ elementType: 'div', class:'photoActions', childrenArray:[profilePhotoActionEdit]})
+    userProfileDiv.prepend(profilePhotoActions)
+    profileEditButton.addEventListener('click', () =>{ profileEditControls.classList.toggle('visible'); profileEditControls.focus() })
+    profileEditControls.addEventListener('blur', () =>{ profileEditControls.classList.remove('visible')})
+    profileChangePictureBtn.addEventListener('click', () =>{
+      
+    })
+  }else{ 
+    let universalCallButtons = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray:[
+      createElement({ elementType: 'button', childrenArray:[createElement({ elementType: 'i', class: 'bx bxs-message-square-dots'})], onclick:()=>{chat(userInfo.userID)}}),
+      createElement({ elementType: 'button', childrenArray:[createElement({ elementType: 'i', class: 'bx bxs-phone'})], onclick:()=>{call(userInfo.userID, true, false, false, false, null)}}),
+      createElement({ elementType: 'button', childrenArray:[createElement({ elementType: 'i', class: 'bx bxs-video'})], onclick:()=>{call(userInfo.userID, true, true, false, false, null)}})
+    ]})
+    userSecondaryInfo.prepend(universalCallButtons) 
+  }
+  body.append(mainCentralProfileDiv)
+  await new Promise(resolve => setTimeout(resolve, 20))
+  mainCentralProfileDiv.classList.add('visible')
+  closeButton.addEventListener('click', async () =>{
+    mainCentralProfileDiv.classList.remove('visible')
+    await new Promise(resolve => setTimeout(resolve, 3000))
+    mainCentralProfileDiv.remove()})
+  return mainCentralProfileDiv
+}
+
 // Array manipulators
 function findNonNullNonUndefined(array) {
   let firstBestValue = null;
@@ -3619,3 +3718,14 @@ function addIndexAndLabelAsName(array) {
 //     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
 //   }
 // }
+let usr = {
+  email: "test7email@gmail.com",
+  name: "Test",
+  profilePicture: 'private/profiles/user-128.png',
+  role: "Human Accounts Technician",
+  status: "online",
+  surname: "User7",
+  userID: 7,
+
+}
+createProfilePopup(usr, true)
