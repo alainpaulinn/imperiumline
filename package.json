@@ -25,6 +25,7 @@
     "path": "^0.12.7",
     "peer": "^0.6.1",
     "socket.io": "^4.2.0",
+    "socketio-file-upload": "^0.7.3",
     "uuid": "^8.3.2",
     "uuidv4": "^6.2.12"
   }

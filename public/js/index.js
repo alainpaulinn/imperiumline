@@ -1,5 +1,7 @@
 //Get data from the chatsFromDataServer
 var socket = io();
+var uploader = new SocketIOFileUpload(socket);
+uploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
 
 let taggedMessages = [];
 let selectedChatId;
@@ -1552,9 +1554,9 @@ socket.on('searchPerson', (searchPeople) => {
       chatSearchToogle();
       console.log("CHAT", this.id)
       chat(this.id.slice(0, -10))
-      
+
       ITriggeredChatCreation = true;
-      
+
     })
   })
   let searchAudioButtons = document.querySelectorAll('.searchAudioButton')
@@ -3390,7 +3392,7 @@ function streamVolumeOnTreshold(stream, threshold, outletEment) {
 function call(callTo, audio, video, group, fromChat, previousCallId) {
   initiateCall({ callTo, audio, video, group, fromChat, previousCallId })
 }
-function chat(corespondantId){
+function chat(corespondantId) {
   socket.emit('makeChat', corespondantId)
 }
 
@@ -3600,7 +3602,7 @@ function createInScreenPopup(constraints) {
 async function createProfilePopup(userInfo, editProfile = false) {
   //coverPhotoDiv
   let coverPhoto;
-  if (userInfo.cover == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) }) }
+  if (userInfo.cover == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0)+'.' }) }
   else { coverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: userInfo.cover }) }
   // close div button
   let closeButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
@@ -3621,7 +3623,7 @@ async function createProfilePopup(userInfo, editProfile = false) {
 
   // userPrimaryInfo
   let name = createElement({ elementType: 'div', class: 'name', textContent: userInfo.name + ' ' + userInfo.surname })
-  let email = createElement({ elementType: 'a', class: 'email', href: "mailto:" + userInfo.email , textContent:userInfo.email})
+  let email = createElement({ elementType: 'a', class: 'email', href: "mailto:" + userInfo.email, textContent: userInfo.email })
   let position = createElement({ elementType: 'div', class: 'position', textContent: userInfo.role })
   let userPrimaryInfo = createElement({ elementType: 'div', class: 'userPrimaryInfo', childrenArray: [name, email, position] })
 
@@ -3634,7 +3636,7 @@ async function createProfilePopup(userInfo, editProfile = false) {
   let presentMembersDiv = createElement({ elementType: 'div', class: 'presentMembersDiv', childrenArray: [presentMember] })
 
   let userSecondaryInfo = createElement({
-    elementType: 'div', class: 'userSecondaryInfo', childrenArray: [ presentMembersDiv]
+    elementType: 'div', class: 'userSecondaryInfo', childrenArray: [presentMembersDiv]
   })
   // userDataDiv
   let userDataDiv = createElement({ elementType: 'div', class: 'userDataDiv', childrenArray: [userProfileDiv, userPrimaryInfo, userSecondaryInfo] })
@@ -3648,43 +3650,69 @@ async function createProfilePopup(userInfo, editProfile = false) {
     let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
     let deleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
     let changePictureBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
-    let editControls = createElement({ elementType: 'div', class: 'editControls', tabIndex:"0", childrenArray: [deleteBtn, changePictureBtn] })
+    let editControls = createElement({ elementType: 'div', class: 'editControls', tabIndex: "0", childrenArray: [deleteBtn, changePictureBtn] })
     let photoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [editButton, editControls] })
+
+    let coverPictureInputElement = createElement({ elementType: 'input', type:'file', id:'coverPictureInputElement', class: 'hidden'})
+    let selectCoverBtn = createElement({ elementType: 'label', for:'coverPictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
+    coverPhotoDiv.append(selectCoverBtn, coverPictureInputElement)
+
     coverPhotoActions.prepend(photoActionEdit)
-    editButton.addEventListener('click', () =>{ editControls.classList.toggle('visible'); editControls.focus() })
-    editControls.addEventListener('blur', () =>{ editControls.classList.remove('visible')})
-    changePictureBtn.addEventListener('click', () =>{
+    editButton.addEventListener('click', () => { editControls.classList.toggle('visible'); editControls.focus() })
+    editControls.addEventListener('blur', () => { editControls.classList.remove('visible') })
 
+    changePictureBtn.addEventListener('click', () => { selectCoverBtn.classList.add('visible'); selectCoverBtn.focus(); })
+    selectCoverBtn.addEventListener('blur', () => { selectCoverBtn.classList.remove('visible'); })
+
+    selectCoverBtn.addEventListener('click', () => {
+      //-> select and upload cover Picture
+      console.log('select and upload cover Picture')
     })
+    // listen to coverPhotoUpload
+    uploader.listenOnInput(coverPictureInputElement);
 
+    //-------------------------------------------------------------------
     // profile edit Buttons
     let profileEditButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
     let profileDeleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
     let profileChangePictureBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
-    let profileEditControls = createElement({ elementType: 'div', class: 'editControls',tabIndex:"0", childrenArray: [profileDeleteBtn, profileChangePictureBtn] })
+    let profileEditControls = createElement({ elementType: 'div', class: 'editControls', tabIndex: "0", childrenArray: [profileDeleteBtn, profileChangePictureBtn] })
     let profilePhotoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [profileEditButton, profileEditControls] })
-    let profilePhotoActions = createElement({ elementType: 'div', class:'photoActions', childrenArray:[profilePhotoActionEdit]})
+    let profilePhotoActions = createElement({ elementType: 'div', class: 'photoActions', childrenArray: [profilePhotoActionEdit] })
+
+    let profilePictureInputElement = createElement({ elementType: 'input', type:'file', id:'profilePictureInputElement', class: 'hidden'})
+    let selectPictureBtn = createElement({ elementType: 'label', for:'profilePictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
+    selectPictureBtn.addEventListener('blur', () => { selectPictureBtn.classList.remove('visible') })
+    userProfileDiv.append(selectPictureBtn, profilePictureInputElement)
+
     userProfileDiv.prepend(profilePhotoActions)
-    profileEditButton.addEventListener('click', () =>{ profileEditControls.classList.toggle('visible'); profileEditControls.focus() })
-    profileEditControls.addEventListener('blur', () =>{ profileEditControls.classList.remove('visible')})
-    profileChangePictureBtn.addEventListener('click', () =>{
-      
+    profileEditButton.addEventListener('click', () => { profileEditControls.classList.toggle('visible'); profileEditControls.focus() })
+    profileEditControls.addEventListener('blur', () => { profileEditControls.classList.remove('visible') })
+    profileChangePictureBtn.addEventListener('click', () => { selectPictureBtn.classList.add('visible'); selectPictureBtn.focus(); })
+
+
+    selectPictureBtn.addEventListener('click', () => {
+      //-> select and upload profile Picture
+      console.log('select and upload profile Picture')
     })
-  }else{ 
-    let universalCallButtons = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray:[
-      createElement({ elementType: 'button', childrenArray:[createElement({ elementType: 'i', class: 'bx bxs-message-square-dots'})], onclick:()=>{chat(userInfo.userID)}}),
-      createElement({ elementType: 'button', childrenArray:[createElement({ elementType: 'i', class: 'bx bxs-phone'})], onclick:()=>{call(userInfo.userID, true, false, false, false, null)}}),
-      createElement({ elementType: 'button', childrenArray:[createElement({ elementType: 'i', class: 'bx bxs-video'})], onclick:()=>{call(userInfo.userID, true, true, false, false, null)}})
-    ]})
-    userSecondaryInfo.prepend(universalCallButtons) 
+  } else {
+    let universalCallButtons = createElement({
+      elementType: 'div', class: 'universalCallButtons', childrenArray: [
+        createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })], onclick: () => { chat(userInfo.userID) } }),
+        createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(userInfo.userID, true, false, false, false, null) } }),
+        createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userInfo.userID, true, true, false, false, null) } })
+      ]
+    })
+    userSecondaryInfo.prepend(universalCallButtons)
   }
   body.append(mainCentralProfileDiv)
   await new Promise(resolve => setTimeout(resolve, 20))
   mainCentralProfileDiv.classList.add('visible')
-  closeButton.addEventListener('click', async () =>{
+  closeButton.addEventListener('click', async () => {
     mainCentralProfileDiv.classList.remove('visible')
     await new Promise(resolve => setTimeout(resolve, 3000))
-    mainCentralProfileDiv.remove()})
+    mainCentralProfileDiv.remove()
+  })
   return mainCentralProfileDiv
 }
 
@@ -3696,14 +3724,36 @@ function findNonNullNonUndefined(array) {
 }
 
 function addIndexAndLabelAsName(array) {
-  for (let i = 0; i < array.length; i++) {
-    array[i].id = i;
-    array[i].name = array[i].label;
-  }
+  for (let i = 0; i < array.length; i++) { array[i].id = i; array[i].name = array[i].label; }
   return array;
 }
 
-
+// validate ImageUpload
+function ValidateFileUpload() {
+  var fuData = document.getElementById('fileChooser');
+  var FileUploadPath = fuData.value;
+  //To check if user upload any file
+  if (FileUploadPath == '') {
+    alert("Please upload an image");
+  } else {
+    var Extension = FileUploadPath.substring(FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+    //The file uploaded is an image
+    if (Extension == "gif" || Extension == "png" || Extension == "bmp" || Extension == "jpeg" || Extension == "jpg") {
+      // To Display
+      if (fuData.files && fuData.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $('#blah').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(fuData.files[0]);
+      }
+    }
+    //The file upload is NOT an image
+    else {
+      alert("Photo only allows file types of GIF, PNG, JPG, JPEG and BMP. ");
+    }
+  }
+}
 // window.onbeforeunload = function () {
 //   deleteAllCookies()
 //   return 'Are you sure you want to leave?';

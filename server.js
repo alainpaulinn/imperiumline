@@ -7,7 +7,7 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const dotenv = require('dotenv');
 const session = require('express-session');
-
+const SocketIOFileUpload = require("socketio-file-upload")
 const fs = require('fs')
 
 dotenv.config({ path: './.env' });
@@ -65,6 +65,8 @@ app.use('/', require('./routes/router.js'));
 app.use('/auth', require('./routes/auth.js'));
 app.use('/private', require('./routes/router.js'));
 
+app.use(SocketIOFileUpload.router);
+
 let connectedUsers = [];
 io.on('connection', (socket) => {
   console.log(socket.request.session.email ? "a user came online and has session opened" : " a user came online and has No session");
@@ -99,6 +101,27 @@ io.on('connection', (socket) => {
       socket.emit('updateCalendar', await getEvents(id, lastYear, nextYear))
 
     })
+    // prepare to receive files
+    // Make an instance of SocketIOFileUpload and listen on this socket:
+    var uploader = new SocketIOFileUpload();
+    uploader.dir = "uploads";
+    uploader.maxFileSize = 1024 * 1024 * 1024; // reject files more th
+    uploader.listen(socket);
+    // Do something when starting upload:
+    uploader.on("start", function (event) {
+      event.file.clientDetail.name = event.file.name;
+    });
+
+    // Do something when a file is saved:
+    uploader.on("saved", function (event) {
+      event.file.clientDetail.name = event.file.name;
+    });
+
+    // Error handler:
+    uploader.on("error", function (event) {
+      console.log("Error from uploader", event);
+    });
+    //->
     socket.on('requestChatContent', async (chatIdentification) => {
       socket.emit('chatContent', await getChatInfo(chatIdentification, id))
     });
