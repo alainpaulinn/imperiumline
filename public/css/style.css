@@ -1572,7 +1572,7 @@ body {
   width: fit-content;
   visibility: visible;
   opacity: 1;
-  width: 9.4rem;
+  width: 12rem;
 }
 
 .message-received:first-child > .message-received-text {
@@ -1781,7 +1781,7 @@ body {
   width: -webkit-fit-content;
   width: fit-content;
   opacity: 1;
-  width: 10rem;
+  width: 12rem;
 }
 
 .message-sent-text {
