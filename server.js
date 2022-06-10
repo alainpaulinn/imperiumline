@@ -78,8 +78,9 @@ io.on('connection', (socket) => {
       id = result[0].id;
       let randomPeerId = makeid(25)
       connectedUsers.push({ id: id, email: email, socket: socket, callId: randomPeerId })
-      socket.emit('myId', { id: id, name: result[0].name, surname: result[0].surname, callId: randomPeerId });
-
+      let userInfo = await getUserInfo(id)
+      userInfo.callId = randomPeerId
+      socket.emit('myId', userInfo);
       db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess`, room.chatID, room.name, room.type, room.profilePicture, room.creationDate, room.lastActionDate FROM `participants` JOIN room ON room.chatID = participants.roomID WHERE participants.userID = ? ORDER BY `room`.`lastActionDate` DESC', [id], async (err, mychatResults) => {
         if (err) return console.log(err)
         mychatResults.forEach(async myChat => {
@@ -104,24 +105,26 @@ io.on('connection', (socket) => {
     // prepare to receive files
     // Make an instance of SocketIOFileUpload and listen on this socket:
     var uploader = new SocketIOFileUpload();
-    uploader.dir = "uploads";
+    uploader.dir = "private/cover";
     uploader.maxFileSize = 1024 * 1024 * 1024; // reject files more th
     uploader.listen(socket);
     // Do something when starting upload:
     uploader.on("start", function (event) {
       event.file.clientDetail.name = event.file.name;
+      console.log('start', event.file.name)
     });
 
     // Do something when a file is saved:
     uploader.on("saved", function (event) {
       event.file.clientDetail.name = event.file.name;
+      console.log('saved', event.file.name)
     });
 
     // Error handler:
     uploader.on("error", function (event) {
       console.log("Error from uploader", event);
     });
-    //->
+    //-----------------------------------
     socket.on('requestChatContent', async (chatIdentification) => {
       socket.emit('chatContent', await getChatInfo(chatIdentification, id))
     });

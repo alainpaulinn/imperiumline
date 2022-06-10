@@ -1,7 +1,5 @@
 //Get data from the chatsFromDataServer
 var socket = io();
-var uploader = new SocketIOFileUpload(socket);
-uploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
 
 let taggedMessages = [];
 let selectedChatId;
@@ -17,6 +15,8 @@ let openChatInfo;
 let chatEventListenings = [];
 let chatContainer = document.querySelector("#place_for_chats")
 let body = document.getElementsByTagName('body')[0]
+
+let openProfileDiv;
 /////////////////////SIDEPANEL SWITCH///////////////////////////
 
 let messages_panel = document.getElementById("messages_panel")
@@ -213,15 +213,17 @@ let functionalityOptionsArray = [
     })
   });
   let audioVideoInOutBtn = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Choose', onclick: () => { devicePopForm.classList.toggle('visible') } })
-
   // logout form
   let logoutForm = createElement({ elementType: 'form', action: "/auth/logout", method: "post", childrenArray: [createElement({ elementType: 'input', type: 'text', name: 'logout', hidden: "true" })] })
   let logoutButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Logout', onclick: () => { logoutForm.submit(); } })
-
   // edit profile form
-  let editProfilePanel = createInScreenPopup({ title: "Edit Profile", contentElementsArray: [] })
-  let editProfileButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Edit', onclick: () => { editProfilePanel.classList.toggle('visible') } })
+  // let editProfilePanel = createInScreenPopup({ title: "Edit Profile", contentElementsArray: [] })
+  let editProfileButton = createElement({
+    elementType: 'button', class: 'importantButton', textContent: 'Edit', onclick: () => {
+      /*editProfilePanel.classList.toggle('visible')*/
 
+    }
+  })
   let defaultOptions = [
     {
       title: "Preferences",
@@ -524,7 +526,19 @@ let functionalityOptionsArray = [
     }
     $(".pill").click(function () { $(this).toggleClass("selectedPill"); });
   })()
-
+  socket.on('redirect', function (destination) {
+    window.location.href = destination;
+  });
+  socket.on('myId', function (userInfo) {
+    console.log('myId :', userInfo);
+    // mySavedInfo = userInfo
+    mySavedID = userInfo.userID;
+    myName = userInfo.name;
+    Mysurname = userInfo.surname;
+    editProfileButton.addEventListener('click', function () {
+      createProfilePopup(userInfo, true)
+    })
+  });
 })(functionalityOptionsArray);
 function showMessagesPanel() {
   messages_panel.style.display = "flex";
@@ -572,23 +586,6 @@ function showWorkShiftsSection() {
   document_title.innerText = "work shifts";
 }
 
-
-//Logout Button
-var logout_button = document.getElementById("logout-button");
-// logout_button.addEventListener("click", function () {
-//   document.getElementById("logoutForm").submit();
-// });
-
-socket.on('redirect', function (destination) {
-  window.location.href = destination;
-});
-socket.on('myId', function (myId) {
-  console.log('myId :', myId);
-  mySavedID = myId.id;
-  myName = myId.name;
-  Mysurname = myId.surname;
-  // document.getElementById("my-name-surname").innerHTML = myName + ' ' + Mysurname;
-});
 
 
 
@@ -3493,17 +3490,13 @@ function displayNotification(notificationConfig) {
 
 //exemplary Notification Code
 let notification = displayNotification({
-  title: { iconClass: 'bx bxs-phone-call', titleText: 'Incoming call' },
+  title: { iconClass: 'bx bxs-door-open', titleText: 'Welcome' },
   body: {
-    shortOrImage: { shortOrImagType: 'image', shortOrImagContent: '/images/profiles/group.jpeg' },
+    shortOrImage: { shortOrImagType: 'image', shortOrImagContent: '/private/profiles/group.jpeg' },
     bodyContent: 'Welcome to ImperiumLine.com, an ezy way to connect with people and teams that/where you belong/care. Enjoy the app'
   },
   actions: [
-    // {
-    //   type: 'confirm', displayText: 'Answer', actionFunction: () => {
-    //     console.log('call answered')
-    //   }
-    // }
+    // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
   ],
   obligatoryActions: {
     onDisplay: () => { console.log('Notification Displayed') },
@@ -3600,9 +3593,11 @@ function createInScreenPopup(constraints) {
 }
 
 async function createProfilePopup(userInfo, editProfile = false) {
+  // delete the existing Div
+  if (openProfileDiv) openProfileDiv.remove()
   //coverPhotoDiv
   let coverPhoto;
-  if (userInfo.cover == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0)+'.' }) }
+  if (userInfo.cover == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' }) }
   else { coverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: userInfo.cover }) }
   // close div button
   let closeButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
@@ -3653,8 +3648,8 @@ async function createProfilePopup(userInfo, editProfile = false) {
     let editControls = createElement({ elementType: 'div', class: 'editControls', tabIndex: "0", childrenArray: [deleteBtn, changePictureBtn] })
     let photoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [editButton, editControls] })
 
-    let coverPictureInputElement = createElement({ elementType: 'input', type:'file', id:'coverPictureInputElement', class: 'hidden'})
-    let selectCoverBtn = createElement({ elementType: 'label', for:'coverPictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
+    let coverPictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'coverPictureInputElement', class: 'hidden' })
+    let selectCoverBtn = createElement({ elementType: 'label', for: 'coverPictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
     coverPhotoDiv.append(selectCoverBtn, coverPictureInputElement)
 
     coverPhotoActions.prepend(photoActionEdit)
@@ -3664,12 +3659,20 @@ async function createProfilePopup(userInfo, editProfile = false) {
     changePictureBtn.addEventListener('click', () => { selectCoverBtn.classList.add('visible'); selectCoverBtn.focus(); })
     selectCoverBtn.addEventListener('blur', () => { selectCoverBtn.classList.remove('visible'); })
 
-    selectCoverBtn.addEventListener('click', () => {
-      //-> select and upload cover Picture
-      console.log('select and upload cover Picture')
-    })
     // listen to coverPhotoUpload
+    var uploader = new SocketIOFileUpload(socket);
+    uploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
     uploader.listenOnInput(coverPictureInputElement);
+    // Do something on upload progress:
+    uploader.addEventListener("progress", function (event) {
+      var percent = (event.bytesLoaded / event.file.size) * 100;
+      console.log("File is", percent.toFixed(2), "percent loaded");
+    });
+    // Do something when a file is uploaded:
+    uploader.addEventListener("complete", function (event) {
+      console.log("complete", event.detail.name);
+    });
+
 
     //-------------------------------------------------------------------
     // profile edit Buttons
@@ -3680,8 +3683,8 @@ async function createProfilePopup(userInfo, editProfile = false) {
     let profilePhotoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [profileEditButton, profileEditControls] })
     let profilePhotoActions = createElement({ elementType: 'div', class: 'photoActions', childrenArray: [profilePhotoActionEdit] })
 
-    let profilePictureInputElement = createElement({ elementType: 'input', type:'file', id:'profilePictureInputElement', class: 'hidden'})
-    let selectPictureBtn = createElement({ elementType: 'label', for:'profilePictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
+    let profilePictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'profilePictureInputElement', class: 'hidden' })
+    let selectPictureBtn = createElement({ elementType: 'label', for: 'profilePictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
     selectPictureBtn.addEventListener('blur', () => { selectPictureBtn.classList.remove('visible') })
     userProfileDiv.append(selectPictureBtn, profilePictureInputElement)
 
@@ -3690,11 +3693,10 @@ async function createProfilePopup(userInfo, editProfile = false) {
     profileEditControls.addEventListener('blur', () => { profileEditControls.classList.remove('visible') })
     profileChangePictureBtn.addEventListener('click', () => { selectPictureBtn.classList.add('visible'); selectPictureBtn.focus(); })
 
+    // listen to coverPhotoUpload
+    uploader.listenOnInput(profilePictureInputElement);
 
-    selectPictureBtn.addEventListener('click', () => {
-      //-> select and upload profile Picture
-      console.log('select and upload profile Picture')
-    })
+
   } else {
     let universalCallButtons = createElement({
       elementType: 'div', class: 'universalCallButtons', childrenArray: [
@@ -3713,6 +3715,7 @@ async function createProfilePopup(userInfo, editProfile = false) {
     await new Promise(resolve => setTimeout(resolve, 3000))
     mainCentralProfileDiv.remove()
   })
+  openProfileDiv = mainCentralProfileDiv;
   return mainCentralProfileDiv
 }
 
