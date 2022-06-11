@@ -3650,7 +3650,8 @@ async function createProfilePopup(userInfo, editProfile = false) {
 
     let coverPictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'coverPictureInputElement', class: 'hidden' })
     let selectCoverBtn = createElement({ elementType: 'label', for: 'coverPictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
-    coverPhotoDiv.append(selectCoverBtn, coverPictureInputElement)
+    let coverPicProgressBar = createBarLoader()
+    coverPhotoDiv.append(selectCoverBtn, coverPictureInputElement, coverPicProgressBar)
 
     coverPhotoActions.prepend(photoActionEdit)
     editButton.addEventListener('click', () => { editControls.classList.toggle('visible'); editControls.focus() })
@@ -3663,14 +3664,25 @@ async function createProfilePopup(userInfo, editProfile = false) {
     var uploader = new SocketIOFileUpload(socket);
     uploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
     uploader.listenOnInput(coverPictureInputElement);
+    // Do something on start progress:
+    uploader.addEventListener("start", function (event) {
+      event.file.meta.fileRole = "profilePicture";
+      coverPicProgressBar.classList.add('visible');
+    });
     // Do something on upload progress:
     uploader.addEventListener("progress", function (event) {
       var percent = (event.bytesLoaded / event.file.size) * 100;
+      coverPicProgressBar.setPercentage(percent.toFixed(2))
       console.log("File is", percent.toFixed(2), "percent loaded");
     });
     // Do something when a file is uploaded:
     uploader.addEventListener("complete", function (event) {
-      console.log("complete", event.detail.name);
+      // console.log("complete", event.detail.name);
+      coverPicProgressBar.classList.remove('visible');
+      console.log("coverPhoto",event);
+      let newCoverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: 'private/cover/' +event.detail.name })
+      coverPhoto.after(newCoverPhoto);
+      coverPhoto.remove();
     });
 
 
@@ -3729,6 +3741,28 @@ function findNonNullNonUndefined(array) {
 function addIndexAndLabelAsName(array) {
   for (let i = 0; i < array.length; i++) { array[i].id = i; array[i].name = array[i].label; }
   return array;
+}
+
+function createBarLoader() {
+
+  // let inner = createElement({ elementType: 'div', class: 'inner'})
+  // let number = createElement({ elementType: 'div', class: 'number'})
+
+  //     let progress_left = createElement({ elementType: 'div', class: 'progress'})
+  //   let left = createElement({ elementType: 'div', class: 'bar left', childrenArray:[progress_left]})
+  //     let progress_right = createElement({ elementType: 'div', class: 'progress'})
+  //   let right = createElement({ elementType: 'div', class: 'bar right', childrenArray:[progress_right]})
+  // let circle = createElement({ elementType: 'div', class: 'circle', childrenArray:[left, right]})
+  // let circular = createElement({ elementType: 'div', class:'circular', childrenArray:[inner, number, circle]})
+
+  let progress_value = createElement({ elementType: 'div', class: 'progress-value' })
+  let number = createElement({ elementType: 'div', class: 'number' })
+  let progress = createElement({ elementType: 'div', class: 'progress', childrenArray: [progress_value, number] })
+  progress.setPercentage = (percentage) => {
+    number.textContent = percentage + '%';
+    progress_value.style.width = percentage + '%';
+  }
+  return progress
 }
 
 // validate ImageUpload
