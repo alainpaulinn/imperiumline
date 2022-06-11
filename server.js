@@ -109,19 +109,18 @@ io.on('connection', (socket) => {
     uploader.maxFileSize = 1024 * 1024 * 1024; // reject files more th
     uploader.listen(socket);
     // Do something when starting upload:
-    uploader.on("start", function (event) {
+    uploader.on("start", (event) => {
       event.file.clientDetail.name = event.file.name;
       console.log('start', event.file.name)
     });
 
     // Do something when a file is saved:
-    uploader.on("saved", function (event) {
+    uploader.on("saved", (event) => {
       event.file.clientDetail.name = event.file.name;
       console.log('saved', event.file.name)
     });
-
     // Error handler:
-    uploader.on("error", function (event) {
+    uploader.on("error", (event) => {
       console.log("Error from uploader", event);
     });
     //-----------------------------------
