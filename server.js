@@ -138,9 +138,11 @@ io.on('connection', (socket) => {
       switch (event.file.meta.fileRole) {
         case 'profilePicture':
           fs.renameSync('private/profiles/' + event.file.name, 'private/profiles/' + fileName);
+          updateDBProfilePicture(id, 'private/profiles/' + fileName)
           break;
         case 'coverPicture':
           fs.renameSync('private/cover/' + event.file.name, 'private/cover/' + fileName);
+          updateDBCoverPicture(id, 'private/cover/' + fileName)
           break;
       }
       event.file.clientDetail.name = fileName
@@ -697,10 +699,22 @@ io.on('connection', (socket) => {
   }
 
 });
+
 function isNumeric(num) { return !isNaN(num) }
 function isNegative(num) {
   if (Math.sign(num) === -1) { return true; }
   return false;
+}
+
+function updateDBCoverPicture(userID, fileName){
+  db.query('UPDATE `user` SET `coverPicture` = ? WHERE `user`.`id` = ?',[fileName, userID], async (err, _myEvents) => {
+    if (err) return console.log(err)
+  })
+}
+function updateDBProfilePicture(userID, fileName){
+  db.query('UPDATE `user` SET `profilePicture` = ? WHERE `user`.`id` = ?',[fileName, userID], async (err, _myEvents) => {
+    if (err) return console.log(err)
+  })
 }
 
 function getEvents(userId, initalDate, endDate) {
@@ -1205,17 +1219,19 @@ function getParticipantArray(roomIdentification) {
 }
 function getUserInfo(userID) {
   //console.log("getuserinfo function presented ID", userID)
-  if (userID < 1) userID = 1
+  if (userID < 1) return console.log("requested user info does not exist", userID)
   return new Promise(function (resolve, reject) {
-    db.query('SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `password`, `company_id`, `positionId`, `registration_date` FROM `user` WHERE `id`= ?', [userID], async (err, profiles) => {
+    db.query('SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `coverPicture`, `password`, `company_id`, `positionId`, `registration_date` FROM `user` WHERE `id`= ?', [userID], async (err, profiles) => {
       if (err) return console.log(err)
       if (profiles.length < 1) return console.log('No profile found for user ' + userID)
+      console.log("profiles[0]", profiles[0])
       resolve({
         email: profiles[0].email,
         userID: profiles[0].id,
         name: profiles[0].name,
         surname: profiles[0].surname,
         profilePicture: profiles[0].profilePicture,
+        cover: profiles[0].coverPicture,
         role: await getUserRole(profiles[0].positionId),
         status: connectedUsers.some(e => e.id === profiles[0].id) ? 'online' : 'offline'
       })

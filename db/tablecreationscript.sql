@@ -42,6 +42,7 @@ CREATE TABLE `user` (
   `surname` text NOT NULL,
   `email` text NOT NULL,
   `profilePicture` text DEFAULT NULL,
+  `coverPicture` TEXT DEFAULT NULL,
   `password` text NOT NULL,
   `company_id` int(11) NOT NULL,
   `positionId` int(11) NOT NULL,
