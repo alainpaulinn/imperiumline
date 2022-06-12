@@ -105,19 +105,46 @@ io.on('connection', (socket) => {
     // prepare to receive files
     // Make an instance of SocketIOFileUpload and listen on this socket:
     var uploader = new SocketIOFileUpload();
-    uploader.dir = "private/cover";
+    // uploader.dir = "private/cover";
     uploader.maxFileSize = 1024 * 1024 * 1024; // reject files more th
     uploader.listen(socket);
     // Do something when starting upload:
     uploader.on("start", (event) => {
+      // security check
+      if (/\.exe$/.test(event.file.name)) {
+        uploader.abort(event.file.id, socket);
+      }
+      if (!event.file.meta.fileRole) return console.log("unable to upload file: " + event.file.name, "invalid Role")
+      switch (event.file.meta.fileRole) {
+        case 'profilePicture':
+          uploader.dir = "private/profiles"
+          break;
+        case 'coverPicture':
+          uploader.dir = "private/cover"
+          break;
+        default:
+          break;
+      }
       event.file.clientDetail.name = event.file.name;
+      console.log('event', event)
       console.log('start', event.file.name)
+      console.log('Meta', event.file.meta.fileRole)
     });
 
     // Do something when a file is saved:
     uploader.on("saved", (event) => {
-      event.file.clientDetail.name = event.file.name;
-      console.log('saved', event.file.name)
+      // event.file.clientDetail.name = event.file.name;
+      let fileName = makeid(25)
+      switch (event.file.meta.fileRole) {
+        case 'profilePicture':
+          fs.renameSync('private/profiles/' + event.file.name, 'private/profiles/' + fileName);
+          break;
+        case 'coverPicture':
+          fs.renameSync('private/cover/' + event.file.name, 'private/cover/' + fileName);
+          break;
+      }
+      event.file.clientDetail.name = fileName
+      console.log('saved', event)
     });
     // Error handler:
     uploader.on("error", (event) => {

@@ -6487,8 +6487,8 @@ body {
   position: absolute;
   top: 0;
   right: 0;
-  height: 20px;
-  width: 20px;
+  height: 30px;
+  width: 30px;
   aspect-ratio: 1;
   background-color: green;
   border-radius: 15px;
@@ -6668,75 +6668,6 @@ body {
   display: none !important;
 }
 
-/* .circular{
-  height:100px;
-  width: 100px;
-  position: relative;
-  transform:scale(2);
-  .inner{
-    position: absolute;
-    z-index: 6;
-    top: 50%;
-    left: 50%;
-    height: 80px;
-    width: 80px;
-    margin: -40px 0 0 -40px;
-    background: #dde6f0;
-    border-radius: 100%;
-   
-  }
-  .number{
-    position: absolute;
-    top:50%;
-    left:50%;
-    transform: translate(-50%, -50%);
-    z-index:10;
-    font-size:18px;
-    font-weight:500;
-    color:#4158d0;
-  }
-  .bar{
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background: #fff;
-    -webkit-border-radius: 100%;
-    clip: rect(0px, 100px, 100px, 50px);
-  }
-}
-
-.circle .bar .progress{
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  -webkit-border-radius: 100%;
-  clip: rect(0px, 50px, 100px, 0px);
-  background: #4158d0;
-}
-.circle .left .progress{
-  z-index:1;
-  animation: left 4s linear both;
-}
-@keyframes left{
-  100%{
-    transform: rotate(180deg);
-  }
-}
-.circle .right {
-  transform: rotate(180deg);
-  z-index:3;
- 
-}
-.circle .right .progress{
-  animation: right 4s linear both;
-  animation-delay:4s;
-}
-@keyframes right{
-  100%{
-    transform: rotate(180deg);
-  }
-}
-*/
 .progress {
   visibility: hidden;
   opacity: 0;
@@ -6782,6 +6713,53 @@ body {
 }
 
 .progress.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.progressBar {
+  visibility: hidden;
+  opacity: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #ffffff;
+  position: absolute;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  border-radius: 100%;
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+}
+
+.progressBar .circular-progress {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+}
+
+.progressBar .circular-progress:before {
+  content: "";
+  position: absolute;
+  height: 84%;
+  width: 84%;
+  background-color: #ffffff;
+  border-radius: 50%;
+}
+
+.progressBar .value-container {
+  position: relative;
+  color: white;
+  mix-blend-mode: difference;
+}
+
+.progressBar.visible {
   visibility: visible;
   opacity: 1;
 }

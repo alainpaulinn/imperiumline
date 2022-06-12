@@ -3325,6 +3325,12 @@ function createElement(configuration) {
   if (configuration.action) elementToReturn.setAttribute('action', configuration.action)
   if (configuration.tabIndex) elementToReturn.setAttribute('tabindex', configuration.tabIndex)
   if (configuration.href) elementToReturn.setAttribute('href', configuration.href)
+  if (configuration.style) elementToReturn.setAttribute('style', configuration.style)
+  if (configuration.cy) elementToReturn.setAttribute('cy', configuration.cy)
+  if (configuration.cx) elementToReturn.setAttribute('cx', configuration.cx)
+  if (configuration.r) elementToReturn.setAttribute('r', configuration.r)
+  if (configuration.xmlns) elementToReturn.setAttribute('xmlns', configuration.xmlns)
+  if (configuration.viewBox) elementToReturn.setAttribute('viewBox', configuration.viewBox)
   if (configuration.autoplay) elementToReturn.autoplay = configuration.autoplay
   return elementToReturn
 }
@@ -3661,28 +3667,29 @@ async function createProfilePopup(userInfo, editProfile = false) {
     selectCoverBtn.addEventListener('blur', () => { selectCoverBtn.classList.remove('visible'); })
 
     // listen to coverPhotoUpload
-    var uploader = new SocketIOFileUpload(socket);
-    uploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
-    uploader.listenOnInput(coverPictureInputElement);
+    var coverPictureUploader = new SocketIOFileUpload(socket);
+    coverPictureUploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
+    coverPictureUploader.listenOnInput(coverPictureInputElement);
     // Do something on start progress:
-    uploader.addEventListener("start", function (event) {
-      event.file.meta.fileRole = "profilePicture";
+    coverPictureUploader.addEventListener("start", function (event) {
+      event.file.meta.fileRole = "coverPicture";
       coverPicProgressBar.classList.add('visible');
     });
     // Do something on upload progress:
-    uploader.addEventListener("progress", function (event) {
+    coverPictureUploader.addEventListener("progress", function (event) {
       var percent = (event.bytesLoaded / event.file.size) * 100;
       coverPicProgressBar.setPercentage(percent.toFixed(2))
       console.log("File is", percent.toFixed(2), "percent loaded");
     });
     // Do something when a file is uploaded:
-    uploader.addEventListener("complete", function (event) {
+    coverPictureUploader.addEventListener("complete", function (event) {
       // console.log("complete", event.detail.name);
       coverPicProgressBar.classList.remove('visible');
-      console.log("coverPhoto",event);
-      let newCoverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: 'private/cover/' +event.detail.name })
+      console.log("coverPhoto", event);
+      let newCoverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: 'private/cover/' + event.detail.name })
       coverPhoto.after(newCoverPhoto);
       coverPhoto.remove();
+      coverPhoto = newCoverPhoto;
     });
 
 
@@ -3698,7 +3705,8 @@ async function createProfilePopup(userInfo, editProfile = false) {
     let profilePictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'profilePictureInputElement', class: 'hidden' })
     let selectPictureBtn = createElement({ elementType: 'label', for: 'profilePictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
     selectPictureBtn.addEventListener('blur', () => { selectPictureBtn.classList.remove('visible') })
-    userProfileDiv.append(selectPictureBtn, profilePictureInputElement)
+    let circleLoader = createCircleLoader()
+    userProfileDiv.append(selectPictureBtn, profilePictureInputElement, circleLoader)
 
     userProfileDiv.prepend(profilePhotoActions)
     profileEditButton.addEventListener('click', () => { profileEditControls.classList.toggle('visible'); profileEditControls.focus() })
@@ -3706,8 +3714,31 @@ async function createProfilePopup(userInfo, editProfile = false) {
     profileChangePictureBtn.addEventListener('click', () => { selectPictureBtn.classList.add('visible'); selectPictureBtn.focus(); })
 
     // listen to coverPhotoUpload
-    uploader.listenOnInput(profilePictureInputElement);
-
+    var profilePictureUploader = new SocketIOFileUpload(socket);
+    profilePictureUploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
+    profilePictureUploader.listenOnInput(profilePictureInputElement);
+    // Do something on start progress:
+    profilePictureUploader.addEventListener("start", function (event) {
+      event.file.meta.fileRole = "profilePicture";
+      circleLoader.classList.add('visible');
+    });
+    // Do something on upload progress:
+    profilePictureUploader.addEventListener("progress", function (event) {
+      var percent = (event.bytesLoaded / event.file.size) * 100;
+      circleLoader.setPercentage(percent.toFixed(2))
+      console.log("File is", percent.toFixed(2), "percent loaded");
+    });
+    // Do something when a file is uploaded:
+    profilePictureUploader.addEventListener("complete", function (event) {
+      // console.log("complete", event.detail.name);
+      circleLoader.classList.remove('visible');
+      console.log("profilePhoto", event);
+      let newProfilePhoto = createElement({ elementType: 'img', class: 'profilePicture', src: 'private/profiles/' + event.detail.name })
+      
+      profilePicture.after(newProfilePhoto);
+      profilePicture.remove();
+      profilePicture = newProfilePhoto;
+    });
 
   } else {
     let universalCallButtons = createElement({
@@ -3761,6 +3792,18 @@ function createBarLoader() {
   progress.setPercentage = (percentage) => {
     number.textContent = percentage + '%';
     progress_value.style.width = percentage + '%';
+  }
+  return progress
+}
+
+function createCircleLoader() {
+  let value_container = createElement({ elementType: 'div', class: 'value-container' })
+  let circular_progress = createElement({ elementType: 'div', class: 'circular-progress', childrenArray: [value_container] })
+  let progress = createElement({ elementType: 'div', class: 'progressBar', childrenArray: [circular_progress] })
+  progress.setPercentage = (percentage) => {
+    value_container.textContent = percentage + '%';
+    // progress_value.style.width = percentage + '%';
+    circular_progress.style.background = `conic-gradient(#4d5bf9 ${percentage * 3.6}deg, #cadcff ${percentage * 3.6}deg )`
   }
   return progress
 }
