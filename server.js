@@ -63,6 +63,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use('/', require('./routes/router.js'));
 app.use('/auth', require('./routes/auth.js'));
+app.use('/admin', require('./routes/router.js'));
 app.use('/private', require('./routes/router.js'));
 
 app.use(SocketIOFileUpload.router);
@@ -1374,11 +1375,7 @@ function findCommonElement(array1, array2) {
   })
 }
 
-//createChat(108,128).then(console.log)
-//getChatInfo(105,22).then(console.log)
-/*console.log(__dirname)
-getRoomInfo(106, 128).then(console.log)
-getParticipantArray(105).then(console.log)*/
+
 server.listen(port, () => {
   console.log(`listening on Port number ${port}`);
 });
