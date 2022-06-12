@@ -56,6 +56,14 @@ let functionalityOptionsArray = [
     icon: "bx bxs-calendar",
     subMenu: []
   },
+  {
+    functionalityId: 5,
+    panel: createElement({elementType: "div"}),
+    redirect: "/action",
+    title: "Admin",
+    icon: "bx bx-shield-quarter",
+    subMenu: []
+  },
 ];
 
 
@@ -274,6 +282,8 @@ let functionalityOptionsArray = [
         sidepanelElements[i].dropIcon.classList.remove('rotate180');
       }
       else {
+        if(sidepanelElements[i].redirect) return window.location.replace(sidepanelElements[i].redirect);
+
         sidepanelElements[i].panel.style.display = "flex";
         sidepanelElements[i].subMenuDiv.classList.remove('undropped-down')
         sidepanelElements[i].dropIcon.classList.add('rotate180');
