@@ -152,6 +152,12 @@ io.on('connection', (socket) => {
     uploader.on("error", (event) => {
       console.log("Error from uploader", event);
     });
+    socket.on("deleteCoverPicture", () => {
+      deleteCoverPicture(id)
+    })
+    socket.on("deleteProfilePicture", () => {
+      deleteProfilePicture(id)
+    })
     //-----------------------------------
     socket.on('requestChatContent', async (chatIdentification) => {
       socket.emit('chatContent', await getChatInfo(chatIdentification, id))
@@ -713,6 +719,16 @@ function updateDBCoverPicture(userID, fileName){
 }
 function updateDBProfilePicture(userID, fileName){
   db.query('UPDATE `user` SET `profilePicture` = ? WHERE `user`.`id` = ?',[fileName, userID], async (err, _myEvents) => {
+    if (err) return console.log(err)
+  })
+}
+function deleteProfilePicture(userID){
+  db.query('UPDATE `user` SET `profilePicture` = ? WHERE `user`.`id` = ?',[null , userID], async (err, _myEvents) => {
+    if (err) return console.log(err)
+  })
+}
+function deleteCoverPicture(userID){
+  db.query('UPDATE `user` SET `coverPicture` = ? WHERE `user`.`id` = ?',[null , userID], async (err, _myEvents) => {
     if (err) return console.log(err)
   })
 }

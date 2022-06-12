@@ -3649,9 +3649,9 @@ async function createProfilePopup(userInfo, editProfile = false) {
   if (editProfile == true) {
     // cover edit - buttons
     let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
-    let deleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
+    let coverDeleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
     let changePictureBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
-    let editControls = createElement({ elementType: 'div', class: 'editControls', tabIndex: "0", childrenArray: [deleteBtn, changePictureBtn] })
+    let editControls = createElement({ elementType: 'div', class: 'editControls', tabIndex: "0", childrenArray: [coverDeleteBtn, changePictureBtn] })
     let photoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [editButton, editControls] })
 
     let coverPictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'coverPictureInputElement', class: 'hidden' })
@@ -3734,11 +3734,28 @@ async function createProfilePopup(userInfo, editProfile = false) {
       circleLoader.classList.remove('visible');
       console.log("profilePhoto", event);
       let newProfilePhoto = createElement({ elementType: 'img', class: 'profilePicture', src: 'private/profiles/' + event.detail.name })
-      
+
       profilePicture.after(newProfilePhoto);
       profilePicture.remove();
       profilePicture = newProfilePhoto;
     });
+
+    coverDeleteBtn.addEventListener('click', () => {
+      socket.emit('deleteCoverPicture')
+      let newCoverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' })
+      coverPhoto.after(newCoverPhoto);
+      coverPhoto.remove();
+      coverPhoto = newCoverPhoto;
+
+    })
+
+    profileDeleteBtn.addEventListener('click', () => {
+      socket.emit('deleteProfilePicture');
+      let newProfilePhoto = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+      profilePicture.after(newProfilePhoto);
+      profilePicture.remove();
+      profilePicture = newProfilePhoto;
+    })
 
   } else {
     let universalCallButtons = createElement({
