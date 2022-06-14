@@ -18,7 +18,7 @@ let body = document.getElementsByTagName('body')[0]
 
 let openProfileDiv;
 /////////////////////SIDEPANEL SWITCH///////////////////////////
-
+let appWrapper = document.getElementById("appWrapper")
 let messages_panel = document.getElementById("messages_panel")
 let call_log_panel = document.getElementById("call_log_panel")
 let ongoing_call_panel = document.getElementById("ongoing_call_panel")
@@ -55,15 +55,7 @@ let functionalityOptionsArray = [
     title: "Calendar",
     icon: "bx bxs-calendar",
     subMenu: []
-  },
-  {
-    functionalityId: 5,
-    panel: createElement({elementType: "div"}),
-    redirect: "/action",
-    title: "Admin",
-    icon: "bx bx-shield-quarter",
-    subMenu: []
-  },
+  }
 ];
 
 
@@ -282,7 +274,7 @@ let functionalityOptionsArray = [
         sidepanelElements[i].dropIcon.classList.remove('rotate180');
       }
       else {
-        if(sidepanelElements[i].redirect) return window.location.replace(sidepanelElements[i].redirect);
+        if (sidepanelElements[i].redirect) return window.location.replace(sidepanelElements[i].redirect);
 
         sidepanelElements[i].panel.style.display = "flex";
         sidepanelElements[i].subMenuDiv.classList.remove('undropped-down')
@@ -325,7 +317,8 @@ let functionalityOptionsArray = [
       title: title,
       triggerButton: builtOption.triggerButton,
       subMenuDiv: builtOption.subMenuDiv,
-      dropIcon: builtOption.dropIcon
+      dropIcon: builtOption.dropIcon,
+      optionContainer: builtOption.optionContainer
     }
   });
 
@@ -343,7 +336,8 @@ let functionalityOptionsArray = [
       title: title,
       triggerButton: builtOption.triggerButton,
       subMenuDiv: builtOption.subMenuDiv,
-      dropIcon: builtOption.dropIcon
+      dropIcon: builtOption.dropIcon,
+      optionContainer: builtOption.optionContainer
     }
   });
 
@@ -545,9 +539,41 @@ let functionalityOptionsArray = [
     mySavedID = userInfo.userID;
     myName = userInfo.name;
     Mysurname = userInfo.surname;
-    editProfileButton.addEventListener('click', function () {
-      createProfilePopup(userInfo, true)
+    editProfileButton.addEventListener('click', function () { createProfilePopup(userInfo, true) })
+
+    let adminPanel = createElement({ elementType: 'section', class:'c-time-admin_panel'})
+    let adminOption = {
+      functionalityId: 5,
+      panel: adminPanel,
+      redirect: "/action",
+      title: "Admin",
+      icon: "bx bx-shield-quarter",
+      subMenu: []
+    }
+    // sidepanelElements
+
+    let { functionalityId, panel, title, icon, subMenu } = adminOption
+    let builtOption = createAdminpanel(title, icon, subMenu)
+    sidepanelElements[sidepanelElements.length - 1].optionContainer.after(builtOption.optionContainer)
+    builtOption.triggerButton.addEventListener("click", showSection(functionalityId - 1))
+    sidepanelElements.push({
+      index: functionalityId - 1,
+      panel: panel,
+      title: title,
+      triggerButton: builtOption.triggerButton,
+      subMenuDiv: builtOption.subMenuDiv,
+      dropIcon: builtOption.dropIcon,
+      optionContainer: builtOption.optionContainer
     })
+
+    function createAdminpanel(title, icon, subMenu, superAdmin, admin){
+      appWrapper.append(adminPanel)
+      adminPanel.innerHTML = 
+      `
+      
+      `
+      return createSidePanelElement(title, icon, subMenu)
+    }
   });
 })(functionalityOptionsArray);
 function showMessagesPanel() {

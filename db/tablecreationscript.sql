@@ -52,6 +52,27 @@ CREATE TABLE `user` (
   FOREIGN KEY (`company_id`) REFERENCES companies(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `admins` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `company_id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `done_by` int(11) NOT NULL,
+  `registration_date` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`company_id`) REFERENCES companies(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`admin_id`) REFERENCES user(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `superadmins` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `admin_id` int(11) NOT NULL,
+  `done_by` int(11) NOT NULL,
+  `registration_date` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`admin_id`) REFERENCES user(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`done_by`) REFERENCES user(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `calls` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `callUniqueId` text NOT NULL,

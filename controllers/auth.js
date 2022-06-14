@@ -9,9 +9,9 @@ const db = require('../db/db.js')
 exports.register = (req, res) => {
     //console.log(req.body);
 
-    const {name, surname, email, password, password_confirm} = req.body;
+    const { name, surname, email, password, password_confirm } = req.body;
     //check for required fiels
-    if(!name || !surname || !email || !password || !password_confirm) {
+    if (!name || !surname || !email || !password || !password_confirm) {
         return res.render('signUp', {
             register_message_failure: 'All fields are required',
             email: email,
@@ -21,13 +21,13 @@ exports.register = (req, res) => {
             password_confirm: password_confirm
         })
     }
-    db.query('SELECT email FROM user WHERE email = ?', [email], async(err, result) => {
+    db.query('SELECT email FROM user WHERE email = ?', [email], async (err, result) => {
         //if errors on select
         if (err) {
             console.log(err);
         }
         //if user already exists
-        if(result.length > 0) {
+        if (result.length > 0) {
             return res.render('signUp', {
                 register_message_failure: 'this email is already registered',
                 name: name,
@@ -37,7 +37,7 @@ exports.register = (req, res) => {
             })
         }
         //if passwords do not match
-        else if(password !== password_confirm) {
+        else if (password !== password_confirm) {
             return res.render('signUp', {
                 register_message_failure: 'The passwords do not match',
                 name: name,
@@ -50,42 +50,38 @@ exports.register = (req, res) => {
         //just for testing purposes
         console.log(hashed_salted_password);
         //now register the user in the DB
-        db.query("INSERT INTO user SET ?", {name: name, surname: surname, email: email, password: hashed_salted_password, positionId: 1, company_id: 1}, (err, result) => {
+        db.query("INSERT INTO user SET ?", { name: name, surname: surname, email: email, password: hashed_salted_password, positionId: 1, company_id: 1 }, (err, result) => {
             //if we get some errors while registering the user
             if (err) {
                 console.log(err);
             }
             //if registration successfull
-            else{
-                res.render('signUp',{
+            else {
+                res.render('signUp', {
                     register_message_success: "The account is registered successfully. Go ahead with Login"
                 })
             }
         })
     })
-    
+
 }
 
 exports.login = (req, res) => {
-    console.log(req.body);
-    
-    const {email, password} = req.body;
-    
-    db.query('SELECT email FROM user WHERE email = ?', [email], async(err, result) => {
+    const { email, password } = req.body;
+    db.query('SELECT email FROM user WHERE email = ?', [email], async (err, result) => {
         if (err) {
             console.log(err);
             return;
         }
-        if(result.length <= 0) {
+        if (result.length <= 0) {
             return res.render('connect', {
                 login_message_failure: 'No user with such login',
-
                 email: email,
                 password: password,
             })
         }
 
-        else{
+        else {
             db.query('SELECT password FROM user WHERE email = ?', [email], async (err, result) => {
                 if (err) {
                     res.render('connect', {
@@ -95,29 +91,23 @@ exports.login = (req, res) => {
                     })
                     return console.log(err);
                 }
-                else{
-                    let userAuthenticated = await bcrypt.compare(password,result[0].password);
-                    if(userAuthenticated){
+                else {
+                    let userAuthenticated = await bcrypt.compare(password, result[0].password);
+                    if (userAuthenticated) {
                         db.query('SELECT `id`, `name`, `surname`, `email`, `company_id`, `registration_date` FROM `user` WHERE `email`= ?', [email], async (err, result) => {
-                        req.session.userId = result[0].id;
-                        req.session.email = result[0].email;
-                        req.session.name = result[0].name;
-                        req.session.surname = result[0].surname;  
-                        req.session.company_id = result[0].company_id
-                        req.session.registration_date = result[0].registration_date;   
-                        
-                        console.log(req.session);
-                        
-                        res.redirect('../')
-                        /*
-                        res.render('index', {
-                            name: result[0].name,
-                            surname: result[0].surname
-                        })*/
+                            req.session.userId = result[0].id;
+                            req.session.email = result[0].email;
+                            req.session.name = result[0].name;
+                            req.session.surname = result[0].surname;
+                            req.session.company_id = result[0].company_id
+                            req.session.registration_date = result[0].registration_date;
 
+                            console.log(req.session);
+
+                            res.redirect('../')
                         })
                     }
-                    else{
+                    else {
                         res.render('connect', {
                             login_message_failure: 'Password Incorrect',
                             email: email
@@ -126,15 +116,15 @@ exports.login = (req, res) => {
                 }
             })
         }
-    })  
+    })
 }
 
 exports.logout = (req, res) => {
-    if (req.session.userId){
+    if (req.session.userId) {
         req.session.destroy();
         res.redirect('/')
     }
-    else{
+    else {
         res.render('connect', {
             login_message_failure: 'Not Logged in',
             email: email

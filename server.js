@@ -713,23 +713,23 @@ function isNegative(num) {
   return false;
 }
 
-function updateDBCoverPicture(userID, fileName){
-  db.query('UPDATE `user` SET `coverPicture` = ? WHERE `user`.`id` = ?',[fileName, userID], async (err, _myEvents) => {
+function updateDBCoverPicture(userID, fileName) {
+  db.query('UPDATE `user` SET `coverPicture` = ? WHERE `user`.`id` = ?', [fileName, userID], async (err, _myEvents) => {
     if (err) return console.log(err)
   })
 }
-function updateDBProfilePicture(userID, fileName){
-  db.query('UPDATE `user` SET `profilePicture` = ? WHERE `user`.`id` = ?',[fileName, userID], async (err, _myEvents) => {
+function updateDBProfilePicture(userID, fileName) {
+  db.query('UPDATE `user` SET `profilePicture` = ? WHERE `user`.`id` = ?', [fileName, userID], async (err, _myEvents) => {
     if (err) return console.log(err)
   })
 }
-function deleteProfilePicture(userID){
-  db.query('UPDATE `user` SET `profilePicture` = ? WHERE `user`.`id` = ?',[null , userID], async (err, _myEvents) => {
+function deleteProfilePicture(userID) {
+  db.query('UPDATE `user` SET `profilePicture` = ? WHERE `user`.`id` = ?', [null, userID], async (err, _myEvents) => {
     if (err) return console.log(err)
   })
 }
-function deleteCoverPicture(userID){
-  db.query('UPDATE `user` SET `coverPicture` = ? WHERE `user`.`id` = ?',[null , userID], async (err, _myEvents) => {
+function deleteCoverPicture(userID) {
+  db.query('UPDATE `user` SET `coverPicture` = ? WHERE `user`.`id` = ?', [null, userID], async (err, _myEvents) => {
     if (err) return console.log(err)
   })
 }
@@ -827,7 +827,6 @@ function getEvents(userId, initalDate, endDate) {
             //everyday
             if (eventdetails.recurrenceType == 1) {
               for (let i = 0; i < dayDifference; i++) {
-                console.log("day loop running", i)
                 let operationDateString = operationDate.toISOString().slice(0, 10)
                 if (eventDates[operationDateString]) eventDates[operationDateString].push(eventdetails);
                 operationDate.setDate(operationDate.getDate() + 1)
@@ -838,9 +837,8 @@ function getEvents(userId, initalDate, endDate) {
             else if (eventdetails.recurrenceType == 2) {
 
               for (let i = 0; i < dayDifference / 7; i++) {
-                console.log("week loop running", i)
                 let operationDateString = operationDate.toISOString().slice(0, 10)
-                if (eventDates[operationDateString]) eventDates[operationDateString].push(eventdetails); console.log("week loop found ->", operationDateString)
+                if (eventDates[operationDateString]) eventDates[operationDateString].push(eventdetails);
                 operationDate.setDate(operationDate.getDate() + 7)
               }
             }
@@ -1064,7 +1062,6 @@ function getMessageTags(messageId) {
         let messageTagsArray = messageTags.map(async messageTag => {
           return await getMessageInfo(messageTag.tagMessageId)
         })
-        console.log("Taaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaags", Promise.all(messageTagsArray))
         resolve(Promise.all(messageTagsArray))
       });
   })
@@ -1164,7 +1161,6 @@ function getRoomInfo(roomID, viewerID) {
 
         for (let i = 0; i < participants.length; i++) {
           const participant = participants[i];
-          console.log('participant.userID', participant.userID)
           usersArray.push(await getUserInfo(participant.userID));
         }
 
@@ -1241,7 +1237,6 @@ function getUserInfo(userID) {
     db.query('SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `coverPicture`, `password`, `company_id`, `positionId`, `registration_date` FROM `user` WHERE `id`= ?', [userID], async (err, profiles) => {
       if (err) return console.log(err)
       if (profiles.length < 1) return console.log('No profile found for user ' + userID)
-      console.log("profiles[0]", profiles[0])
       resolve({
         email: profiles[0].email,
         userID: profiles[0].id,

@@ -5647,3 +5647,31 @@ body {
     opacity: 1;
   }
 }
+
+//---------------------------------------ADMIN PANEL-----------------------------------------
+.c-time-admin_panel {
+  flex: 1;
+  display: none;
+  width: 100%;
+  height: 100%;
+  background-color: $sidepanel;
+
+  .left-responsibilities {
+    width: 350px;
+    background-color: white;
+    border-radius: $borderRadius;
+    margin: 1rem 0rem 1rem 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    .responsibilitiesHeader {
+      padding: 1rem;
+      font-weight: bolder;
+      text-align: center;
+    }
+  }
+  .central-Options{
+    
+  }
+}
