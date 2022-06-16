@@ -2126,6 +2126,7 @@ body {
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
           transition: all 0.4s;
           flex-shrink: 0;
+          object-fit: cover;
         }
 
         .memberNameRole {
@@ -2709,6 +2710,7 @@ body {
             box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
             transition: all 0.4s;
             flex-shrink: 0;
+            object-fit: cover;
           }
 
           .memberNameRole {
@@ -2794,6 +2796,7 @@ body {
             box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
             transition: all 0.4s;
             flex-shrink: 0;
+            object-fit: cover;
           }
 
           .memberNameRole {
@@ -3032,6 +3035,7 @@ body {
                 box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
                 transition: all 0.4s;
                 flex-shrink: 0;
+                object-fit: cover;
               }
 
               .memberNameRole {
@@ -3579,6 +3583,7 @@ body {
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
     transition: all 0.4s;
     flex-shrink: 0;
+    object-fit: cover;
   }
 
   .memberNameRole {
@@ -4058,6 +4063,7 @@ body {
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
         transition: all 0.4s;
         flex-shrink: 0;
+        object-fit: cover;
       }
 
       .memberNameRole {
@@ -5666,12 +5672,62 @@ body {
     flex-direction: column;
 
     .responsibilitiesHeader {
-      padding: 1rem;
+      padding: 1.5rem 2rem;
       font-weight: bolder;
-      text-align: center;
+      display: flex;
+      gap: 0.5rem;
+      width: 100%;
+      font-size: 1.5rem;
+      box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.451);
+    }
+    .responsibilitiesContainer{
+      padding: 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      // background-color: #797979;
+
+      .responsibilityOption{
+        padding: 1rem;
+        background-color: $sidepanel;
+        border-radius: $borderRadius;
+        
+        border: none;
+        outline: none;
+        cursor: pointer;
+      }
     }
   }
   .central-Options{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1rem;
     
+    border-radius: 15px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    .adminWelcomeDiv{
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content:center;
+      padding: 1rem;
+    }
+    .centralHeader{
+      padding: 1.5rem 2rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.451);
+
+    }
+    .adminPanelMainContent{
+      flex: 1;
+    }
   }
 }

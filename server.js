@@ -74,14 +74,26 @@ io.on('connection', (socket) => {
   if (socket.request.session.email) {
     var email = socket.request.session.email;
     let id;
-    db.query('SELECT id, name, surname FROM user WHERE email = ?', [email], async (err, result) => {
+    db.query('SELECT id, name, surname, company_id FROM user WHERE email = ?', [email], async (err, result) => {
       if (result.length < 1) return console.log("Connected user's cookie's email does not exist in the database!! Modified cookie");
       id = result[0].id;
+      company_id = result[0].company_id;
       let randomPeerId = makeid(25)
       connectedUsers.push({ id: id, email: email, socket: socket, callId: randomPeerId })
       let userInfo = await getUserInfo(id)
       userInfo.callId = randomPeerId
-      socket.emit('myId', userInfo);
+      let myInformation = {
+        userInfo: userInfo,
+        adminShip: {
+          superAdmin: {isSuperAdmin: await getSuperadminAccess(id)}, 
+          admin:{
+            isAdmin: await checkAdminAccess(id), 
+            administeredCompanyInfo: await getCompanyInfo(company_id)
+          }
+        }
+      }
+      socket.emit('myId', myInformation);
+      console.log('myInformation',myInformation)
       db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess`, room.chatID, room.name, room.type, room.profilePicture, room.creationDate, room.lastActionDate FROM `participants` JOIN room ON room.chatID = participants.roomID WHERE participants.userID = ? ORDER BY `room`.`lastActionDate` DESC', [id], async (err, mychatResults) => {
         if (err) return console.log(err)
         mychatResults.forEach(async myChat => {
@@ -383,7 +395,7 @@ io.on('connection', (socket) => {
       }
       ///////////////////////
 
-      console.log(data)
+      // console.log(data)
       if (callTo === undefined || audio === undefined || video === undefined || group === undefined || fromChat === undefined) return console.log("invalid call performed by user ID:", id)
 
       let audioPresentation = 1;
@@ -578,7 +590,7 @@ io.on('connection', (socket) => {
 
     // for testing only
     socket.on('showConnectedUsers', () => {
-      console.log(connectedUsers)
+      console.log("showConnectedUsers",connectedUsers)
     })
 
     ////////////////Meeting/schedule planning/////////////////
@@ -598,14 +610,14 @@ io.on('connection', (socket) => {
         var listWithoutMe = foundUsersusers.filter(function (user) {
           return user.id != id;
         });
-        console.log(listWithoutMe)
+        console.log("scheduleInviteResults listWithoutMe", listWithoutMe)
         socket.emit('scheduleInviteResults', listWithoutMe)
 
       })
     })
     ///////////New Event/schedule/meeting plan////////////////////////////////
     socket.on('newEventPlan', (newEventCreation) => {
-      console.log(newEventCreation)
+      console.log("newEventCreation", newEventCreation)
       let { inviteList, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate } = newEventCreation;
       db.query("INSERT INTO `events`(`ownerId`, `title`, `eventLocation`, `context`, `activityLink`, `details`, `startTime`, `endTime`, `occurrence`, `recurrenceType`, `startRecurrenceDate`, `endRecurrenceDate`, `type`, `oneTimeDate`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         [id, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate],
@@ -821,8 +833,8 @@ function getEvents(userId, initalDate, endDate) {
 
             //number of difference in days
             let dayDifference = dayDif(checkStartDate, checkEndDate) + 1;
-            console.log(checkStartDate, checkEndDate)
-            console.log(dayDifference)
+            // console.log(checkStartDate, checkEndDate)
+            // console.log(dayDifference)
 
             //everyday
             if (eventdetails.recurrenceType == 1) {
@@ -1184,7 +1196,7 @@ function getRoomInfo(roomID, viewerID) {
 
           switch (type) {
             case 0:
-              console.log(usersArray)
+              // console.log("usersArray", usersArray)
               //console.log("is a private chat");
               var otherUser = usersArray.filter(user => { return user.userID !== viewerID })[0];
               avatar = otherUser.profilePicture;
@@ -1369,6 +1381,59 @@ function findCommonElement(array1, array2) {
     resolve(resultObject);
   })
 }
+
+function getSuperadminAccess(userID) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `admin_id` FROM `superadmins` WHERE `admin_id` = ?', [userID], async (err, admins) => {
+      if (err) return console.log(err)
+      if (admins.length > 0) { resolve(true) }
+      else resolve(false)
+    })
+  })
+}
+function checkAdminAccess(userID) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `admin_id` FROM `admins` WHERE `admin_id` = ?', [userID], async (err, admins) => {
+      if (err) return console.log(err)
+      if (admins.length > 0) { resolve(true) }
+      else resolve(false)
+    })
+  })
+}
+
+function getCompanyInfo(companyID) {
+  console.log(companyID)
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `comanyname`, `description`, `logopath` FROM `companies` WHERE `id` = ?', [companyID], async (err, companies) => {
+      if (err) return console.log(err)
+      if (companies.length > 0){
+        resolve({
+          id: companies[0].id,
+          name: companies[0].id,
+          description: companies[0].description,
+          logo: companies[0].logopath
+        })
+      }
+      else { resolve(null) }
+    })
+  })
+}
+
+/*
+function checkAccess(req, res) {
+  if (!req.session.userId || !req.session.email) return res.redirect('/connect')
+  var email = req.session.email;
+  return db.query('SELECT id, name, surname FROM user WHERE email = ?', [email], async (err, user) => {
+    if (err) return console.log(err)
+    if (user.length < 1) return console.log("Cannot find the user with email " + email);
+    let access = {
+      NAdmin: await getAdminAccess(user[0].id),
+      SAdmin: await getSuperadminAccess(user[0].id),
+      name: user[0].name + ' ' + user[0].surname
+    } // SAdmin means super admin, NAdmin means normal admin
+    return access
+  })
+} */
 
 
 server.listen(port, () => {

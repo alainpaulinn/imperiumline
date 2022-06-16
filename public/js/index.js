@@ -533,47 +533,86 @@ let functionalityOptionsArray = [
   socket.on('redirect', function (destination) {
     window.location.href = destination;
   });
-  socket.on('myId', function (userInfo) {
-    console.log('myId :', userInfo);
+  socket.on('myId', function (myInformation) {
+    console.log('myId :', myInformation);
+    let { userInfo, adminShip } = myInformation;
+    let { superAdmin, admin } = adminShip;
+
     // mySavedInfo = userInfo
     mySavedID = userInfo.userID;
     myName = userInfo.name;
     Mysurname = userInfo.surname;
     editProfileButton.addEventListener('click', function () { createProfilePopup(userInfo, true) })
 
-    let adminPanel = createElement({ elementType: 'section', class:'c-time-admin_panel'})
-    let adminOption = {
-      functionalityId: 5,
-      panel: adminPanel,
-      redirect: "/action",
-      title: "Admin",
-      icon: "bx bx-shield-quarter",
-      subMenu: []
-    }
-    // sidepanelElements
+    if (superAdmin.isSuperAdmin == true || admin.isAdmin == true) {
+      let adminPanel = createElement({ elementType: 'section', class: 'c-time-admin_panel' })
+      let adminOption = {
+        functionalityId: 5,
+        panel: adminPanel,
+        redirect: "/action",
+        title: "Admin",
+        icon: "bx bx-shield-quarter",
+        subMenu: []
+      }
 
-    let { functionalityId, panel, title, icon, subMenu } = adminOption
-    let builtOption = createAdminpanel(title, icon, subMenu)
-    sidepanelElements[sidepanelElements.length - 1].optionContainer.after(builtOption.optionContainer)
-    builtOption.triggerButton.addEventListener("click", showSection(functionalityId - 1))
-    sidepanelElements.push({
-      index: functionalityId - 1,
-      panel: panel,
-      title: title,
-      triggerButton: builtOption.triggerButton,
-      subMenuDiv: builtOption.subMenuDiv,
-      dropIcon: builtOption.dropIcon,
-      optionContainer: builtOption.optionContainer
-    })
+      let { functionalityId, panel, title, icon, subMenu } = adminOption
+      let builtOption = createAdminpanel(title, icon, subMenu, superAdmin, admin)
+      sidepanelElements[sidepanelElements.length - 1].optionContainer.after(builtOption.optionContainer)
+      builtOption.triggerButton.addEventListener("click", showSection(functionalityId - 1))
+      sidepanelElements.push({
+        index: functionalityId - 1,
+        panel: panel,
+        title: title,
+        triggerButton: builtOption.triggerButton,
+        subMenuDiv: builtOption.subMenuDiv,
+        dropIcon: builtOption.dropIcon,
+        optionContainer: builtOption.optionContainer
+      })
 
-    function createAdminpanel(title, icon, subMenu, superAdmin, admin){
-      appWrapper.append(adminPanel)
-      adminPanel.innerHTML = 
-      `
-      
-      `
-      return createSidePanelElement(title, icon, subMenu)
+      function createAdminpanel(title, icon, subMenu, superAdmin, admin) {
+        let { isAdmin, administeredCompanyInfo } = admin
+        let { isSuperAdmin } = superAdmin
+        appWrapper.append(adminPanel)
+
+        let responsibilitiesContainer = createElement({ elementType: 'div', class: 'responsibilitiesContainer' })
+        let responsibilitiesPanel = createElement({ elementType: 'div', class: 'left-responsibilities', childrenArray: [createElement({ elementType: 'div', class: 'responsibilitiesHeader', textContent: 'Admin Panel' }), responsibilitiesContainer] })
+        let contentPanel = createElement({
+          elementType: 'div', class: 'central-Options', childrenArray: [
+            createElement({
+              elementType: 'div', class: 'adminWelcomeDiv', childrenArray: [
+                createElement({ elementType: 'img', class: 'adminWelcomeImage', src: 'images/adminKeys.png' }),
+                createElement({ elementType: 'p', textContent: 'Click on the menu to choose Groups to manage' })
+
+              ]
+            })
+          ]
+        })
+        if (isSuperAdmin === true) {
+          let superAdminButton = createElement({ elementType: 'button', class: 'responsibilityOption', textContent: 'Application Administration' })
+          responsibilitiesContainer.append(superAdminButton)
+          superAdminButton.addEventListener('click', () => {
+            contentPanel.textContent = ''
+            let Header = createElement({ elementType: 'div', class: 'centralHeader', textContent: 'Imperium Line Admin Panel'})
+            let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent'})
+            contentPanel.append(Header, adminPanelMainContent)
+          })
+        }
+        if (isAdmin === true) {
+          let companyAdminButton = createElement({ elementType: 'button', class: 'responsibilityOption', textContent: 'Company Administration' })
+          responsibilitiesContainer.append(companyAdminButton)
+          companyAdminButton.addEventListener('click', () => {
+            contentPanel.textContent = ''
+            let Header = createElement({ elementType: 'div', class: 'centralHeader', textContent: 'Imperium Line Admin Panel'})
+            let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent'})
+            contentPanel.append(Header, adminPanelMainContent)
+          })
+        }
+
+        adminPanel.append(responsibilitiesPanel, contentPanel)
+        return createSidePanelElement(title, icon, subMenu)
+      }
     }
+
   });
 })(functionalityOptionsArray);
 function showMessagesPanel() {
@@ -3901,14 +3940,3 @@ function ValidateFileUpload() {
 //     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
 //   }
 // }
-let usr = {
-  email: "test7email@gmail.com",
-  name: "Test",
-  profilePicture: 'private/profiles/user-128.png',
-  role: "Human Accounts Technician",
-  status: "online",
-  surname: "User7",
-  userID: 7,
-
-}
-createProfilePopup(usr, true)

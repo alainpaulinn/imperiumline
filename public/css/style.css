@@ -2419,6 +2419,8 @@ body {
   transition: all 0.4s;
   -ms-flex-negative: 0;
       flex-shrink: 0;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .c-call_log_panel .callSearchSection .searchResultsDiv .listMember .memberNameRole {
@@ -3167,6 +3169,8 @@ body {
   transition: all 0.4s;
   -ms-flex-negative: 0;
       flex-shrink: 0;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole {
@@ -3277,6 +3281,8 @@ body {
   transition: all 0.4s;
   -ms-flex-negative: 0;
       flex-shrink: 0;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole {
@@ -3593,6 +3599,8 @@ body {
   transition: all 0.4s;
   -ms-flex-negative: 0;
       flex-shrink: 0;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberNameRole {
@@ -4282,6 +4290,8 @@ body {
   transition: all 0.4s;
   -ms-flex-negative: 0;
       flex-shrink: 0;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .listMember .memberNameRole {
@@ -4827,6 +4837,8 @@ body {
   transition: all 0.4s;
   -ms-flex-negative: 0;
       flex-shrink: 0;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .videoCoverDiv .calleesDiv .listMember .memberNameRole {
@@ -6790,8 +6802,91 @@ body {
 }
 
 .c-time-admin_panel .left-responsibilities .responsibilitiesHeader {
-  padding: 1rem;
+  padding: 1.5rem 2rem;
   font-weight: bolder;
-  text-align: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  font-size: 1.5rem;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.451);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.451);
+}
+
+.c-time-admin_panel .left-responsibilities .responsibilitiesContainer {
+  padding: 1rem;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 0.5rem;
+}
+
+.c-time-admin_panel .left-responsibilities .responsibilitiesContainer .responsibilityOption {
+  padding: 1rem;
+  background-color: #ebf0f6;
+  border-radius: 15px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.c-time-admin_panel .central-Options {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 1rem;
+  margin: 1rem;
+  border-radius: 15px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.c-time-admin_panel .central-Options .adminWelcomeDiv {
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 1rem;
+}
+
+.c-time-admin_panel .central-Options .centralHeader {
+  padding: 1.5rem 2rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.451);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.451);
+}
+
+.c-time-admin_panel .central-Options .adminPanelMainContent {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
 }
 /*# sourceMappingURL=style.css.map */

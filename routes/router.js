@@ -22,31 +22,7 @@ const redirectToLogin = (req, res, next) => {
   }
 }
 
-function checkAccess(req, res) {
-  if (!req.session.userId || !req.session.email) return res.redirect('/connect')
-  var email = req.session.email;
-  return db.query('SELECT id, name, surname FROM user WHERE email = ?', [email], async (err, user) => {
-    if (err) return console.log(err)
-    if (user.length < 1) return console.log("Cannot find the user with email " + email);
-    let access = {
-      NAdmin: await getAdminAccess(user[0].id),
-      SAdmin: await getSuperadminAccess(user[0].id),
-      name: user[0].name + ' ' + user[0].surname
-    } // SAdmin means super admin, NAdmin means normal admin
-    return access
-  })
-}
-
-router.get('/', redirectToHome, (req, res) => {
-  res.render('index', {
-    access: {
-      NAdmin: "correct",
-      SAdmin: checkAccess(req, res).SAdmin,
-      name: checkAccess(req, res).name,
-    }
-  })
-  // console.log("checkAccess", checkAccess(req, res))
-});
+router.get('/', redirectToHome, (req, res) => { res.render('index') });
 router.get('/connect', redirectToLogin, (req, res) => { res.render('connect') });
 router.get('/signUp', redirectToLogin, (req, res) => { res.render('signUp') });
 router.get('/admin', redirectToHome, (req, res) => { res.render('admin') });
@@ -108,23 +84,3 @@ router.get('/cover*', function (req, res) {
 });
 
 module.exports = router;
-
-function getSuperadminAccess(userID) {
-  return new Promise(function (resolve, reject) {
-    db.query('SELECT `admin_id` FROM `superadmins` WHERE `admin_id` = ?', [userID], async (err, admins) => {
-      if (err) return console.log(err)
-      if (admins.length > 0) { resolve(true) }
-      else resolve(false)
-    })
-  })
-}
-function getAdminAccess(userID) {
-  return new Promise(function (resolve, reject) {
-    db.query('SELECT `admin_id` FROM `admins` WHERE `admin_id` = ?', [userID], async (err, admins) => {
-      if (err) return console.log(err)
-      if (admins.length > 0) { resolve(true) }
-      else resolve(false)
-    })
-  })
-}
-getAdminAccess(4).then(console.log)
