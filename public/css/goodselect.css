@@ -20,6 +20,7 @@
   border-radius: 15px;
   -webkit-transition: .5s;
   transition: .5s;
+  width: 100%;
 }
 
 .goodselect .selected-value {

@@ -570,7 +570,7 @@ let functionalityOptionsArray = [
       })
 
       function createAdminpanel(title, icon, subMenu, superAdmin, admin) {
-        let { isAdmin, administeredCompanyInfo } = admin
+        let { isAdmin, administeredCompaniesInfo } = admin
         let { isSuperAdmin } = superAdmin
         appWrapper.append(adminPanel)
 
@@ -588,26 +588,57 @@ let functionalityOptionsArray = [
           ]
         })
         if (isSuperAdmin === true) {
-          let superAdminButton = createElement({ elementType: 'button', class: 'responsibilityOption', textContent: 'Application Administration' })
+          let superAdminButton = createElement({ elementType: 'button', class: 'responsibilityOptionButton', textContent: 'Application Administration' })
           responsibilitiesContainer.append(superAdminButton)
           superAdminButton.addEventListener('click', () => {
             contentPanel.textContent = ''
-            let Header = createElement({ elementType: 'div', class: 'centralHeader', textContent: 'Imperium Line Admin Panel'})
-            let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent'})
-            contentPanel.append(Header, adminPanelMainContent)
-          })
-        }
-        if (isAdmin === true) {
-          let companyAdminButton = createElement({ elementType: 'button', class: 'responsibilityOption', textContent: 'Company Administration' })
-          responsibilitiesContainer.append(companyAdminButton)
-          companyAdminButton.addEventListener('click', () => {
-            contentPanel.textContent = ''
-            let Header = createElement({ elementType: 'div', class: 'centralHeader', textContent: 'Imperium Line Admin Panel'})
-            let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent'})
+
+            let companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: 'favicon.ico' })
+            let companyName = createElement({ elementType: 'div', class: 'companyName', textContent: 'Imperium Line' })
+            let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: 'Imperium Line application main administration' })
+            let companyNameDescription = createElement({ elementType: 'div', class: 'companyNameDescription', childrenArray: [companyName, companyDescription] })
+            let companyInfoDiv = createElement({
+              elementType: 'div', class: 'companyInfoDiv', childrenArray: [
+                companyProfilePic,
+                companyNameDescription
+              ]
+            })
+
+            let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv] })
+            let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent' })
             contentPanel.append(Header, adminPanelMainContent)
           })
         }
 
+        if (isAdmin === true) {
+          let companyAdminButton = createElement({ elementType: 'button', class: 'responsibilityOptionDropDown', })
+          goodselect(companyAdminButton, {
+            availableOptions: administeredCompaniesInfo,
+            placeHolder: "Select Company",
+            selectorWidth: "100%",
+            selectedOptionId: administeredCompaniesInfo[0].id || null,
+            onOptionChange: (option) => {
+              console.log('company Chosen',option)
+              contentPanel.textContent = '';
+
+              let companyProfilePic
+              if (option.logo == null) companyProfilePic = createElement({ elementType: 'div', class: 'companyProfilePic', textContent: option.name.substring(0, 2) })
+              else companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: option.logo })
+              let companyName = createElement({ elementType: 'div', class: 'companyName', textContent: option.name })
+              let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: option.description })
+              let companyNameDescription = createElement({ elementType: 'div', class: 'companyNameDescription', childrenArray: [companyName, companyDescription] })
+              let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [ companyProfilePic, companyNameDescription ] })
+
+              let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+              let universalButtons = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [editButton] })
+
+              let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv, universalButtons] })
+              let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent' })
+              contentPanel.append(Header, adminPanelMainContent)
+            }
+          })
+          responsibilitiesContainer.append(companyAdminButton)
+        }
         adminPanel.append(responsibilitiesPanel, contentPanel)
         return createSidePanelElement(title, icon, subMenu)
       }

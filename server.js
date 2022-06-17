@@ -88,10 +88,11 @@ io.on('connection', (socket) => {
           superAdmin: {isSuperAdmin: await getSuperadminAccess(id)}, 
           admin:{
             isAdmin: await checkAdminAccess(id), 
-            administeredCompanyInfo: await getCompanyInfo(company_id)
+            administeredCompaniesInfo: await getAdminUserCompanies(id)
           }
         }
       }
+      console.log('myInformation ID', id)
       socket.emit('myId', myInformation);
       console.log('myInformation',myInformation)
       db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess`, room.chatID, room.name, room.type, room.profilePicture, room.creationDate, room.lastActionDate FROM `participants` JOIN room ON room.chatID = participants.roomID WHERE participants.userID = ? ORDER BY `room`.`lastActionDate` DESC', [id], async (err, mychatResults) => {
@@ -1402,19 +1403,31 @@ function checkAdminAccess(userID) {
 }
 
 function getCompanyInfo(companyID) {
-  console.log(companyID)
+  console.log("companyID",companyID)
   return new Promise(function (resolve, reject) {
-    db.query('SELECT `id`, `comanyname`, `description`, `logopath` FROM `companies` WHERE `id` = ?', [companyID], async (err, companies) => {
+    db.query('SELECT `id`, `comanyname`, `description`, `logopath`, `coverpath` FROM `companies` WHERE `id` = ?', [companyID], async (err, companies) => {
       if (err) return console.log(err)
       if (companies.length > 0){
         resolve({
           id: companies[0].id,
-          name: companies[0].id,
+          name: companies[0].comanyname,
           description: companies[0].description,
-          logo: companies[0].logopath
+          logo: companies[0].logopath,
+          cover: companies[0].coverpath
         })
       }
       else { resolve(null) }
+    })
+  })
+}
+
+function getAdminUserCompanies(userID) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `company_id`, `admin_id`, `done_by`, `registration_date` FROM `admins` WHERE `admin_id` = ?', [userID], async (err, companies) => {
+      if (err) return console.log(err)
+      let companyArray = []
+      for (let i = 0; i < companies.length; i++) { companyArray.push( await getCompanyInfo(companies[i].company_id)) }
+      resolve(companyArray)
     })
   })
 }

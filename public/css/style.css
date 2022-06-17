@@ -2631,6 +2631,7 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  text-transform: uppercase;
 }
 
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .nameAndType {
@@ -6829,8 +6830,16 @@ body {
   gap: 0.5rem;
 }
 
-.c-time-admin_panel .left-responsibilities .responsibilitiesContainer .responsibilityOption {
+.c-time-admin_panel .left-responsibilities .responsibilitiesContainer .responsibilityOptionButton {
   padding: 1rem;
+  background-color: #ebf0f6;
+  border-radius: 15px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.c-time-admin_panel .left-responsibilities .responsibilitiesContainer .responsibilityOptionDropDown {
   background-color: #ebf0f6;
   border-radius: 15px;
   border: none;
@@ -6877,16 +6886,82 @@ body {
 }
 
 .c-time-admin_panel .central-Options .centralHeader {
-  padding: 1.5rem 2rem;
-  font-size: 1.5rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 1rem;
   font-weight: bold;
   -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.451);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.451);
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.c-time-admin_panel .central-Options .centralHeader .companyInfoDiv {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: .5rem;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  min-width: 0;
+}
+
+.c-time-admin_panel .central-Options .centralHeader .companyInfoDiv .companyProfilePic {
+  width: 40px;
+  height: 40px;
+  border-radius: 15px;
+  border: 1px solid #003061;
+  -o-object-fit: cover;
+     object-fit: cover;
+  text-transform: uppercase;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: white;
+  background-color: #003061;
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
+}
+
+.c-time-admin_panel .central-Options .centralHeader .companyInfoDiv .companyNameDescription {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.c-time-admin_panel .central-Options .centralHeader .companyInfoDiv .companyNameDescription .companyDescription {
+  font-weight: 400;
 }
 
 .c-time-admin_panel .central-Options .adminPanelMainContent {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
+}
+
+.c-time-admin_panel .central-Options .adminPanelMainContent .adminFunctionOption {
+  -webkit-box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
+  border-radius: 15px;
 }
 /*# sourceMappingURL=style.css.map */

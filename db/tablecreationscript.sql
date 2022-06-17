@@ -7,6 +7,7 @@ CREATE TABLE `companies` (
   `comanyname` text NOT NULL,
   `description` text DEFAULT NULL,
   `logopath` text DEFAULT NULL,
+  `coverpath` text DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
