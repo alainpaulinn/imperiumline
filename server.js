@@ -684,12 +684,14 @@ io.on('connection', (socket) => {
       let adminAccess = await checkAdminAccess(id);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
+      console.log('adminNumbers', await getNumbersArray('admin', companyId))
 
     })
     socket.on('requestSuperAdminNumbers', async (companyId) => {
       let adminAccess = await getSuperadminAccess(id);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
+      console.log('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
     })
     ///////////////
     socket.on('disconnecting', () => {
