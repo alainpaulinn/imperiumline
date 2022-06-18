@@ -605,7 +605,21 @@ let functionalityOptionsArray = [
             })
 
             let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv] })
-            let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent' })
+            let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [
+              createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] }) // create Spinner
+            ]})
+            socket.emit('requestSuperAdminNumbers')
+            socket.on('superAdminNumbers', numbersArray =>{
+              numbersDiv.textContent = '';
+              numbersArray.map(number => {
+                let valueDiv = createElement({elementType:'div', class:'valueDiv ', textContent: number.value})
+                let titleDiv = createElement({elementType:'div', class:'titleDiv', textContent: number.title})
+                let numberOption =  createElement({ elementType: 'div', class:'numberOption', childrenArray:[valueDiv, titleDiv]})
+                numbersDiv.append(numberOption)
+              })
+            })
+                            
+            let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray:[numbersDiv] })
             contentPanel.append(Header, adminPanelMainContent)
           })
         }

@@ -683,17 +683,13 @@ io.on('connection', (socket) => {
     socket.on('requestAdminNumbers', async (companyId) => {
       let adminAccess = await checkAdminAccess(id);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
-      console.log('adminAccess requested')
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
-      console.log('adminNumbers', await getNumbersArray('admin', companyId))
 
     })
     socket.on('requestSuperAdminNumbers', async (companyId) => {
       let adminAccess = await getSuperadminAccess(id);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
-      console.log('superAdminNumbers requested')
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
-      console.log('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
     })
     ///////////////
     socket.on('disconnecting', () => {
@@ -1454,18 +1450,20 @@ function getNumbersArray(role, companyId) {
     if (role === 'admin') {
       let numbers = []
       let usersQueryObjectArray = [
-        { query: 'SELECT count(*) as `count` FROM `user` WHERE `company_id` = ?', arguments: [companyId], title: 'Users' },
-        { query: 'SELECT count(*) as `count` FROM `admins` WHERE `company_id` = ?', arguments: [companyId], title: 'Admins' },
-        { query: 'SELECT calls.`id`, COUNT(*) as count FROM calls INNER JOIN user ON calls.initiatorId = user.id WHERE user.company_id = ?', arguments: [companyId], title: 'Calls' },
-        { query: 'SELECT events.`eventId`, COUNT(*) as count FROM events INNER JOIN user ON events.ownerId = user.id WHERE user.company_id = ?', arguments: [companyId], title: 'Events' },
-        { query: 'SELECT message.`id`, COUNT(*) as count FROM message INNER JOIN user ON message.userID = user.id WHERE user.company_id = ?', arguments: [companyId], title: 'Messages' }
+        { queryString: 'SELECT count(*) as `count` FROM `user` WHERE `company_id` = ?', queryTerms: [companyId], title: 'Users', resultVariable: 'count' },
+        { queryString: 'SELECT count(*) as `count` FROM `admins` WHERE `company_id` = ?', queryTerms: [companyId], title: 'Admins', resultVariable: 'count' },
+        { queryString: 'SELECT calls.`id`, COUNT(*) as count FROM calls INNER JOIN user ON calls.initiatorId = user.id WHERE user.company_id = ?', queryTerms: [companyId], title: 'Calls', resultVariable: 'count' },
+        { queryString: 'SELECT events.`eventId`, COUNT(*) as count FROM events INNER JOIN user ON events.ownerId = user.id WHERE user.company_id = ?', queryTerms: [companyId], title: 'Events', resultVariable: 'count' },
+        { queryString: 'SELECT message.`id`, COUNT(*) as count FROM message INNER JOIN user ON message.userID = user.id WHERE user.company_id = ?', queryTerms: [companyId], title: 'Messages', resultVariable: 'count' }
       ]
       for (let i = 0; i < usersQueryObjectArray.length; i++) {
-        db.query(usersQueryObjectArray[i].query, usersQueryObjectArray[i].arguments, async (err, obtainedNumbers) => {
-          if (err) return console.log(err)
-          numbers.push({ title: usersQueryObjectArray[i].title, value: obtainedNumbers[0].count})
-          console.log(obtainedNumbers)
-          
+        numbers.push({
+          title: usersQueryObjectArray[i].title,
+          value: await automaticSingleRowQuerry({
+            queryString: usersQueryObjectArray[i].queryString,
+            queryTerms: usersQueryObjectArray[i].queryTerms,
+            resultVariable: usersQueryObjectArray[i].resultVariable
+          })
         })
       }
       resolve(Promise.all(numbers))
@@ -1473,23 +1471,38 @@ function getNumbersArray(role, companyId) {
     if (role === 'superAdmin') {
       let numbers = []
       let usersQueryObjectArray = [
-        { query: 'SELECT COUNT(*) AS count FROM `user`', arguments: [], title: 'Users' },
-        { query: 'SELECT COUNT(*) AS count FROM `message`', arguments: [], title: 'Messages' },
-        { query: 'SELECT COUNT(*) AS count FROM `reactionoptions`', arguments: [], title: 'Reaction Options' },
-        { query: 'SELECT COUNT(*) AS count FROM `calls`', arguments: [], title: 'Calls' },
-        { query: 'SELECT COUNT(*) AS count FROM `events`', arguments: [], title: 'Events' },
-        { query: 'SELECT COUNT(*) AS count FROM `admins`', arguments: [], title: 'Admins' },
-        { query: 'SELECT COUNT(*) AS count FROM `superadmins`', arguments: [], title: 'Super Admins' }
+        { queryString: 'SELECT COUNT(*) AS count FROM `user`', queryTerms: [], title: 'Users', resultVariable: 'count' },
+        { queryString: 'SELECT COUNT(*) AS count FROM `message`', queryTerms: [], title: 'Messages', resultVariable: 'count' },
+        { queryString: 'SELECT COUNT(*) AS count FROM `reactionoptions`', queryTerms: [], title: 'Reaction Options', resultVariable: 'count' },
+        { queryString: 'SELECT COUNT(*) AS count FROM `calls`', queryTerms: [], title: 'Calls', resultVariable: 'count' },
+        { queryString: 'SELECT COUNT(*) AS count FROM `events`', queryTerms: [], title: 'Events', resultVariable: 'count' },
+        { queryString: 'SELECT COUNT(*) AS count FROM `events`', queryTerms: [], title: 'Events', resultVariable: 'count' },
+        { queryString: 'SELECT COUNT(*) AS count FROM `companies`', queryTerms: [], title: 'Companies', resultVariable: 'count' },
+        { queryString: 'SELECT COUNT(*) AS count FROM `superadmins`', queryTerms: [], title: 'Super Admins', resultVariable: 'count' }
       ]
       for (let i = 0; i < usersQueryObjectArray.length; i++) {
-        db.query(usersQueryObjectArray[i].query, usersQueryObjectArray[i].arguments, async (err, obtainedNumbers) => {
-          if (err) return console.log(err)
-          numbers.push({ title: usersQueryObjectArray[i].title, value: obtainedNumbers[0].count})
-          console.log(obtainedNumbers)
+        numbers.push({
+          title: usersQueryObjectArray[i].title,
+          value: await automaticSingleRowQuerry({
+            queryString: usersQueryObjectArray[i].queryString,
+            queryTerms: usersQueryObjectArray[i].queryTerms,
+            resultVariable: usersQueryObjectArray[i].resultVariable
+          })
         })
       }
-      resolve(Promise.all(numbers))
+      resolve(numbers)
     }
+  })
+}
+
+function automaticSingleRowQuerry(queryObject) {
+  let { queryString, queryTerms, resultVariable } = queryObject
+  return new Promise(function (resolve, reject) {
+    db.query(queryString, queryTerms, async (err, obtainedVariables) => {
+      if (err) reject(err)
+      if (obtainedVariables.length < 1) { reject("querry returned 0 results") }
+      resolve(obtainedVariables[0][resultVariable])
+    })
   })
 }
 

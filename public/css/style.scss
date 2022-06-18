@@ -5777,24 +5777,27 @@ body {
     .adminPanelMainContent {
       flex: 1;
       padding: 1rem;
+
       .numbersDiv {
         display: flex;
         gap: 1rem;
         flex-wrap: wrap;
         justify-content: space-around;
+
         .numberOption {
           border-radius: $borderRadius;
           padding: 1rem;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
-          width: 15rem;
+          min-width: 15rem;
           text-align: center;
+
           .valueDiv {
             font-size: 3rem;
             font-weight: bold;
           }
 
           .titleDiv {
-            font-size: 1.2rem;
+            // font-size: 1.2rem;
           }
         }
 
