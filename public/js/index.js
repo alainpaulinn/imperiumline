@@ -615,9 +615,10 @@ let functionalityOptionsArray = [
             let companiesDivHeader = createElement({elementType:'div', class:'companiesDivHeader'})
             let companiesDiv = createElement({elementType:'div', class:'companiesDiv'})
             let editDiv = createElement({elementType:'div', class:'editDiv'})     
-            
+
             socket.emit('requestSuperAdminNumbers')
             socket.on('superAdminNumbers', numbersArray =>{
+              console.log("numbersArray",numbersArray)
               numbersDiv.textContent = '';
               numbersArray.map(number => {
                 let valueDiv = createElement({elementType:'div', class:'valueDiv ', textContent: number.value})
