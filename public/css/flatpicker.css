@@ -14,12 +14,9 @@
   border-radius: 5px;
   position: absolute;
   width: 307.875px;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -ms-touch-action: manipulation;
   touch-action: manipulation;
   background: #fff;
-  -webkit-box-shadow: 1px 0 0 #e6e6e6, -1px 0 0 #e6e6e6, 0 1px 0 #e6e6e6, 0 -1px 0 #e6e6e6, 0 3px 13px rgba(0, 0, 0, 0.08);
   box-shadow: 1px 0 0 #e6e6e6, -1px 0 0 #e6e6e6, 0 1px 0 #e6e6e6, 0 -1px 0 #e6e6e6, 0 3px 13px rgba(0, 0, 0, 0.08);
 }
 
@@ -56,13 +53,11 @@
   display: block;
 }
 
-.flatpickr-calendar.multiMonth .flatpickr-days .dayContainer:nth-child(n + 1) .flatpickr-day.inRange:nth-child(7n + 7) {
-  -webkit-box-shadow: none !important;
+.flatpickr-calendar.multiMonth .flatpickr-days .dayContainer:nth-child(n+1) .flatpickr-day.inRange:nth-child(7n+7) {
   box-shadow: none !important;
 }
 
-.flatpickr-calendar.multiMonth .flatpickr-days .dayContainer:nth-child(n + 2) .flatpickr-day.inRange:nth-child(7n + 1) {
-  -webkit-box-shadow: -2px 0 0 #e6e6e6, 5px 0 0 #e6e6e6;
+.flatpickr-calendar.multiMonth .flatpickr-days .dayContainer:nth-child(n+2) .flatpickr-day.inRange:nth-child(7n+1) {
   box-shadow: -2px 0 0 #e6e6e6, 5px 0 0 #e6e6e6;
 }
 
@@ -158,8 +153,6 @@
 }
 
 .flatpickr-months {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
 }
 
@@ -176,8 +169,6 @@
   -ms-user-select: none;
   user-select: none;
   overflow: hidden;
-  -webkit-box-flex: 1;
-  -ms-flex: 1;
   flex: 1;
 }
 
@@ -211,27 +202,27 @@
 .flatpickr-months .flatpickr-prev-month.flatpickr-prev-month,
 .flatpickr-months .flatpickr-next-month.flatpickr-prev-month {
   /*
-      /*rtl:begin:ignore*/
+    /*rtl:begin:ignore*/
   left: 0;
   /*
-      /*rtl:end:ignore*/
+  /*rtl:end:ignore*/
 }
 
 /*
-      /*rtl:begin:ignore*/
+    /*rtl:begin:ignore*/
 /*
       /*rtl:end:ignore*/
 .flatpickr-months .flatpickr-prev-month.flatpickr-next-month,
 .flatpickr-months .flatpickr-next-month.flatpickr-next-month {
   /*
-      /*rtl:begin:ignore*/
+    /*rtl:begin:ignore*/
   right: 0;
   /*
-      /*rtl:end:ignore*/
+  /*rtl:end:ignore*/
 }
 
 /*
-      /*rtl:begin:ignore*/
+    /*rtl:begin:ignore*/
 /*
       /*rtl:end:ignore*/
 .flatpickr-months .flatpickr-prev-month:hover,
@@ -252,7 +243,6 @@
 
 .flatpickr-months .flatpickr-prev-month svg path,
 .flatpickr-months .flatpickr-next-month svg path {
-  -webkit-transition: fill 0.1s;
   transition: fill 0.1s;
   fill: inherit;
 }
@@ -291,7 +281,6 @@
   opacity: 0;
   cursor: pointer;
   border: 1px solid rgba(57, 57, 57, 0.15);
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -362,7 +351,6 @@
   height: 34px;
   display: inline-block;
   text-align: center;
-  -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
 }
 
@@ -381,7 +369,7 @@
 
 .flatpickr-current-month .numInputWrapper {
   width: 6ch;
-  width: 7ch\0;
+  width: 7ch\0 ;
   display: inline-block;
 }
 
@@ -395,7 +383,6 @@
 
 .flatpickr-current-month input.cur-year {
   background: transparent;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   color: inherit;
   cursor: text;
@@ -471,21 +458,13 @@
   text-align: center;
   overflow: hidden;
   width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
   height: 28px;
 }
 
 .flatpickr-weekdays .flatpickr-weekdaycontainer {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-flex: 1;
-  -ms-flex: 1;
   flex: 1;
 }
 
@@ -498,8 +477,6 @@ span.flatpickr-weekday {
   margin: 0;
   text-align: center;
   display: block;
-  -webkit-box-flex: 1;
-  -ms-flex: 1;
   flex: 1;
   font-weight: bolder;
 }
@@ -512,11 +489,7 @@ span.flatpickr-weekday {
 .flatpickr-days {
   position: relative;
   overflow: hidden;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: start;
-  -ms-flex-align: start;
   align-items: flex-start;
   width: 307.875px;
 }
@@ -532,23 +505,17 @@ span.flatpickr-weekday {
   width: 307.875px;
   min-width: 307.875px;
   max-width: 307.875px;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
-  display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
   flex-wrap: wrap;
   -ms-flex-wrap: wrap;
-  -ms-flex-pack: justify;
   justify-content: space-around;
-  -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
   opacity: 1;
 }
 
 .dayContainer + .dayContainer {
-  -webkit-box-shadow: -1px 0 0 #e6e6e6;
   box-shadow: -1px 0 0 #e6e6e6;
 }
 
@@ -556,13 +523,11 @@ span.flatpickr-weekday {
   background: none;
   border: 1px solid transparent;
   border-radius: 15px;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   color: #393939;
   cursor: pointer;
   font-weight: 400;
   width: 14.2857143%;
-  -ms-flex-preferred-size: 14.2857143%;
   flex-basis: 14.2857143%;
   max-width: 39px;
   height: 39px;
@@ -570,8 +535,6 @@ span.flatpickr-weekday {
   margin: 0;
   display: inline-block;
   position: relative;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
   justify-content: center;
   text-align: center;
 }
@@ -624,7 +587,6 @@ span.flatpickr-weekday {
 .flatpickr-day.startRange.nextMonthDay,
 .flatpickr-day.endRange.nextMonthDay {
   background: #003061;
-  -webkit-box-shadow: none;
   box-shadow: none;
   color: #fff;
   border-color: #003061;
@@ -642,10 +604,9 @@ span.flatpickr-weekday {
   border-radius: 0 50px 50px 0;
 }
 
-.flatpickr-day.selected.startRange + .endRange:not(:nth-child(7n + 1)),
-.flatpickr-day.startRange.startRange + .endRange:not(:nth-child(7n + 1)),
-.flatpickr-day.endRange.startRange + .endRange:not(:nth-child(7n + 1)) {
-  -webkit-box-shadow: -10px 0 0 #569ff7;
+.flatpickr-day.selected.startRange + .endRange:not(:nth-child(7n+1)),
+.flatpickr-day.startRange.startRange + .endRange:not(:nth-child(7n+1)),
+.flatpickr-day.endRange.startRange + .endRange:not(:nth-child(7n+1)) {
   box-shadow: -10px 0 0 #569ff7;
 }
 
@@ -657,7 +618,6 @@ span.flatpickr-weekday {
 
 .flatpickr-day.inRange {
   border-radius: 0;
-  -webkit-box-shadow: -5px 0 0 #e6e6e6, 5px 0 0 #e6e6e6;
   box-shadow: -5px 0 0 #e6e6e6, 5px 0 0 #e6e6e6;
 }
 
@@ -682,7 +642,6 @@ span.flatpickr-weekday {
 
 .flatpickr-day.week.selected {
   border-radius: 0;
-  -webkit-box-shadow: -5px 0 0 #569ff7, 5px 0 0 #569ff7;
   box-shadow: -5px 0 0 #569ff7, 5px 0 0 #569ff7;
 }
 
@@ -700,7 +659,6 @@ span.flatpickr-weekday {
 
 .flatpickr-weekwrapper .flatpickr-weeks {
   padding: 0 12px;
-  -webkit-box-shadow: 1px 0 0 #e6e6e6;
   box-shadow: 1px 0 0 #e6e6e6;
 }
 
@@ -724,10 +682,7 @@ span.flatpickr-weekday {
 
 .flatpickr-innerContainer {
   display: block;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -735,7 +690,6 @@ span.flatpickr-weekday {
 .flatpickr-rContainer {
   display: inline-block;
   padding: 0;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -746,11 +700,8 @@ span.flatpickr-weekday {
   height: 0;
   line-height: 40px;
   max-height: 40px;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
 }
 
@@ -761,8 +712,6 @@ span.flatpickr-weekday {
 }
 
 .flatpickr-time .numInputWrapper {
-  -webkit-box-flex: 1;
-  -ms-flex: 1;
   flex: 1;
   width: 40%;
   height: 40px;
@@ -787,7 +736,6 @@ span.flatpickr-weekday {
 
 .flatpickr-time input {
   background: transparent;
-  -webkit-box-shadow: none;
   box-shadow: none;
   border: 0;
   border-radius: 0;
@@ -799,7 +747,6 @@ span.flatpickr-weekday {
   color: #393939;
   font-size: 14px;
   position: relative;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   -webkit-appearance: textfield;
   -moz-appearance: textfield;
@@ -832,10 +779,7 @@ span.flatpickr-weekday {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  -webkit-align-self: center;
-  -ms-flex-item-align: center;
-  -ms-grid-row-align: center;
-      align-self: center;
+  align-self: center;
 }
 
 .flatpickr-time .flatpickr-am-pm {
@@ -860,26 +804,20 @@ span.flatpickr-weekday {
 @-webkit-keyframes fpFadeInDown {
   from {
     opacity: 0;
-    -webkit-transform: translate3d(0, -20px, 0);
     transform: translate3d(0, -20px, 0);
   }
   to {
     opacity: 1;
-    -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
   }
 }
-
 @keyframes fpFadeInDown {
   from {
     opacity: 0;
-    -webkit-transform: translate3d(0, -20px, 0);
     transform: translate3d(0, -20px, 0);
   }
   to {
     opacity: 1;
-    -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
   }
-}
-/*# sourceMappingURL=flatpicker.css.map */
+}/*# sourceMappingURL=flatpicker.css.map */

@@ -5777,12 +5777,12 @@ body {
     .adminPanelMainContent {
       flex: 1;
       padding: 1rem;
-
+      overflow-y: auto;
       .numbersDiv {
         display: flex;
         gap: 1rem;
         flex-wrap: wrap;
-        justify-content: space-around;
+        justify-content: center;
 
         .numberOption {
           border-radius: $borderRadius;

@@ -1476,8 +1476,8 @@ function getNumbersArray(role, companyId) {
         { queryString: 'SELECT COUNT(*) AS count FROM `reactionoptions`', queryTerms: [], title: 'Reaction Options', resultVariable: 'count' },
         { queryString: 'SELECT COUNT(*) AS count FROM `calls`', queryTerms: [], title: 'Calls', resultVariable: 'count' },
         { queryString: 'SELECT COUNT(*) AS count FROM `events`', queryTerms: [], title: 'Events', resultVariable: 'count' },
-        { queryString: 'SELECT COUNT(*) AS count FROM `events`', queryTerms: [], title: 'Events', resultVariable: 'count' },
         { queryString: 'SELECT COUNT(*) AS count FROM `companies`', queryTerms: [], title: 'Companies', resultVariable: 'count' },
+        { queryString: 'SELECT COUNT(*) AS count FROM `admins`', queryTerms: [], title: 'Admins', resultVariable: 'count' },
         { queryString: 'SELECT COUNT(*) AS count FROM `superadmins`', queryTerms: [], title: 'Super Admins', resultVariable: 'count' }
       ]
       for (let i = 0; i < usersQueryObjectArray.length; i++) {

@@ -608,6 +608,14 @@ let functionalityOptionsArray = [
             let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [
               createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] }) // create Spinner
             ]})
+
+            // companiesDiv
+            let companiesDivTitle = createElement({elementType:'p', class:'companiesDivTitle', textContent: ""})
+            let companiesDivTitleIcon = createElement({elementType:'i', class:'companiesDivTitle', textContent: ""})
+            let companiesDivHeader = createElement({elementType:'div', class:'companiesDivHeader'})
+            let companiesDiv = createElement({elementType:'div', class:'companiesDiv'})
+            let editDiv = createElement({elementType:'div', class:'editDiv'})     
+            
             socket.emit('requestSuperAdminNumbers')
             socket.on('superAdminNumbers', numbersArray =>{
               numbersDiv.textContent = '';
@@ -618,10 +626,18 @@ let functionalityOptionsArray = [
                 numbersDiv.append(numberOption)
               })
             })
-                            
+                    
             let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray:[numbersDiv] })
             contentPanel.append(Header, adminPanelMainContent)
           })
+        }
+
+        function createAdminManagementOption(optionobject){
+          let {socketEvent, eventArgumentsObject, optionTitle, optionIcon } = optionobject
+          let companiesDivTitleIcon = createElement({elementType:'i', class:optionIcon})
+          let companiesDivTitle = createElement({elementType:'p', class:'companiesDivTitle', textContent: optionTitle })
+
+          return adminOptionDiv
         }
 
         if (isAdmin === true) {
@@ -677,6 +693,7 @@ let functionalityOptionsArray = [
           })
           responsibilitiesContainer.append(companyAdminButton)
         }
+        
         adminPanel.append(responsibilitiesPanel, contentPanel)
         return createSidePanelElement(title, icon, subMenu)
       }
