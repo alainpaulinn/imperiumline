@@ -85,16 +85,16 @@ io.on('connection', (socket) => {
       let myInformation = {
         userInfo: userInfo,
         adminShip: {
-          superAdmin: {isSuperAdmin: await getSuperadminAccess(id)}, 
-          admin:{
-            isAdmin: await checkAdminAccess(id), 
+          superAdmin: { isSuperAdmin: await getSuperadminAccess(id) },
+          admin: {
+            isAdmin: await checkAdminAccess(id),
             administeredCompaniesInfo: await getAdminUserCompanies(id)
           }
         }
       }
       console.log('myInformation ID', id)
       socket.emit('myId', myInformation);
-      console.log('myInformation',myInformation)
+      console.log('myInformation', myInformation)
       db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess`, room.chatID, room.name, room.type, room.profilePicture, room.creationDate, room.lastActionDate FROM `participants` JOIN room ON room.chatID = participants.roomID WHERE participants.userID = ? ORDER BY `room`.`lastActionDate` DESC', [id], async (err, mychatResults) => {
         if (err) return console.log(err)
         mychatResults.forEach(async myChat => {
@@ -591,7 +591,7 @@ io.on('connection', (socket) => {
 
     // for testing only
     socket.on('showConnectedUsers', () => {
-      console.log("showConnectedUsers",connectedUsers)
+      console.log("showConnectedUsers", connectedUsers)
     })
 
     ////////////////Meeting/schedule planning/////////////////
@@ -677,6 +677,23 @@ io.on('connection', (socket) => {
       let access = await checkCallAccess(id, callUniqueId)
       if (access != true) { return console.log('User :', id, ' text in this call because he has no access to this call :', callUniqueId) }
       io.sockets.in(callUniqueId + '-allAnswered-sockets').emit('new-incall-message', { userInfo: await getUserInfo(id), content: message, time: new Date() });
+    })
+
+    ///ADMIN functionalities
+    socket.on('requestAdminNumbers', async (companyId) => {
+      let adminAccess = await checkAdminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+      console.log('adminAccess requested')
+      socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
+      console.log('adminNumbers', await getNumbersArray('admin', companyId))
+
+    })
+    socket.on('requestSuperAdminNumbers', async (companyId) => {
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+      console.log('superAdminNumbers requested')
+      socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
+      console.log('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
     })
     ///////////////
     socket.on('disconnecting', () => {
@@ -1403,11 +1420,11 @@ function checkAdminAccess(userID) {
 }
 
 function getCompanyInfo(companyID) {
-  console.log("companyID",companyID)
+  console.log("companyID", companyID)
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `comanyname`, `description`, `logopath`, `coverpath` FROM `companies` WHERE `id` = ?', [companyID], async (err, companies) => {
       if (err) return console.log(err)
-      if (companies.length > 0){
+      if (companies.length > 0) {
         resolve({
           id: companies[0].id,
           name: companies[0].comanyname,
@@ -1426,9 +1443,53 @@ function getAdminUserCompanies(userID) {
     db.query('SELECT `id`, `company_id`, `admin_id`, `done_by`, `registration_date` FROM `admins` WHERE `admin_id` = ?', [userID], async (err, companies) => {
       if (err) return console.log(err)
       let companyArray = []
-      for (let i = 0; i < companies.length; i++) { companyArray.push( await getCompanyInfo(companies[i].company_id)) }
+      for (let i = 0; i < companies.length; i++) { companyArray.push(await getCompanyInfo(companies[i].company_id)) }
       resolve(companyArray)
     })
+  })
+}
+function getNumbersArray(role, companyId) {
+
+  return new Promise(async function (resolve, reject) {
+    if (role === 'admin') {
+      let numbers = []
+      let usersQueryObjectArray = [
+        { query: 'SELECT count(*) as `count` FROM `user` WHERE `company_id` = ?', arguments: [companyId], title: 'Users' },
+        { query: 'SELECT count(*) as `count` FROM `admins` WHERE `company_id` = ?', arguments: [companyId], title: 'Admins' },
+        { query: 'SELECT calls.`id`, COUNT(*) as count FROM calls INNER JOIN user ON calls.initiatorId = user.id WHERE user.company_id = ?', arguments: [companyId], title: 'Calls' },
+        { query: 'SELECT events.`eventId`, COUNT(*) as count FROM events INNER JOIN user ON events.ownerId = user.id WHERE user.company_id = ?', arguments: [companyId], title: 'Events' },
+        { query: 'SELECT message.`id`, COUNT(*) as count FROM message INNER JOIN user ON message.userID = user.id WHERE user.company_id = ?', arguments: [companyId], title: 'Messages' }
+      ]
+      for (let i = 0; i < usersQueryObjectArray.length; i++) {
+        db.query(usersQueryObjectArray[i].query, usersQueryObjectArray[i].arguments, async (err, obtainedNumbers) => {
+          if (err) return console.log(err)
+          numbers.push({ title: usersQueryObjectArray[i].title, value: obtainedNumbers[0].count})
+          console.log(obtainedNumbers)
+          
+        })
+      }
+      resolve(Promise.all(numbers))
+    }
+    if (role === 'superAdmin') {
+      let numbers = []
+      let usersQueryObjectArray = [
+        { query: 'SELECT COUNT(*) AS count FROM `user`', arguments: [], title: 'Users' },
+        { query: 'SELECT COUNT(*) AS count FROM `message`', arguments: [], title: 'Messages' },
+        { query: 'SELECT COUNT(*) AS count FROM `reactionoptions`', arguments: [], title: 'Reaction Options' },
+        { query: 'SELECT COUNT(*) AS count FROM `calls`', arguments: [], title: 'Calls' },
+        { query: 'SELECT COUNT(*) AS count FROM `events`', arguments: [], title: 'Events' },
+        { query: 'SELECT COUNT(*) AS count FROM `admins`', arguments: [], title: 'Admins' },
+        { query: 'SELECT COUNT(*) AS count FROM `superadmins`', arguments: [], title: 'Super Admins' }
+      ]
+      for (let i = 0; i < usersQueryObjectArray.length; i++) {
+        db.query(usersQueryObjectArray[i].query, usersQueryObjectArray[i].arguments, async (err, obtainedNumbers) => {
+          if (err) return console.log(err)
+          numbers.push({ title: usersQueryObjectArray[i].title, value: obtainedNumbers[0].count})
+          console.log(obtainedNumbers)
+        })
+      }
+      resolve(Promise.all(numbers))
+    }
   })
 }
 
