@@ -690,7 +690,6 @@ let functionalityOptionsArray = [
                     numbersDiv.append(numberOption)
                   })
                 })
-
                 let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray: [numbersDiv] })
                 contentPanel.append(Header, adminPanelMainContent)
               }
