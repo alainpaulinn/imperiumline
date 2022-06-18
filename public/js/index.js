@@ -618,23 +618,47 @@ let functionalityOptionsArray = [
             selectorWidth: "100%",
             selectedOptionId: administeredCompaniesInfo[0].id || null,
             onOptionChange: (option) => {
-              console.log('company Chosen',option)
               contentPanel.textContent = '';
+              if (option == null) {
+                console.log('company Chosen', option)
+                contentPanel.append(createElement({
+                  elementType: 'div', class: 'adminWelcomeDiv', childrenArray: [
+                    createElement({ elementType: 'img', class: 'adminWelcomeImage', src: 'images/adminKeys.png' }),
+                    createElement({ elementType: 'p', textContent: 'Click on the menu to choose Groups to manage' })
+                  ]
+                }))
+              }
+              else {
+                let companyProfilePic
+                if (option.logo == null) companyProfilePic = createElement({ elementType: 'div', class: 'companyProfilePic', textContent: option.name.substring(0, 2) })
+                else companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: option.logo })
+                let companyName = createElement({ elementType: 'div', class: 'companyName', textContent: option.name })
+                let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: option.description })
+                let companyNameDescription = createElement({ elementType: 'div', class: 'companyNameDescription', childrenArray: [companyName, companyDescription] })
+                let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [companyProfilePic, companyNameDescription] })
 
-              let companyProfilePic
-              if (option.logo == null) companyProfilePic = createElement({ elementType: 'div', class: 'companyProfilePic', textContent: option.name.substring(0, 2) })
-              else companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: option.logo })
-              let companyName = createElement({ elementType: 'div', class: 'companyName', textContent: option.name })
-              let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: option.description })
-              let companyNameDescription = createElement({ elementType: 'div', class: 'companyNameDescription', childrenArray: [companyName, companyDescription] })
-              let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [ companyProfilePic, companyNameDescription ] })
+                let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+                let universalButtons = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [editButton] })
 
-              let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
-              let universalButtons = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [editButton] })
+                let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv, universalButtons] })
 
-              let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv, universalButtons] })
-              let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent' })
-              contentPanel.append(Header, adminPanelMainContent)
+                let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [
+                  createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] }) // create Spinner
+                ]})
+                socket.emit('requestAdminNumbers', option.id)
+                socket.on('adminNumbers', numbersArray =>{
+                  numbersDiv.textContent = '';
+                  numbersArray.map(number => {
+                    let valueDiv = createElement({elementType:'div', class:'valueDiv ', textContent: number.value})
+                    let titleDiv = createElement({elementType:'div', class:'titleDiv', textContent: number.title})
+                    let numberOption =  createElement({ elementType: 'div', class:'numberOption', childrenArray:[valueDiv, titleDiv]})
+                    numbersDiv.append(numberOption)
+                  })
+                })
+                                
+                let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray:[numbersDiv] })
+                contentPanel.append(Header, adminPanelMainContent)
+              }
             }
           })
           responsibilitiesContainer.append(companyAdminButton)
