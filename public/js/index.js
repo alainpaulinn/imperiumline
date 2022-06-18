@@ -621,7 +621,7 @@ let functionalityOptionsArray = [
               console.log("numbersArray",numbersArray)
               numbersDiv.textContent = '';
               numbersArray.map(number => {
-                let valueDiv = createElement({elementType:'div', class:'valueDiv ', textContent: number.value})
+                let valueDiv = createElement({elementType:'div', class:'valueDiv ', textContent: number.value+""})
                 let titleDiv = createElement({elementType:'div', class:'titleDiv', textContent: number.title})
                 let numberOption =  createElement({ elementType: 'div', class:'numberOption', childrenArray:[valueDiv, titleDiv]})
                 numbersDiv.append(numberOption)
