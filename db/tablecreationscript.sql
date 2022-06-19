@@ -17,25 +17,28 @@ INSERT INTO `companies` (`comanyname`, `description`) VALUES
 CREATE TABLE `positions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `position` text NOT NULL,
-   PRIMARY KEY (`id`)
+  `company_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`company_id`) REFERENCES companies(`id`) ON DELETE CASCADE
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `positions` (`position`) VALUES
-('Early app test user'),
-('Central Branding Director'),
-('Corporate Security Manager'),
-('Future Metrics Vice President'),
-('Future Branding Administrator'),
-('Dynamic Resonance Manager'),
-('Lead Markets Developer'),
-('Human Accounts Technician'),
-('National Tactics Planner'),
-('Interactive Applications Architect'),
-('Customer Applications Architect'),
-('Legacy Applications Strategist'),
-('Dynamic Applications Orchestrator'),
-('Human Applications Developer'),
-('Internal Applications Coordinator');
+INSERT INTO `positions` (`position`, `company_id`) VALUES
+('Early app test user', 1),
+('Central Branding Director', 2),
+('Corporate Security Manager', 1),
+('Future Metrics Vice President', 2),
+('Future Branding Administrator', 1),
+('Dynamic Resonance Manager', 1),
+('Lead Markets Developer', 1),
+('Human Accounts Technician', 1),
+('National Tactics Planner', 1),
+('Interactive Applications Architect', 1),
+('Customer Applications Architect', 1),
+('Legacy Applications Strategist', 1),
+('Dynamic Applications Orchestrator', 1),
+('Human Applications Developer', 1),
+('Internal Applications Coordinator', 1);
 
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

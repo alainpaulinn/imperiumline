@@ -582,7 +582,6 @@ let functionalityOptionsArray = [
               elementType: 'div', class: 'adminWelcomeDiv', childrenArray: [
                 createElement({ elementType: 'img', class: 'adminWelcomeImage', src: 'images/adminKeys.png' }),
                 createElement({ elementType: 'p', textContent: 'Click on the menu to choose Groups to manage' })
-
               ]
             })
           ]
@@ -590,48 +589,53 @@ let functionalityOptionsArray = [
         if (isSuperAdmin === true) {
           let superAdminButton = createElement({ elementType: 'button', class: 'responsibilityOptionButton', textContent: 'Application Administration' })
           responsibilitiesContainer.append(superAdminButton)
+          // early define the numbers Div
+          let numbersDiv = createElement({
+            elementType: 'div', class: 'numbersDiv', childrenArray: [
+              createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] }) // create Spinner
+            ]
+          })
+          let companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: 'favicon.ico' })
+          let companyName = createElement({ elementType: 'div', class: 'companyName', textContent: 'Imperium Line' })
+          let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: 'Imperium Line application main administration' })
+          let companyNameDescription = createElement({ elementType: 'div', class: 'companyNameDescription', childrenArray: [companyName, companyDescription] })
+          let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [companyProfilePic, companyNameDescription] })
+          let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv] })
+          let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray: [numbersDiv] })
+          contentPanel.append(Header, adminPanelMainContent)
+          // listen for superAdmin numbers
+          socket.on('superAdminNumbers', numbersArray => {
+            console.log('superAdminNumbers', numbersArray)
+            numbersDiv.textContent = '';
+            numbersArray.map(number => {
+              let manageButton = createElement({ elementType: 'div', class: 'manageButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-cog' })] })
+              let valueDiv = createElement({ elementType: 'div', class: 'valueDiv ', textContent: number.value })
+              let titleDiv = createElement({ elementType: 'div', class: 'titleDiv', textContent: number.title })
+              let childrenArray = [valueDiv, titleDiv]
+
+              if (number.title == 'Companies') {
+                childrenArray.push(manageButton)
+                valueDiv.classList.add('editable')
+              }
+              if (number.title == 'Admins') {
+                childrenArray.push(manageButton)
+                valueDiv.classList.add('editable')
+              }
+              if (number.title == 'Super Admins') {
+                childrenArray.push(manageButton)
+                valueDiv.classList.add('editable')
+              }
+
+              let numberOption = createElement({ elementType: 'div', class: 'numberOption', childrenArray: childrenArray })
+              numbersDiv.append(numberOption)
+            })
+          })
           superAdminButton.addEventListener('click', () => {
             contentPanel.textContent = ''
-
-            let companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: 'favicon.ico' })
-            let companyName = createElement({ elementType: 'div', class: 'companyName', textContent: 'Imperium Line' })
-            let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: 'Imperium Line application main administration' })
-            let companyNameDescription = createElement({ elementType: 'div', class: 'companyNameDescription', childrenArray: [companyName, companyDescription] })
-            let companyInfoDiv = createElement({
-              elementType: 'div', class: 'companyInfoDiv', childrenArray: [
-                companyProfilePic,
-                companyNameDescription
-              ]
-            })
-
-            let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv] })
-            let numbersDiv = createElement({
-              elementType: 'div', class: 'numbersDiv', childrenArray: [
-                createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] }) // create Spinner
-              ]
-            })
-
-            // companiesDiv
-            let companiesDivTitle = createElement({ elementType: 'p', class: 'companiesDivTitle', textContent: "" })
-            let companiesDivTitleIcon = createElement({ elementType: 'i', class: 'companiesDivTitle', textContent: "" })
-            let companiesDivHeader = createElement({ elementType: 'div', class: 'companiesDivHeader' })
-            let companiesDiv = createElement({ elementType: 'div', class: 'companiesDiv' })
-            let editDiv = createElement({ elementType: 'div', class: 'editDiv' })
-
-            socket.emit('requestSuperAdminNumbers')
-            socket.on('superAdminNumbers', numbersArray => {
-              console.log("numbersArray", numbersArray)
-              numbersDiv.textContent = '';
-              numbersArray.map(number => {
-                let valueDiv = createElement({ elementType: 'div', class: 'valueDiv ', textContent: number.value + "" })
-                let titleDiv = createElement({ elementType: 'div', class: 'titleDiv', textContent: number.title })
-                let numberOption = createElement({ elementType: 'div', class: 'numberOption', childrenArray: [valueDiv, titleDiv] })
-                numbersDiv.append(numberOption)
-              })
-            })
-
-            let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray: [numbersDiv] })
             contentPanel.append(Header, adminPanelMainContent)
+            numbersDiv.textContent = ''
+            numbersDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+            socket.emit('requestSuperAdminNumbers')
           })
         }
 
@@ -639,12 +643,103 @@ let functionalityOptionsArray = [
           let { socketEvent, eventArgumentsObject, optionTitle, optionIcon } = optionobject
           let companiesDivTitleIcon = createElement({ elementType: 'i', class: optionIcon })
           let companiesDivTitle = createElement({ elementType: 'p', class: 'companiesDivTitle', textContent: optionTitle })
-
           return adminOptionDiv
         }
 
         if (isAdmin === true) {
+          let selectedCompanyID
           let companyAdminButton = createElement({ elementType: 'button', class: 'responsibilityOptionDropDown', })
+          let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })] }) // create Spinner
+          let managementDiv = createElement({ elementType: 'div', class: 'managementDiv', textContent: "Select any of the above clickable options to manage" })
+          let userManagementDiv
+          let adminsManagementDiv
+          let positionsManagementDiv
+          socket.on('adminNumbers', numbersArray => {
+            numbersDiv.textContent = '';
+            numbersArray.map(number => {
+              let manageButton = createElement({ elementType: 'div', class: 'manageButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-cog' })] })
+              let valueDiv = createElement({ elementType: 'div', class: 'valueDiv ', textContent: number.value })
+              let titleDiv = createElement({ elementType: 'div', class: 'titleDiv', textContent: number.title })
+              let childrenArray = [valueDiv, titleDiv]
+              if (number.title == 'Users') {
+                childrenArray.push(manageButton)
+                valueDiv.classList.add('editable')
+                manageButton.addEventListener('click', () => {
+                  socket.emit('manageUsers', selectedCompanyID)
+                  managementDiv.textContent = '';
+                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                })
+              }
+              if (number.title == 'Admins') {
+                childrenArray.push(manageButton)
+                valueDiv.classList.add('editable')
+                manageButton.addEventListener('click', () => {
+                  socket.emit('manageAdmins', selectedCompanyID)
+                  managementDiv.textContent = '';
+                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                })
+              }
+              if (number.title == 'Positions') {
+                childrenArray.push(manageButton)
+                valueDiv.classList.add('editable')
+                manageButton.addEventListener('click', () => {
+                  socket.emit('managePositions', selectedCompanyID)
+                  managementDiv.textContent = '';
+                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                })
+              }
+              let numberOption = createElement({ elementType: 'div', class: 'numberOption', childrenArray: childrenArray })
+              numbersDiv.append(numberOption)
+            })
+          })
+          socket.on('manageUsers', users => {
+            console.log('manageUsers', users)
+            let icon = 'bx bxs-user-detail'
+            let title = 'Manage Users'
+            let actionsPerItem = [ { actionIcon: 'bx bx-plus', actionFunction: () => { console.log("edit button clicked") } } ]
+            let data = users
+            let ConfigObj = { icon, title, actionsPerItem }
+            createmgtPanel(ConfigObj)
+
+          })
+          socket.on('manageAdmins', admins => {
+            console.log('manageAdmins', admins)
+            let icon = 'bx bxs-check-shield'
+            let title = 'Manage Admins'
+            let actionsPerItem = [ { actionIcon: 'bx bx-plus', actionFunction: () => { console.log("edit button clicked") } }]
+            let ConfigObj = { icon, title, actionsPerItem }
+            createmgtPanel(ConfigObj)
+          })
+          socket.on('managePositions', admins => {
+            console.log('managePositions', admins)
+            let icon = 'bx bxs-directions'
+            let title = 'Manage Positions'
+            let actionsPerItem = [ { actionIcon: 'bx bx-plus', actionFunction: () => { console.log("edit button clicked") } } ]
+            let ConfigObj = { icon, title, actionsPerItem }
+            createmgtPanel(ConfigObj)
+          })
+
+          function createmgtPanel(ConfigObj) {
+            let { icon, title, actionsPerItem } = ConfigObj
+            // actionsPerItem is an array of {actionIcon, actionFunction}
+            managementDiv.textContent = ''
+            let geaderText = createElement({
+              elementType: 'div', class: 'headerText', childrenArray: [
+                createElement({ elementType: 'i', class: icon }),
+                createElement({ elementType: 'p', textContent: title })
+              ]
+            })
+            let headerSearchDiv = createElement({ elementType: 'input', textContent: title, placeHolder: 'Search - ' + title })
+            let actionButtonArray = actionsPerItem.map(action => {
+              let actionButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: action.actionIcon })], onclick: action.actionFunction })
+              return actionButton
+            })
+            let actionButtonsDiv = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: actionButtonArray })
+            let actionPart = createElement({ elementType: 'div', class: 'actionPart', childrenArray: [headerSearchDiv, actionButtonsDiv] })
+            let managementDivHeader = createElement({ elementType: 'div', class: 'managementDivHeader', childrenArray: [geaderText, actionPart] })
+            managementDiv.append(managementDivHeader)
+          }
+
           goodselect(companyAdminButton, {
             availableOptions: administeredCompaniesInfo,
             placeHolder: "Select Company",
@@ -653,7 +748,6 @@ let functionalityOptionsArray = [
             onOptionChange: (option) => {
               contentPanel.textContent = '';
               if (option == null) {
-                console.log('company Chosen', option)
                 contentPanel.append(createElement({
                   elementType: 'div', class: 'adminWelcomeDiv', childrenArray: [
                     createElement({ elementType: 'img', class: 'adminWelcomeImage', src: 'images/adminKeys.png' }),
@@ -662,6 +756,7 @@ let functionalityOptionsArray = [
                 }))
               }
               else {
+                selectedCompanyID = option.id;
                 let companyProfilePic
                 if (option.logo == null) companyProfilePic = createElement({ elementType: 'div', class: 'companyProfilePic', textContent: option.name.substring(0, 2) })
                 else companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: option.logo })
@@ -669,28 +764,13 @@ let functionalityOptionsArray = [
                 let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: option.description })
                 let companyNameDescription = createElement({ elementType: 'div', class: 'companyNameDescription', childrenArray: [companyName, companyDescription] })
                 let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [companyProfilePic, companyNameDescription] })
-
                 let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
                 let universalButtons = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [editButton] })
-
                 let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv, universalButtons] })
-
-                let numbersDiv = createElement({
-                  elementType: 'div', class: 'numbersDiv', childrenArray: [
-                    createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] }) // create Spinner
-                  ]
-                })
                 socket.emit('requestAdminNumbers', option.id)
-                socket.on('adminNumbers', numbersArray => {
-                  numbersDiv.textContent = '';
-                  numbersArray.map(number => {
-                    let valueDiv = createElement({ elementType: 'div', class: 'valueDiv ', textContent: number.value + "" })
-                    let titleDiv = createElement({ elementType: 'div', class: 'titleDiv', textContent: number.title })
-                    let numberOption = createElement({ elementType: 'div', class: 'numberOption', childrenArray: [valueDiv, titleDiv] })
-                    numbersDiv.append(numberOption)
-                  })
-                })
-                let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray: [numbersDiv] })
+                numbersDiv.textContent = '';
+                numbersDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray: [numbersDiv, managementDiv] })
                 contentPanel.append(Header, adminPanelMainContent)
               }
             }

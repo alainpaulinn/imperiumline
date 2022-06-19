@@ -690,6 +690,34 @@ io.on('connection', (socket) => {
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
     })
+    // --
+    socket.on('manageAdmins', async (companyId) => {
+      console.log('manageAdmins', companyId)
+      let adminAccess = await checkAdminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+      socket.emit('manageAdmins', await getCompanyAdmins(companyId))
+      console.log('manageAdmins', await getCompanyAdmins(companyId))
+    })
+    socket.on('manageUsers', async (companyId) => {
+      console.log('manageUsers', companyId)
+      let adminAccess = await checkAdminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+      socket.emit('manageUsers', await getCompanyUsers(companyId))
+      console.log('manageUsers', await getCompanyUsers(companyId))
+    })
+    socket.on('managePositions', async (companyId) => {
+      console.log('managePositions', companyId)
+      let adminAccess = await checkAdminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+      socket.emit('managePositions', await getCompanyPositions(companyId))
+      console.log('managePositions', await getCompanyPositions(companyId))
+    })
+    // socket.on('requestSuperAdminNumbers', async (companyId) => {
+    //   let adminAccess = await getSuperadminAccess(id);
+    //   if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+    //   socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
+    // })
+
     ///////////////
     socket.on('disconnecting', () => {
       console.log('socket.roomsssssssssssssssssssssss', socket.rooms); // the Set contains at least the socket ID
@@ -1450,6 +1478,7 @@ function getNumbersArray(role, companyId) {
       let usersQueryObjectArray = [
         { queryString: 'SELECT count(*) as `count` FROM `user` WHERE `company_id` = ?', queryTerms: [companyId], title: 'Users', resultVariable: 'count' },
         { queryString: 'SELECT count(*) as `count` FROM `admins` WHERE `company_id` = ?', queryTerms: [companyId], title: 'Admins', resultVariable: 'count' },
+        { queryString: 'SELECT count(*) as `count` FROM `positions` WHERE `company_id` = ?', queryTerms: [companyId], title: 'Positions', resultVariable: 'count' },
         { queryString: 'SELECT calls.`id`, COUNT(*) as count FROM calls INNER JOIN user ON calls.initiatorId = user.id WHERE user.company_id = ?', queryTerms: [companyId], title: 'Calls', resultVariable: 'count' },
         { queryString: 'SELECT events.`eventId`, COUNT(*) as count FROM events INNER JOIN user ON events.ownerId = user.id WHERE user.company_id = ?', queryTerms: [companyId], title: 'Events', resultVariable: 'count' },
         { queryString: 'SELECT message.`id`, COUNT(*) as count FROM message INNER JOIN user ON message.userID = user.id WHERE user.company_id = ?', queryTerms: [companyId], title: 'Messages', resultVariable: 'count' }
@@ -1500,6 +1529,49 @@ function automaticSingleRowQuerry(queryObject) {
       if (err) reject(err)
       // if (obtainedVariables.length == 0) { reject("querry returned 0 results") }
       resolve(obtainedVariables[0][resultVariable])
+    })
+  })
+}
+function getCompanyUsers(companyId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id` FROM `user` WHERE `company_id` = ?', [companyId], async (err, users) => {
+      if (err) reject(err)
+      resolve(Promise.all(
+        users.map(async user => await getUserInfo(user.id))
+      ))
+    })
+  })
+}
+function getCompanyAdmins(companyId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `company_id`, `admin_id`, `done_by`, `registration_date` FROM `admins` WHERE `company_id` = ?', [companyId], async (err, users) => {
+      if (err) reject(err)
+      resolve(
+        Promise.all(
+          users.map(async user => {
+            return {
+              admin: await getUserInfo(user.id),
+              done_by: await getUserInfo(user.done_by),
+              done: user.registration_date
+            }
+          })
+        )
+      )
+    })
+  })
+}
+function getCompanyPositions(companyId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `position` FROM `positions` WHERE `company_id` = ?', [companyId], async (err, positions) => {
+      if (err) reject(err)
+      resolve(Promise.all(
+        positions.map(async position => {
+          return {
+            positionId: position.id,
+            position: position.position
+          }
+        })
+      ))
     })
   })
 }
