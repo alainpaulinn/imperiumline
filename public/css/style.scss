@@ -426,7 +426,24 @@ body {
   .popupTitle {
     border-bottom: 1px solid #f1f4f6;
     padding: 1rem;
-    font-size: 18px;
+    // font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .headerText {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      gap: 0.5rem;
+      i {
+        font-size: 18px;
+        padding: 0.5rem;
+        border-radius: $borderRadius;
+        background-color: $notification;
+        color: white;
+      }
+    }
   }
 
   .popupBody {
@@ -435,6 +452,28 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+
+    .editBlock{
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      min-width: 300px;
+      input{
+        flex: 1;
+        padding: 1rem;
+        background-color: $sidepanel;
+        outline: none;
+        border-radius: $borderRadius;
+        border: none;
+      }
+      button{
+        flex: 1;
+        background-color: $sidepanel;
+        outline: none;
+        border-radius: $borderRadius;
+        border: none;
+      }
+    }
 
   }
 
@@ -3565,7 +3604,6 @@ body {
   display: flex;
   padding: .5rem;
   align-items: center;
-  height: 100%;
 
 
   .memberProfilePicture {
@@ -5891,9 +5929,23 @@ body {
 
         .managementDivBody {
           padding: 1rem;
-          border-radius: $borderRadius;
+          // border-radius: $borderRadius;
           background-color: $sidepanel;
-          max-height: 80%;
+
+          display: flex;
+          gap: 1rem;
+          flex-direction: column;
+          overflow-y: auto;
+
+          //flex-direction: column;
+          .listMember {
+            background-color: white;
+            display: flex;
+            padding: .5rem;
+            border-radius: $borderRadius;
+            align-items: center;
+            // height: unset;
+          }
         }
       }
 

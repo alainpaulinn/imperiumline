@@ -87,7 +87,7 @@ io.on('connection', (socket) => {
         adminShip: {
           superAdmin: { isSuperAdmin: await getSuperadminAccess(id) },
           admin: {
-            isAdmin: await checkAdminAccess(id),
+            isAdmin: await checkGenericAdminAccess(id),
             administeredCompaniesInfo: await getAdminUserCompanies(id)
           }
         }
@@ -680,8 +680,10 @@ io.on('connection', (socket) => {
     })
 
     ///ADMIN functionalities
+    // -- Fetch Numbers
     socket.on('requestAdminNumbers', async (companyId) => {
-      let adminAccess = await checkAdminAccess(id);
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      console.log('id, companyId',id, companyId)
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
     })
@@ -690,28 +692,32 @@ io.on('connection', (socket) => {
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
     })
-    // --
+    // -- Fetch actual data
     socket.on('manageAdmins', async (companyId) => {
       console.log('manageAdmins', companyId)
-      let adminAccess = await checkAdminAccess(id);
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
       socket.emit('manageAdmins', await getCompanyAdmins(companyId))
-      console.log('manageAdmins', await getCompanyAdmins(companyId))
     })
     socket.on('manageUsers', async (companyId) => {
       console.log('manageUsers', companyId)
-      let adminAccess = await checkAdminAccess(id);
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
       socket.emit('manageUsers', await getCompanyUsers(companyId))
-      console.log('manageUsers', await getCompanyUsers(companyId))
     })
     socket.on('managePositions', async (companyId) => {
       console.log('managePositions', companyId)
-      let adminAccess = await checkAdminAccess(id);
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
       socket.emit('managePositions', await getCompanyPositions(companyId))
-      console.log('managePositions', await getCompanyPositions(companyId))
     })
+    // -- Delete data
+    // socket.on('deleteUserInfo', async (companyId) => {
+    //   console.log('manageUsers', companyId)
+    //   let adminAccess = await checkCompanyAdminAccess(id, companyId);
+    //   if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+    //   socket.emit('manageUsers', await getCompanyUsers(companyId))
+    // })
     // socket.on('requestSuperAdminNumbers', async (companyId) => {
     //   let adminAccess = await getSuperadminAccess(id);
     //   if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
@@ -1298,6 +1304,7 @@ function getUserInfo(userID) {
         profilePicture: profiles[0].profilePicture,
         cover: profiles[0].coverPicture,
         role: await getUserRole(profiles[0].positionId),
+        company: await getCompanyInfo(profiles[0].company_id),
         status: connectedUsers.some(e => e.id === profiles[0].id) ? 'online' : 'offline'
       })
     });
@@ -1432,11 +1439,21 @@ function getSuperadminAccess(userID) {
     })
   })
 }
-function checkAdminAccess(userID) {
+function checkGenericAdminAccess(userID) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `admin_id` FROM `admins` WHERE `admin_id` = ?', [userID], async (err, admins) => {
       if (err) return console.log(err)
       if (admins.length > 0) { resolve(true) }
+      else resolve(false)
+    })
+  })
+}
+
+function checkCompanyAdminAccess(userID, companyID) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `admin_id`, `company_id` FROM `admins` WHERE `admin_id` = ?', [userID], async (err, admins) => {
+      if (err) return console.log(err)
+      if (admins.map(admin => admin.company_id).includes(companyID)) { resolve(true) }
       else resolve(false)
     })
   })

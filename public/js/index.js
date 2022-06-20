@@ -17,6 +17,7 @@ let chatContainer = document.querySelector("#place_for_chats")
 let body = document.getElementsByTagName('body')[0]
 
 let openProfileDiv;
+let openPopupDiv;
 /////////////////////SIDEPANEL SWITCH///////////////////////////
 let appWrapper = document.getElementById("appWrapper")
 let messages_panel = document.getElementById("messages_panel")
@@ -125,8 +126,6 @@ let functionalityOptionsArray = [
   let audioOutputSelection = createElement({ elementType: 'div' })
   let importantInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions is required" })
 
-  let devicePopForm = createInScreenPopup({ title: "Choose Media Devices", contentElementsArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, importantInfo] })
-
   let availableDevices = { videoInput: [], audioInput: [], audioOutput: [] }
   let chosenDevices = { videoInput: null, audioInput: null, audioOutput: null }
   if (localStorage.getItem("chosenDevices") != null) chosenDevices = JSON.parse(localStorage.getItem("chosenDevices"))
@@ -212,7 +211,16 @@ let functionalityOptionsArray = [
       }
     })
   });
-  let audioVideoInOutBtn = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Choose', onclick: () => { devicePopForm.classList.toggle('visible') } })
+  let audioVideoInOutBtn = createElement({
+    elementType: 'button', class: 'importantButton', textContent: 'Choose', onclick: () => {
+      let devicePopForm = createInScreenPopup({
+        icon: 'bx bx-devices',
+        title: "Choose Media Devices",
+        contentElementsArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, importantInfo],
+        actions: [{ element: createElement({ elementType: 'button', textContent: 'Done' }), functionCall: () => { console.log("Done") } }]
+      })
+    }
+  })
   // logout form
   let logoutForm = createElement({ elementType: 'form', action: "/auth/logout", method: "post", childrenArray: [createElement({ elementType: 'input', type: 'text', name: 'logout', hidden: "true" })] })
   let logoutButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Logout', onclick: () => { logoutForm.submit(); } })
@@ -602,7 +610,7 @@ let functionalityOptionsArray = [
           let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [companyProfilePic, companyNameDescription] })
           let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv] })
           let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray: [numbersDiv] })
-          contentPanel.append(Header, adminPanelMainContent)
+          // contentPanel.append(Header, adminPanelMainContent)
           // listen for superAdmin numbers
           socket.on('superAdminNumbers', numbersArray => {
             console.log('superAdminNumbers', numbersArray)
@@ -648,6 +656,7 @@ let functionalityOptionsArray = [
 
         if (isAdmin === true) {
           let selectedCompanyID
+          let companyPositions;
           let companyAdminButton = createElement({ elementType: 'button', class: 'responsibilityOptionDropDown', })
           let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })] }) // create Spinner
           let managementDiv = createElement({ elementType: 'div', class: 'managementDiv', textContent: "Select any of the above clickable options to manage" })
@@ -691,14 +700,97 @@ let functionalityOptionsArray = [
               let numberOption = createElement({ elementType: 'div', class: 'numberOption', childrenArray: childrenArray })
               numbersDiv.append(numberOption)
             })
+            socket.emit('managePositions', selectedCompanyID) // in order to update the positions Array for future use
           })
           socket.on('manageUsers', users => {
             console.log('manageUsers', users)
             let icon = 'bx bxs-user-detail'
             let title = 'Manage Users'
-            let actionsPerItem = [ { actionIcon: 'bx bx-plus', actionFunction: () => { console.log("edit button clicked") } } ]
-            let data = users
-            let ConfigObj = { icon, title, actionsPerItem }
+            let actionsPerItem = [{ actionIcon: 'bx bxs-user-plus', actionFunction: () => { console.log("edit button clicked") } }]
+            let contentElements = users.map((user) => {
+              let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+              let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+              let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+              let deleteButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
+              let actions
+              if (user.userID == mySavedID) actions = []
+              else actions = [
+                { element: messageButton, functionCall: () => { initiateChat(user.userID) } },
+                { element: callButton, functionCall: () => { call(user.userID, true, false, false, false, null) } },
+                {
+                  element: editButton, functionCall: () => {
+                    // let editPopup;
+                    let nameLabel = createElement({ elementType: 'label', for: 'name' + user.userID, textContent: 'Name' })
+                    let nameInput = createElement({ elementType: 'input', id: 'name' + user.userID, placeHolder: 'Name', value: user.name })
+                    let nameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [nameLabel, nameInput] })
+
+                    let surnameLabel = createElement({ elementType: 'label', for: 'surname' + user.userID, textContent: 'Surname' })
+                    let surnameInput = createElement({ elementType: 'input', id: 'surname' + user.userID, placeHolder: 'Surname', value: user.surname })
+                    let surnameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [surnameLabel, surnameInput] })
+
+                    let roleLabel = createElement({ elementType: 'label', for: 'role' + user.userID, textContent: 'Position' })
+                    let roleInput = createElement({ elementType: 'button', id: 'role' + user.userID })
+                    let roleBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [roleLabel, roleInput] })
+
+                    let selectedPositionId = companyPositions.find(position => position.position == user.role).positionId
+                    goodselect(roleInput, {
+                      availableOptions: companyPositions.map(position => {
+                        return { id: position.positionId, name: position.position }
+                      }),
+                      placeHolder: "Select Position",
+                      selectorWidth: "100%",
+                      selectedOptionId: companyPositions.find(position => position.position == user.role).positionId,
+                      onOptionChange: (option) => {
+                        if (option != null) selectedPositionId = option.id
+                      }
+                    })
+
+                    let icon = 'bx bxs-user-detail'
+                    let title = 'Edit User Information'
+                    let contentElementsArray = [nameBlock, surnameBlock, roleBlock]
+                    let savebutton = createElement({ elementType: 'button', textContent: 'Save' })
+                    let actions = [{
+                      element: savebutton, functionCall: () => {
+                        socket.emit('updateUserInfo', { name: nameInput.value, surname: surnameInput.value, positionId: selectedPositionId })
+                        console.log({ name: nameInput.value, surname: surnameInput.value, positionId: selectedPositionId })
+
+                      }
+                    }]
+                    let constraints = { icon, title, contentElementsArray, actions }
+                    createInScreenPopup(constraints).then(editPopup => savebutton.addEventListener('click', editPopup.closePopup))
+                  }
+                },
+                {
+                  element: deleteButton, functionCall: () => {
+                    // let editPopup;
+                    let question = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Are you sure you want to delete:' })
+                    let userBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [ userForAttendanceList(user, []) ]})
+                    let emphasis = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please note that all related account information such as responsibilities, calls, events, and messages will be deleted.' })
+
+                    let icon = 'bx bxs-trash-alt'
+                    let title = 'Delete User confirmation'
+                    let contentElementsArray = [question, userBlock, emphasis]
+                    let cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel' })
+                    let deleteButton = createElement({ elementType: 'button', textContent: 'Yes, Delete' })
+                    let actions = [
+                      { element: cancelButton, functionCall: () => { } },
+                      {
+                        element: deleteButton, functionCall: () => {
+                          socket.emit('deleteUserInfo', user.userID)
+                        }
+                      }
+                    ]
+                    let constraints = { icon, title, contentElementsArray, actions }
+                    createInScreenPopup(constraints).then(editPopup => {
+                      cancelButton.addEventListener('click', editPopup.closePopup);
+                      deleteButton.addEventListener('click', editPopup.closePopup);
+                    })
+                  }
+                }
+              ]
+              return userForAttendanceList(user, actions)
+            })
+            let ConfigObj = { icon, title, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
 
           })
@@ -706,21 +798,23 @@ let functionalityOptionsArray = [
             console.log('manageAdmins', admins)
             let icon = 'bx bxs-check-shield'
             let title = 'Manage Admins'
-            let actionsPerItem = [ { actionIcon: 'bx bx-plus', actionFunction: () => { console.log("edit button clicked") } }]
-            let ConfigObj = { icon, title, actionsPerItem }
+            let actionsPerItem = [{ actionIcon: 'bx bxs-user-plus', actionFunction: () => { console.log("edit button clicked") } }]
+
+            let ConfigObj = { icon, title, actionsPerItem, /*contentElements*/ }
             createmgtPanel(ConfigObj)
           })
-          socket.on('managePositions', admins => {
-            console.log('managePositions', admins)
+          socket.on('managePositions', positions => {
+            companyPositions = positions
+            console.log('managePositions', positions)
             let icon = 'bx bxs-directions'
             let title = 'Manage Positions'
-            let actionsPerItem = [ { actionIcon: 'bx bx-plus', actionFunction: () => { console.log("edit button clicked") } } ]
+            let actionsPerItem = [{ actionIcon: 'bx bx-plus', actionFunction: () => { console.log("edit button clicked") } }]
             let ConfigObj = { icon, title, actionsPerItem }
             createmgtPanel(ConfigObj)
           })
 
           function createmgtPanel(ConfigObj) {
-            let { icon, title, actionsPerItem } = ConfigObj
+            let { icon, title, actionsPerItem, contentElements } = ConfigObj
             // actionsPerItem is an array of {actionIcon, actionFunction}
             managementDiv.textContent = ''
             let geaderText = createElement({
@@ -737,7 +831,8 @@ let functionalityOptionsArray = [
             let actionButtonsDiv = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: actionButtonArray })
             let actionPart = createElement({ elementType: 'div', class: 'actionPart', childrenArray: [headerSearchDiv, actionButtonsDiv] })
             let managementDivHeader = createElement({ elementType: 'div', class: 'managementDivHeader', childrenArray: [geaderText, actionPart] })
-            managementDiv.append(managementDivHeader)
+            let managementDivBody = createElement({ elementType: 'div', class: 'managementDivBody', childrenArray: contentElements })
+            managementDiv.append(managementDivHeader, managementDivBody)
           }
 
           goodselect(companyAdminButton, {
@@ -3554,6 +3649,7 @@ function createElement(configuration) {
   if (configuration.id) elementToReturn.setAttribute('id', configuration.id)
   if (configuration.class) elementToReturn.setAttribute('class', configuration.class)
   if (configuration.title) elementToReturn.setAttribute('title', configuration.title)
+  if (configuration.value) elementToReturn.setAttribute('value', configuration.value)
   if (configuration.srcObject) elementToReturn.srcObject = configuration.srcObject
   if (configuration.src) elementToReturn.src = configuration.src
   if (configuration.textContent) elementToReturn.textContent = configuration.textContent
@@ -3829,17 +3925,29 @@ function createTopBar(callInfo, myInfo) {
   return { callScreenHeader, invitedDiv }
 }
 
-function createInScreenPopup(constraints) {
-  let { title, contentElementsArray } = constraints
-  let popupTitle = createElement({ elementType: 'div', class: 'popupTitle', textContent: title })
+async function createInScreenPopup(constraints) {
+  let { icon, title, contentElementsArray, actions } = constraints
+  // actions is an array of a button and a function of what it does
+  if (openPopupDiv) openPopupDiv.closePopup()
+  let defaultClosebtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
+  let headerActions = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [defaultClosebtn] })
+  let headerText = createElement({ elementType: 'div', class: 'headerText', childrenArray: [createElement({ elementType: 'i', class: icon }), createElement({ elementType: 'p', textContent: title })] })
+  let popupHeader = createElement({ elementType: 'div', class: 'popupTitle', childrenArray: [headerText, headerActions] })
   let popupBody = createElement({ elementType: 'div', class: 'popupBody', childrenArray: contentElementsArray })
-  let popupFinishButton = createElement({ elementType: 'button', class: 'positive', textContent: 'Done' })
-  let popupBottom = createElement({ elementType: 'div', class: 'popupBottom', childrenArray: [popupFinishButton] })
-  let inScreenPanel = createElement({ elementType: 'div', class: 'inScreenPanel', childrenArray: [popupTitle, popupBody, popupBottom] })
+  let bottomButtons = actions.map(action => { action.element.addEventListener('click', action.functionCall); return action.element; })
+  let popupBottom = createElement({ elementType: 'div', class: 'popupBottom', childrenArray: bottomButtons })
+  let inScreenPanel = createElement({ elementType: 'div', class: 'inScreenPanel', childrenArray: [popupHeader, popupBody, popupBottom] })
   body.append(inScreenPanel)
-  popupFinishButton.addEventListener('click', () => {
+  await new Promise(resolve => setTimeout(resolve, 20)) // wait 20 millisecons / helps the animation
+  inScreenPanel.classList.add('visible') // add the visibility class so that the item transitions into screen
+  async function removePopup() {
     inScreenPanel.classList.remove('visible')
-  })
+    await new Promise(resolve => setTimeout(resolve, 3000))
+    inScreenPanel.remove()
+  }
+  defaultClosebtn.addEventListener('click', removePopup)
+  inScreenPanel.closePopup = removePopup
+  openPopupDiv = inScreenPanel
   return inScreenPanel
 }
 
@@ -3874,9 +3982,11 @@ async function createProfilePopup(userInfo, editProfile = false) {
   let userPrimaryInfo = createElement({ elementType: 'div', class: 'userPrimaryInfo', childrenArray: [name, email, position] })
 
   // organization
-  let memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: 'OR' })
-  let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: 'Organization' })
-  let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: 'this place will be filled with organization info' })
+  let memberProfilePicture
+  if (userInfo.company.logo == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.company.name.substring(0, 2) })
+  else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.company.logo })
+  let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.company.name })
+  let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.company.description })
   let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
   let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole] })
   let presentMembersDiv = createElement({ elementType: 'div', class: 'presentMembersDiv', childrenArray: [presentMember] })
@@ -4037,17 +4147,6 @@ function addIndexAndLabelAsName(array) {
 }
 
 function createBarLoader() {
-
-  // let inner = createElement({ elementType: 'div', class: 'inner'})
-  // let number = createElement({ elementType: 'div', class: 'number'})
-
-  //     let progress_left = createElement({ elementType: 'div', class: 'progress'})
-  //   let left = createElement({ elementType: 'div', class: 'bar left', childrenArray:[progress_left]})
-  //     let progress_right = createElement({ elementType: 'div', class: 'progress'})
-  //   let right = createElement({ elementType: 'div', class: 'bar right', childrenArray:[progress_right]})
-  // let circle = createElement({ elementType: 'div', class: 'circle', childrenArray:[left, right]})
-  // let circular = createElement({ elementType: 'div', class:'circular', childrenArray:[inner, number, circle]})
-
   let progress_value = createElement({ elementType: 'div', class: 'progress-value' })
   let number = createElement({ elementType: 'div', class: 'number' })
   let progress = createElement({ elementType: 'div', class: 'progress', childrenArray: [progress_value, number] })
