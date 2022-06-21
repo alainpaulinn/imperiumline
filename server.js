@@ -683,7 +683,7 @@ io.on('connection', (socket) => {
     // -- Fetch Numbers
     socket.on('requestAdminNumbers', async (companyId) => {
       let adminAccess = await checkCompanyAdminAccess(id, companyId);
-      console.log('id, companyId',id, companyId)
+      console.log('id, companyId', id, companyId)
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
     })
@@ -692,7 +692,8 @@ io.on('connection', (socket) => {
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
     })
-    // -- Fetch actual data
+    // ADMIN -- Fetch actual data -- deleting -- updating -- searching
+    // Fetch
     socket.on('manageAdmins', async (companyId) => {
       console.log('manageAdmins', companyId)
       let adminAccess = await checkCompanyAdminAccess(id, companyId);
@@ -711,18 +712,51 @@ io.on('connection', (socket) => {
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
       socket.emit('managePositions', await getCompanyPositions(companyId))
     })
-    // -- Delete data
-    // socket.on('deleteUserInfo', async (companyId) => {
-    //   console.log('manageUsers', companyId)
-    //   let adminAccess = await checkCompanyAdminAccess(id, companyId);
-    //   if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
-    //   socket.emit('manageUsers', await getCompanyUsers(companyId))
-    // })
-    // socket.on('requestSuperAdminNumbers', async (companyId) => {
-    //   let adminAccess = await getSuperadminAccess(id);
-    //   if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
-    //   socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
-    // })
+    // Update
+    socket.on('updateAdmin', async (updateObject) => {
+      console.log('updateAdmin', updateObject)
+      if (name == '' || surname == '' || email == '' || positionId == '') return console.log('constraints not met')
+      let { adminId, isAdmin, companyId } = updateObject
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+
+      socket.emit('updateAdmin', await getCompanyAdmins(companyId))
+
+    })
+    socket.on('updateUser', async (updateObject) => {
+      console.log('updateUser', updateObject)
+      let { userID, name, surname, email, positionId, password, companyId } = updateObject
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+
+      socket.emit('updateUser', await getCompanyUsers(companyId))
+
+    })
+    socket.on('updatePosition', async (updateObject) => {
+      console.log('updatePosition', updateObject)
+      let { positionId, newPositionName, companyId } = updateObject
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+
+      socket.emit('updatePosition', await getCompanyPositions(companyId))
+
+    })
+    // Delete
+
+    // Create New
+
+    // Search
+
+    // SUPER ADMIN Fetch actual data -- deleting -- updating -- searching
+    // Fetch
+
+    // Update
+
+    // Delete
+
+    // Create New
+
+    // Search
 
     ///////////////
     socket.on('disconnecting', () => {

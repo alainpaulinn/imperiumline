@@ -589,7 +589,7 @@ let functionalityOptionsArray = [
             createElement({
               elementType: 'div', class: 'adminWelcomeDiv', childrenArray: [
                 createElement({ elementType: 'img', class: 'adminWelcomeImage', src: 'images/adminKeys.png' }),
-                createElement({ elementType: 'p', textContent: 'Click on the menu to choose Groups to manage' })
+                createElement({ elementType: 'p', textContent: 'Click on the menu to choose Groups to manage. Please remember that this Admin panel should only be opened in a safe place with full privacy' })
               ]
             })
           ]
@@ -646,14 +646,6 @@ let functionalityOptionsArray = [
             socket.emit('requestSuperAdminNumbers')
           })
         }
-
-        function createAdminManagementOption(optionobject) {
-          let { socketEvent, eventArgumentsObject, optionTitle, optionIcon } = optionobject
-          let companiesDivTitleIcon = createElement({ elementType: 'i', class: optionIcon })
-          let companiesDivTitle = createElement({ elementType: 'p', class: 'companiesDivTitle', textContent: optionTitle })
-          return adminOptionDiv
-        }
-
         if (isAdmin === true) {
           let selectedCompanyID
           let companyPositions;
@@ -706,7 +698,51 @@ let functionalityOptionsArray = [
             console.log('manageUsers', users)
             let icon = 'bx bxs-user-detail'
             let title = 'Manage Users'
-            let actionsPerItem = [{ actionIcon: 'bx bxs-user-plus', actionFunction: () => { console.log("edit button clicked") } }]
+            let headerSearchDiv = createElement({ elementType: 'input', textContent: title, placeHolder: 'Search - ' + title })
+            let actionsPerItem = [{
+              actionIcon: 'bx bxs-user-plus', actionFunction: () => {
+                // -------------------- Creating a new user - on popup;
+                let nameLabel = createElement({ elementType: 'label', for: 'name' + 'chooseNew', textContent: 'Name' })
+                let nameInput = createElement({ elementType: 'input', id: 'name' + 'chooseNew', placeHolder: 'Name' })
+                let nameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [nameLabel, nameInput] })
+
+                let surnameLabel = createElement({ elementType: 'label', for: 'surname' + 'chooseNew', textContent: 'Surname' })
+                let surnameInput = createElement({ elementType: 'input', id: 'surname' + 'chooseNew', placeHolder: 'Surname' })
+                let surnameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [surnameLabel, surnameInput] })
+
+                let roleLabel = createElement({ elementType: 'label', for: 'role' + 'chooseNew', textContent: 'Position' })
+                let roleInput = createElement({ elementType: 'button', id: 'role' + 'chooseNew' })
+                let roleBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [roleLabel, roleInput] })
+
+                let passwordLabel = createElement({ elementType: 'label', for: 'password' + 'chooseNew', textContent: 'Password' })
+                let passwordInput = createElement({ elementType: 'input', id: 'password' + 'chooseNew', placeHolder: 'Password' })
+                let passwordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [passwordLabel, passwordInput] })
+
+                let selectedPositionId;
+                goodselect(roleInput, {
+                  availableOptions: companyPositions.map(position => { return { id: position.positionId, name: position.position } }),
+                  placeHolder: "Select Position",
+                  selectorWidth: "100%",
+                  onOptionChange: (option) => {
+                    if (option != null) selectedPositionId = option.id;
+                    else selectedPositionId = option;
+                  }
+                })
+
+                let icon = 'bx bxs-user-plus'
+                let title = 'Create User Account'
+                let contentElementsArray = [nameBlock, surnameBlock, roleBlock, passwordBlock]
+                let savebutton = createElement({ elementType: 'button', textContent: 'Save' })
+                let actions = [{
+                  element: savebutton, functionCall: () => {
+                    socket.emit('saveNewUserInfo', { name: nameInput.value, surname: surnameInput.value, positionId: selectedPositionId, companyId: selectedCompanyID })
+                    console.log({ name: nameInput.value, surname: surnameInput.value, positionId: selectedPositionId, companyId: selectedCompanyID })
+                  }
+                }]
+                let constraints = { icon, title, contentElementsArray, actions }
+                createInScreenPopup(constraints).then(editPopup => savebutton.addEventListener('click', editPopup.closePopup))
+              }
+            }]
             let contentElements = users.map((user) => {
               let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
               let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
@@ -719,7 +755,7 @@ let functionalityOptionsArray = [
                 { element: callButton, functionCall: () => { call(user.userID, true, false, false, false, null) } },
                 {
                   element: editButton, functionCall: () => {
-                    // let editPopup;
+                    // -------------------- Editing user - on popup;
                     let nameLabel = createElement({ elementType: 'label', for: 'name' + user.userID, textContent: 'Name' })
                     let nameInput = createElement({ elementType: 'input', id: 'name' + user.userID, placeHolder: 'Name', value: user.name })
                     let nameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [nameLabel, nameInput] })
@@ -728,9 +764,19 @@ let functionalityOptionsArray = [
                     let surnameInput = createElement({ elementType: 'input', id: 'surname' + user.userID, placeHolder: 'Surname', value: user.surname })
                     let surnameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [surnameLabel, surnameInput] })
 
+                    let emailLabel = createElement({ elementType: 'label', for: 'email' + user.userID, textContent: 'email' })
+                    let emailInput = createElement({ elementType: 'input', id: 'email' + user.userID, placeHolder: 'email', value: user.email })
+                    let emailBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [emailLabel, emailInput] })
+
                     let roleLabel = createElement({ elementType: 'label', for: 'role' + user.userID, textContent: 'Position' })
                     let roleInput = createElement({ elementType: 'button', id: 'role' + user.userID })
                     let roleBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [roleLabel, roleInput] })
+
+                    let passwordWarningBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [createElement({ elementType: 'div', textContent: "Warning, filling any Valid Password value in the password field will change the user's password to that value. Please remember to communicate it to the concerned user. If you do not ontend to change the user's password, do not fill the next field" })] })
+
+                    let passwordLabel = createElement({ elementType: 'label', for: 'password' + user.userID, textContent: 'Password' })
+                    let passwordInput = createElement({ elementType: 'input', id: 'password' + user.userID, placeHolder: 'Password' })
+                    let passwordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [passwordLabel, passwordInput] })
 
                     let selectedPositionId = companyPositions.find(position => position.position == user.role).positionId
                     goodselect(roleInput, {
@@ -741,30 +787,32 @@ let functionalityOptionsArray = [
                       selectorWidth: "100%",
                       selectedOptionId: companyPositions.find(position => position.position == user.role).positionId,
                       onOptionChange: (option) => {
-                        if (option != null) selectedPositionId = option.id
+                        if (option != null) { selectedPositionId = option.id; }
                       }
                     })
 
                     let icon = 'bx bxs-user-detail'
                     let title = 'Edit User Information'
-                    let contentElementsArray = [nameBlock, surnameBlock, roleBlock]
+                    let contentElementsArray = [nameBlock, surnameBlock, emailBlock, roleBlock, passwordWarningBlock, passwordBlock]
                     let savebutton = createElement({ elementType: 'button', textContent: 'Save' })
                     let actions = [{
                       element: savebutton, functionCall: () => {
-                        socket.emit('updateUserInfo', { name: nameInput.value, surname: surnameInput.value, positionId: selectedPositionId })
-                        console.log({ name: nameInput.value, surname: surnameInput.value, positionId: selectedPositionId })
+                        socket.emit('updateUser', { userID: user.userID, name: nameInput.value, surname: surnameInput.value, email: emailInput.value, positionId: selectedPositionId, password: passwordInput.value, companyId: selectedCompanyID })
+                        console.log({ name: nameInput.value, surname: surnameInput.value, email: emailInput.value, positionId: selectedPositionId, password: passwordInput.value, companyId: selectedCompanyID })
 
                       }
                     }]
                     let constraints = { icon, title, contentElementsArray, actions }
-                    createInScreenPopup(constraints).then(editPopup => savebutton.addEventListener('click', editPopup.closePopup))
+                    createInScreenPopup(constraints).then(editPopup => {
+                      savebutton.addEventListener('click', editPopup.closePopup)
+                    })
                   }
                 },
                 {
                   element: deleteButton, functionCall: () => {
-                    // let editPopup;
+                    // -------------------- Deleting user - on popup;
                     let question = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Are you sure you want to delete:' })
-                    let userBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [ userForAttendanceList(user, []) ]})
+                    let userBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [userForAttendanceList(user, [])] })
                     let emphasis = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please note that all related account information such as responsibilities, calls, events, and messages will be deleted.' })
 
                     let icon = 'bx bxs-trash-alt'
@@ -776,7 +824,7 @@ let functionalityOptionsArray = [
                       { element: cancelButton, functionCall: () => { } },
                       {
                         element: deleteButton, functionCall: () => {
-                          socket.emit('deleteUserInfo', user.userID)
+                          socket.emit('deleteUserInfo', { userToDelete: user.userID, companyId: selectedCompanyID })
                         }
                       }
                     ]
@@ -790,17 +838,18 @@ let functionalityOptionsArray = [
               ]
               return userForAttendanceList(user, actions)
             })
-            let ConfigObj = { icon, title, actionsPerItem, contentElements }
+            headerSearchDiv.addEventListener('input', () => socket.emit('manageUsersSearch', { searchTerms: headerSearchDiv.value, companyId: selectedCompanyID }))
+            let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
-
           })
           socket.on('manageAdmins', admins => {
             console.log('manageAdmins', admins)
             let icon = 'bx bxs-check-shield'
             let title = 'Manage Admins'
+            let headerSearchDiv = createElement({ elementType: 'input', textContent: title, placeHolder: 'Search - ' + title })
             let actionsPerItem = [{ actionIcon: 'bx bxs-user-plus', actionFunction: () => { console.log("edit button clicked") } }]
 
-            let ConfigObj = { icon, title, actionsPerItem, /*contentElements*/ }
+            let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, /*contentElements*/ }
             createmgtPanel(ConfigObj)
           })
           socket.on('managePositions', positions => {
@@ -808,13 +857,14 @@ let functionalityOptionsArray = [
             console.log('managePositions', positions)
             let icon = 'bx bxs-directions'
             let title = 'Manage Positions'
+            let headerSearchDiv = createElement({ elementType: 'input', textContent: title, placeHolder: 'Search - ' + title })
             let actionsPerItem = [{ actionIcon: 'bx bx-plus', actionFunction: () => { console.log("edit button clicked") } }]
-            let ConfigObj = { icon, title, actionsPerItem }
+            let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem }
             createmgtPanel(ConfigObj)
           })
 
           function createmgtPanel(ConfigObj) {
-            let { icon, title, actionsPerItem, contentElements } = ConfigObj
+            let { icon, title, headerSearchDiv, actionsPerItem, contentElements } = ConfigObj
             // actionsPerItem is an array of {actionIcon, actionFunction}
             managementDiv.textContent = ''
             let geaderText = createElement({
@@ -823,7 +873,7 @@ let functionalityOptionsArray = [
                 createElement({ elementType: 'p', textContent: title })
               ]
             })
-            let headerSearchDiv = createElement({ elementType: 'input', textContent: title, placeHolder: 'Search - ' + title })
+
             let actionButtonArray = actionsPerItem.map(action => {
               let actionButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: action.actionIcon })], onclick: action.actionFunction })
               return actionButton
