@@ -538,9 +538,14 @@ let functionalityOptionsArray = [
     }
     $(".pill").click(function () { $(this).toggleClass("selectedPill"); });
   })()
+  // initial important events to listen to
   socket.on('redirect', function (destination) {
     window.location.href = destination;
   });
+  socket.on('feedback', function (feedback) {
+    if(feedback.type == 'negative') console.error(feedback)
+    if(feedback.type == 'positie') console.log(feedback)
+  })
   socket.on('myId', function (myInformation) {
     console.log('myId :', myInformation);
     let { userInfo, adminShip } = myInformation;
@@ -649,6 +654,7 @@ let functionalityOptionsArray = [
         if (isAdmin === true) {
           let selectedCompanyID
           let companyPositions;
+          let managementDivBodyStored // store the di in order to update it in case of a change
           let companyAdminButton = createElement({ elementType: 'button', class: 'responsibilityOptionDropDown', })
           let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })] }) // create Spinner
           let managementDiv = createElement({ elementType: 'div', class: 'managementDiv', textContent: "Select any of the above clickable options to manage" })
@@ -709,6 +715,10 @@ let functionalityOptionsArray = [
                 let surnameLabel = createElement({ elementType: 'label', for: 'surname' + 'chooseNew', textContent: 'Surname' })
                 let surnameInput = createElement({ elementType: 'input', id: 'surname' + 'chooseNew', placeHolder: 'Surname' })
                 let surnameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [surnameLabel, surnameInput] })
+                
+                let emailLabel = createElement({ elementType: 'label', for: 'email' + 'chooseNew', textContent: 'email' })
+                let emailInput = createElement({ elementType: 'input', id: 'email' + 'chooseNew', placeHolder: 'email' })
+                let emailBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [emailLabel, emailInput] })
 
                 let roleLabel = createElement({ elementType: 'label', for: 'role' + 'chooseNew', textContent: 'Position' })
                 let roleInput = createElement({ elementType: 'button', id: 'role' + 'chooseNew' })
@@ -731,19 +741,30 @@ let functionalityOptionsArray = [
 
                 let icon = 'bx bxs-user-plus'
                 let title = 'Create User Account'
-                let contentElementsArray = [nameBlock, surnameBlock, roleBlock, passwordBlock]
+                let contentElementsArray = [nameBlock, surnameBlock, emailBlock, roleBlock, passwordBlock]
                 let savebutton = createElement({ elementType: 'button', textContent: 'Save' })
                 let actions = [{
                   element: savebutton, functionCall: () => {
-                    socket.emit('saveNewUserInfo', { name: nameInput.value, surname: surnameInput.value, positionId: selectedPositionId, companyId: selectedCompanyID })
-                    console.log({ name: nameInput.value, surname: surnameInput.value, positionId: selectedPositionId, companyId: selectedCompanyID })
+                    socket.emit('saveNewUserInfo', { name: nameInput.value, surname: surnameInput.value, email:emailInput.value, positionId: selectedPositionId, password: passwordInput.value, companyId: selectedCompanyID })
+                    console.log({ name: nameInput.value, surname: surnameInput.value, email:emailInput.value, positionId: selectedPositionId, password: passwordInput.value, companyId: selectedCompanyID })
                   }
                 }]
                 let constraints = { icon, title, contentElementsArray, actions }
                 createInScreenPopup(constraints).then(editPopup => savebutton.addEventListener('click', editPopup.closePopup))
               }
             }]
-            let contentElements = users.map((user) => {
+            let contentElements = createUserMgtBodyElements(users)
+            headerSearchDiv.addEventListener('input', () => {
+              socket.emit('manageUsersSearch', { searchTerm: headerSearchDiv.value, companyId: selectedCompanyID });
+              managementDivBodyStored.textContent = ''
+              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+            })
+            let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
+            createmgtPanel(ConfigObj)
+          })
+
+          function createUserMgtBodyElements(usersArray){
+            contentElements = usersArray.map((user) => {
               let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
               let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
               let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
@@ -838,10 +859,17 @@ let functionalityOptionsArray = [
               ]
               return userForAttendanceList(user, actions)
             })
-            headerSearchDiv.addEventListener('input', () => socket.emit('manageUsersSearch', { searchTerms: headerSearchDiv.value, companyId: selectedCompanyID }))
-            let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
-            createmgtPanel(ConfigObj)
+            return contentElements
+          }
+
+          socket.on('manageUsersSearch', users => {
+            console.log('manageUsersSearch', users)
+            managementDivBodyStored.textContent = ''
+            let resultElements = createUserMgtBodyElements(users)
+            resultElements.forEach(element => managementDivBodyStored.append(element))
+            if(users.length < 1) {managementDivBodyStored.textContent = 'No user found with such criteria'}
           })
+          
           socket.on('manageAdmins', admins => {
             console.log('manageAdmins', admins)
             let icon = 'bx bxs-check-shield'
@@ -882,8 +910,11 @@ let functionalityOptionsArray = [
             let actionPart = createElement({ elementType: 'div', class: 'actionPart', childrenArray: [headerSearchDiv, actionButtonsDiv] })
             let managementDivHeader = createElement({ elementType: 'div', class: 'managementDivHeader', childrenArray: [geaderText, actionPart] })
             let managementDivBody = createElement({ elementType: 'div', class: 'managementDivBody', childrenArray: contentElements })
+            managementDivBodyStored = managementDivBody
             managementDiv.append(managementDivHeader, managementDivBody)
           }
+
+          
 
           goodselect(companyAdminButton, {
             availableOptions: administeredCompaniesInfo,

@@ -9,10 +9,12 @@ const dotenv = require('dotenv');
 const session = require('express-session');
 const SocketIOFileUpload = require("socketio-file-upload")
 const fs = require('fs')
+const bcrypt = require('bcryptjs');
 
 dotenv.config({ path: './.env' });
 
 const db = require('./db/db.js');
+const pwValidator = require('./controllers/pwValidator');
 const { connect } = require('tls');
 const console = require('console');
 
@@ -243,11 +245,7 @@ io.on('connection', (socket) => {
     socket.on('searchPeople', (searchPeople) => {
       db.query("SELECT `id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchPeople + '%', '%' + searchPeople + '%', '%' + searchPeople + '%'], async (err, userSearchResult) => {
         if (err) return console.log(err)
-        let foundUsers = []
-        for (let i = 0; i < userSearchResult.length; i++) {
-          const userID = userSearchResult[i].id;
-          if (id != userID) foundUsers.push(await getUserInfo(userID))
-        }
+        let foundUsers = await searchUsers(searchPeople, id, company_id, false, 15)
         socket.emit('searchPerson', foundUsers)
       })
     })
@@ -715,13 +713,10 @@ io.on('connection', (socket) => {
     // Update
     socket.on('updateAdmin', async (updateObject) => {
       console.log('updateAdmin', updateObject)
-      if (name == '' || surname == '' || email == '' || positionId == '') return console.log('constraints not met')
       let { adminId, isAdmin, companyId } = updateObject
       let adminAccess = await checkCompanyAdminAccess(id, companyId);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
-
       socket.emit('updateAdmin', await getCompanyAdmins(companyId))
-
     })
     socket.on('updateUser', async (updateObject) => {
       console.log('updateUser', updateObject)
@@ -729,8 +724,10 @@ io.on('connection', (socket) => {
       let adminAccess = await checkCompanyAdminAccess(id, companyId);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
 
-      socket.emit('updateUser', await getCompanyUsers(companyId))
-
+      let userInfoUpdateResult = await updateUserInfo(userID, name, surname, email, positionId)
+      let passwordResult = await updateUserPassword(userID, password)
+      socket.emit('manageUsers', await getCompanyUsers(companyId))
+      socket.emit('feedback', [userInfoUpdateResult, passwordResult])
     })
     socket.on('updatePosition', async (updateObject) => {
       console.log('updatePosition', updateObject)
@@ -742,10 +739,38 @@ io.on('connection', (socket) => {
 
     })
     // Delete
+    socket.on('deleteUserInfo', async (updateObject) => {
+      console.log('deleteUserInfo', updateObject)
+      let { userToDelete, companyId } = updateObject
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
 
+      let deleteUserResult = await deleteUser(userToDelete)
+      socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
+      socket.emit('manageUsers', await getCompanyUsers(companyId))
+      socket.emit('feedback', [deleteUserResult])
+    })
     // Create New
+    socket.on('saveNewUserInfo', async (updateObject) => {
+      console.log('saveNewUserInfo', updateObject)
+      let { name, surname, email, positionId, password, companyId } = updateObject
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
 
+      let createUserResult = await createUser(name, surname, email, positionId, password, companyId)
+      socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
+      socket.emit('manageUsers', await getCompanyUsers(companyId))
+      socket.emit('feedback', [createUserResult])
+    })
     // Search
+    socket.on('manageUsersSearch', async (searchObject) => {
+      console.log('manageUsersSearch', searchObject)
+      let { searchTerm, companyId } = searchObject
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+
+      socket.emit('manageUsersSearch', await searchUsers(searchTerm, id, companyId, true, 15))
+    })
 
     // SUPER ADMIN Fetch actual data -- deleting -- updating -- searching
     // Fetch
@@ -1344,6 +1369,23 @@ function getUserInfo(userID) {
     });
   })
 }
+
+function searchUsers(searchterm, myId, company_id, includeMe, limit) {
+  return new Promise(function (resolve, reject) {
+    db.query("SELECT `id` FROM `user` WHERE (`name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ?) AND (`company_id` = ?) LIMIT ?", ['%' + searchterm + '%', '%' + searchterm + '%', '%' + searchterm + '%', company_id, limit], async (err, userSearchResult) => {
+      if (err) return console.log(err)
+      let foundUsers = []
+      for (let i = 0; i < userSearchResult.length; i++) {
+        const userID = userSearchResult[i].id;
+        if (includeMe == false) {
+          if (myId != userID) foundUsers.push(await getUserInfo(userID))
+        }
+        else { foundUsers.push(await getUserInfo(userID)) }
+      }
+      resolve(foundUsers)
+    })
+  })
+}
 function getUserRole(roleId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `position` FROM `positions` WHERE `id` = ?', [roleId], async (err, roles) => {
@@ -1624,6 +1666,54 @@ function getCompanyPositions(companyId) {
         })
       ))
     })
+  })
+}
+function updateUserInfo(userID, name, surname, email, positionId) {
+  return new Promise(function (resolve, reject) {
+    if (userID == '' || name.trim() == '' || surname.trim() == '' || email.trim() == '' || positionId == '') resolve({ type: 'negative', message: 'Invalid data given Please check the input data' })
+    db.query('UPDATE `user` SET `name`=?,`surname`=?,`email`=?,`positionId`=? WHERE `id` = ?',
+      [name.trim(), surname.trim(), email.trim(), positionId, userID], async (err, report) => {
+        if (err) resolve({ type: 'negative', message: 'An error occured while executing the change' })
+        resolve({ type: 'positive', message: 'User Information updated successfully' })
+      })
+  })
+}
+function updateUserPassword(userID, password) {
+  return new Promise(async function (resolve, reject) {
+    if (!pwValidator.validate(password)) {
+      resolve({ type: 'negative', message: 'The specified password does not meet the minimum requirements for a secure password' });
+      return;
+    }
+    let hashed_salted_password = await bcrypt.hash(password, 10);
+    db.query('UPDATE `user` SET `password`=? WHERE `id` = ?',
+      [hashed_salted_password, userID], async (err, report) => {
+        if (err) resolve({ type: 'negative', message: 'An error occured while executing password change' });
+        resolve({ type: 'positive', message: 'User Password updated successfully' })
+      })
+  })
+}
+
+function deleteUser(userToDelete) {
+  return new Promise(function (resolve, reject) {
+    db.query('DELETE FROM `user` WHERE `id` = ?', [userToDelete], async (err, report) => {
+      if (err) resolve({ type: 'negative', message: 'An error occured while deleting the user' });
+      resolve({ type: 'positive', message: 'User is deleted successfully' })
+    })
+  })
+}
+function createUser(name, surname, email, positionId, password, companyId) {
+  return new Promise(async function (resolve, reject) {
+    if (name.trim() == '' || surname.trim() == '' || email.trim() == '' || positionId == '') resolve({ type: 'negative', message: 'Invalid data given Please check the input data' })
+    if (!pwValidator.validate(password)) {
+      resolve({ type: 'negative', message: 'The specified password does not meet the minimum requirements for a secure password' });
+      return;
+    }
+    let hashed_salted_password = await bcrypt.hash(password, 10);
+    db.query('INSERT INTO `user`(`name`, `surname`, `email`, `password`, `company_id`, `positionId`) VALUES (?,?,?,?,?,?)',
+      [name.trim(), surname.trim(), email.trim(), hashed_salted_password, companyId, positionId], async (err, report) => {
+        if (err) resolve({ type: 'negative', message: 'An error occured while creating the user' });
+        resolve({ type: 'positive', message: 'User is created successfully' })
+      })
   })
 }
 
