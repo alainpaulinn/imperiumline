@@ -805,6 +805,22 @@ io.on('connection', (socket) => {
 
     // Search
 
+    // helper events to update elements
+    socket.on('preparePositions', async companyId => {
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+      socket.emit('preparePositions', await getCompanyPositions(companyId))
+    })
+    socket.on('prepareUsers', async companyId => {
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+      socket.emit('prepareUsers', await getCompanyUsers(companyId))
+    })
+    socket.on('prepareAdmins', async companyId => {
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+      socket.emit('prepareAdmins', await getCompanyAdmins(companyId))
+    })
     ///////////////
     socket.on('disconnecting', () => {
       console.log('socket.roomsssssssssssssssssssssss', socket.rooms); // the Set contains at least the socket ID

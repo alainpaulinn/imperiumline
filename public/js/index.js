@@ -700,9 +700,12 @@ let functionalityOptionsArray = [
               let numberOption = createElement({ elementType: 'div', class: 'numberOption', childrenArray: childrenArray })
               numbersDiv.append(numberOption)
             })
-            socket.emit('managePositions', selectedCompanyID) // in order to update the positions Array for future use
+            socket.emit('preparePositions', selectedCompanyID) // in order to update the positions Array for future use
+            socket.emit('prepareUsers', selectedCompanyID) // in order to update the users Array for future use
+            socket.emit('prepareAdmins', selectedCompanyID) // in order to update the admins Array for future use
           })
           socket.on('manageUsers', users => {
+            companyUsers = users
             console.log('manageUsers', users)
             let icon = 'bx bxs-user-detail'
             let title = 'Manage Users'
@@ -940,6 +943,7 @@ let functionalityOptionsArray = [
           })
           
           socket.on('manageAdmins', admins => {
+            companyAdmins = admins
             console.log('manageAdmins', admins)
             let icon = 'bx bxs-check-shield'
             let title = 'Manage Admins'
@@ -950,21 +954,20 @@ let functionalityOptionsArray = [
                 let SearchLabel = createElement({ elementType: 'label', for: 'Search' + 'chooseNew', textContent: 'Search' })
                 let SearchInput = createElement({ elementType: 'button', id: 'Search' + 'chooseNew', placeHolder: 'Search' })
                 let SearchBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [SearchLabel, SearchInput] })
-
+                console.log(companyUsers)
                 let selectedPositionId;
                 goodselect(SearchInput, {
-                  availableOptions: companyPositions.map(position => { return { id: position.positionId, name: position.position } }),
-                  placeHolder: "User Position",
+                  availableOptions: companyUsers.map(user => { return { id: user.userID, name: user.name+' ' + user.surname} }),
+                  placeHolder: "Select User to make Admin",
                   selectorWidth: "100%",
                   onOptionChange: (option) => {
-                    if (option != null) selectedPositionId = option.id;
-                    else selectedPositionId = option;
+                    if (option != null) {}
                   }
                 })
 
                 let icon = 'bx bxs-user-plus'
                 let title = 'Create administrator Account'
-                let contentElementsArray = [SearchBlock, bodyInput]
+                let contentElementsArray = [SearchBlock]
                 let savebutton = createElement({ elementType: 'button', textContent: 'Save' })
                 let actions = []
                 let constraints = { icon, title, contentElementsArray, actions }
@@ -994,12 +997,15 @@ let functionalityOptionsArray = [
           })
           socket.on('preparePositions', positions => {
             companyPositions = positions
+            console.log('positions defined')
           })
           socket.on('prepareUsers', users => {
             companyUsers = users
+            console.log('companyUsers defined')
           })
           socket.on('prepareAdmins', admins => {
             companyAdmins = admins
+            console.log('admins defined')
           })
 
           function createmgtPanel(ConfigObj) {
