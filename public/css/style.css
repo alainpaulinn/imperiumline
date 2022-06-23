@@ -4933,6 +4933,28 @@ body {
   border-radius: 15px;
   align-items: center;
 }
+.c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 15px;
+}
+.c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer .delegatedByDiv {
+  display: flex;
+  gap: 0.5rem;
+}
+.c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer .delegatedByDiv .delegatedByLabel {
+  display: flex;
+  align-items: center;
+  margin: 1rem;
+  padding: 1rem;
+  background-color: rgb(0, 48, 97);
+  border-radius: 15px;
+  color: white;
+}
+.c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer .delegatedByDiv .listMember {
+  flex: 1;
+}
 .c-time-admin_panel .central-Options .adminPanelMainContent .adminFunctionOption {
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
   border-radius: 15px;

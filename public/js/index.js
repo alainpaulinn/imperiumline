@@ -654,6 +654,8 @@ let functionalityOptionsArray = [
         if (isAdmin === true) {
           let selectedCompanyID
           let companyPositions;
+          let companyUsers;
+          let companyAdmins;
           let managementDivBodyStored // store the di in order to update it in case of a change
           let companyAdminButton = createElement({ elementType: 'button', class: 'responsibilityOptionDropDown', })
           let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })] }) // create Spinner
@@ -861,103 +863,70 @@ let functionalityOptionsArray = [
             })
             return contentElements
           }
+
           function createAdminMgtBodyElements(admins){
             contentElements = admins.map((adminObject) => {
               let {admin, done, done_by} = adminObject;
               console.log(admin, done, done_by)
+              // -- for Admin
               let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
               let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-              let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
-              let deleteButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
+              let revokeAdminAccessButton = createElement({ elementType: 'button', textContent:'Revoke admin access'})
               let actions
               if (admin.userID == mySavedID) actions = []
               else actions = [
                 { element: messageButton, functionCall: () => { initiateChat(admin.userID) } },
                 { element: callButton, functionCall: () => { call(admin.userID, true, false, false, false, null) } },
                 {
-                  element: editButton, functionCall: () => {
-                    // -------------------- Editing user - on popup;
-                    let nameLabel = createElement({ elementType: 'label', for: 'name' + admin.userID, textContent: 'Name' })
-                    let nameInput = createElement({ elementType: 'input', id: 'name' + admin.userID, placeHolder: 'Name', value: admin.name })
-                    let nameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [nameLabel, nameInput] })
-
-                    let surnameLabel = createElement({ elementType: 'label', for: 'surname' + admin.userID, textContent: 'Surname' })
-                    let surnameInput = createElement({ elementType: 'input', id: 'surname' + admin.userID, placeHolder: 'Surname', value: admin.surname })
-                    let surnameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [surnameLabel, surnameInput] })
-
-                    let emailLabel = createElement({ elementType: 'label', for: 'email' + admin.userID, textContent: 'email' })
-                    let emailInput = createElement({ elementType: 'input', id: 'email' + admin.userID, placeHolder: 'email', value: admin.email })
-                    let emailBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [emailLabel, emailInput] })
-
-                    let roleLabel = createElement({ elementType: 'label', for: 'role' + admin.userID, textContent: 'Position' })
-                    let roleInput = createElement({ elementType: 'button', id: 'role' + admin.userID })
-                    let roleBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [roleLabel, roleInput] })
-
-                    let passwordWarningBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [createElement({ elementType: 'div', textContent: "Warning, filling any Valid Password value in the password field will change the user's password to that value. Please remember to communicate it to the concerned admin. If you do not ontend to change the user's password, do not fill the next field" })] })
-
-                    let passwordLabel = createElement({ elementType: 'label', for: 'password' + admin.userID, textContent: 'Password' })
-                    let passwordInput = createElement({ elementType: 'input', id: 'password' + admin.userID, placeHolder: 'Password' })
-                    let passwordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [passwordLabel, passwordInput] })
-
-                    let selectedPositionId = companyPositions.find(position => position.position == admin.role).positionId
-                    goodselect(roleInput, {
-                      availableOptions: companyPositions.map(position => {
-                        return { id: position.positionId, name: position.position }
-                      }),
-                      placeHolder: "Select Position",
-                      selectorWidth: "100%",
-                      selectedOptionId: companyPositions.find(position => position.position == admin.role).positionId,
-                      onOptionChange: (option) => {
-                        if (option != null) { selectedPositionId = option.id; }
-                      }
-                    })
-
-                    let icon = 'bx bxs-user-detail'
-                    let title = 'Edit User Information'
-                    let contentElementsArray = [nameBlock, surnameBlock, emailBlock, roleBlock, passwordWarningBlock, passwordBlock]
-                    let savebutton = createElement({ elementType: 'button', textContent: 'Save' })
-                    let actions = [{
-                      element: savebutton, functionCall: () => {
-                        socket.emit('updateUser', { userID: admin.userID, name: nameInput.value, surname: surnameInput.value, email: emailInput.value, positionId: selectedPositionId, password: passwordInput.value, companyId: selectedCompanyID })
-                        console.log({ name: nameInput.value, surname: surnameInput.value, email: emailInput.value, positionId: selectedPositionId, password: passwordInput.value, companyId: selectedCompanyID })
-
-                      }
-                    }]
-                    let constraints = { icon, title, contentElementsArray, actions }
-                    createInScreenPopup(constraints).then(editPopup => {
-                      savebutton.addEventListener('click', editPopup.closePopup)
-                    })
-                  }
-                },
-                {
-                  element: deleteButton, functionCall: () => {
+                  element: revokeAdminAccessButton, functionCall: () => {
                     // -------------------- Deleting user - on popup;
-                    let question = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Are you sure you want to delete:' })
-                    let userBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [userForAttendanceList(user, [])] })
-                    let emphasis = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please note that all related account information such as responsibilities, calls, events, and messages will be deleted.' })
+                    let question = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Are you sure you want to revoke admin access for:' })
+                    let userBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [userForAttendanceList(admin, [])] })
+                    let emphasis = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please note that all admin accesses for this user will be deleted. Do this only when authorized to.' })
 
                     let icon = 'bx bxs-trash-alt'
-                    let title = 'Delete User confirmation'
+                    let title = 'Revokation of Admin Access'
                     let contentElementsArray = [question, userBlock, emphasis]
                     let cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel' })
-                    let deleteButton = createElement({ elementType: 'button', textContent: 'Yes, Delete' })
+                    let revokeButton = createElement({ elementType: 'button', textContent: 'Yes, Revoke' })
                     let actions = [
                       { element: cancelButton, functionCall: () => { } },
                       {
-                        element: deleteButton, functionCall: () => {
-                          socket.emit('deleteUserInfo', { userToDelete: admin.userID, companyId: selectedCompanyID })
+                        element: revokeButton, functionCall: () => {
+                          socket.emit('revokeAdminAccess', { adminToDelete: admin.userID, companyId: selectedCompanyID })
                         }
                       }
                     ]
                     let constraints = { icon, title, contentElementsArray, actions }
                     createInScreenPopup(constraints).then(editPopup => {
                       cancelButton.addEventListener('click', editPopup.closePopup);
-                      deleteButton.addEventListener('click', editPopup.closePopup);
+                      revokeButton.addEventListener('click', editPopup.closePopup);
                     })
                   }
                 }
               ]
-              return userForAttendanceList(admin, actions)
+              // --- for DoneBy
+              let DoneByMessageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+              let DoneByCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+              let DoneByActions
+              if (admin.userID == mySavedID) DoneByActions = []
+              else DoneByActions = [
+                {element: DoneByMessageButton, functionCall: () => {initiateChat(done_by.userID)}},
+                {element: DoneByCallButton, functionCall: () => {call(done_by.userID, true, false, false, false, null)}}
+              ]
+
+              let delegatedByDiv = createElement({ elementType: 'div', class:'delegatedByDiv', childrenArray:[
+                createElement({ elementType: 'div', class:'delegatedByLabel', textContent: 'Delegated by:'}),
+                userForAttendanceList(done_by, DoneByActions),
+                createElement({ elementType: 'div', class:'delegatedByLabel', textContent: 'On: '+ done}),
+              ]})
+
+              // finally
+              let adminContainer = createElement({elementType:'div', class:'adminContainer', childrenArray:[
+                userForAttendanceList(admin, actions),
+                delegatedByDiv
+              ]})
+              return adminContainer 
             })
             return contentElements
           }
@@ -975,7 +944,33 @@ let functionalityOptionsArray = [
             let icon = 'bx bxs-check-shield'
             let title = 'Manage Admins'
             let headerSearchDiv = createElement({ elementType: 'input', textContent: title, placeHolder: 'Search - ' + title })
-            let actionsPerItem = [{ actionIcon: 'bx bxs-user-plus', actionFunction: () => { console.log("edit button clicked") } }]
+            let actionsPerItem = [{ actionIcon: 'bx bxs-user-plus', actionFunction: () => {
+              
+                // -------------------- Creating a new admin - on popup;
+                let SearchLabel = createElement({ elementType: 'label', for: 'Search' + 'chooseNew', textContent: 'Search' })
+                let SearchInput = createElement({ elementType: 'button', id: 'Search' + 'chooseNew', placeHolder: 'Search' })
+                let SearchBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [SearchLabel, SearchInput] })
+
+                let selectedPositionId;
+                goodselect(SearchInput, {
+                  availableOptions: companyPositions.map(position => { return { id: position.positionId, name: position.position } }),
+                  placeHolder: "User Position",
+                  selectorWidth: "100%",
+                  onOptionChange: (option) => {
+                    if (option != null) selectedPositionId = option.id;
+                    else selectedPositionId = option;
+                  }
+                })
+
+                let icon = 'bx bxs-user-plus'
+                let title = 'Create administrator Account'
+                let contentElementsArray = [SearchBlock, bodyInput]
+                let savebutton = createElement({ elementType: 'button', textContent: 'Save' })
+                let actions = []
+                let constraints = { icon, title, contentElementsArray, actions }
+                createInScreenPopup(constraints).then(editPopup => savebutton.addEventListener('click', editPopup.closePopup))
+              
+            } }]
 
             let contentElements = createAdminMgtBodyElements(admins/*.map(admin => admin.admin)*/)
             headerSearchDiv.addEventListener('input', () => {
@@ -996,6 +991,15 @@ let functionalityOptionsArray = [
             let actionsPerItem = [{ actionIcon: 'bx bx-plus', actionFunction: () => { console.log("edit button clicked") } }]
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem }
             createmgtPanel(ConfigObj)
+          })
+          socket.on('preparePositions', positions => {
+            companyPositions = positions
+          })
+          socket.on('prepareUsers', users => {
+            companyUsers = users
+          })
+          socket.on('prepareAdmins', admins => {
+            companyAdmins = admins
           })
 
           function createmgtPanel(ConfigObj) {

@@ -750,6 +750,17 @@ io.on('connection', (socket) => {
       socket.emit('manageUsers', await getCompanyUsers(companyId))
       socket.emit('feedback', [deleteUserResult])
     })
+    socket.on('revokeAdminAccess', async (updateObject) => {
+      console.log('revokeAdminAccess', updateObject)
+      let { adminToDelete, companyId } = updateObject
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+
+      let revokeAdminAccessResult = await revokeAdminAccess(adminToDelete, companyId)
+      socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
+      socket.emit('manageAdmins', await getCompanyUsers(companyId))
+      socket.emit('feedback', [revokeAdminAccessResult])
+    })
     // Create New
     socket.on('saveNewUserInfo', async (updateObject) => {
       console.log('saveNewUserInfo', updateObject)
@@ -761,6 +772,17 @@ io.on('connection', (socket) => {
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
       socket.emit('manageUsers', await getCompanyUsers(companyId))
       socket.emit('feedback', [createUserResult])
+    })
+    socket.on('giveNewAdminAccess', async (updateObject) => {
+      console.log('giveNewAdminAccess', updateObject)
+      let { userId, companyId, myId } = updateObject
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+
+      let makeUserAdminResult = await makeUserAdmin(userId, companyId, myId)
+      socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
+      socket.emit('manageUsers', await getCompanyUsers(companyId))
+      socket.emit('feedback', [makeUserAdminResult])
     })
     // Search
     socket.on('manageUsersSearch', async (searchObject) => {
@@ -1716,7 +1738,14 @@ function createUser(name, surname, email, positionId, password, companyId) {
       })
   })
 }
-
+function revokeAdminAccess(adminToDelete, companyId) {
+  return new Promise(function (resolve, reject) {
+    db.query('DELETE FROM `admins` WHERE `admin_id` = ? AND `company_id` = ?', [adminToDelete, companyId], async (err, report) => {
+      if (err) resolve({ type: 'negative', message: 'An error occured while revoking the admin access' });
+      resolve({ type: 'positive', message: 'Admin Access is revoked successfully' })
+    })
+  })
+}
 /*
 function checkAccess(req, res) {
   if (!req.session.userId || !req.session.email) return res.redirect('/connect')

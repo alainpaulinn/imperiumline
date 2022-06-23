@@ -5950,6 +5950,29 @@ body {
             align-items: center;
             // height: unset;
           }
+
+          .adminContainer{
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: $borderRadius;
+            .delegatedByDiv{
+              display: flex;
+              gap: .5rem;
+              .delegatedByLabel{
+                display: flex;
+                align-items: center;
+                margin: 1rem;
+                padding: 1rem;
+                background-color: $notification;
+                border-radius: $borderRadius;
+                color: white;
+              }
+              .listMember{
+                flex: 1;
+              }
+            }
+          }
         }
       }
 
