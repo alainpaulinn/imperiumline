@@ -476,6 +476,10 @@ body {
         border-radius: $borderRadius;
         border: none;
       }
+      .editBlockButtons{
+        padding: 1rem;
+        cursor: pointer;
+      }
     }
 
   }
@@ -496,6 +500,7 @@ body {
       box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
       cursor: pointer;
     }
+    
   }
 
 }

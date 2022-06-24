@@ -373,6 +373,10 @@ body {
   border-radius: 15px;
   border: none;
 }
+.inScreenPanel .popupBody .editBlock .editBlockButtons {
+  padding: 1rem;
+  cursor: pointer;
+}
 .inScreenPanel .popupBottom {
   border-top: 1px solid #f1f4f6;
   padding: 1rem;

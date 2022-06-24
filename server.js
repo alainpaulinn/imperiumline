@@ -758,7 +758,7 @@ io.on('connection', (socket) => {
 
       let revokeAdminAccessResult = await revokeAdminAccess(adminToDelete, companyId)
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
-      socket.emit('manageAdmins', await getCompanyUsers(companyId))
+      socket.emit('manageAdmins', await getCompanyAdmins(companyId))
       socket.emit('feedback', [revokeAdminAccessResult])
     })
     // Create New
@@ -775,14 +775,15 @@ io.on('connection', (socket) => {
     })
     socket.on('giveNewAdminAccess', async (updateObject) => {
       console.log('giveNewAdminAccess', updateObject)
-      let { userId, companyId, myId } = updateObject
+      let { userId, companyId } = updateObject
       let adminAccess = await checkCompanyAdminAccess(id, companyId);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
 
-      let makeUserAdminResult = await makeUserAdmin(userId, companyId, myId)
+      let makeUserAdminResult = await makeUserAdmin(userId, companyId, id)
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
-      socket.emit('manageUsers', await getCompanyUsers(companyId))
+      socket.emit('manageAdmins', await await getCompanyAdmins(companyId))
       socket.emit('feedback', [makeUserAdminResult])
+      // console.log('executed')
     })
     // Search
     socket.on('manageUsersSearch', async (searchObject) => {
@@ -1712,7 +1713,7 @@ function updateUserInfo(userID, name, surname, email, positionId) {
     db.query('UPDATE `user` SET `name`=?,`surname`=?,`email`=?,`positionId`=? WHERE `id` = ?',
       [name.trim(), surname.trim(), email.trim(), positionId, userID], async (err, report) => {
         if (err) resolve({ type: 'negative', message: 'An error occured while executing the change' })
-        resolve({ type: 'positive', message: 'User Information updated successfully' })
+        resolve({ type: 'positive', message: 'User Information was updated successfully' })
       })
   })
 }
@@ -1726,7 +1727,7 @@ function updateUserPassword(userID, password) {
     db.query('UPDATE `user` SET `password`=? WHERE `id` = ?',
       [hashed_salted_password, userID], async (err, report) => {
         if (err) resolve({ type: 'negative', message: 'An error occured while executing password change' });
-        resolve({ type: 'positive', message: 'User Password updated successfully' })
+        resolve({ type: 'positive', message: 'User Password was updated successfully' })
       })
   })
 }
@@ -1735,7 +1736,7 @@ function deleteUser(userToDelete) {
   return new Promise(function (resolve, reject) {
     db.query('DELETE FROM `user` WHERE `id` = ?', [userToDelete], async (err, report) => {
       if (err) resolve({ type: 'negative', message: 'An error occured while deleting the user' });
-      resolve({ type: 'positive', message: 'User is deleted successfully' })
+      resolve({ type: 'positive', message: 'User was deleted successfully' })
     })
   })
 }
@@ -1750,7 +1751,7 @@ function createUser(name, surname, email, positionId, password, companyId) {
     db.query('INSERT INTO `user`(`name`, `surname`, `email`, `password`, `company_id`, `positionId`) VALUES (?,?,?,?,?,?)',
       [name.trim(), surname.trim(), email.trim(), hashed_salted_password, companyId, positionId], async (err, report) => {
         if (err) resolve({ type: 'negative', message: 'An error occured while creating the user' });
-        resolve({ type: 'positive', message: 'User is created successfully' })
+        resolve({ type: 'positive', message: 'User was created successfully' })
       })
   })
 }
@@ -1758,7 +1759,15 @@ function revokeAdminAccess(adminToDelete, companyId) {
   return new Promise(function (resolve, reject) {
     db.query('DELETE FROM `admins` WHERE `admin_id` = ? AND `company_id` = ?', [adminToDelete, companyId], async (err, report) => {
       if (err) resolve({ type: 'negative', message: 'An error occured while revoking the admin access' });
-      resolve({ type: 'positive', message: 'Admin Access is revoked successfully' })
+      resolve({ type: 'positive', message: 'Admin Access was revoked successfully' })
+    })
+  })
+}
+function makeUserAdmin(userId, companyId, id) {
+  return new Promise(function (resolve, reject) {
+    db.query('INSERT INTO `admins`(`company_id`, `admin_id`, `done_by`) VALUES ()', [companyId, userId, id], async (err, report) => {
+      if (err) resolve({ type: 'negative', message: 'An error occured while giving the admin access' });
+      resolve({ type: 'positive', message: 'Admin Access was givens successfully' })
     })
   })
 }
