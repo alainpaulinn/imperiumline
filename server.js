@@ -781,7 +781,7 @@ io.on('connection', (socket) => {
 
       let makeUserAdminResult = await makeUserAdmin(userId, companyId, id)
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
-      socket.emit('manageAdmins', await await getCompanyAdmins(companyId))
+      socket.emit('manageAdmins', await getCompanyAdmins(companyId))
       socket.emit('feedback', [makeUserAdminResult])
       // console.log('executed')
     })
@@ -793,6 +793,14 @@ io.on('connection', (socket) => {
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
 
       socket.emit('manageUsersSearch', await searchUsers(searchTerm, id, companyId, true, 15))
+    })
+    socket.on('manageAdminsSearch', async (searchObject) => {
+      console.log('manageAdminsSearch', searchObject)
+      let { searchTerm, companyId } = searchObject
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+
+      socket.emit('manageAdminsSearch', await searchAdmins(searchTerm, companyId))
     })
 
     // SUPER ADMIN Fetch actual data -- deleting -- updating -- searching
@@ -1682,7 +1690,7 @@ function getCompanyAdmins(companyId) {
         Promise.all(
           users.map(async user => {
             return {
-              admin: await getUserInfo(user.id),
+              admin: await getUserInfo(user.admin_id),
               done_by: await getUserInfo(user.done_by),
               done: user.registration_date
             }
@@ -1756,18 +1764,59 @@ function createUser(name, surname, email, positionId, password, companyId) {
   })
 }
 function revokeAdminAccess(adminToDelete, companyId) {
+  console.log('EXECUTED---------------------')
   return new Promise(function (resolve, reject) {
-    db.query('DELETE FROM `admins` WHERE `admin_id` = ? AND `company_id` = ?', [adminToDelete, companyId], async (err, report) => {
-      if (err) resolve({ type: 'negative', message: 'An error occured while revoking the admin access' });
+    db.query('DELETE FROM `admins` WHERE `admin_id`= ?  AND `company_id` = ?', [adminToDelete, companyId], async (err, report) => {
+      if (err) {
+        console.log(err)
+        resolve({ type: 'negative', message: 'An error occured while revoking the admin access' });
+      }
       resolve({ type: 'positive', message: 'Admin Access was revoked successfully' })
     })
   })
 }
 function makeUserAdmin(userId, companyId, id) {
   return new Promise(function (resolve, reject) {
-    db.query('INSERT INTO `admins`(`company_id`, `admin_id`, `done_by`) VALUES ()', [companyId, userId, id], async (err, report) => {
+    db.query('INSERT INTO `admins`(`company_id`, `admin_id`, `done_by`) VALUES (?,?,?)', [companyId, userId, id], async (err, report) => {
       if (err) resolve({ type: 'negative', message: 'An error occured while giving the admin access' });
       resolve({ type: 'positive', message: 'Admin Access was givens successfully' })
+    })
+  })
+}
+function searchAdmins(searchTerm, companyId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT admins.company_id, admins.`admin_id`, admins.`done_by`, admins.`registration_date`, user.name, user.surname, user.email, user.id FROM `admins` INNER JOIN `user` ON `admins`.admin_id = `user`.`id` WHERE (`user`.`name` LIKE ? OR `user`.`surname` LIKE ? Or `user`.`email` LIKE ?) AND admins.`company_id` = ?',
+      ['%' + searchTerm + '%', '%' + searchTerm + '%', '%' + searchTerm + '%', companyId], async (err, users) => {
+        if (err) reject(err)
+        resolve(
+          Promise.all(
+            users.map(async user => {
+              return {
+                admin: await getUserInfo(user.admin_id),
+                done_by: await getUserInfo(user.done_by),
+                done: user.registration_date
+              }
+            })
+          )
+        )
+      })
+  })
+}
+function getCompanyAdmins(companyId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `company_id`, `admin_id`, `done_by`, `registration_date` FROM `admins` WHERE `company_id` = ?', [companyId], async (err, users) => {
+      if (err) reject(err)
+      resolve(
+        Promise.all(
+          users.map(async user => {
+            return {
+              admin: await getUserInfo(user.admin_id),
+              done_by: await getUserInfo(user.done_by),
+              done: user.registration_date
+            }
+          })
+        )
+      )
     })
   })
 }

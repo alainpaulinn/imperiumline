@@ -64,7 +64,8 @@ CREATE TABLE `admins` (
   `registration_date` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   FOREIGN KEY (`company_id`) REFERENCES companies(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`admin_id`) REFERENCES user(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`admin_id`) REFERENCES user(`id`) ON DELETE CASCADE,
+  UNIQUE KEY `company_id` (`company_id`,`admin_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `superadmins` (

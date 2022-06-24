@@ -622,8 +622,8 @@ let functionalityOptionsArray = [
             numbersDiv.textContent = '';
             numbersArray.map(number => {
               let manageButton = createElement({ elementType: 'div', class: 'manageButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-cog' })] })
-              let valueDiv = createElement({ elementType: 'div', class: 'valueDiv ', textContent: number.value })
-              let titleDiv = createElement({ elementType: 'div', class: 'titleDiv', textContent: number.title })
+              let valueDiv = createElement({ elementType: 'div', class: 'valueDiv ', textContent: number.value + '' })
+              let titleDiv = createElement({ elementType: 'div', class: 'titleDiv', textContent: number.title + '' })
               let childrenArray = [valueDiv, titleDiv]
 
               if (number.title == 'Companies') {
@@ -937,6 +937,52 @@ let functionalityOptionsArray = [
             })
             return contentElements
           }
+          function createPositionsBodyElements(positions) {
+            contentElements = positions.map((adminObject) => {
+              let { admin, done, done_by } = adminObject;
+              console.log(admin, done, done_by, adminObject)
+              // -- for Admin
+              let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+              let deleteButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+              let revokeAdminAccessButton = createElement({ elementType: 'button', textContent: 'Revoke admin access' })
+              let actions
+              if (admin.userID == mySavedID) actions = []
+              else actions = [
+                // { element: editButton, functionCall: () => {} },
+                // { element: deleteButton, functionCall: () => {} },
+                // {
+                //   element: revokeAdminAccessButton, functionCall: () => {
+                //     // -------------------- Deleting user - on popup;
+                //     let question = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Are you sure you want to revoke admin access for:' })
+                //     let userBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [userForAttendanceList(admin, [])] })
+                //     let emphasis = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please note that all admin accesses for this user will be deleted. Do this only when authorized to.' })
+
+                //     let icon = 'bx bxs-trash-alt'
+                //     let title = 'Revokation of Admin Access'
+                //     let contentElementsArray = [question, userBlock, emphasis]
+                //     let cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel' })
+                //     let revokeButton = createElement({ elementType: 'button', textContent: 'Yes, Revoke' })
+                //     let actions = [
+                //       { element: cancelButton, functionCall: () => { } },
+                //       {
+                //         element: revokeButton, functionCall: () => {
+                //           socket.emit('revokeAdminAccess', { adminToDelete: admin.userID, companyId: selectedCompanyID })
+                //         }
+                //       }
+                //     ]
+                //     let constraints = { icon, title, contentElementsArray, actions }
+                //     createInScreenPopup(constraints).then(editPopup => {
+                //       cancelButton.addEventListener('click', editPopup.closePopup);
+                //       revokeButton.addEventListener('click', editPopup.closePopup);
+                //     })
+                //   }
+                // }
+              ]
+
+              return userForAttendanceList(admin, actions)
+            })
+            return contentElements
+          }
 
           socket.on('manageUsersSearch', users => {
             console.log('manageUsersSearch', users)
@@ -990,6 +1036,7 @@ let functionalityOptionsArray = [
 
                   submitButton.addEventListener('click', () => {
                     socket.emit('giveNewAdminAccess', { userId: selectedUserId, companyId: selectedCompanyID })
+                    console.log('giveNewAdminAccess', { userId: selectedUserId, companyId: selectedCompanyID })
                     editPopup.closePopup();
                   });
                 })
@@ -1007,6 +1054,14 @@ let functionalityOptionsArray = [
             createmgtPanel(ConfigObj)
           })
 
+          socket.on('manageAdminsSearch', admins => {
+            console.log('manageAdminsSearch', admins)
+            managementDivBodyStored.textContent = ''
+            let resultElements = createAdminMgtBodyElements(admins)
+            resultElements.forEach(element => managementDivBodyStored.append(element))
+            if (users.length < 1) { managementDivBodyStored.textContent = 'No Admin found with such criteria' }
+          })
+
           socket.on('managePositions', positions => {
             companyPositions = positions
             console.log('managePositions', positions)
@@ -1014,9 +1069,19 @@ let functionalityOptionsArray = [
             let title = 'Manage Positions'
             let headerSearchDiv = createElement({ elementType: 'input', textContent: title, placeHolder: 'Search - ' + title })
             let actionsPerItem = [{ actionIcon: 'bx bx-plus', actionFunction: () => { console.log("edit button clicked") } }]
-            let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem }
+
+            let contentElements = createPositionsBodyElements(positions)
+            headerSearchDiv.addEventListener('input', () => {
+              socket.emit('managePositionsSearch', { searchTerm: headerSearchDiv.value, companyId: selectedCompanyID });
+              managementDivBodyStored.textContent = ''
+              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+            })
+
+            let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
           })
+
+          // -- Preparing the Admin Figures and essential objects
           socket.on('preparePositions', positions => {
             companyPositions = positions
             console.log('positions defined')
