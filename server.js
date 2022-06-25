@@ -711,13 +711,6 @@ io.on('connection', (socket) => {
       socket.emit('managePositions', await getCompanyPositions(companyId))
     })
     // Update
-    socket.on('updateAdmin', async (updateObject) => {
-      console.log('updateAdmin', updateObject)
-      let { adminId, isAdmin, companyId } = updateObject
-      let adminAccess = await checkCompanyAdminAccess(id, companyId);
-      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
-      socket.emit('updateAdmin', await getCompanyAdmins(companyId))
-    })
     socket.on('updateUser', async (updateObject) => {
       console.log('updateUser', updateObject)
       let { userID, name, surname, email, positionId, password, companyId } = updateObject
@@ -729,14 +722,15 @@ io.on('connection', (socket) => {
       socket.emit('manageUsers', await getCompanyUsers(companyId))
       socket.emit('feedback', [userInfoUpdateResult, passwordResult])
     })
-    socket.on('updatePosition', async (updateObject) => {
-      console.log('updatePosition', updateObject)
-      let { positionId, newPositionName, companyId } = updateObject
+    socket.on('editPosition', async (updateObject) => {
+      console.log('editPosition', updateObject)
+      let { positionId, companyId, positionName } = updateObject
       let adminAccess = await checkCompanyAdminAccess(id, companyId);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
 
-      socket.emit('updatePosition', await getCompanyPositions(companyId))
-
+      let editPositionResult = await editPosition(positionId, companyId, positionName)
+      socket.emit('managePositions', await getCompanyPositions(companyId))
+      socket.emit('feedback', [editPositionResult])
     })
     // Delete
     socket.on('deleteUserInfo', async (updateObject) => {
@@ -760,6 +754,17 @@ io.on('connection', (socket) => {
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
       socket.emit('manageAdmins', await getCompanyAdmins(companyId))
       socket.emit('feedback', [revokeAdminAccessResult])
+    })
+    socket.on('deletePosition', async (updateObject) => {
+      console.log('deletePosition', updateObject)
+      let { positionId, companyId } = updateObject
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+
+      let deletePositionResult = await deletePosition(positionId, companyId)
+      socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
+      socket.emit('managePositions', await getCompanyPositions(companyId))
+      socket.emit('feedback', [deletePositionResult])
     })
     // Create New
     socket.on('saveNewUserInfo', async (updateObject) => {
@@ -785,6 +790,18 @@ io.on('connection', (socket) => {
       socket.emit('feedback', [makeUserAdminResult])
       // console.log('executed')
     })
+    socket.on('createPosition', async (updateObject) => {
+      console.log('createPosition', updateObject)
+      let { positionName, companyId } = updateObject
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+
+      let createPositionResult = await createPosition(positionName, companyId)
+      socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
+      socket.emit('managePositions', await getCompanyPositions(companyId))
+      socket.emit('feedback', [createPositionResult])
+      // console.log('executed')
+    })
     // Search
     socket.on('manageUsersSearch', async (searchObject) => {
       console.log('manageUsersSearch', searchObject)
@@ -802,10 +819,32 @@ io.on('connection', (socket) => {
 
       socket.emit('manageAdminsSearch', await searchAdmins(searchTerm, companyId))
     })
+    socket.on('managePositionSearch', async (searchObject) => {
+      console.log('managePositionSearch', searchObject)
+      let { searchTerm, companyId } = searchObject
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+
+      socket.emit('managePositionSearch', await searchPosition(searchTerm, companyId))
+    })
 
     // SUPER ADMIN Fetch actual data -- deleting -- updating -- searching
     // Fetch
-
+    socket.on('superManageCompanies', async companyId => {
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+      socket.emit('superManageCompanies', await getCompanyPositions(companyId))
+    })
+    socket.on('superManageAdmins', async companyId => {
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+      socket.emit('superManageAdmins', await getCompanyPositions(companyId))
+    })
+    socket.on('superManageSuperAdmins', async companyId => {
+      let adminAccess = await checkCompanyAdminAccess(id, companyId);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
+      socket.emit('superManageSuperAdmins', await getCompanyPositions(companyId))
+    })
     // Update
 
     // Delete
@@ -829,6 +868,22 @@ io.on('connection', (socket) => {
       let adminAccess = await checkCompanyAdminAccess(id, companyId);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
       socket.emit('prepareAdmins', await getCompanyAdmins(companyId))
+    })
+    // Superadmin helpsers to update elements
+    socket.on('superAdminPrepareCompanies', async () => {
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+      socket.emit('superAdminPrepareCompanies', await getAllCompanies())
+    })
+    socket.on('superAdminPrepareAdmins', async () => {
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+      socket.emit('superAdminPrepareAdmins', await getAllPrimaryAdmins())
+    })
+    socket.on('superAdminPrepareSuperAdmins', async () => {
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+      socket.emit('superAdminPrepareSuperAdmins', await getAllSuperAdmins())
     })
     ///////////////
     socket.on('disconnecting', () => {
@@ -1583,7 +1638,6 @@ function checkCompanyAdminAccess(userID, companyID) {
 }
 
 function getCompanyInfo(companyID) {
-  console.log("companyID", companyID)
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `comanyname`, `description`, `logopath`, `coverpath` FROM `companies` WHERE `id` = ?', [companyID], async (err, companies) => {
       if (err) return console.log(err)
@@ -1692,7 +1746,8 @@ function getCompanyAdmins(companyId) {
             return {
               admin: await getUserInfo(user.admin_id),
               done_by: await getUserInfo(user.done_by),
-              done: user.registration_date
+              done: user.registration_date,
+              company: await getCompanyInfo(user.company_id)
             }
           })
         )
@@ -1813,6 +1868,98 @@ function getCompanyAdmins(companyId) {
               admin: await getUserInfo(user.admin_id),
               done_by: await getUserInfo(user.done_by),
               done: user.registration_date
+            }
+          })
+        )
+      )
+    })
+  })
+}
+function editPosition(positionId, companyId, positionName) {
+  return new Promise(function (resolve, reject) {
+    db.query('UPDATE `positions` SET `position`= ?,`company_id`= ? WHERE `id` = ?', [positionName, companyId, positionId], async (err, report) => {
+      if (err) resolve({ type: 'negative', message: 'An error occured while updating the position.' });
+      resolve({ type: 'positive', message: 'Position was edited successfully' })
+    })
+  })
+}
+function deletePosition(positionId, companyId) {
+  return new Promise(function (resolve, reject) {
+    db.query('DELETE FROM `positions` WHERE `id` = ? AND `company_id` = ?', [positionId, companyId], async (err, report) => {
+      if (err) resolve({ type: 'negative', message: 'An error occured while Deleting the position.' });
+      resolve({ type: 'positive', message: 'Position was deleted successfully' })
+    })
+  })
+}
+function createPosition(positionName, companyId) {
+  return new Promise(function (resolve, reject) {
+    db.query('INSERT INTO `positions`(`position`, `company_id`) VALUES (?,?)', [positionName, companyId], async (err, report) => {
+      if (err) resolve({ type: 'negative', message: 'An error occured while Creating the position.' });
+      resolve({ type: 'positive', message: 'Position was created successfully' })
+    })
+  })
+}
+function searchPosition(searchTerm, companyId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `position`, `company_id` FROM `positions` WHERE (`id` LIKE ? OR `position` LIKE ?) AND `company_id` = ?', ['%' + searchTerm + '%', '%' + searchTerm + '%', companyId], async (err, positions) => {
+      if (err) reject(err)
+      resolve(
+        Promise.all(
+          positions.map(async position => {
+            return {
+              positionId: position.id,
+              position: position.position
+            }
+          })
+        )
+      )
+    })
+  })
+}
+
+// superAdmin functions
+function getAllCompanies() {
+  return new Promise((resolve, reject) => {
+    db.query('SELECT `id`, `comanyname`, `description`, `logopath`, `coverpath` FROM `companies`', [], async (err, rows) => {
+      if (err) reject(err)
+      resolve(
+        Promise.all(
+          rows.map(async company => await getCompanyInfo(company.id))
+        )
+      )
+    })
+  })
+}
+function getAllPrimaryAdmins() {
+  return new Promise((resolve, reject) => {
+    db.query('SELECT `id`, `company_id`, `admin_id`, `done_by`, `registration_date`, `isPirmary` FROM `admins` WHERE `isPirmary = 1', [], async (err, rows) => {
+      if (err) reject(err)
+      resolve(
+        Promise.all(
+          rows.map(async admin => {
+            return {
+              admin: await getUserInfo(admin.admin_id),
+              done_by: await getUserInfo(admin.done_by),
+              done: admin.registration_date,
+              company: await getCompanyInfo(admin.company_id)
+            }
+          })
+        )
+      )
+    })
+  })
+}
+function getAllSuperAdmins() {
+  return new Promise((resolve, reject) => {
+    db.query('SELECT `id`, `admin_id`, `done_by`, `registration_date` FROM `superadmins`', [], async (err, rows) => {
+      if (err) reject(err)
+      resolve(
+        Promise.all(
+          rows.map(async superAdmin => {
+            return {
+              admin: await getUserInfo(superAdmin.admin_id),
+              done_by: await getUserInfo(superAdmin.done_by),
+              done: admin.registration_date,
             }
           })
         )

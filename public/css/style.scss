@@ -5978,6 +5978,26 @@ body {
               }
             }
           }
+          .positionDiv{
+            display: flex;
+            padding: 0.5rem;
+            background-color: white;
+            border-radius: $borderRadius;
+            align-items: center;
+            .position{
+              flex: 1
+            }
+          }
+        }
+        .managementDivTemporary{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          font-size: 1.5rem;
+        }
+        .spinner{
+          height: 100%;
         }
       }
 

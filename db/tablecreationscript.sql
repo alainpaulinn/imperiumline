@@ -19,8 +19,8 @@ CREATE TABLE `positions` (
   `position` text NOT NULL,
   `company_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`company_id`) REFERENCES companies(`id`) ON DELETE CASCADE
-
+  FOREIGN KEY (`company_id`) REFERENCES companies(`id`) ON DELETE CASCADE,
+  UNIQUE KEY `position` (`position`,`company_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `positions` (`position`, `company_id`) VALUES
@@ -62,6 +62,7 @@ CREATE TABLE `admins` (
   `admin_id` int(11) NOT NULL,
   `done_by` int(11) NOT NULL,
   `registration_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `isPirmary` INT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`company_id`) REFERENCES companies(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`admin_id`) REFERENCES user(`id`) ON DELETE CASCADE,

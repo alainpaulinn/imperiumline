@@ -4959,6 +4959,26 @@ body {
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer .delegatedByDiv .listMember {
   flex: 1;
 }
+.c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .positionDiv {
+  display: flex;
+  padding: 0.5rem;
+  background-color: white;
+  border-radius: 15px;
+  align-items: center;
+}
+.c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .positionDiv .position {
+  flex: 1;
+}
+.c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivTemporary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 1.5rem;
+}
+.c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .spinner {
+  height: 100%;
+}
 .c-time-admin_panel .central-Options .adminPanelMainContent .adminFunctionOption {
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
   border-radius: 15px;
