@@ -802,6 +802,7 @@ io.on('connection', (socket) => {
       socket.emit('feedback', [createPositionResult])
       // console.log('executed')
     })
+
     // Search
     socket.on('manageUsersSearch', async (searchObject) => {
       console.log('manageUsersSearch', searchObject)
@@ -830,29 +831,63 @@ io.on('connection', (socket) => {
 
     // SUPER ADMIN Fetch actual data -- deleting -- updating -- searching
     // Fetch
-    socket.on('superManageCompanies', async companyId => {
-      let adminAccess = await checkCompanyAdminAccess(id, companyId);
-      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
-      socket.emit('superManageCompanies', await getCompanyPositions(companyId))
+    socket.on('superManageCompanies', async () => {
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+      socket.emit('superManageCompanies', await getAllCompanies())
     })
-    socket.on('superManageAdmins', async companyId => {
-      let adminAccess = await checkCompanyAdminAccess(id, companyId);
-      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
-      socket.emit('superManageAdmins', await getCompanyPositions(companyId))
+    socket.on('superManageAdmins', async () => {
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+      socket.emit('superManageAdmins', await getAllPrimaryAdmins())
     })
-    socket.on('superManageSuperAdmins', async companyId => {
-      let adminAccess = await checkCompanyAdminAccess(id, companyId);
-      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
-      socket.emit('superManageSuperAdmins', await getCompanyPositions(companyId))
+    socket.on('superManageSuperAdmins', async () => {
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+      socket.emit('superManageSuperAdmins', await await getAllSuperAdmins())
     })
     // Update
+    socket.on('superManageEditCompanies', async (updateObject) => {
+      let { companyId, companyName, description } = updateObject
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
 
+      let editCompaniesResult = await editCompany(companyId, companyName, description)
+      socket.emit('superManageCompanies', await getAllCompanies())
+      socket.emit('feedback', [editCompaniesResult])
+    })
     // Delete
+    socket.on('superManageDeleteCompanies', async (deleteObject) => {
+      let { companyId } = deleteObject
 
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+
+      let editCompaniesResult = await deleteCompany(companyId)
+      socket.emit('superManageCompanies', await getAllCompanies())
+      socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
+      socket.emit('feedback', [editCompaniesResult])
+    })
     // Create New
+    socket.on('superManageCreateCompany', async (createObject) => {
+      let { companyName, companyDescription } = createObject
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
 
+      let editCompaniesResult = await createCompany(companyName, companyDescription)
+      socket.emit('superManageCompanies', await getAllCompanies())
+      socket.emit('superAdminNumbers', await getNumbersArray('superAdmin'))
+      socket.emit('feedback', [editCompaniesResult])
+    })
     // Search
+    socket.on('superManageSearchCreateCompany', async (searchObject) => {
+      let { searchTerm } = searchObject
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
 
+      socket.emit('superManageSearchCreateCompany', await searchCompany(searchTerm))
+    })
+    // --------------------------------------------Helpers--------------------------------
     // helper events to update elements
     socket.on('preparePositions', async companyId => {
       let adminAccess = await checkCompanyAdminAccess(id, companyId);
@@ -1932,7 +1967,7 @@ function getAllCompanies() {
 }
 function getAllPrimaryAdmins() {
   return new Promise((resolve, reject) => {
-    db.query('SELECT `id`, `company_id`, `admin_id`, `done_by`, `registration_date`, `isPirmary` FROM `admins` WHERE `isPirmary = 1', [], async (err, rows) => {
+    db.query('SELECT `id`, `company_id`, `admin_id`, `done_by`, `registration_date`, `isPirmary` FROM `admins` WHERE `isPirmary` = 1', [], async (err, rows) => {
       if (err) reject(err)
       resolve(
         Promise.all(
@@ -1959,7 +1994,7 @@ function getAllSuperAdmins() {
             return {
               admin: await getUserInfo(superAdmin.admin_id),
               done_by: await getUserInfo(superAdmin.done_by),
-              done: admin.registration_date,
+              done: superAdmin.registration_date,
             }
           })
         )
@@ -1967,6 +2002,48 @@ function getAllSuperAdmins() {
     })
   })
 }
+// company operations
+function createCompany(companyName, companyDescription) {
+  return new Promise(function (resolve, reject) {
+    db.query('INSERT INTO `companies`(`comanyname`, `description`) VALUES (?,?)', [companyName, companyDescription], async (err, report) => {
+      if (err) resolve({ type: 'negative', message: 'An error occured while Creating the company.' });
+      resolve({ type: 'positive', message: 'Company was created successfully' })
+    })
+  })
+}
+function editCompany(companyId, companyName, companyDescription) {
+  console.log(companyId, companyName, companyDescription)
+  return new Promise(function (resolve, reject) {
+    db.query('UPDATE `companies` SET `comanyname`= ?,`description`= ? WHERE `id`= ?', [companyName, companyDescription, companyId], async (err, report) => {
+      console.log(err);
+      if (err) resolve({ type: 'negative', message: 'An error occured while updating the company.' });
+      resolve({ type: 'positive', message: 'company was edited successfully' })
+    })
+  })
+}
+function deleteCompany(companyId) {
+  console.log('superManageDeleteCompanies', companyId)
+  return new Promise(function (resolve, reject) {
+    db.query('DELETE FROM `companies` WHERE `id` = ?', [companyId], async (err, report) => {
+      if (err) resolve({ type: 'negative', message: 'An error occured while Deleting the company.' });
+      resolve({ type: 'positive', message: 'Company was deleted successfully' })
+    })
+  })
+}
+function searchCompany(searchTerm) {
+  console.log('superManageDeleteCompanies', searchTerm)
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `comanyname`, `description`, `logopath`, `coverpath` FROM `companies` WHERE `comanyname` LIKE ? OR `description` LIKE ?', ['%' + searchTerm + '%', '%' + searchTerm + '%'], async (err, rows) => {
+      if (err) reject(err)
+      resolve(
+        Promise.all(
+          rows.map(async company => await getCompanyInfo(company.id))
+        )
+      )
+    })
+  })
+}
+
 /*
 function checkAccess(req, res) {
   if (!req.session.userId || !req.session.email) return res.redirect('/connect')

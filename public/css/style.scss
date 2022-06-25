@@ -460,7 +460,7 @@ body {
       gap: 1rem;
       min-width: 300px;
 
-      input {
+      input, textarea {
         flex: 1;
         padding: 1rem;
         background-color: $sidepanel;
