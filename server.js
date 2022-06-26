@@ -844,7 +844,7 @@ io.on('connection', (socket) => {
     socket.on('superManageSuperAdmins', async () => {
       let adminAccess = await getSuperadminAccess(id);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
-      socket.emit('superManageSuperAdmins', await await getAllSuperAdmins())
+      socket.emit('superManageSuperAdmins', await getAllSuperAdmins())
     })
     // Update
     socket.on('superManageEditCompanies', async (updateObject) => {
@@ -868,17 +868,60 @@ io.on('connection', (socket) => {
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
       socket.emit('feedback', [editCompaniesResult])
     })
+    socket.on('revokePrimaryAdminAccess', async (deleteObject) => {
+      let { adminToDelete } = deleteObject
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+
+      let deletePrimaryAdminResult = await deletePrimaryAdmin(adminToDelete)
+      socket.emit('superManageAdmins', await getAllPrimaryAdmins())
+      socket.emit('superAdminNumbers', await getNumbersArray('superAdmin'))
+      socket.emit('feedback', [deletePrimaryAdminResult])
+    })
+    socket.on('revokeSuperAdminAccess', async (deleteObject) => {
+      let { superAdminId } = deleteObject
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+
+      let deleteSuperAdminResult = await deleteSuperAdmin(superAdminId)
+      socket.emit('superManageSuperAdmins', await getAllSuperAdmins())
+      socket.emit('superAdminNumbers', await getNumbersArray('superAdmin'))
+      socket.emit('feedback', [deleteSuperAdminResult])
+    })
     // Create New
     socket.on('superManageCreateCompany', async (createObject) => {
       let { companyName, companyDescription } = createObject
       let adminAccess = await getSuperadminAccess(id);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
 
-      let editCompaniesResult = await createCompany(companyName, companyDescription)
+      let createCompanyResult = await createCompany(companyName, companyDescription)
       socket.emit('superManageCompanies', await getAllCompanies())
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin'))
-      socket.emit('feedback', [editCompaniesResult])
+      socket.emit('feedback', [createCompanyResult])
     })
+    socket.on('superManageCreateAdmin', async (createObject) => {
+      console.log('superManageCreateAdmin', createObject)
+      let { companyId, adminName, adminSurname, adminEmail, adminPassword } = createObject
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+
+      let createPrimaryAdminResult = await createPrimaryAdmin(companyId, adminName, adminSurname, adminEmail, adminPassword, id)
+      socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
+      socket.emit('superManageAdmins', await getAllPrimaryAdmins())
+      socket.emit('feedback', [createPrimaryAdminResult])
+    })
+    socket.on('superManageCreateSuperAdmin', async (createObject) => {
+      console.log('superManageCreateSuperAdmin', createObject)
+      let { companyId, adminName, adminSurname, adminEmail, adminPassword } = createObject
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+
+      let createSuperAdminResult = await createSuperAdmin(companyId, adminName, adminSurname, adminEmail, adminPassword, id)
+      socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
+      socket.emit('superManageSuperAdmins', await getAllSuperAdmins())
+      socket.emit('feedback', [createSuperAdminResult])
+    })
+
     // Search
     socket.on('superManageSearchCreateCompany', async (searchObject) => {
       let { searchTerm } = searchObject
@@ -886,6 +929,20 @@ io.on('connection', (socket) => {
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
 
       socket.emit('superManageSearchCreateCompany', await searchCompany(searchTerm))
+    })
+    socket.on('superManageAdminsSearch', async (searchObject) => {
+      let { searchTerm } = searchObject
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+
+      socket.emit('superManageAdminsSearch', await searchPrimaryAdmins(searchTerm))
+    })
+    socket.on('superManageSuperAdminsSearch', async (searchObject) => {
+      let { searchTerm } = searchObject
+      let adminAccess = await getSuperadminAccess(id);
+      if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
+
+      socket.emit('superManageSuperAdminsSearch', await searchSuperAdmins(searchTerm))
     })
     // --------------------------------------------Helpers--------------------------------
     // helper events to update elements
@@ -1732,8 +1789,9 @@ function getNumbersArray(role, companyId) {
         { queryString: 'SELECT COUNT(*) AS count FROM `reactionoptions`', queryTerms: [], title: 'Reaction Options', resultVariable: 'count' },
         { queryString: 'SELECT COUNT(*) AS count FROM `calls`', queryTerms: [], title: 'Calls', resultVariable: 'count' },
         { queryString: 'SELECT COUNT(*) AS count FROM `events`', queryTerms: [], title: 'Events', resultVariable: 'count' },
+        { queryString: 'SELECT COUNT(*) AS count FROM `admins`', queryTerms: [], title: 'Company Admins', resultVariable: 'count' },
+        { queryString: 'SELECT COUNT(*) AS count FROM `admins` WHERE `isPirmary` = 1', queryTerms: [], title: 'Primary Admins', resultVariable: 'count' },
         { queryString: 'SELECT COUNT(*) AS count FROM `companies`', queryTerms: [], title: 'Companies', resultVariable: 'count' },
-        { queryString: 'SELECT COUNT(*) AS count FROM `admins`', queryTerms: [], title: 'Admins', resultVariable: 'count' },
         { queryString: 'SELECT COUNT(*) AS count FROM `superadmins`', queryTerms: [], title: 'Super Admins', resultVariable: 'count' }
       ]
       for (let i = 0; i < usersQueryObjectArray.length; i++) {
@@ -1929,6 +1987,7 @@ function deletePosition(positionId, companyId) {
 function createPosition(positionName, companyId) {
   return new Promise(function (resolve, reject) {
     db.query('INSERT INTO `positions`(`position`, `company_id`) VALUES (?,?)', [positionName, companyId], async (err, report) => {
+      if (!report) resolve({ type: 'negative', message: 'The position already exists.' });
       if (err) resolve({ type: 'negative', message: 'An error occured while Creating the position.' });
       resolve({ type: 'positive', message: 'Position was created successfully' })
     })
@@ -2044,21 +2103,136 @@ function searchCompany(searchTerm) {
   })
 }
 
-/*
-function checkAccess(req, res) {
-  if (!req.session.userId || !req.session.email) return res.redirect('/connect')
-  var email = req.session.email;
-  return db.query('SELECT id, name, surname FROM user WHERE email = ?', [email], async (err, user) => {
-    if (err) return console.log(err)
-    if (user.length < 1) return console.log("Cannot find the user with email " + email);
-    let access = {
-      NAdmin: await getAdminAccess(user[0].id),
-      SAdmin: await getSuperadminAccess(user[0].id),
-      name: user[0].name + ' ' + user[0].surname
-    } // SAdmin means super admin, NAdmin means normal admin
-    return access
+// -- create Admins frm super admins
+function createPrimaryAdmin(companyId, adminName, adminSurname, adminEmail, adminPassword, doneBy) {
+  return new Promise(async function (resolve, reject) {
+    console.log(companyId, adminName, adminSurname, adminEmail, adminPassword, doneBy)
+    if (companyId == '' || adminName.trim() == '' || adminSurname.trim() == '' || adminEmail.trim() == '' || adminPassword == '') resolve({ type: 'negative', message: 'Invalid data given Please check the input data' })
+    let existingPositionId = await getCompanyPositionId('Company Administrator', companyId)
+    if (existingPositionId == null) {
+      existingPositionId = await createPositionReturn('Company Administrator', companyId)
+    }
+    let createdUserid = await createUserReturn(adminName, adminSurname, adminEmail, existingPositionId, adminPassword, companyId)
+    resolve(await createPrimaryAdminReturn(companyId, createdUserid, doneBy, 1))
   })
-} */
+}
+
+function getCompanyPositionId(positionName, companyId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `position`, `company_id` FROM `positions` WHERE `position` = ? AND `company_id` = ?', [positionName, companyId], async (err, rows) => {
+      if (err) reject(err)
+      if (rows.length > 0) resolve(rows[0].id)
+      else (resolve(null))
+    })
+  })
+}
+function createPositionReturn(positionName, companyId) {
+  return new Promise(function (resolve, reject) {
+    db.query('INSERT INTO `positions`(`position`, `company_id`) VALUES (?,?)', [positionName, companyId], async (err, report) => {
+      if (err) reject(err);
+      resolve(report.insertId)
+    })
+  })
+}
+function createUserReturn(name, surname, email, positionId, password, companyId) {
+  return new Promise(async function (resolve, reject) {
+    if (name.trim() == '' || surname.trim() == '' || email.trim() == '' || positionId == '') return console.log("one or many properties are empty", name, surname, email, positionId, companyId)
+    if (!pwValidator.validate(password)) { return console.log('password is not conform', error) }
+    let hashed_salted_password = await bcrypt.hash(password, 10);
+    db.query('INSERT INTO `user`(`name`, `surname`, `email`, `password`, `company_id`, `positionId`) VALUES (?,?,?,?,?,?)',
+      [name.trim(), surname.trim(), email.trim(), hashed_salted_password, companyId, positionId], async (err, report) => {
+        if (err) return console.log('error while inserting the user', err);
+        resolve(report.insertId)
+      })
+  })
+}
+function createPrimaryAdminReturn(companyId, adminId, doneBy, isPirmary) {
+  return new Promise(async function (resolve, reject) {
+    db.query('INSERT INTO `admins`(`company_id`, `admin_id`, `done_by`, `isPirmary`) VALUES (?,?,?,?)',
+      [companyId, adminId, doneBy, isPirmary], async (err, report) => {
+        if (err) return console.log('error while inserting the Primary Admin', err);
+        resolve(report.insertId)
+      })
+  })
+}
+function createSuperAdminReturn(adminId, doneBy) {
+  return new Promise(async function (resolve, reject) {
+    db.query('INSERT INTO `superadmins`(`admin_id`, `done_by`) VALUES (?,?)',
+      [adminId, doneBy], async (err, report) => {
+        if (err) return console.log('error while inserting the Primary Admin', err);
+        else resolve('success')
+      })
+  })
+}
+function searchPrimaryAdmins(searchTerm) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT admins.company_id, admins.`admin_id`, admins.`done_by`, admins.`registration_date`, user.name, user.surname, user.email, user.id , companies.id, companies.comanyname, companies.description FROM `admins` INNER JOIN `user` ON `admins`.admin_id = `user`.`id` INNER JOIN `companies` ON `admins`.`company_id` = `companies`.`id` WHERE (`user`.`name` LIKE ? OR `user`.`surname` LIKE ? Or `user`.`email` LIKE ? OR `companies`.`id` LIKE ? or `companies`.`comanyname` LIKE ? OR `companies`.`description` LIKE ? ) AND `admins`.`isPirmary` = 1',
+      ['%' + searchTerm + '%', '%' + searchTerm + '%', '%' + searchTerm + '%', '%' + searchTerm + '%', '%' + searchTerm + '%', '%' + searchTerm + '%'], async (err, users) => {
+        if (err) console.log(err)
+        resolve(
+          Promise.all(
+            users.map(async user => {
+              return {
+                admin: await getUserInfo(user.admin_id),
+                done_by: await getUserInfo(user.done_by),
+                done: user.registration_date,
+                company: await getCompanyInfo(user.company_id)
+              }
+            })
+          )
+        )
+      })
+  })
+}
+function deletePrimaryAdmin(adminId) {
+  return new Promise(function (resolve, reject) {
+    db.query('DELETE FROM `user` WHERE `id` = ?', [adminId], async (err, report) => {
+      if (err) resolve({ type: 'negative', message: 'An error occured while Deleting the Primary Admin access, and the user account.' });
+      resolve({ type: 'positive', message: 'Primary Admin access revoked successfully and the user was deleted successfully' })
+    })
+  })
+}
+function deleteSuperAdmin(superAdminId) {
+  return new Promise(function (resolve, reject) {
+    db.query('DELETE FROM `user` WHERE `id` = ?', [superAdminId], async (err, report) => {
+      if (err) resolve({ type: 'negative', message: 'An error occured while Deleting the Primary Admin access, and the user account.' });
+      resolve({ type: 'positive', message: 'Primary Admin access revoked successfully and the user was deleted successfully' })
+    })
+  })
+}
+
+function createSuperAdmin(companyId, adminName, adminSurname, adminEmail, adminPassword, doneBy) {
+  return new Promise(async function (resolve, reject) {
+    console.log(companyId, adminName, adminSurname, adminEmail, adminPassword, doneBy)
+    if (companyId == '' || adminName.trim() == '' || adminSurname.trim() == '' || adminEmail.trim() == '' || adminPassword == '') resolve({ type: 'negative', message: 'Invalid data given Please check the input data' })
+    let existingPositionId = await getCompanyPositionId('Company Administrator', companyId)
+    if (existingPositionId == null) {
+      existingPositionId = await createPositionReturn('Company Administrator', companyId)
+    }
+    let createdUserid = await createUserReturn(adminName, adminSurname, adminEmail, existingPositionId, adminPassword, companyId)
+    resolve(await createSuperAdminReturn(createdUserid, doneBy))
+  })
+}
+
+function searchSuperAdmins(searchTerm) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT  superadmins.`admin_id`, superadmins.`done_by`, superadmins.`registration_date`, user.name, user.surname, user.email, user.id FROM `superadmins` INNER JOIN `user` ON `superadmins`.admin_id = `user`.`id` WHERE (`user`.`name` LIKE ? OR `user`.`surname` LIKE ? Or `user`.`email` LIKE ?)',
+      ['%' + searchTerm + '%', '%' + searchTerm + '%', '%' + searchTerm + '%'], async (err, users) => {
+        if (err) reject(err)
+        resolve(
+          Promise.all(
+            users.map(async user => {
+              return {
+                admin: await getUserInfo(user.admin_id),
+                done_by: await getUserInfo(user.done_by),
+                done: user.registration_date
+              }
+            })
+          )
+        )
+      })
+  })
+}
 
 
 server.listen(port, () => {
