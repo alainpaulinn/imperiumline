@@ -460,7 +460,8 @@ body {
       gap: 1rem;
       min-width: 300px;
 
-      input, textarea {
+      input,
+      textarea {
         flex: 1;
         padding: 1rem;
         background-color: $sidepanel;
@@ -476,7 +477,8 @@ body {
         border-radius: $borderRadius;
         border: none;
       }
-      .editBlockButtons{
+
+      .editBlockButtons {
         padding: 1rem;
         cursor: pointer;
       }
@@ -500,7 +502,7 @@ body {
       box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
       cursor: pointer;
     }
-    
+
   }
 
 }
@@ -3614,23 +3616,7 @@ body {
   align-items: center;
 
 
-  .memberProfilePicture {
-    border: 1px solid $notification;
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-    border-radius: $borderRadius;
-    text-transform: uppercase;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    background-color: #003061;
-    box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-    transition: all 0.4s;
-    flex-shrink: 0;
-    object-fit: cover;
-  }
+
 
   .memberNameRole {
     display: flex;
@@ -5956,15 +5942,17 @@ body {
             // height: unset;
           }
 
-          .adminContainer{
+          .adminContainer {
             display: flex;
             flex-direction: column;
             background-color: white;
             border-radius: $borderRadius;
-            .delegatedByDiv{
+
+            .delegatedByDiv {
               display: flex;
               gap: .5rem;
-              .delegatedByLabel{
+
+              .delegatedByLabel {
                 display: flex;
                 align-items: center;
                 margin: 1rem;
@@ -5973,34 +5961,40 @@ body {
                 border-radius: $borderRadius;
                 color: white;
               }
-              .listMember{
+
+              .listMember {
                 flex: 1;
               }
             }
-            .userCompanyDiv{
+
+            .userCompanyDiv {
               display: flex;
               gap: .5rem;
             }
           }
-          .positionDiv{
+
+          .positionDiv {
             display: flex;
             padding: 0.5rem;
             background-color: white;
             border-radius: $borderRadius;
             align-items: center;
-            .position{
+
+            .position {
               flex: 1
             }
           }
         }
-        .managementDivTemporary{
+
+        .managementDivTemporary {
           display: flex;
           align-items: center;
           justify-content: center;
           height: 100%;
           font-size: 1.5rem;
         }
-        .spinner{
+
+        .spinner {
           height: 100%;
         }
       }
@@ -6012,4 +6006,23 @@ body {
       }
     }
   }
+}
+
+.memberProfilePicture {
+  border: 1px solid $notification;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: $borderRadius;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  background-color: #003061;
+  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  transition: all 0.4s;
+  flex-shrink: 0;
+  object-fit: cover;
 }

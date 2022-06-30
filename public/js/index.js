@@ -11,6 +11,9 @@ let friends = [];
 let chats = [];
 let ITriggeredChatCreation = false;
 
+let deletedUser = { userID: 0, name: 'Deleted', surname: 'User', role: 'Deleted User', profilePicture: null, status: 'offline' }
+// to be used in ca se we have a deleted user
+
 let openChatInfo;
 let chatEventListenings = [];
 let chatContainer = document.querySelector("#place_for_chats")
@@ -1040,8 +1043,10 @@ let functionalityOptionsArray = [
                 let emailInput = createElement({ elementType: 'input', id: 'email' + 'chooseNew', placeHolder: 'email' })
                 let emailBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [emailLabel, emailInput] })
 
-                let roleBlock = createElement({ elementType: 'div', class: 'editBlock', 
-                textContent: 'The Position will automatically be set to the Company Administrator.' })
+                let roleBlock = createElement({
+                  elementType: 'div', class: 'editBlock',
+                  textContent: 'The Position will automatically be set to the Company Administrator.'
+                })
 
                 let passwordLabel = createElement({ elementType: 'label', for: 'password' + 'chooseNew', textContent: 'Password' })
                 let passwordInput = createElement({ elementType: 'input', id: 'password' + 'chooseNew', placeHolder: 'Password' })
@@ -1089,13 +1094,13 @@ let functionalityOptionsArray = [
             }]
             let contentElements = SuperAdmin_createSuperAdminsMgtBodyElement(superAdmins)
             headerSearchDiv.addEventListener('input', () => {
-              socket.emit('superManageSuperAdminsSearch', { searchTerm: headerSearchDiv.value});
+              socket.emit('superManageSuperAdminsSearch', { searchTerm: headerSearchDiv.value });
               managementDivBodyStored.textContent = ''
               managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
             })
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
-          
+
           })
           // -- companies search
           socket.on('superManageSearchCreateCompany', companies => {
@@ -1770,17 +1775,15 @@ function showWorkShiftsSection() {
 }
 
 
-
-
 socket.on('displayChat', function (chat) {
   let chatAlreadyExists = document.getElementById(chat.roomID + 'msg')
   if (chatAlreadyExists) {
-    chatAlreadyExists.innerHTML = buildChat(chat, true)
+    chatAlreadyExists.append(showOnChatList(chat))
     //console.log('existing chat')
     //chatAlreadyExists.click();
   }
   else {
-    chatContainer.innerHTML += buildChat(chat, false)
+    chatContainer.append(showOnChatList(chat))
     //console.log('new chat')
   }
   console.log(chat)
@@ -1998,13 +2001,17 @@ function buildChat(chat, exists) {
       break;
   }
 
-  let newChatTemplate = `<li class='c-chats__list' id='${roomID}msg'><button data-id='${roomID
-    }' class='c-chats__link' href='' title=''><div class='c-chats__image-container'>${avatar
-    }</div><div class='c-chats__info'><p class='c-chats__title'>${roomName
-    }</p><span>${chatDate.toString('YYYY-MM-dd').substring(0, 24)
-    }</span><p class='c-chats__excerpt'>${writenBy + lastmessage
-    //.substring(0,25)+'...'
-    }</p></div></button></li>`;
+  let newChatTemplate = `
+  <li class='c-chats__list' id='${roomID}msg'>
+    <button data-id='${roomID}' class='c-chats__link' href='' title=''>
+      <div class='c-chats__image-container'>${avatar}</div>
+      <div class='c-chats__info'>
+        <p class='c-chats__title'>${roomName}</p>
+        <span>${chatDate.toString('YYYY-MM-dd').substring(0, 24)}</span>
+        <p class='c-chats__excerpt'>${writenBy + lastmessage}</p>
+      </div>
+    </button>
+  </li>`;
 
   let existChatTemplate = `<button data-id='${roomID
     }' class='c-chats__link' href='' title=''><div class='c-chats__image-container'>${avatar
@@ -2021,6 +2028,49 @@ function buildChat(chat, exists) {
       return newChatTemplate;
   }
 }
+
+function showOnChatList(chat) {
+  let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = chat;
+
+  let writenBy = '';
+  let imageContainer;
+  let chatTitleText = ''
+  switch (type) {
+    case 0:
+      writenBy = "";
+      let userToDisplay = users.filter(user => user.userID != myID)
+      if (userToDisplay.length < 1) { // in case we have only one user (viewer)
+        chatTitleText = 'Deleted User'
+        imageContainer = makeProfilePicture(deletedUser)
+      } else {
+        chatTitleText = userToDisplay[0].name + ' ' + userToDisplay[0].surname
+        imageContainer = makeProfilePicture(userToDisplay[0])
+      }
+      break;
+    case 1:
+      if (myID == lastmessage.from.userID) { writenBy = "Me: "; }
+      else { writenBy = lastmessage.from.name + ": "; }
+      if (profilePicture == null) { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
+      else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
+
+      if(roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
+      else chatTitleText = roomName;
+
+      break;
+    default:
+      break;
+  }
+
+  let chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: chatTitleText})
+  let chatDate = createElement({ elementType: 'span', textContent: lastmessage.timeStamp.toString('YYYY-MM-dd').substring(0, 24) })
+  let chatMessage = createElement({ elementType: 'p', class: 'c-chats__excerpt', textContent: writenBy + lastmessage.message })
+  let chatInformation = createElement({ elementType: 'div', class: 'c-chats__info', childrenArray: [chatTitle, chatDate, chatMessage] })
+
+  let chatListButton = createElement({ elementType: 'button', class: 'c-chats__link', childrenArray: [imageContainer, chatInformation] })
+  let chatListItem = createElement({ elementType: 'li', class: 'c-chats__list', childrenArray: [chatListButton] })
+  return chatListItem;
+}
+
 function initialiseChatEventListeners() {
   let chatArray = document.querySelectorAll('.c-chats__list')
   chatArray.forEach(chat => {
@@ -2037,6 +2087,14 @@ function initialiseChatEventListeners() {
       });
     }
   })
+}
+
+function makeProfilePicture(userInfo) {
+  let { userID, name, surname, role, profilePicture, status } = userInfo
+  let memberProfilePicture;
+  if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+  else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture })
+  return memberProfilePicture;
 }
 
 
@@ -4523,9 +4581,7 @@ function userForAttendanceList(userInfo, actions) {
   let { userID, name, surname, role, profilePicture, status } = userInfo
   // actions is an array of buttons where on item is {element, functionCall}
   // container is presentMembersDiv
-  let memberProfilePicture;
-  if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-  else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture })
+  let memberProfilePicture = makeProfilePicture(userInfo)
 
   let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: name + ' ' + surname })
   let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: role })

@@ -358,7 +358,8 @@ body {
   gap: 1rem;
   min-width: 300px;
 }
-.inScreenPanel .popupBody .editBlock input {
+.inScreenPanel .popupBody .editBlock input,
+.inScreenPanel .popupBody .editBlock textarea {
   flex: 1;
   padding: 1rem;
   background-color: rgb(235, 240, 246);
@@ -2954,24 +2955,6 @@ body {
   padding: 0.5rem;
   align-items: center;
 }
-.listMember .memberProfilePicture {
-  border: 1px solid rgb(0, 48, 97);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  background-color: #003061;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  transition: all 0.4s;
-  flex-shrink: 0;
-  -o-object-fit: cover;
-     object-fit: cover;
-}
 .listMember .memberNameRole {
   display: flex;
   flex-direction: column;
@@ -4959,6 +4942,10 @@ body {
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer .delegatedByDiv .listMember {
   flex: 1;
 }
+.c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer .userCompanyDiv {
+  display: flex;
+  gap: 0.5rem;
+}
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .positionDiv {
   display: flex;
   padding: 0.5rem;
@@ -4982,4 +4969,24 @@ body {
 .c-time-admin_panel .central-Options .adminPanelMainContent .adminFunctionOption {
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
   border-radius: 15px;
+}
+
+.memberProfilePicture {
+  border: 1px solid rgb(0, 48, 97);
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 15px;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  background-color: #003061;
+  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  transition: all 0.4s;
+  flex-shrink: 0;
+  -o-object-fit: cover;
+     object-fit: cover;
 }/*# sourceMappingURL=style.css.map */
