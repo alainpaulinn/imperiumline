@@ -26,6 +26,7 @@ exports.register = (req, res) => {
         if (err) {
             console.log(err);
         }
+        
         //if user already exists
         if (result.length > 0) {
             return res.render('signUp', {
