@@ -175,7 +175,7 @@ io.on('connection', (socket) => {
     })
     //-----------------------------------
     socket.on('requestChatContent', async (chatIdentification) => {
-      socket.emit('chatContent', await getChatInfo(chatIdentification, id))
+      socket.emit('chatContent', await getChatFullInfo(chatIdentification, id))
     });
     socket.on('message', async (message) => {
       /* message = { toRoom: selectedChatId, message: messageContent.innerText.trim(), timeStamp: new Date().toISOString(), taggedMessages: taggedMessages }; */
@@ -267,7 +267,7 @@ io.on('connection', (socket) => {
             case true:
               socket.emit('displayChat', await getRoomInfo(commonEntry.id, id))
               socket.emit('clickOnChat', commonEntry.id)
-              //socket.emit('chatContent', await getChatInfo(commonEntry.id, id))  
+              //socket.emit('chatContent', await getChatFullInfo(commonEntry.id, id))  
               break;
             case false:
               /////////CREATE A NEW CHAT
@@ -414,7 +414,7 @@ io.on('connection', (socket) => {
           if (group === false && fromChat === false) { let oneToCall = await getUserInfo(callTo); initiateCall([oneToCall, await getUserInfo(id)]); return; }
           switch (chatPresentation) {
             case 0:  //call from Chat
-              let groupMembersToCall = await getParticipantArray(callTo)
+              let groupMembersToCall = await getRoomParticipantArray(callTo)
               initiateCall(groupMembersToCall)
               break;
             case 1: //call from callogs
@@ -1433,103 +1433,13 @@ function getReactors(messageID, reactionID) {
         let _reaction = messageReactions.map(async messageReaction => {
           return await getUserInfo(messageReaction.userID)
         })
-
         resolve(await Promise.all(_reaction))
       });
   })
 }
-
-//console.log("hello")
-//getMessageReactors(17).then(console.log)
-// function getRoomInfo(roomID, viewerID) {
-//   return new Promise(function (resolve, reject) {
-//     db.query('SELECT `chatID`, `name`, `type`, `profilePicture`, `creationDate` FROM `room` WHERE `chatID` = ?', [roomID], async (err, room) => {
-//       if (err) return console.log(err)
-//       let chatID = null;
-//       let name = null;
-//       let roomProfilePicture = null;
-//       let type = null;
-//       let creationDate = null;
-//       room.forEach(roomInfo => {
-//         chatID = roomInfo.chatID;
-//         name = roomInfo.name;
-//         roomProfilePicture = roomInfo.profilePicture;
-//         type = roomInfo.type;
-//         creationDate = roomInfo.creationDate;
-//       })
-
-//       let usersArray = [];
-//       let lastMessage;
-//       let timestamp;
-//       let fromID;
-//       let fromName;
-//       let fromSurname;
-//       let myID;
-//       let fromUserPicture;
-//       let avatar = roomProfilePicture;
-//       db.query('SELECT `id`, `userID`, `roomID` FROM `participants` WHERE `roomID` = ?', [roomID], async (err, participants) => {
-//         if (err) return console.log(err)
-//         for (let i = 0; i < participants.length; i++) {
-//           const participant = participants[i];
-//           usersArray.push(await getUserInfo(participant.userID));
-//         }
-//         db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `roomID` = ? ORDER BY timeStamp DESC LIMIT 1', [roomID], async (err, messages) => {
-//           if (err) return console.log(err)
-//           //set default if there is no message (new fake message)
-//           //console.log('messagessssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', roomID, viewerID, messages)
-
-//           if (messages.length < 1) {
-//             lastMessage = `<em>New Chat</em>`;
-//             timestamp = creationDate;
-//             fromID = viewerID;
-//           }
-//           else {
-//             messages.forEach(message => {
-//               lastMessage = message.message;
-//               timestamp = message.timeStamp;
-//               fromID = message.userID;
-//             })
-//           }
-
-//           switch (type) {
-//             case 0:
-//               //console.log("is a private chat");
-//               var otherUser = usersArray.filter(user => { return user.userID !== viewerID })[0];
-//               avatar = otherUser.profilePicture;
-//               name = otherUser.name + ' ' + otherUser.surname;
-//               if (avatar == null) avatar = otherUser.name.charAt(0).toUpperCase() + otherUser.surname.charAt(0).toUpperCase();
-//               break;
-//             case 1:
-//               //console.log("is a group chat");
-//               avatar = roomProfilePicture;
-//               if (name == null) name = usersArray.map(user => { return "Group: " + user.name + ' ' + user.surname }).join(', ');
-//               if (avatar == null) avatar = '/private/profiles/group.jpeg';
-//               break;
-
-//             default:
-//               break;
-//           }
-//           resolve({
-//             roomID: roomID,
-//             users: await Promise.all(usersArray),
-//             roomName: name,
-//             profilePicture: avatar,
-//             type: type,
-//             lastmessage: lastMessage,
-//             from: await getUserInfo(fromID),
-//             myID: viewerID,
-//             timestamp: timestamp,
-//             unreadCount: 0, //tobe done later
-//             isNew: false
-//           })
-//         });
-//       });
-//     });
-//   })
-// }
 function getRoomInfo(roomID, viewerID) {
   return new Promise(async function (resolve, reject) {
-    let participants = await getParticipantArray(roomID)
+    let participants = await getRoomParticipantArray(roomID)
     let roomBasicInfo = await getChatRoomBasicInfo(roomID)
     let { chatID, name, type, profilePicture, creationDate, lastActionDate } = roomBasicInfo
 
@@ -1546,7 +1456,7 @@ function getRoomInfo(roomID, viewerID) {
   })
 }
 
-function getParticipantArray(roomIdentification) {
+function getRoomParticipantArray(roomIdentification) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `userID`, `roomID` FROM `participants` WHERE `roomID` = ?', [roomIdentification], async (err, participants) => {
       if (err) return console.log(err)
@@ -1630,64 +1540,28 @@ function getUserRole(roleId) {
     });
   })
 }
-function getChatInfo(chatIdentification, viewerID) {
+async function getChatFullInfo(roomId, viewerID) {
+  let roomInfo = await getRoomInfo(roomId, viewerID)
+  let messagesArray = await getRoomMessages(roomId)
+  return { roomInfo, messagesArray }
+}
+
+function getRoomMessages(roomId) {
   return new Promise(function (resolve, reject) {
-    db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `roomID` = ? ORDER BY timeStamp DESC', [chatIdentification], async (err, messages) => {
+    db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `roomID` = ? ORDER BY timeStamp DESC', [roomId], async (err, messages) => {
       if (err) return console.log(err)
-      //messagesArray = [];
-
-      let messagesArray = messages.map(async (oneMessage) => {
-        let { id, message, roomID, userID, timeStamp } = oneMessage;
-        let userInfo = await getUserInfo(userID)
-        let reactions = {
-          //Promise.all(await getMessageReactions(id))
-          chat: roomID,
-          message: id,
-          details: await getMessageReactions(id)
-        }
-        let tagContent = await getMessageTags(id)
-        console.log(reactions)
-        //let reactions = Promise.all(await getMessageReactions(id))
-        //messagesArray.push({id, message, roomID, userID, timeStamp, userInfo})
-
-        return { id, message, roomID, userID, timeStamp, userInfo, reactions, tagContent }
-      })
-
-
-      db.query('SELECT `chatID`, `name`, `type`, `profilePicture` FROM `room` WHERE `chatID` = ?', [chatIdentification], async (err, room) => {
-        if (err) return console.log(err)
-        let _usersArray = await getParticipantArray(chatIdentification);
-        let _roomName;
-        let _profilePicture;
-        switch (room[0].type) {
-          case 0:
-            var otherUser = _usersArray.filter(user => { return user.userID != viewerID })[0];
-            _roomName = otherUser.name + ' ' + otherUser.surname;
-            _profilePicture = otherUser.profilePicture
-
-            break;
-          case 1:
-            if (room[0].name == null) {
-              _roomName = _usersArray.map(user => { return user.name }).join(", ")
-            } else {
-              _roomName = room[0].name
-            }
-            break;
-
-          default:
-            break;
-        }
-        resolve({
-          roomID: chatIdentification,
-          roomName: _roomName,
-          type: room[0].type,
-          profilePicture: room[0].profilePicture,
-          myID: viewerID,
-          messagesArray: await Promise.all(messagesArray),
-          usersArray: _usersArray
-        })
-      })
-    });
+      resolve(
+        Promise.all(
+          messages.map(async (oneMessage) => {
+            let { id, message, roomID, userID, timeStamp } = oneMessage;
+            let userInfo = await getUserInfo(userID)
+            let reactions = { chat: roomID, message: id, details: await getMessageReactions(id) }
+            let tagContent = await getMessageTags(id)
+            return { id, message, roomID, userID, timeStamp, userInfo, reactions, tagContent }
+          })
+        )
+      )
+    })
   })
 }
 

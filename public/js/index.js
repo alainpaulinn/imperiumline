@@ -1773,27 +1773,13 @@ function showWorkShiftsSection() {
 
   document_title.innerText = "work shifts";
 }
-
-
 socket.on('displayChat', function (chat) {
-  let chatAlreadyExists = document.getElementById(chat.roomID + 'msg')
-  if (chatAlreadyExists) {
-    chatAlreadyExists.append(showOnChatList(chat))
-    //console.log('existing chat')
-    //chatAlreadyExists.click();
-  }
-  else {
-    chatContainer.append(showOnChatList(chat))
-    //console.log('new chat')
-  }
+  chatContainer.append(showOnChatList(chat))
   console.log(chat)
-  initialiseChatEventListeners()
 });
-
 socket.on('displayNewCreatedChat', function (chat) {
   chatContainer.innerHTML = buildChat(chat, false) + chatContainer.innerHTML
-  console.log('new chat')
-  initialiseChatEventListeners()
+  console.log('new chat', chat)
 });
 socket.on('clickOnChat', function (chatToClick) {
   let messageElement = document.getElementById(chatToClick + "msg")
@@ -1804,9 +1790,8 @@ socket.on('clickOnChat', function (chatToClick) {
 socket.on('chatContent', function (chatContent) {
   openChatInfo = chatContent;
   console.log("from server: ", chatContent)
-  openChat(openChatInfo)
+  displayChatOnChatArea(openChatInfo)
 });
-
 socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
   //updateChatList
   /*
@@ -1865,14 +1850,12 @@ socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
     console.log('new chat')
   }
   displayMessageOnChat(expectedUser, insertedMessage);
-  initialiseChatEventListeners()
+  // initialiseChatEventListeners()
   console.log(chatContainer.children)
 });
-
 socket.on('updateReaction', function (receivedReactionsInfo) {
-  console.log("receivedReactionsInfo", receivedReactionsInfo)
-  /*
-  {
+  console.log("receivedReactionsInfo", receivedReactionsInfo);
+  /*  {
       "chat": "9",
       message: reactionIdentifiers.messageId,
       "details": [
@@ -1914,7 +1897,6 @@ socket.on('updateReaction', function (receivedReactionsInfo) {
     reactionsContainer.innerHTML = buildReaction(receivedReactionsInfo)
   }
 })
-
 function buildReaction(receivedReactionsInfo) {
   let reactionsContainerContent = ``;
   receivedReactionsInfo.details.forEach(entry => {
@@ -2053,7 +2035,7 @@ function showOnChatList(chat) {
       if (profilePicture == null) { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
       else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
 
-      if(roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
+      if (roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
       else chatTitleText = roomName;
 
       break;
@@ -2061,32 +2043,24 @@ function showOnChatList(chat) {
       break;
   }
 
-  let chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: chatTitleText})
+  let chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: chatTitleText })
   let chatDate = createElement({ elementType: 'span', textContent: lastmessage.timeStamp.toString('YYYY-MM-dd').substring(0, 24) })
   let chatMessage = createElement({ elementType: 'p', class: 'c-chats__excerpt', textContent: writenBy + lastmessage.message })
   let chatInformation = createElement({ elementType: 'div', class: 'c-chats__info', childrenArray: [chatTitle, chatDate, chatMessage] })
 
   let chatListButton = createElement({ elementType: 'button', class: 'c-chats__link', childrenArray: [imageContainer, chatInformation] })
   let chatListItem = createElement({ elementType: 'li', class: 'c-chats__list', childrenArray: [chatListButton] })
-  return chatListItem;
-}
 
-function initialiseChatEventListeners() {
-  let chatArray = document.querySelectorAll('.c-chats__list')
-  chatArray.forEach(chat => {
-    if (chatEventListenings.includes(chat.id)) socket.emit('requestChat', "already added")
-    else {
-      chat.addEventListener('click', function () {
-        document.querySelector(".c-openchat").innerHTML = `<div class="spinner"> <div></div>  <div></div>  <div></div>  </div>`
-        socket.emit('requestChatContent', chat.id.slice(0, -3))
-        console.log(chat.id.slice(0, -3))
-        chatEventListenings.push(chat.id)
-        document.querySelectorAll('.c-chats__list').forEach(selection => { selection.classList.remove("openedChat") })
-        this.classList.add("openedChat");
-        selectedChatId = chat.id.slice(0, -3);
-      });
-    }
+  chatListItem.addEventListener('click', () => {
+    document.querySelector(".c-openchat").innerHTML = `<div class="spinner"> <div></div>  <div></div>  <div></div>  </div>`
+    socket.emit('requestChatContent', roomID)
+    chatEventListenings.push(roomID)
+    document.querySelectorAll('.c-chats__list').forEach(selection => { selection.classList.remove("openedChat") })
+    this.classList.add("openedChat");
+    selectedChatId = roomID;
+
   })
+  return chatListItem;
 }
 
 function makeProfilePicture(userInfo) {
@@ -2110,8 +2084,10 @@ function setFocus() {
   document.getElementById('w-input-text').focus();
 }
 
-function openChat(openChatInfo) {
-  let { roomID, roomName, type, profilePicture, myID, messagesArray, usersArray } = openChatInfo;
+function displayChatOnChatArea(openChatInfo) {
+  let { roomInfo, messagesArray } = openChatInfo
+  let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = roomInfo
+  // let { roomID, roomName, type, profilePicture, myID, messagesArray, usersArray } = openChatInfo;
 
   /*one Message
   {
@@ -2136,52 +2112,87 @@ function openChat(openChatInfo) {
       1: {id: 40, message: 'e e', roomID: 7, userID: 1, timeStamp: '2022-01-08T23:51:10.000Z', …}
 }*/
 
+  // let chatTitle;
+  // let avatar;
 
-  let chatTitle;
-  let avatar;
+  // if (messagesArray.length > 0) lastMessageInSelectedChat = messagesArray[0]
+  // else lastMessageInSelectedChat = null
 
-  if (messagesArray.length > 0) lastMessageInSelectedChat = messagesArray[0]
-  else lastMessageInSelectedChat = null
+  // let callOptions = ``
+  // switch (type) {
+  //   case 1:
 
-  let callOptions = ``
+  //     if (profilePicture === null) { avatar = `<img class="c-openchat__box__pp" src='/private/profiles/group.jpeg' alt=''></img>` }
+  //     else avatar = `<img class="c-openchat__box__pp" src='${profilePicture}' alt=''></img>`;
+
+  //     // groupId, audiocall = true, videoCall = false, is a group = true;
+  //     callOptions = `
+  //       <button onclick="" title="Set/Change this Conversation's name"><i class='bx bxs-edit-alt'></i></button>
+  //       <button onclick="" title="Add/Remove people from this Conversation"><i class='bx bxs-user-plus' ></i></button>
+  //       <button onclick="call(${roomID}, true, false, false, true, null)" title="Initiate a call"><i class="bx bxs-phone"></i></button>
+  //       <button ><i class='bx bx-chevron-right' title="More"></i></button>
+  //     `
+  //     break;
+  //   case 0:
+  //     var otherUser = usersArray.filter(user => {
+  //       return user.userID !== myID
+  //     })
+
+  //     if (otherUser.length > 0) {
+  //       chatTitle = otherUser[0].name + ' ' + otherUser[0].surname;
+  //       callOptions = `
+  //       <button onclick="call(${roomID}, true, false, false, true, null)" title="Initiate audio call"><i class="bx bxs-phone"></i></button>
+  //       <button onclick="call(${roomID}, true, true, false, true, null)" title="Initiate video call"><i class='bx bxs-video'></i></button>
+  //       <button ><i class='bx bx-chevron-right' title="More"></i></button>
+  //       `
+  //     } else {
+  //       chatTitle = "<em>User Quit or his account was deleted</em>"
+  //       callOptions = `<button ><i class='bx bx-chevron-right' ></i></button>`
+  //     }
+
+  //     if (otherUser[0].profilePicture === null) { avatar = `<div class="c-openchat__box__pp">${otherUser[0].name.charAt(0) + otherUser[0].surname.charAt(0)}</div>`; }
+  //     else avatar = `<img class="c-openchat__box__pp" src='${otherUser[0].profilePicture}' alt=''></img>`;
+
+  //     callType = false
+  //     break;
+  //   default:
+
+  // }
+
+  let imageContainer;
+  let chatTitleText = ''
+  let openchat__box__header;
+  let chatActions = []
   switch (type) {
-    case 1:
-
-      if (profilePicture === null) { avatar = `<img class="c-openchat__box__pp" src='/private/profiles/group.jpeg' alt=''></img>` }
-      else avatar = `<img class="c-openchat__box__pp" src='${profilePicture}' alt=''></img>`;
-
-      // groupId, audiocall = true, videoCall = false, is a group = true;
-      callOptions = `
-        <button onclick="" title="Set/Change this Conversation's name"><i class='bx bxs-edit-alt'></i></button>
-        <button onclick="" title="Add/Remove people from this Conversation"><i class='bx bxs-user-plus' ></i></button>
-        <button onclick="call(${roomID}, true, false, false, true, null)" title="Initiate a call"><i class="bx bxs-phone"></i></button>
-        <button ><i class='bx bx-chevron-right' title="More"></i></button>
-      `
-      break;
     case 0:
-      var otherUser = usersArray.filter(user => {
-        return user.userID !== myID
-      })
-
-      if (otherUser.length > 0) {
-        chatTitle = otherUser[0].name + ' ' + otherUser[0].surname;
-        callOptions = `
-        <button onclick="call(${roomID}, true, false, false, true, null)" title="Initiate audio call"><i class="bx bxs-phone"></i></button>
-        <button onclick="call(${roomID}, true, true, false, true, null)" title="Initiate video call"><i class='bx bxs-video'></i></button>
-        <button ><i class='bx bx-chevron-right' title="More"></i></button>
-        `
+      let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: '', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: '', class: 'bx bxs-video' })] })
+      let moreButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: '', class: 'bx bx-chevron-right' })] })
+      let userToDisplay = users.filter(user => user.userID != myID)
+      chatActions = [
+        { element: callButton, functionCall: () => { console.log('callButton', userToDisplay[0].userID) } },
+        { element: videoButton, functionCall: () => { console.log('videoButton', userToDisplay[0].userID) } },
+        { element: moreButton, functionCall: () => { console.log('moreButton', userToDisplay[0].userID) } }
+      ]
+      if (userToDisplay.length < 1) { // in case we have only one user (viewer)
+        chatTitleText = 'Deleted User'
+        imageContainer = userForAttendanceList(deletedUser, [])
       } else {
-        chatTitle = "<em>User Quit or his account was deleted</em>"
-        callOptions = `<button ><i class='bx bx-chevron-right' ></i></button>`
+        chatTitleText = userToDisplay[0].name + ' ' + userToDisplay[0].surname
+        imageContainer = makeProfilePicture(userToDisplay[0])
+        openchat__box__header = userForAttendanceList(userToDisplay[0], chatActions)
       }
+      break;
+    case 1:
+      if (profilePicture == null) { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
+      else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
 
-      if (otherUser[0].profilePicture === null) { avatar = `<div class="c-openchat__box__pp">${otherUser[0].name.charAt(0) + otherUser[0].surname.charAt(0)}</div>`; }
-      else avatar = `<img class="c-openchat__box__pp" src='${otherUser[0].profilePicture}' alt=''></img>`;
+      if (roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
+      else chatTitleText = roomName;
 
-      callType = false
       break;
     default:
-
+      break;
   }
 
   let chatBoxTeamplate = `
@@ -2195,12 +2206,9 @@ function openChat(openChatInfo) {
       <div class="universalCallButtons">
         ${callOptions}
       </div>
-
     </div>
     <div class='c-openchat__box__info'>
       
-      
-
     </div>
     <div class="typingBox">
       <button class='chat-options' href='' title=''><i class='bx bxs-smile' ></i></i></button>
@@ -2213,8 +2221,6 @@ function openChat(openChatInfo) {
       </div>
       <button id='sendButton' class='chat-options' href='' title=''><i class='bx bxs-send' ></i></button>
     </div>
-  
-  
   </div>`;
   //insert the elements
   document.querySelector(".c-openchat").innerHTML = chatBoxTeamplate;
@@ -2222,17 +2228,28 @@ function openChat(openChatInfo) {
   let messagescontainer = document.querySelector('.c-openchat__box__info');
   messagescontainer.style.scrollBehavior = "auto"
 
+  let openchat__box__info = createElement({ elementType: 'div', class: 'openchat__box__info' })
+  let emojiButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-smile' })] })
+  let attachButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })] })
+  let inputText = createElement({ elementType: 'div', class: 'w-input-text', contenteditable: true })
+  let placeholder = createElement({ elementType: 'div', class: 'w-placeholder' })
+  let input_text_group = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, placeholder] })
+  let input_container = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [input_text_group] })
+
+  let sendMessageButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
+
+  let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [emojiButton, attachButton, input_container, sendMessageButton] })
+  let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox] })
+
   let receivedGroup = '';
   let sentGroup = '';
 
   let previousMessageDate;
   let previousUserId;
   let profilePictureToReleaseLater;
+
   messagesArray.forEach((message, index) => {
-    if (index === 0) {
-      //excpect set that there was no previous sender
-      previousUserId = null;
-    }
+    if (index === 0) { previousUserId = null; } //excpect set that there was no previous sender
 
     //date separation
     let prevDate = new Date(previousMessageDate)
@@ -2455,9 +2472,8 @@ function openChat(openChatInfo) {
   });
 
   //grab text message input and process it
-  let sendButton = document.getElementById("sendButton")
-  sendButton.addEventListener('click', function (e) {
-
+  let Message = document.getElementById("Message")
+  Message.addEventListener('click', function (e) {
     if (messageContent.innerText.trim() != '') {
       let unfDate = new Date();
       let fDate = [
@@ -2484,12 +2500,13 @@ function openChat(openChatInfo) {
       // prevent default behavior
       e.preventDefault();
     }
-
   });
-
-  //initialise all icons because there are new icons added in the open chat section
-
 }
+
+function scrollToBottom(div) {
+  div.scrollTop = div.scrollHeight;
+}
+
 function reactionTo(messageId, reaction) {
   console.log(messageId, reaction);
   socket.emit('messageReaction', { messageId, selectedChatId, reaction })
@@ -4088,8 +4105,8 @@ myPeer.on('open', myPeerId => {
     let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeholder', textContent: 'Type a message' })
     let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
     let inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
-    let sendButton = createElement({ elementType: 'button', class: 'chat-options', title: 'Send Message', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
-    let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [iconButton, inputContainer, sendButton] })
+    let Message = createElement({ elementType: 'button', class: 'chat-options', title: 'Send Message', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
+    let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [iconButton, inputContainer, Message] })
 
     let callMessagingDiv = createElement({ elementType: 'div', class: 'callMessagingDiv hideDivAside', childrenArray: [c_openchat__box__info, typingBox] })
 
@@ -4108,7 +4125,7 @@ myPeer.on('open', myPeerId => {
       unreadmessagesCount = 0
       messagesSelectorbtn.textContent = ('Messages ' + unreadmessagesCount)
     })
-    sendButton.addEventListener('click', sendMessage)
+    Message.addEventListener('click', sendMessage)
     inputText.addEventListener('keydown', function (e) { if (e.key == 'Enter' && !e.shiftKey) { sendMessage(); e.preventDefault(); } })
     function sendMessage() {
       if (inputText.textContent == '') return;
