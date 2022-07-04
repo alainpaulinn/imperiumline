@@ -915,6 +915,7 @@ body {
   &__link {
     text-decoration: none;
     display: flex;
+    gap: 1rem;
     padding: 10px 5px;
     transition: transform 0.5s;
     width: 100%;
@@ -1137,6 +1138,33 @@ body {
 
   border-radius: $borderRadius;
   overflow: hidden;
+
+  .listMember{
+    border-bottom: 1px solid #f1f4f6;
+    padding: 1rem 1rem;
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 3px 3px 10px -2px rgba(204, 197, 197, 0.5);
+    background-color: white;
+
+
+    .c-chat-title {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      min-width: 0;
+    }
+    button{
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
 
   &__header {
     //padding:1rem 0;
@@ -1695,7 +1723,7 @@ body {
 //Typing --- Box
 .typingBox {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   width: 100%;
   max-width: 100%;
   align-items: center;
@@ -2153,6 +2181,7 @@ body {
       .listMember {
         background-color: white;
         display: flex;
+        gap: 1rem;
         padding: .5rem;
         align-items: center;
         height: 100%;
@@ -2162,7 +2191,6 @@ body {
           border: 1px solid $notification;
           width: 40px;
           height: 40px;
-          margin-right: 10px;
           border-radius: $borderRadius;
           text-transform: uppercase;
           display: -webkit-box;
@@ -2212,7 +2240,6 @@ body {
           border: none;
           outline: none;
           cursor: pointer;
-          margin-left: .5rem;
 
           i {
             font-size: 18px;
@@ -2739,7 +2766,8 @@ body {
         .listMember {
           background-color: white;
           display: flex;
-          padding: .5rem;
+          padding: 1rem;
+          gap: 1rem;
           align-items: center;
           height: 100%;
 
@@ -2823,7 +2851,8 @@ body {
         .listMember {
           background-color: white;
           display: flex;
-          padding: .5rem;
+          padding: 1rem;
+          gap: 1rem;
           align-items: center;
           height: 100%;
 
@@ -3064,7 +3093,8 @@ body {
             .listMember {
               background-color: white;
               display: flex;
-              padding: .5rem;
+              padding: 1rem;
+              gap: 1rem;
               align-items: center;
               border-radius: $borderRadius;
               margin-bottom: .5rem;
@@ -3612,11 +3642,9 @@ body {
 .listMember {
   background-color: white;
   display: flex;
-  padding: .5rem;
+  padding: 1rem;
+  gap: 1rem;
   align-items: center;
-
-
-
 
   .memberNameRole {
     display: flex;
@@ -3653,7 +3681,6 @@ body {
     border: none;
     outline: none;
     cursor: pointer;
-    margin-left: .5rem;
 
     i {
       font-size: 18px;
@@ -4075,7 +4102,8 @@ body {
     .listMember {
       background-color: white;
       display: flex;
-      padding: .5rem;
+      padding: 1rem;
+      gap: 1rem;
       align-items: center;
       border-radius: $borderRadius;
       // margin-bottom: .5rem;
@@ -5936,7 +5964,8 @@ body {
           .listMember {
             background-color: white;
             display: flex;
-            padding: .5rem;
+            padding: 1rem;
+            gap: 1rem;
             border-radius: $borderRadius;
             align-items: center;
             // height: unset;
@@ -6013,7 +6042,6 @@ body {
   width: 40px;
   min-width: 40px;
   height: 40px;
-  margin-right: 10px;
   border-radius: $borderRadius;
   text-transform: uppercase;
   display: flex;
