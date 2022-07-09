@@ -1895,33 +1895,20 @@ socket.on('updateReaction', function (receivedReactionsInfo) {
     reactionsContainer.innerHTML = buildReaction(receivedReactionsInfo)
   }
 })
-function buildReaction(receivedReactionsInfo) {
-  let reactionsContainerContent = ``;
-  receivedReactionsInfo.details.forEach(entry => {
-    let reactionIcon = entry.icon;
-    let reactorsList = `<div class="title">Reactions</div>`;
-
-    entry.users.forEach(user => {
-      let nameString;
-      if (mySavedID == user.userID) {
-        nameString = "Me";
-      }
-      else {
-        nameString = user.name + " " + user.surname;
-      }
-      reactorsList += `<li>${nameString}</li>`
+function buildReaction(details, myID) {
+  let reactions = details.map(reaction => {
+    let reactorsTitle = createElement({ elementType: 'div', class: 'title', textContent: 'Reactions' });
+    let reactorsArray = reaction.users.map(user => {
+      return createElement({ elementType: 'li', textContent: myID == user.userID ? 'Me' : user.name + " " + user.surname })
     })
-
-    reactionsContainerContent +=
-      `<div class="reactionBox">
-      <div class="reactionIcon">${reactionIcon}</div> 
-      <ul class="reactorList">
-        ${reactorsList}
-      </ul>
-    </div>`
+    return createElement({
+      elementType: 'div', class: 'reactionBox', childrenArray: [
+        createElement({ elementType: 'div', class: 'reactionIcon', textContent: reaction.icon }),
+        createElement({ elementType: 'ul', class: 'reactorList', childrenArray: [reactorsTitle].concat(reactorsArray) }),
+      ]
+    })
   })
-
-  return reactionsContainerContent;
+  return reactions;
 }
 
 function scroll() {
@@ -2102,7 +2089,7 @@ function displayChatOnChatArea(openChatInfo) {
       ]
       if (userToDisplay.length < 1) { // in case we have only one user (viewer)
         chatTitleText = 'Deleted User'
-        openchat__box__header = userForAttendanceList = userForAttendanceList(deletedUser, [])
+        openchat__box__header = userForAttendanceList(deletedUser, [])
       } else {
         chatTitleText = userToDisplay[0].name + ' ' + userToDisplay[0].surname
         imageContainer = makeProfilePicture(userToDisplay[0])
@@ -2114,16 +2101,20 @@ function displayChatOnChatArea(openChatInfo) {
       else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
       if (roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
       else chatTitleText = roomName;
-      let groupCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: ()=> {call(userToDisplay[0].userID, true, false, false, true, null)} })
-      let groupVideoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: ()=> {call(userToDisplay[0].userID, true, false, false, true, null)} })
-      let groupMoreButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: ()=> { console.log('groupMoreButton clicked')} })
-      openchat__box__header = createElement({elementType: 'div', class:'c-openchat__box__header', childrenArray:[
-        createElement({ elementType: 'div', class: 'c-chat-title', childrenArray:[
-          imageContainer,
-          createElement({elementType: 'p', class: 'c-openchat__box__name', textContent: chatTitleText})  
-        ]}),
-        createElement({elementType:'div', class: 'universalCallButtons', childrenArray:[groupCallButton, groupVideoButton, groupMoreButton]})
-      ]})
+      let groupCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(userToDisplay[0].userID, true, false, false, true, null) } })
+      let groupVideoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userToDisplay[0].userID, true, false, false, true, null) } })
+      let groupMoreButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => { console.log('groupMoreButton clicked') } })
+      openchat__box__header = createElement({
+        elementType: 'div', class: 'c-openchat__box__header', childrenArray: [
+          createElement({
+            elementType: 'div', class: 'c-chat-title', childrenArray: [
+              imageContainer,
+              createElement({ elementType: 'p', class: 'c-openchat__box__name', textContent: chatTitleText })
+            ]
+          }),
+          createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [groupCallButton, groupVideoButton, groupMoreButton] })
+        ]
+      })
 
 
       break;
@@ -2147,178 +2138,196 @@ function displayChatOnChatArea(openChatInfo) {
   open_chat_box.textContent = '';
   open_chat_box.append(chatBox)
 
-  let receivedGroup = '';
-  let sentGroup = '';
+  let receivedGroup = [];
+  let sentGroup = [];
 
   let previousMessageDate;
   let previousUserId;
   let profilePictureToReleaseLater;
+  
+  openchat__box__info.textContent = '' // ensure that no element is inside the message container
 
   messagesArray.forEach((message, index) => {
     if (index === 0) { previousUserId = null; } //excpect set that there was no previous sender
-
+    // console.log('index', index, 'userID', message.userID, 'receivedGroup', receivedGroup, 'sentGroup', sentGroup)
     //date separation
     let prevDate = new Date(previousMessageDate)
     let thisDate = new Date(message.timeStamp)
     console.log(sameDay(prevDate, thisDate))
 
     //Preparing the profile Picture
-    let messageUserPicture = '';
-    if (message.userInfo.profilePicture === null) { messageUserPicture = `<div class="receivedMessageProfile">${message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0)}</div>` }
-    else { messageUserPicture = `<img class="receivedMessageProfile" src="${message.userInfo.profilePicture}" alt=""></img>` }
-    if (profilePictureToReleaseLater === null) { profilePictureToReleaseLater = `<div class="receivedMessageProfile">${messagesArray[index - 1].userInfo.name.charAt(0) + messagesArray[index - 1].userInfo.surname.charAt(0)}</div>` }
-    else { profilePictureToReleaseLater = `<img class="receivedMessageProfile" src="${profilePictureToReleaseLater}" alt=""></img>` }
+    let messageUserPicture = makeProfilePicture(message.userInfo)
+    // profilePictureToReleaseLater = makeProfilePicture(messagesArray[index - 1].userInfo)
 
     //release previous message if it sontains something
-    if (message.userID == myID + '') {
-      if (receivedGroup != '') {
+    if (message.userID == myID) {
+      if (receivedGroup.length != 0) {
         let separator = '';
-        if (!sameDay(prevDate, thisDate)) separator = `<div class="message-separator"><span>${prevDate.toString('YYYY-MM-dd').substring(0, 15)}</span></div>`;
+        if (!sameDay(prevDate, thisDate)) separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: prevDate.toString('YYYY-MM-dd').substring(0, 15) })] })
         else separator = '';
-        openchat__box__info.innerHTML = separator +
-          `<div class="message-group-received">
-            <div>
-                ${profilePictureToReleaseLater} 
-            </div>
-            <div>
-                ${receivedGroup}
-            </div>
-        </div>` + openchat__box__info.innerHTML;
-        receivedGroup = '';
+        
+        openchat__box__info.prepend(separator, createElement({ // create and release the group with Image
+          elementType: 'div', class: 'message-group-received', childrenArray: [
+            createElement({ elementType: 'div', childrenArray: [messageUserPicture] }),
+            createElement({ elementType: 'div', childrenArray: receivedGroup })
+          ]
+        }))
+        // separator +
+        //   `<div class="message-group-received">
+        //     <div>
+        //         ${profilePictureToReleaseLater} 
+        //     </div>
+        //     <div>
+        //         ${receivedGroup}
+        //     </div>
+        // </div>` + openchat__box__info.innerHTML;
+        receivedGroup = [];
       }
 
       //one minute ungrouping of my sent messages
-      if (((prevDate - thisDate) > 60000 || !sameDay(prevDate, thisDate)) && (index !== 0) && previousUserId == myID + '' && sentGroup != '') {
+      if (((prevDate - thisDate) > 60000 || !sameDay(prevDate, thisDate)) && (index !== 0) && previousUserId == myID + '' && sentGroup.length != 0) {
         let separator = '';
-        if (!sameDay(prevDate, thisDate)) separator = `<div class="message-separator"><span>${prevDate.toString('YYYY-MM-dd').substring(0, 15)}</span></div>`;
+        if (!sameDay(prevDate, thisDate)) separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: prevDate.toString('YYYY-MM-dd').substring(0, 15) })] })
         else separator = '';
-        openchat__box__info.innerHTML = separator +
-          `
-        <div class="message-group-sent">
-          ${sentGroup}
-        </div> ` + openchat__box__info.innerHTML;
-        sentGroup = '';
+        openchat__box__info.prepend(separator,
+          createElement({ elementType: 'div', class: 'message-group-sent', childrenArray: sentGroup })
+        )
+        //   `
+        // <div class="message-group-sent">
+        //   ${sentGroup}
+        // </div> ` + openchat__box__info.innerHTML;
+        // sentGroup = '';
       }
 
-      let tagTemplate = ``
-      message.tagContent.forEach(tag => {
-        tagTemplate += `<a href="#${tag.id}" class="message-tag-text">${tag.message}</a>`
+      let tagTemplate = message.tagContent.map(tag => {
+        return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message })
       })
       //Prepare reaction template
-      sentGroup =
-        `<div class="message-sent" id="${message.id}">
-        ${buildOptions(message, true)}
-        <div class="message-sent-text" id="${message.id}-messageText">${tagTemplate + message.message
-        //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-        }</div>
-        <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg" alt=""></div>
-      </div>` + sentGroup;
+      let msgGrp = createElement({
+        elementType: 'div', class: 'message-sent', childrenArray: [
+          buildOptions(message, myID),
+          createElement({
+            elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })])
+          }),
+          createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [createElement({ elementType: 'img', src: 'https://randomuser.me/api/portraits/med/men/1.jpg' })] })
+        ]
+      })
+      sentGroup.unshift(msgGrp)
 
       //release my sent message group on the final message
       if (messagesArray.length == index + 1) {
-        openchat__box__info.innerHTML =
-          `<div class="message-separator"><span>${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(0, 15)}</span></div>
-        <div class="message-group-sent">
-          ${sentGroup}
-        </div> ` + openchat__box__info.innerHTML;
-        sentGroup = '';
+        let separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: new Date(message.timeStamp).toString('YYYY-MM-dd').substring(0, 15) })] })
+        openchat__box__info.prepend(separator,
+          createElement({ elementType: 'div', class: 'message-group-sent', childrenArray: sentGroup })
+        )
+        sentGroup = [];
       }
 
     }
     else {
       //release previous message if it sontains something
-      if (sentGroup != '') {
+      if (sentGroup.length != 0) {
         let separator = '';
-        if (!sameDay(prevDate, thisDate)) separator = `<div class="message-separator"><span>${prevDate.toString('YYYY-MM-dd').substring(0, 15)}</span></div>`;
+        if (!sameDay(prevDate, thisDate)) separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: prevDate.toString('YYYY-MM-dd').substring(0, 15) })] })
         else separator = '';
-        openchat__box__info.innerHTML = separator +
-          `<div class="message-group-sent">
-          ${sentGroup}
-        </div> ` + openchat__box__info.innerHTML;
-        sentGroup = '';
+        openchat__box__info.prepend(separator,
+          createElement({ elementType: 'div', class: 'message-group-sent', childrenArray: sentGroup })
+        )
+        sentGroup = [];
       }
 
       //if the messageis not from the same person as previously sent, or if it is more than one minute ago
-      if (index != 0 && previousUserId != message.userID + '' && previousUserId != myID + '' && receivedGroup != '') {
+      if (index != 0 && previousUserId != message.userID + '' && previousUserId != myID + '' && receivedGroup.length != 0) {
         let separator = '';
-        if (!sameDay(prevDate, thisDate)) separator = `<div class="message-separator"><span>${prevDate.toString('YYYY-MM-dd').substring(0, 15)}</span></div>`;
+        if (!sameDay(prevDate, thisDate)) separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: prevDate.toString('YYYY-MM-dd').substring(0, 15) })] });
         else separator = '';
-        openchat__box__info.innerHTML = separator +
-          `
-        <div class="message-group-received">
-            <div>
-                ${profilePictureToReleaseLater}
-            </div>
-            <div>
-                ${receivedGroup}
-            </div>
-            
-        </div>` + openchat__box__info.innerHTML;
-        receivedGroup = '';
+        openchat__box__info.prepend(separator,
+          createElement({
+            elementType: 'div', class: 'message-group-received', childrenArray: [
+              createElement({ elementType: 'div', childrenArray: [makeProfilePicture(message.userInfo)] }),
+              createElement({ elementType: 'div', childrenArray: receivedGroup })
+            ]
+          })
+        )
+        receivedGroup = [];
       }
 
       //one minute ungrouping of my sent messages
-      if (receivedGroup != '' && index != 0 && previousUserId == message.userID && ((prevDate - thisDate) > 60000 || !sameDay(prevDate, thisDate))) {
-        //console.log(message.message)
+      if (receivedGroup.length != 0 && index != 0 && previousUserId == message.userID && ((prevDate - thisDate) > 60000 || !sameDay(prevDate, thisDate))) {
         let separator = '';
-        if (!sameDay(prevDate, thisDate)) separator = `<div class="message-separator"><span>${prevDate.toString('YYYY-MM-dd').substring(0, 15)}</span></div>`;
+        if (!sameDay(prevDate, thisDate)) separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: prevDate.toString('YYYY-MM-dd').substring(0, 15) })] })
         else separator = '';
-        openchat__box__info.innerHTML = separator +
-          `
-        <div class="message-group-received">
-            <div>
-                ${messageUserPicture}
-            </div>
-            <div>
-                ${receivedGroup}
-            </div>
-        </div>` + openchat__box__info.innerHTML;
-        receivedGroup = '';
+        openchat__box__info.prepend(separator,
+          createElement({
+            elementType: 'div', class: 'message-group-received', childrenArray: [
+              createElement({ elementType: 'div', childrenArray: [messageUserPicture] }),
+              createElement({ elementType: 'div', childrenArray: receivedGroup }),
+            ]
+          })
+        )
+        receivedGroup = [];
       }
 
-      let tagTemplate = ``
-      message.tagContent.forEach(tag => {
-        tagTemplate += `<a href="#${tag.id}" class="message-tag-text">${tag.message}</a>`
+      // let tagTemplate = ``
+      // message.tagContent.forEach(tag => {
+      //   tagTemplate += `<a href="#${tag.id}" class="message-tag-text">${tag.message}</a>`
+      // })
+      let tagTemplate = message.tagContent.map(tag => {
+        return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message })
       })
-
       //sender's name
       let sendersName = ''
-      if (receivedGroup === '') {
-        sendersName = `<div class="senderOriginName">${message.userInfo.name + ' ' + message.userInfo.surname}</div>`
+      if (receivedGroup.length == 0) {
+        // sendersName = `<div class="senderOriginName">${message.userInfo.name + ' ' + message.userInfo.surname}</div>`
+        sendersName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
       }
-      receivedGroup =
-        `<div class="message-received" id="${message.id}">
-          <div class="message-received-text" id="${message.id}-messageText">${
-        //message.userID +": " + 
-        tagTemplate + message.message
-        //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-        }</div>
-          ${buildOptions(message, false)}
-          ${sendersName}
-        </div>` + receivedGroup;
+      receivedGroup.unshift(
+        createElement({
+          elementType: 'div', class: 'message-received', childrenArray: [
+            createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) }),
+            buildOptions(message, myID),
+            sendersName
+          ]
+        })
+      )
+      // `<div class="message-received" id="${message.id}">
+      //   <div class="message-received-text" id="${message.id}-messageText">${
+      // //message.userID +": " + 
+      // tagTemplate + message.message
+      // //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
+      // }</div>
+      //   ${buildOptions(message, false)}
+      //   ${sendersName}
+      // </div>` + receivedGroup;
 
 
       //release my received message group on the final message
       if (messagesArray.length == index + 1) {
-        openchat__box__info.innerHTML =
-          `<div class="message-separator"><span>${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(0, 15)}</span></div>
-        <div class="message-group-received">
-            <div>
-                ${messageUserPicture}
-            </div>
-            <div>
-                ${receivedGroup}
-            </div>
-        </div>` + openchat__box__info.innerHTML;
-        receivedGroup = '';
+        let separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: new Date(message.timeStamp).toString('YYYY-MM-dd').substring(0, 15) })] })
+        openchat__box__info.prepend(
+          separator,
+          createElement({
+            elementType: 'div', class: 'message-group-received', childrenArray: [
+              createElement({ elementType: 'div', childrenArray: [messageUserPicture] }),
+              createElement({ elementType: 'div', childrenArray: receivedGroup }),
+            ]
+          })
+        )
+        //   `<div class="message-separator"><span>${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(0, 15)}</span></div>
+        // <div class="message-group-received">
+        //     <div>
+        //         ${messageUserPicture}
+        //     </div>
+        //     <div>
+        //         ${receivedGroup}
+        //     </div>
+        // </div>` + openchat__box__info.innerHTML;
+        receivedGroup = [];
       }
-      profilePictureToReleaseLater = message.userInfo.profilePicture;
+      profilePictureToReleaseLater = makeProfilePicture(message.userInfo)
     }
-
     previousMessageDate = message.timeStamp;
     previousUserId = message.userID;
-
-
   })
 
 
@@ -2334,15 +2343,31 @@ function displayChatOnChatArea(openChatInfo) {
   })
 
   if (messagesArray.length < 1) {
-    openchat__box__info.innerHTML = `
-    <div class="c-openchat__selectConversation">
-      <img src="/images/createChat.png" alt="">
-      <h3> Start typing <i class='bx bxs-keyboard'></i> </br> Your messages will appear here ...</h3>
-    </div>
-    `
+    openchat__box__info.textContent = ''
+    openchat__box__info.append(
+      createElement({
+        elementType: 'div', class: 'c-openchat__selectConversation', childrenArray: [
+          createElement({ elementType: 'img', src: '/images/createChat.png' }),
+          createElement({
+            elementType: 'h3', childrenArray: [
+              'Start typing',
+              createElement({ elementType: 'i', class: 'bx bxs-keyboard' }),
+              createElement({ elementType: 'br' })]
+          }),
+          'Your messages will appear here ...'
+        ]
+      })
+    )
+    // `
+    // <div class="c-openchat__selectConversation">
+    //   <img src="/images/createChat.png" alt="">
+    //   <h3> Start typing <i class='bx bxs-keyboard'></i> </br> Your messages will appear here ...</h3>
+    // </div>
+    // `
   }
   else {
-    openchat__box__info.innerHTML = `<div class="push-down"></div>` + openchat__box__info.innerHTML;
+    openchat__box__info.prepend( createElement({ elementType: 'div', class: 'push-down' }))
+    // `<div class="push-down"></div>` + openchat__box__info.innerHTML;
   }
 
   //grab text message input and process it
@@ -2375,9 +2400,8 @@ function displayChatOnChatArea(openChatInfo) {
   });
 
   //grab text message input and process it
-  let Message = document.getElementById("Message")
-  Message.addEventListener('click', function (e) {
-    if (messageContent.innerText.trim() != '') {
+  sendMessageButton.addEventListener('click', function (e) {
+    if (inputText.innerText.trim() != '') {
       let unfDate = new Date();
       let fDate = [
         (unfDate.getFullYear() + ''),
@@ -2390,12 +2414,12 @@ function displayChatOnChatArea(openChatInfo) {
       let message =
       {
         toRoom: selectedChatId,
-        message: messageContent.innerText,
+        message: inputText.innerText,
         timeStamp: fDate,
         taggedMessages: taggedMessages
       };
       console.log('message', message)
-      messageContent.innerText = '';
+      inputText.innerText = '';
       socket.emit('message', message)
 
       taggedMessages = [];
@@ -2442,8 +2466,6 @@ function displayMessageOnChat(expectedUser, message) {
   console.log("Previous message", lastMessageInSelectedChat)
   console.log("new message", message)
   if (message.toRoom == selectedChatId) {
-
-
     //For the first message in chat
     if (!lastMessageInSelectedChat) {
 
@@ -2757,92 +2779,114 @@ function chatSearchToogle() {
   chatContainingDiv.classList.toggle("hideLeft")
 }
 
-function buildOptions(message, sent) {
+function buildOptions(message, myID) {
+  let referenceBtn = createElement({ elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-share' })] })
+  let deleteBtn = createElement({ elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-trash-alt' })] })
 
-  switch (sent) {
-    case true:
-      return `
-          <div class="time_reactions_options">
+  let availableReactions = message.reactions.available.map(reaction => {
+    return createElement({
+      elementType: 'div', class: 'reactionChoice', childrenArray: [
+        createElement({ elementType: 'div', class: 'reactionIconChoose', textContent: reaction.icon }),
+        createElement({ elementType: 'div', class: 'reactionName', textContent: reaction.name }),
+      ]
+    })
+  })
 
-            <div class="messageOptions"> 
-              <button class="expandOptions" onClick="messageReference(${message.id})" id="${message.id}reply"><i class='bx bx-share'></i></button>
-              <button class="expandOptions" onClick="" id="${message.id}Option"><i class='bx bx-trash-alt' ></i></button>
-            </div>
-            <div class="time_reactionChoice">
-              <div class="reactionChoice">
-                <div id="${message.id}-Like" onclick="reactionTo(${message.id}, 'Like')" class="reactionIconChoose">👍</div>
-                <div class="reactionName">Like</div>
-              </div>
-              <div class="reactionChoice">
-                <div id="${message.id}-Angry" onclick="reactionTo(${message.id}, 'Laugh')" class="reactionIconChoose">😂</div>
-                <div class="reactionName">Laugh</div>
-              </div>
-              <div class="reactionChoice">
-                <div id="${message.id}-Afraid" onclick="reactionTo(${message.id}, 'Wow')" class="reactionIconChoose">😲</div>
-                <div class="reactionName">Wow</div>
-              </div>
-              <div class="reactionChoice">
-                <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Afraid')" class="reactionIconChoose">😨</div>
-                <div class="reactionName">Afraid</div>
-              </div>
-              <div class="reactionChoice">
-                <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Angry')" class="reactionIconChoose">😠</div>
-                <div class="reactionName">Angry</div>
-              </div>
-              <div class="reactionChoice">
-                <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Love')" class="reactionIconChoose">❤️</div>
-                <div class="reactionName">Love</div>
-              </div>
-              <div class="ReactionTime">${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(16, 24)}</div>
-            </div> 
-            <div id="${message.id}-reactions" class="messageReactions">
-              ${buildReaction(message.reactions)}
+  let messageTime = createElement({ elementType: 'div', class: 'ReactionTime', textContent: new Date(message.timeStamp).toString('YYYY-MM-dd').substring(16, 24) })
 
-            </div>
-          </div>`
-    case false:
-      return `
-      <div class="time_reactions_options">
-        <div id="${message.id}-reactions" class="messageReactions">
-          ${buildReaction(message.reactions)}
+  let time_reactionChoice = message.userID == myID ? [messageTime].concat(availableReactions) : availableReactions.concat([messageTime])
 
-        </div>
-        <div class="time_reactionChoice">
-          <div class="ReactionTime">${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(16, 24)}</div>
-          <div class="reactionChoice">
-            <div id="${message.id}-Like" onclick="reactionTo(${message.id}, 'Like')" class="reactionIconChoose">👍</div>
-            <div class="reactionName">Like</div>
-          </div>
-          <div class="reactionChoice">
-            <div id="${message.id}-Angry" onclick="reactionTo(${message.id}, 'Laugh')" class="reactionIconChoose">😂</div>
-            <div class="reactionName">Laugh</div>
-          </div>
-          <div class="reactionChoice">
-            <div id="${message.id}-Afraid" onclick="reactionTo(${message.id}, 'Wow')" class="reactionIconChoose">😲</div>
-            <div class="reactionName">Wow</div>
-          </div>
-          <div class="reactionChoice">
-            <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Afraid')" class="reactionIconChoose">😨</div>
-            <div class="reactionName">Afraid</div>
-          </div>
-          <div class="reactionChoice">
-            <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Angry')" class="reactionIconChoose">😠</div>
-            <div class="reactionName">Angry</div>
-          </div>
-          <div class="reactionChoice">
-            <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Love')" class="reactionIconChoose">❤️</div>
-            <div class="reactionName">Love</div>
-          </div>
-        </div> 
-        <div class="messageOptions"> 
-          <button class="expandOptions" onClick="" id="${message.id}Option"><i class='bx bx-dots-horizontal-rounded'></i></button>
-          <button class="expandOptions" onClick="messageReference(${message.id})" id="${message.id}reply"><i class='bx bx-share'></i></button>
-        </div>
-      </div>`;
+  let time_reactions_options = [
+    createElement({ elementType: 'div', class: 'messageOptions', childrenArray: [referenceBtn, deleteBtn] }),
+    createElement({ elementType: 'div', class: 'time_reactionChoice', childrenArray: time_reactionChoice }),
+    createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(message.reactions.details, myID) }),
+  ]
+  if (message.userID == myID) time_reactions_options = time_reactions_options.reverse()
 
-    default:
-      break;
-  }
+  return createElement({ elementType: 'div', class: 'time_reactions_options', childrenArray: time_reactions_options })
+
+  // switch (sent) {
+  //   case true:
+  //     return `
+  //         <div class="time_reactions_options">
+  //           <div class="messageOptions"> 
+  //             <button class="expandOptions" onClick="messageReference(${message.id})" id="${message.id}reply"><i class='bx bx-share'></i></button>
+  //             <button class="expandOptions" onClick="" id="${message.id}Option"><i class='bx bx-trash-alt' ></i></button>
+  //           </div>
+  //           <div class="time_reactionChoice">
+  //             <div class="reactionChoice">
+  //               <div id="${message.id}-Like" onclick="reactionTo(${message.id}, 'Like')" class="reactionIconChoose">👍</div>
+  //               <div class="reactionName">Like</div>
+  //             </div>
+  //             <div class="reactionChoice">
+  //               <div id="${message.id}-Angry" onclick="reactionTo(${message.id}, 'Laugh')" class="reactionIconChoose">😂</div>
+  //               <div class="reactionName">Laugh</div>
+  //             </div>
+  //             <div class="reactionChoice">
+  //               <div id="${message.id}-Afraid" onclick="reactionTo(${message.id}, 'Wow')" class="reactionIconChoose">😲</div>
+  //               <div class="reactionName">Wow</div>
+  //             </div>
+  //             <div class="reactionChoice">
+  //               <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Afraid')" class="reactionIconChoose">😨</div>
+  //               <div class="reactionName">Afraid</div>
+  //             </div>
+  //             <div class="reactionChoice">
+  //               <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Angry')" class="reactionIconChoose">😠</div>
+  //               <div class="reactionName">Angry</div>
+  //             </div>
+  //             <div class="reactionChoice">
+  //               <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Love')" class="reactionIconChoose">❤️</div>
+  //               <div class="reactionName">Love</div>
+  //             </div>
+  //             <div class="ReactionTime">${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(16, 24)}</div>
+  //           </div> 
+  //           <div id="${message.id}-reactions" class="messageReactions">
+  //             ${buildReaction(message.reactions)}
+
+  //           </div>
+  //         </div>`
+  //   case false:
+  //     return `
+  //     <div class="time_reactions_options">
+  //       <div id="${message.id}-reactions" class="messageReactions">
+  //         ${buildReaction(message.reactions)}
+  //       </div>
+  //       <div class="time_reactionChoice">
+  //         <div class="ReactionTime">${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(16, 24)}</div>
+  //         <div class="reactionChoice">
+  //           <div id="${message.id}-Like" onclick="reactionTo(${message.id}, 'Like')" class="reactionIconChoose">👍</div>
+  //           <div class="reactionName">Like</div>
+  //         </div>
+  //         <div class="reactionChoice">
+  //           <div id="${message.id}-Angry" onclick="reactionTo(${message.id}, 'Laugh')" class="reactionIconChoose">😂</div>
+  //           <div class="reactionName">Laugh</div>
+  //         </div>
+  //         <div class="reactionChoice">
+  //           <div id="${message.id}-Afraid" onclick="reactionTo(${message.id}, 'Wow')" class="reactionIconChoose">😲</div>
+  //           <div class="reactionName">Wow</div>
+  //         </div>
+  //         <div class="reactionChoice">
+  //           <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Afraid')" class="reactionIconChoose">😨</div>
+  //           <div class="reactionName">Afraid</div>
+  //         </div>
+  //         <div class="reactionChoice">
+  //           <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Angry')" class="reactionIconChoose">😠</div>
+  //           <div class="reactionName">Angry</div>
+  //         </div>
+  //         <div class="reactionChoice">
+  //           <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Love')" class="reactionIconChoose">❤️</div>
+  //           <div class="reactionName">Love</div>
+  //         </div>
+  //       </div> 
+  //       <div class="messageOptions"> 
+  //         <button class="expandOptions" onClick="" id="${message.id}Option"><i class='bx bx-dots-horizontal-rounded'></i></button>
+  //         <button class="expandOptions" onClick="messageReference(${message.id})" id="${message.id}reply"><i class='bx bx-share'></i></button>
+  //       </div>
+  //     </div>`;
+
+  //   default:
+  //     break;
+  // }
 
 
 }

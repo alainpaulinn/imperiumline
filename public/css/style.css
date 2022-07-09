@@ -1023,25 +1023,11 @@ body {
   flex-grow: 1;
 }
 
-.message-group-received > div:first-child > img {
+.message-group-received > div:first-child > .memberProfilePicture {
   border-radius: 15px;
-  height: 25px;
   width: 25px;
   -o-object-fit: cover;
      object-fit: cover;
-  background: rgb(0, 48, 97);
-  color: white;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-}
-
-.message-group-received > div:first-child > div {
-  border-radius: 15px;
-  height: 25px;
-  width: 25px;
   background: rgb(0, 48, 97);
   color: white;
   text-transform: uppercase;

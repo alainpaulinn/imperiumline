@@ -227,7 +227,8 @@ io.on('connection', (socket) => {
                 reactions: {
                   chat: messageResult[0].roomID,
                   message: messageResult[0].id,
-                  details: await getMessageReactions(messageResult[0].id)
+                  details: await getMessageReactions(messageResult[0].id),
+                  available: await getAvailableMessageReactions()
                 },
                 tagContent: await getMessageTags(messageResult[0].id)
               }
@@ -320,7 +321,8 @@ io.on('connection', (socket) => {
                           {
                             chat: reactionIdentifiers.selectedChatId,
                             message: reactionIdentifiers.messageId,
-                            details: await getMessageReactions(reactionIdentifiers.messageId)
+                            details: await getMessageReactions(reactionIdentifiers.messageId),
+                            available: await getAvailableMessageReactions()
                           }
                         );
                       }
@@ -1388,7 +1390,8 @@ function getMessageInfo(messageId) {
       let reactions = {
         chat: roomID,
         message: id,
-        details: await getMessageReactions(id)
+        details: await getMessageReactions(id),
+        available: await getAvailableMessageReactions()
       }
       resolve({
         id: id,
@@ -1422,6 +1425,20 @@ function getMessageReactions(messageId) {
           }
         })
         resolve(Promise.all(_reactions))
+      });
+  })
+}
+function getAvailableMessageReactions() {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `icon`, `name`, `description` FROM `reactionoptions`',
+      [], async (err, reactions) => {
+        if (err) return console.log(err)
+        resolve(
+          Promise.all(
+            reactions.map(reaction => {
+              return { icon: reaction.icon, name: reaction.name, description: reaction.description }
+            })
+          ))
       });
   })
 }
@@ -1555,7 +1572,7 @@ function getRoomMessages(roomId) {
           messages.map(async (oneMessage) => {
             let { id, message, roomID, userID, timeStamp } = oneMessage;
             let userInfo = await getUserInfo(userID)
-            let reactions = { chat: roomID, message: id, details: await getMessageReactions(id) }
+            let reactions = { chat: roomID, message: id, details: await getMessageReactions(id), available: await getAvailableMessageReactions() }
             let tagContent = await getMessageTags(id)
             return { id, message, roomID, userID, timeStamp, userInfo, reactions, tagContent }
           })

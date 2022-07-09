@@ -1289,9 +1289,9 @@ body {
   flex-grow: 1;
 }
 
-.message-group-received>div:first-child>img {
+.message-group-received>div:first-child>.memberProfilePicture {
   border-radius: $borderRadius;
-  height: 25px;
+  // height: 25px;
   width: 25px;
   object-fit: cover;
   background: $notification;
@@ -1304,19 +1304,19 @@ body {
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
 }
 
-.message-group-received>div:first-child>div {
-  border-radius: $borderRadius;
-  height: 25px;
-  width: 25px;
-  background: $notification;
-  color: white;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+// .message-group-received>div:first-child>div {
+//   border-radius: $borderRadius;
+//   height: 25px;
+//   width: 25px;
+//   background: $notification;
+//   color: white;
+//   text-transform: uppercase;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
 
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-}
+//   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+// }
 
 .message-received {
   word-break: break-all;
