@@ -2115,8 +2115,6 @@ function displayChatOnChatArea(openChatInfo) {
           createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [groupCallButton, groupVideoButton, groupMoreButton] })
         ]
       })
-
-
       break;
     default:
       break;
@@ -2149,7 +2147,6 @@ function displayChatOnChatArea(openChatInfo) {
 
   messagesArray.forEach((message, index) => {
     if (index === 0) { previousUserId = null; } //excpect set that there was no previous sender
-    // console.log('index', index, 'userID', message.userID, 'receivedGroup', receivedGroup, 'sentGroup', sentGroup)
     //date separation
     let prevDate = new Date(previousMessageDate)
     let thisDate = new Date(message.timeStamp)
@@ -2157,7 +2154,6 @@ function displayChatOnChatArea(openChatInfo) {
 
     //Preparing the profile Picture
     let messageUserPicture = makeProfilePicture(message.userInfo)
-    // profilePictureToReleaseLater = makeProfilePicture(messagesArray[index - 1].userInfo)
 
     //release previous message if it sontains something
     if (message.userID == myID) {
@@ -2172,15 +2168,6 @@ function displayChatOnChatArea(openChatInfo) {
             createElement({ elementType: 'div', childrenArray: receivedGroup })
           ]
         }))
-        // separator +
-        //   `<div class="message-group-received">
-        //     <div>
-        //         ${profilePictureToReleaseLater} 
-        //     </div>
-        //     <div>
-        //         ${receivedGroup}
-        //     </div>
-        // </div>` + openchat__box__info.innerHTML;
         receivedGroup = [];
       }
 
@@ -2192,11 +2179,6 @@ function displayChatOnChatArea(openChatInfo) {
         openchat__box__info.prepend(separator,
           createElement({ elementType: 'div', class: 'message-group-sent', childrenArray: sentGroup })
         )
-        //   `
-        // <div class="message-group-sent">
-        //   ${sentGroup}
-        // </div> ` + openchat__box__info.innerHTML;
-        // sentGroup = '';
       }
 
       let tagTemplate = message.tagContent.map(tag => {
@@ -2268,17 +2250,10 @@ function displayChatOnChatArea(openChatInfo) {
         receivedGroup = [];
       }
 
-      // let tagTemplate = ``
-      // message.tagContent.forEach(tag => {
-      //   tagTemplate += `<a href="#${tag.id}" class="message-tag-text">${tag.message}</a>`
-      // })
-      let tagTemplate = message.tagContent.map(tag => {
-        return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message })
-      })
+      let tagTemplate = message.tagContent.map(tag => { return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message }) })
       //sender's name
       let sendersName = ''
       if (receivedGroup.length == 0) {
-        // sendersName = `<div class="senderOriginName">${message.userInfo.name + ' ' + message.userInfo.surname}</div>`
         sendersName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
       }
       receivedGroup.unshift(
@@ -2290,16 +2265,6 @@ function displayChatOnChatArea(openChatInfo) {
           ]
         })
       )
-      // `<div class="message-received" id="${message.id}">
-      //   <div class="message-received-text" id="${message.id}-messageText">${
-      // //message.userID +": " + 
-      // tagTemplate + message.message
-      // //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-      // }</div>
-      //   ${buildOptions(message, false)}
-      //   ${sendersName}
-      // </div>` + receivedGroup;
-
 
       //release my received message group on the final message
       if (messagesArray.length == index + 1) {
@@ -2313,15 +2278,6 @@ function displayChatOnChatArea(openChatInfo) {
             ]
           })
         )
-        //   `<div class="message-separator"><span>${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(0, 15)}</span></div>
-        // <div class="message-group-received">
-        //     <div>
-        //         ${messageUserPicture}
-        //     </div>
-        //     <div>
-        //         ${receivedGroup}
-        //     </div>
-        // </div>` + openchat__box__info.innerHTML;
         receivedGroup = [];
       }
       profilePictureToReleaseLater = makeProfilePicture(message.userInfo)
@@ -2358,16 +2314,9 @@ function displayChatOnChatArea(openChatInfo) {
         ]
       })
     )
-    // `
-    // <div class="c-openchat__selectConversation">
-    //   <img src="/images/createChat.png" alt="">
-    //   <h3> Start typing <i class='bx bxs-keyboard'></i> </br> Your messages will appear here ...</h3>
-    // </div>
-    // `
   }
   else {
     openchat__box__info.prepend( createElement({ elementType: 'div', class: 'push-down' }))
-    // `<div class="push-down"></div>` + openchat__box__info.innerHTML;
   }
 
   //grab text message input and process it
