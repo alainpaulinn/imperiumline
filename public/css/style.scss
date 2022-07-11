@@ -1344,7 +1344,8 @@ body {
     border: 1px solid #eee;
     background-color: #fff;
     border-radius: 50px;
-    padding: 6px;
+    padding: 0.5rem;
+    margin-left: 0.5rem;
 
     .messageReactions {
       color: $notification;
@@ -1453,7 +1454,7 @@ body {
     width: fit-content;
     visibility: visible;
     opacity: 1;
-    width: 12rem;
+    width: 12.5rem;
   }
 
 }
@@ -1536,7 +1537,8 @@ body {
     border: 1px solid #eee;
     background-color: #fff;
     border-radius: 50px;
-    padding: 6px;
+    padding: 0.5rem;
+    margin-right: 0.5rem;
 
     .messageReactions {
       color: $notification;

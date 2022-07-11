@@ -1059,7 +1059,8 @@ body {
   border: 1px solid #eee;
   background-color: #fff;
   border-radius: 50px;
-  padding: 6px;
+  padding: 0.5rem;
+  margin-left: 0.5rem;
 }
 .message-received .time_reactions_options .messageReactions {
   color: rgb(0, 48, 97);
@@ -1146,7 +1147,7 @@ body {
   width: fit-content;
   visibility: visible;
   opacity: 1;
-  width: 12rem;
+  width: 12.5rem;
 }
 
 .message-received:first-child > .message-received-text {
@@ -1214,7 +1215,8 @@ body {
   border: 1px solid #eee;
   background-color: #fff;
   border-radius: 50px;
-  padding: 6px;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
 }
 .message-sent .time_reactions_options .messageReactions {
   color: rgb(0, 48, 97);

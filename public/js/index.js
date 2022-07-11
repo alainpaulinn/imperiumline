@@ -2,11 +2,13 @@
 var socket = io();
 
 let taggedMessages = [];
+let tagField;
 let selectedChatId;
 let selectedReactionId;
 let mySavedID;
 let myName, Mysurname;
 let lastMessageInSelectedChat;
+let displayedMessages = [];
 let friends = [];
 let chats = [];
 let ITriggeredChatCreation = false;
@@ -1773,17 +1775,22 @@ socket.on('displayChat', function (chat) {
   let conversationButton = showOnChatList(chat)
   chatContainer.append(conversationButton)
   availableChats.push({ roomID: chat.roomID, conversationButton })
-  console.log(chat)
 });
 socket.on('displayNewCreatedChat', function (chat) {
-  chatContainer.innerHTML = buildChat(chat, false) + chatContainer.innerHTML
+  let conversationButton = showOnChatList(chat)
+  chatContainer.prepend(conversationButton)
+  availableChats.unshift({ roomID: chat.roomID, conversationButton })
   console.log('new chat', chat)
 });
 socket.on('clickOnChat', function (chatToClick) {
-  let messageElement = document.getElementById(chatToClick + "msg")
-  messageElement.click();
-  console.log('chatToClick', messageElement)
+  let existingChat = availableChats.find(chat => chat.roomID == chatToClick)
+  console.log('existing chat',availableChats,'chatToClick',chatToClick,'existingChat', existingChat)
+  if (!existingChat) {
 
+  }
+  else {
+    existingChat.conversationButton.click()
+  }
 });
 socket.on('chatContent', function (chatContent) {
   openChatInfo = chatContent;
@@ -1996,9 +2003,14 @@ function buildChat(chat, exists) {
   }
 }
 
+function updateChatList(){
+
+}
+
 function showOnChatList(chat) {
   let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = chat;
 
+  console.log("chat to display on list", chat)
   let writenBy = '';
   let imageContainer;
   let chatTitleText = ''
@@ -2029,7 +2041,8 @@ function showOnChatList(chat) {
   }
 
   let chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: chatTitleText })
-  let chatDate = createElement({ elementType: 'span', textContent: lastmessage.timeStamp.toString('YYYY-MM-dd').substring(0, 24) })
+
+  let chatDate = createElement({ elementType: 'span', textContent: new Date(lastmessage.timeStamp).toString('YYYY-MM-dd').substring(0, 24) })
   let chatMessage = createElement({ elementType: 'p', class: 'c-chats__excerpt', textContent: writenBy + lastmessage.message })
   let chatInformation = createElement({ elementType: 'div', class: 'c-chats__info', childrenArray: [chatTitle, chatDate, chatMessage] })
 
@@ -2072,6 +2085,8 @@ function displayChatOnChatArea(openChatInfo) {
   let { roomInfo, messagesArray } = openChatInfo
   let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = roomInfo
   // let { roomID, roomName, type, profilePicture, myID, messagesArray, usersArray } = roomInfo;
+
+  taggedMessages = [];
   let imageContainer;
   let chatTitleText = ''
   let openchat__box__header;
@@ -2142,7 +2157,7 @@ function displayChatOnChatArea(openChatInfo) {
   let previousMessageDate;
   let previousUserId;
   let profilePictureToReleaseLater;
-  
+
   openchat__box__info.textContent = '' // ensure that no element is inside the message container
 
   messagesArray.forEach((message, index) => {
@@ -2161,10 +2176,10 @@ function displayChatOnChatArea(openChatInfo) {
         let separator = '';
         if (!sameDay(prevDate, thisDate)) separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: prevDate.toString('YYYY-MM-dd').substring(0, 15) })] })
         else separator = '';
-        
+
         openchat__box__info.prepend(separator, createElement({ // create and release the group with Image
           elementType: 'div', class: 'message-group-received', childrenArray: [
-            createElement({ elementType: 'div', childrenArray: [messageUserPicture] }),
+            createElement({ elementType: 'div', childrenArray: [profilePictureToReleaseLater] }),
             createElement({ elementType: 'div', childrenArray: receivedGroup })
           ]
         }))
@@ -2172,7 +2187,7 @@ function displayChatOnChatArea(openChatInfo) {
       }
 
       //one minute ungrouping of my sent messages
-      if (((prevDate - thisDate) > 60000 || !sameDay(prevDate, thisDate)) && (index !== 0) && previousUserId == myID + '' && sentGroup.length != 0) {
+      if (((prevDate - thisDate) > 60000 || !sameDay(prevDate, thisDate)) && (index !== 0) && previousUserId == myID && sentGroup.length != 0) {
         let separator = '';
         if (!sameDay(prevDate, thisDate)) separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: prevDate.toString('YYYY-MM-dd').substring(0, 15) })] })
         else separator = '';
@@ -2185,16 +2200,15 @@ function displayChatOnChatArea(openChatInfo) {
         return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message })
       })
       //Prepare reaction template
-      let msgGrp = createElement({
+      let messageSentText = createElement({ elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
+      let msgGrpComponent = createElement({
         elementType: 'div', class: 'message-sent', childrenArray: [
-          buildOptions(message, myID),
-          createElement({
-            elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })])
-          }),
+          buildOptions(message, myID, messageSentText, inputContainer),
+          messageSentText,
           createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [createElement({ elementType: 'img', src: 'https://randomuser.me/api/portraits/med/men/1.jpg' })] })
         ]
       })
-      sentGroup.unshift(msgGrp)
+      sentGroup.unshift(msgGrpComponent)
 
       //release my sent message group on the final message
       if (messagesArray.length == index + 1) {
@@ -2226,7 +2240,7 @@ function displayChatOnChatArea(openChatInfo) {
         openchat__box__info.prepend(separator,
           createElement({
             elementType: 'div', class: 'message-group-received', childrenArray: [
-              createElement({ elementType: 'div', childrenArray: [makeProfilePicture(message.userInfo)] }),
+              createElement({ elementType: 'div', childrenArray: [profilePictureToReleaseLater] }),
               createElement({ elementType: 'div', childrenArray: receivedGroup })
             ]
           })
@@ -2242,7 +2256,7 @@ function displayChatOnChatArea(openChatInfo) {
         openchat__box__info.prepend(separator,
           createElement({
             elementType: 'div', class: 'message-group-received', childrenArray: [
-              createElement({ elementType: 'div', childrenArray: [messageUserPicture] }),
+              createElement({ elementType: 'div', childrenArray: [profilePictureToReleaseLater] }),
               createElement({ elementType: 'div', childrenArray: receivedGroup }),
             ]
           })
@@ -2253,14 +2267,15 @@ function displayChatOnChatArea(openChatInfo) {
       let tagTemplate = message.tagContent.map(tag => { return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message }) })
       //sender's name
       let sendersName = ''
-      if (receivedGroup.length == 0) {
+      if (receivedGroup.length == 0) { 
         sendersName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
       }
+      let messageReceivedText = createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
       receivedGroup.unshift(
         createElement({
           elementType: 'div', class: 'message-received', childrenArray: [
-            createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) }),
-            buildOptions(message, myID),
+            messageReceivedText,
+            buildOptions(message, myID, messageReceivedText, inputContainer),
             sendersName
           ]
         })
@@ -2285,18 +2300,9 @@ function displayChatOnChatArea(openChatInfo) {
     previousMessageDate = message.timeStamp;
     previousUserId = message.userID;
   })
-
-
   //scroll bottom
   openchat__box__info.scrollTop = openchat__box__info.scrollHeight // scrool to the last message
   openchat__box__info.style.scrollBehavior = "smooth" // enable smooth scrolling
-
-  document.querySelectorAll(".reactionIconChoose").forEach(function (reactionIcon) {
-    //console.log(reactionIcon)
-    reactionIcon.addEventListener("click", function () {
-      console.log(reactionIcon.id)
-    })
-  })
 
   if (messagesArray.length < 1) {
     openchat__box__info.textContent = ''
@@ -2315,68 +2321,37 @@ function displayChatOnChatArea(openChatInfo) {
       })
     )
   }
-  else {
-    openchat__box__info.prepend( createElement({ elementType: 'div', class: 'push-down' }))
-  }
+  else { openchat__box__info.prepend(createElement({ elementType: 'div', class: 'push-down' })) }
 
   //grab text message input and process it
   inputText.addEventListener('keydown', function (e) {
-    if (e.key == 'Enter' && !e.shiftKey) {
-      // prevent default behavior
-      e.preventDefault();
-      let unfDate = new Date();
-      let fDate = [
-        (unfDate.getFullYear() + ''),
-        ((unfDate.getMonth() + 1) + '').padStart(2, "0"),
-        (unfDate.getDate() + '').padStart(2, "0")].join('-')
-        + ' ' +
-        [(unfDate.getHours() + '').padStart(2, "0"),
-        (unfDate.getMinutes() + '').padStart(2, "0"),
-        (unfDate.getSeconds() + '').padStart(2, "0")].join(':');
-      let message =
-      {
-        toRoom: selectedChatId,
-        message: inputText.innerText.trim(),
-        timeStamp: fDate,
-        taggedMessages: taggedMessages
-      };
-      console.log(message)
-      inputText.innerText = '';
-      socket.emit('message', message)
-      taggedMessages = [];
-      removeAllTags();
-    }
+    if (e.key == 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
 
-  //grab text message input and process it
   sendMessageButton.addEventListener('click', function (e) {
-    if (inputText.innerText.trim() != '') {
-      let unfDate = new Date();
-      let fDate = [
-        (unfDate.getFullYear() + ''),
-        ((unfDate.getMonth() + 1) + '').padStart(2, "0"),
-        (unfDate.getDate() + '').padStart(2, "0")].join('-')
-        + ' ' +
-        [(unfDate.getHours() + '').padStart(2, "0"),
-        (unfDate.getMinutes() + '').padStart(2, "0"),
-        (unfDate.getSeconds() + '').padStart(2, "0")].join(':');
-      let message =
-      {
-        toRoom: selectedChatId,
-        message: inputText.innerText,
-        timeStamp: fDate,
-        taggedMessages: taggedMessages
-      };
-      console.log('message', message)
-      inputText.innerText = '';
-      socket.emit('message', message)
-
-      taggedMessages = [];
-      removeAllTags();
-      // prevent default behavior
-      e.preventDefault();
-    }
+    if (inputText.innerText.trim() != '') { sendMessage(); e.preventDefault(); }
   });
+
+  function sendMessage() {
+    let fDate = formatDate(new Date())
+    let message = { toRoom: selectedChatId, message: inputText.innerText.trim(), timeStamp: fDate, taggedMessages: taggedMessages };
+    inputText.innerText = '';
+    socket.emit('message', message)
+    if (taggedMessages.length > 0) tagField.remove()
+    taggedMessages = [];
+  }
+}
+
+function formatDate(unfDate) {
+  let fDate = [
+    (unfDate.getFullYear() + ''),
+    ((unfDate.getMonth() + 1) + '').padStart(2, "0"),
+    (unfDate.getDate() + '').padStart(2, "0")].join('-')
+    + ' ' +
+    [(unfDate.getHours() + '').padStart(2, "0"),
+    (unfDate.getMinutes() + '').padStart(2, "0"),
+    (unfDate.getSeconds() + '').padStart(2, "0")].join(':');
+  return fDate;
 }
 
 function scrollToBottom(div) {
@@ -2728,10 +2703,40 @@ function chatSearchToogle() {
   chatContainingDiv.classList.toggle("hideLeft")
 }
 
-function buildOptions(message, myID) {
-  let referenceBtn = createElement({ elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-share' })] })
-  let deleteBtn = createElement({ elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-trash-alt' })] })
+function buildOptions(message, myID, messageTextDiv, inputContainer) {
+  let referenceBtn = createElement({
+    elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })], onclick: () => {
+      messageReference(message.id, messageTextDiv, inputContainer)
+    }
+  })
+  let deleteBtn = createElement({
+    elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })], onclick: () => {
+      let icon, title, contentElementsArray, actions;
+      icon = 'bx bxs-trash-alt'
+      title = 'Delete Message'
+      contentElementsArray = [createElement({ elementType: 'div', textContent: 'Do you really want to delete this message? Note that all of the reactions reated are going to be deleted and the receivers will no longer be able to see the content f the message' })]
 
+      cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel' })
+      confirmButton = createElement({ elementType: 'button', textContent: 'Yes, Delete' })
+      actions = [
+        {
+          element: confirmButton,
+          functionCall: () => {
+            socket.emit('deleteMessage', message.id)
+          }
+        },
+        {
+          element: cancelButton,
+          functionCall: () => { }
+        }
+      ]
+      let constraints = { icon, title, contentElementsArray, actions }
+      // actions is an array of a button and a function of what it does
+      createInScreenPopup(constraints).then(editPopup => {
+        cancelButton.addEventListener('click', editPopup.closePopup)
+      })
+    }
+  })
   let availableReactions = message.reactions.available.map(reaction => {
     return createElement({
       elementType: 'div', class: 'reactionChoice', childrenArray: [
@@ -2740,173 +2745,51 @@ function buildOptions(message, myID) {
       ]
     })
   })
-
   let messageTime = createElement({ elementType: 'div', class: 'ReactionTime', textContent: new Date(message.timeStamp).toString('YYYY-MM-dd').substring(16, 24) })
-
   let time_reactionChoice = message.userID == myID ? [messageTime].concat(availableReactions) : availableReactions.concat([messageTime])
-
   let time_reactions_options = [
     createElement({ elementType: 'div', class: 'messageOptions', childrenArray: [referenceBtn, deleteBtn] }),
     createElement({ elementType: 'div', class: 'time_reactionChoice', childrenArray: time_reactionChoice }),
     createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(message.reactions.details, myID) }),
   ]
-  if (message.userID == myID) time_reactions_options = time_reactions_options.reverse()
-
+  if (message.userID == myID) {
+    time_reactions_options.reverse()
+  }
+  else {
+    deleteBtn.remove()
+  }
   return createElement({ elementType: 'div', class: 'time_reactions_options', childrenArray: time_reactions_options })
-
-  // switch (sent) {
-  //   case true:
-  //     return `
-  //         <div class="time_reactions_options">
-  //           <div class="messageOptions"> 
-  //             <button class="expandOptions" onClick="messageReference(${message.id})" id="${message.id}reply"><i class='bx bx-share'></i></button>
-  //             <button class="expandOptions" onClick="" id="${message.id}Option"><i class='bx bx-trash-alt' ></i></button>
-  //           </div>
-  //           <div class="time_reactionChoice">
-  //             <div class="reactionChoice">
-  //               <div id="${message.id}-Like" onclick="reactionTo(${message.id}, 'Like')" class="reactionIconChoose">👍</div>
-  //               <div class="reactionName">Like</div>
-  //             </div>
-  //             <div class="reactionChoice">
-  //               <div id="${message.id}-Angry" onclick="reactionTo(${message.id}, 'Laugh')" class="reactionIconChoose">😂</div>
-  //               <div class="reactionName">Laugh</div>
-  //             </div>
-  //             <div class="reactionChoice">
-  //               <div id="${message.id}-Afraid" onclick="reactionTo(${message.id}, 'Wow')" class="reactionIconChoose">😲</div>
-  //               <div class="reactionName">Wow</div>
-  //             </div>
-  //             <div class="reactionChoice">
-  //               <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Afraid')" class="reactionIconChoose">😨</div>
-  //               <div class="reactionName">Afraid</div>
-  //             </div>
-  //             <div class="reactionChoice">
-  //               <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Angry')" class="reactionIconChoose">😠</div>
-  //               <div class="reactionName">Angry</div>
-  //             </div>
-  //             <div class="reactionChoice">
-  //               <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Love')" class="reactionIconChoose">❤️</div>
-  //               <div class="reactionName">Love</div>
-  //             </div>
-  //             <div class="ReactionTime">${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(16, 24)}</div>
-  //           </div> 
-  //           <div id="${message.id}-reactions" class="messageReactions">
-  //             ${buildReaction(message.reactions)}
-
-  //           </div>
-  //         </div>`
-  //   case false:
-  //     return `
-  //     <div class="time_reactions_options">
-  //       <div id="${message.id}-reactions" class="messageReactions">
-  //         ${buildReaction(message.reactions)}
-  //       </div>
-  //       <div class="time_reactionChoice">
-  //         <div class="ReactionTime">${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(16, 24)}</div>
-  //         <div class="reactionChoice">
-  //           <div id="${message.id}-Like" onclick="reactionTo(${message.id}, 'Like')" class="reactionIconChoose">👍</div>
-  //           <div class="reactionName">Like</div>
-  //         </div>
-  //         <div class="reactionChoice">
-  //           <div id="${message.id}-Angry" onclick="reactionTo(${message.id}, 'Laugh')" class="reactionIconChoose">😂</div>
-  //           <div class="reactionName">Laugh</div>
-  //         </div>
-  //         <div class="reactionChoice">
-  //           <div id="${message.id}-Afraid" onclick="reactionTo(${message.id}, 'Wow')" class="reactionIconChoose">😲</div>
-  //           <div class="reactionName">Wow</div>
-  //         </div>
-  //         <div class="reactionChoice">
-  //           <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Afraid')" class="reactionIconChoose">😨</div>
-  //           <div class="reactionName">Afraid</div>
-  //         </div>
-  //         <div class="reactionChoice">
-  //           <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Angry')" class="reactionIconChoose">😠</div>
-  //           <div class="reactionName">Angry</div>
-  //         </div>
-  //         <div class="reactionChoice">
-  //           <div id="${message.id}-Wrincle" onclick="reactionTo(${message.id}, 'Love')" class="reactionIconChoose">❤️</div>
-  //           <div class="reactionName">Love</div>
-  //         </div>
-  //       </div> 
-  //       <div class="messageOptions"> 
-  //         <button class="expandOptions" onClick="" id="${message.id}Option"><i class='bx bx-dots-horizontal-rounded'></i></button>
-  //         <button class="expandOptions" onClick="messageReference(${message.id})" id="${message.id}reply"><i class='bx bx-share'></i></button>
-  //       </div>
-  //     </div>`;
-
-  //   default:
-  //     break;
-  // }
-
-
 }
 
-function messageReference(msgID) {
-  console.log(msgID)
+function messageReference(msgID, _messageElement, messagesTagsinputArea) {
   if (taggedMessages.includes(msgID)) return;
-  let button_emelemnt;
+  let messageElement, closeBtn, messageToShow
   if (taggedMessages.length < 1) {
     taggedMessages.push(msgID)
-    let tag_message_container = document.getElementById("w-input-container")
-    let tagField = document.createElement("div")
-    tagField.setAttribute("class", "taggedMessageInTying")
-    tagField.setAttribute("id", "taggedMessageInTying")
+    tagField = createElement({ elementType: 'div', class: 'taggedMessageInTying' })
+    messagesTagsinputArea.prepend(tagField)
 
-    tag_message_container.prepend(tagField)
-
-    let messageElement = document.getElementById(msgID + "-messageText").cloneNode(true);
-    messageElement.setAttribute('id', msgID + "clonedTag");
-
-    let messageToShow = document.createElement('div');
-    messageElement.setAttribute('id', msgID + "container");
-
-    //attributes breakdown
-    button_emelemnt = document.createElement("button")
-    button_emelemnt.setAttribute('class', "btn-remove-tag")
-    let button_icon = document.createElement("i")
-    button_icon.setAttribute('class', 'bx bx-x-circle')
-    //append it to the container
-    button_emelemnt.appendChild(button_icon)
-    messageToShow.appendChild(button_emelemnt)
-    messageToShow.prepend(messageElement)
+    messageElement = _messageElement.cloneNode(true);
+    closeBtn = createElement({ elementType: 'button', class: 'btn-remove-tag', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x-circle' })] })
+    messageToShow = createElement({ elementType: 'div', childrenArray: [messageElement, closeBtn] })
     tagField.appendChild(messageToShow)
   }
   else {
     taggedMessages.push(msgID)
-    let tagField = document.getElementById("taggedMessageInTying")
-    let messageElement = document.getElementById(msgID + "-messageText").cloneNode(true);
-    messageElement.setAttribute('id', msgID + "clonedTag");
 
-    let messageToShow = document.createElement('div');
-    messageElement.setAttribute('id', msgID + "container");
-
-    //attributes breakdown
-    button_emelemnt = document.createElement("button")
-    button_emelemnt.setAttribute('class', "btn-remove-tag")
-    let button_icon = document.createElement("i")
-    button_icon.setAttribute('class', 'bx bx-x-circle')
-    //append it to the container
-    button_emelemnt.appendChild(button_icon)
-    messageToShow.appendChild(button_emelemnt)
-    messageToShow.prepend(messageElement)
+    messageElement = _messageElement.cloneNode(true);
+    closeBtn = createElement({ elementType: 'button', class: 'btn-remove-tag', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x-circle' })] })
+    messageToShow = createElement({ elementType: 'div', childrenArray: [messageElement, closeBtn] })
     tagField.appendChild(messageToShow)
-
-    //console.log(messageToShow)
   }
-  button_emelemnt.addEventListener('click', function () {
+  closeBtn.addEventListener('click', function () {
     taggedMessages = taggedMessages.filter((id) => id !== msgID)
-    this.parentNode.parentNode.removeChild(this.parentElement)
+    messageToShow.remove()
     if (taggedMessages.length == 0) {
-      removeAllTags()
+      tagField.remove();
     }
-
   })
   setFocus()
-}
-
-function removeAllTags() {
-  taggedMessages = [];
-  let tagField = document.getElementById("taggedMessageInTying")
-  tagField.parentNode.removeChild(tagField);
 }
 
 function buildTags(tagContentArray) {

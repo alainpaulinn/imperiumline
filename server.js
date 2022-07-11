@@ -97,7 +97,7 @@ io.on('connection', (socket) => {
       console.log('myInformation ID', id)
       socket.emit('myId', myInformation);
       console.log('myInformation', myInformation)
-      db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess`, room.chatID, room.name, room.type, room.profilePicture, room.creationDate, room.lastActionDate FROM `participants` JOIN room ON room.chatID = participants.roomID WHERE participants.userID = ? ORDER BY `room`.`lastActionDate` DESC', [id], async (err, mychatResults) => {
+      db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess`, room.chatID, room.name, room.type, room.profilePicture, room.creationDate, room.lastActionDate FROM `participants` LEFT JOIN room ON room.chatID = participants.roomID WHERE participants.userID = ? ORDER BY `room`.`lastActionDate` DESC', [id], async (err, mychatResults) => {
         if (err) return console.log(err)
         mychatResults.forEach(async myChat => {
           let roomID = myChat.roomID + '';
@@ -239,9 +239,14 @@ io.on('connection', (socket) => {
         })
       }
       else { console.log(`${id} was prevented to write to ${message.toRoom} because they are not a member`) } //Just for security purposes
-
-      //console.log("EXPECTEEEDDD uuuuuser",await chatInfoforMembers(message.toRoom), expectedUser,id,message)
     });
+    socket.on('deleteMessage', async (messageId) => {
+      let access_roomId = await checkMessageOwnership(messageId, id)
+      if (access == false) return console.log('user cannot delete a message that does not belong to him')
+      let deleteResult = await deleteMessage(messageId)
+      if (deleteResult.type == 'positive') io.sockets.in(messageId).emit('deletedMessage', { roomId: access_roomId, messageId: messageId });
+      socket.emit('feedback', [deleteResult])
+    })
     socket.on('searchPeople', (searchPeople) => {
       db.query("SELECT `id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchPeople + '%', '%' + searchPeople + '%', '%' + searchPeople + '%'], async (err, userSearchResult) => {
         if (err) return console.log(err)
@@ -252,7 +257,6 @@ io.on('connection', (socket) => {
     socket.on('makeChat', (makeChat) => {
       if (makeChat == id) return console.log(`user with ID ${id} wanted to create a chat with himself and was dismissed`)
       let memberRooms = [];
-      let commonChat = { exists: false, id: null };
 
       db.query("SELECT `id`, `userID`, `roomID` FROM `participants` WHERE `userID` = ?", [makeChat], async (err, dbChatCheck) => {
         if (err) return console.log(err)
@@ -266,28 +270,27 @@ io.on('connection', (socket) => {
           let commonEntry = await findCommonElement(memberRooms, myMemberRooms)
           switch (commonEntry.exists) {
             case true:
-              socket.emit('displayChat', await getRoomInfo(commonEntry.id, id))
+              // socket.emit('displayChat', await getRoomInfo(commonEntry.id, id))
               socket.emit('clickOnChat', commonEntry.id)
               //socket.emit('chatContent', await getChatFullInfo(commonEntry.id, id))  
               break;
             case false:
               /////////CREATE A NEW CHAT
-              createdChatId = await createChat(id, makeChat)
-              let partnerConnectionArray = connectedUsers.filter(user => { return user.id == makeChat })
-              let myConnectionArray = connectedUsers.filter(user => { return user.id == id })
+              let createdChatId = await createChat(id, makeChat)
+              let partnerConnectionInstances = connectedUsers.filter(user => { return user.id == makeChat })
+              let myConnectionInstances = connectedUsers.filter(user => { return user.id == id })
 
-              partnerConnectionArray.forEach(connection => { //make partner join the room
+              partnerConnectionInstances.forEach(connection => { //make partner join the room
                 connection.socket.join(createdChatId + '');
               });
 
-              myConnectionArray.forEach(connection => { // join me to the room
+              myConnectionInstances.forEach(connection => { // join me to the room
                 connection.socket.join(createdChatId + '');
               });
               //Send to all concerned people / logged in instances
               io.sockets.in(createdChatId + '').emit('displayNewCreatedChat', await getRoomInfo(createdChatId, id));
-              socket.emit('clickOnChat', createdChatId + '')
+              socket.emit('clickOnChat', createdChatId)
               //for the person who opened the chat -> open the chat
-              //socket.emit
               break;
 
             default:
@@ -1379,6 +1382,28 @@ function getMessageTags(messageId) {
       });
   })
 }
+function checkMessageOwnership(messageId, userID) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id` = ?', [messageId], async (err, messages) => {
+      if (err) return console.log(err)
+      if (messages.length < 1) resolve(false)
+      else {
+        if (messages[0].userID == userID) resolve(messages[0].roomID)
+        else resolve(false)
+      }
+    }
+    );
+  })
+}
+function deleteMessage(messageId) {
+  return new Promise(function (resolve, reject) {
+    db.query('DELETE FROM `message` WHERE `id` = ?',
+      [messageId], async (err, messageTags) => {
+        if (err) resolve({ type: 'negative', message: 'An error occured while deleting the message' });
+        resolve({ type: 'positive', message: 'The message was deleted successfully' })
+      });
+  })
+}
 
 function getMessageInfo(messageId) {
   return new Promise(function (resolve, reject) {
@@ -1460,13 +1485,20 @@ function getRoomInfo(roomID, viewerID) {
     let roomBasicInfo = await getChatRoomBasicInfo(roomID)
     let { chatID, name, type, profilePicture, creationDate, lastActionDate } = roomBasicInfo
 
+    let lastMessage = await getChatRoomLastMessage(roomID)
     resolve({
       roomID: roomID,
       users: participants,
       roomName: roomBasicInfo.name,
       profilePicture: roomBasicInfo.profilePicture,
       type: roomBasicInfo.type,
-      lastmessage: await getChatRoomLastMessage(roomID),
+      lastmessage: lastMessage == null ? {
+        id: 0,
+        message: 'New Chat',
+        roomID: chatID,
+        from: 'No messages Yet',
+        timeStamp: creationDate
+      } : lastMessage,
       myID: viewerID,
       unreadCount: 0, //tobe done later
     })
@@ -1500,7 +1532,7 @@ function getChatRoomLastMessage(roomId) {
     db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `roomID` = ? ORDER BY timeStamp DESC LIMIT 1', [roomId], async (err, messages) => {
       if (err) return console.log(err)
       if (messages.length < 1) resolve(null)
-      resolve({
+      else resolve({
         id: messages[0].id,
         message: messages[0].message,
         roomID: messages[0].roomID,
@@ -1609,22 +1641,15 @@ function roomUserCount(roomId) {
 }
 
 function findCommonElement(array1, array2) {
+  console.log('array1, array2', array1, array2)
   return new Promise(async function (resolve, reject) {
     const filteredArray = array1.filter(value => array2.includes(value));
     var uniqueIds = [];
-    filteredArray.forEach(array => {
-      if (!uniqueIds.includes(array)) uniqueIds.push(array)
-    })
-    let resultObject = {
-      exists: false,
-      id: null
-    };
+    filteredArray.forEach(array => { if (!uniqueIds.includes(array)) uniqueIds.push(array) })
+    let resultObject = { exists: false, id: null };
     for (let i = 0; i < uniqueIds.length; i++) {
       if (await roomUserCount(uniqueIds[i]) == 2) {
-        resultObject = {
-          exists: true,
-          id: uniqueIds[i]
-        };
+        resultObject = { exists: true, id: uniqueIds[i] };
         break;
       }
     }
