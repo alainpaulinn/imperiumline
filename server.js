@@ -99,6 +99,7 @@ io.on('connection', (socket) => {
       console.log('myInformation', myInformation)
       db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess`, room.chatID, room.name, room.type, room.profilePicture, room.creationDate, room.lastActionDate FROM `participants` LEFT JOIN room ON room.chatID = participants.roomID WHERE participants.userID = ? ORDER BY `room`.`lastActionDate` DESC', [id], async (err, mychatResults) => {
         if (err) return console.log(err)
+        console.log('mychatResults', mychatResults)
         mychatResults.forEach(async myChat => {
           let roomID = myChat.roomID + '';
           socket.join(roomID)
@@ -181,17 +182,9 @@ io.on('connection', (socket) => {
       /* message = { toRoom: selectedChatId, message: messageContent.innerText.trim(), timeStamp: new Date().toISOString(), taggedMessages: taggedMessages }; */
       let roomUsersInfo = await getRoomInfo(message.toRoom, id)
       let expectedUser = roomUsersInfo.users.find(user => user.userID == id)
-
-      let unfDate = new Date();
-      let fDate = [
-        (unfDate.getFullYear() + ''),
-        ((unfDate.getMonth() + 1) + '').padStart(2, "0"),
-        (unfDate.getDate() + '').padStart(2, "0")].join('-')
-        + ' ' +
-        [(unfDate.getHours() + '').padStart(2, "0"),
-        (unfDate.getMinutes() + '').padStart(2, "0"),
-        (unfDate.getSeconds() + '').padStart(2, "0")].join(':');
-
+      if(!expectedUser) return console.log('cannot sent a message to a room to which the user is not a member')
+      
+      let fDate = formatDate(new Date())
       if (expectedUser && message.message != "") {
         db.query('INSERT INTO `message`(`message`, `roomID`, `userID`, `timeStamp`) VALUES (?,?,?,?)', [message.message, message.toRoom, id, fDate || message.timeStamp], async (err, participantResult) => {
           if (err) return console.log(err)
@@ -204,7 +197,6 @@ io.on('connection', (socket) => {
               message.taggedMessages.forEach(taggedMessage => {
                 db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id` = ?', [taggedMessage], async (err, referencedMessageResult) => {
                   if (err) return console.log(err)
-                  //console.log(referencedMessageResult)
                   if (referencedMessageResult.length > 0) {
                     if (referencedMessageResult[0].roomID == message.toRoom) {
                       db.query("INSERT INTO `messagetags`(`messageId`, `tagMessageId`) VALUES ('?','?')", [participantResult.insertId, taggedMessage], async (err, insertedTag) => {
@@ -212,16 +204,14 @@ io.on('connection', (socket) => {
                         console.log(`Tag ${insertedTag.insertId} is inserted`)
                       })
                     }
-                    else {
-                      console.log(`User ${id} tried to tag Message ${participantResult.insertId} which is not from group ${message.toRoom} it is from ${referencedMessageResult[0].roomID}`)
-                    }
+                    else console.log(`User ${id} tried to tag Message ${participantResult.insertId} which is not from group ${message.toRoom} it is from ${referencedMessageResult[0].roomID}`)
                   }
                 })
 
               });
               let insertedMessage = {
                 id: messageResult[0].id,
-                toRoom: messageResult[0].roomID,
+                roomID: messageResult[0].roomID,
                 message: messageResult[0].message,
                 timeStamp: messageResult[0].timeStamp,
                 reactions: {
@@ -242,7 +232,7 @@ io.on('connection', (socket) => {
     });
     socket.on('deleteMessage', async (messageId) => {
       let access_roomId = await checkMessageOwnership(messageId, id)
-      if (access == false) return console.log('user cannot delete a message that does not belong to him')
+      if (access_roomId == false) return console.log('user cannot delete a message that does not belong to him')
       let deleteResult = await deleteMessage(messageId)
       if (deleteResult.type == 'positive') io.sockets.in(messageId).emit('deletedMessage', { roomId: access_roomId, messageId: messageId });
       socket.emit('feedback', [deleteResult])
@@ -1029,6 +1019,18 @@ function isNegative(num) {
   return false;
 }
 
+function formatDate(unfDate) {
+  let fDate = [
+    (unfDate.getFullYear() + ''),
+    ((unfDate.getMonth() + 1) + '').padStart(2, "0"),
+    (unfDate.getDate() + '').padStart(2, "0")].join('-')
+    + ' ' +
+    [(unfDate.getHours() + '').padStart(2, "0"),
+    (unfDate.getMinutes() + '').padStart(2, "0"),
+    (unfDate.getSeconds() + '').padStart(2, "0")].join(':');
+  return fDate;
+}
+
 function updateDBCoverPicture(userID, fileName) {
   db.query('UPDATE `user` SET `coverPicture` = ? WHERE `user`.`id` = ?', [fileName, userID], async (err, _myEvents) => {
     if (err) return console.log(err)
@@ -1397,7 +1399,7 @@ function checkMessageOwnership(messageId, userID) {
 }
 function deleteMessage(messageId) {
   return new Promise(function (resolve, reject) {
-    db.query('DELETE FROM `message` WHERE `id` = ?',
+    db.query('UPDATE `message` SET`message`= "__deleted message__" WHERE `id` = ?',
       [messageId], async (err, messageTags) => {
         if (err) resolve({ type: 'negative', message: 'An error occured while deleting the message' });
         resolve({ type: 'positive', message: 'The message was deleted successfully' })
