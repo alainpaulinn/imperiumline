@@ -1841,23 +1841,43 @@ socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
 
 });
 socket.on('updateReaction', function (receivedReactionsInfo) {
-  console.log("receivedReactionsInfo", receivedReactionsInfo);
-  
   if (selectedChatId == receivedReactionsInfo.chat) { // update reaction in case it is on the open chat
-    //  = buildReaction(receivedReactionsInfo)
+    //  = buildReaction(receivedReactionsInfo.details)
+    let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
+    let existingMessageObject = displayedMessages.find(displayedMessage => displayedMessage.object.id == receivedReactionsInfo.message)
+    if (existingMessageObject) {
+      existingMessageObject.reactionsDiv.after(msgReactions)
+      existingMessageObject.reactionsDiv.remove()
+      existingMessageObject.reactionsDiv = msgReactions
+    }
   }
-  else{
-    if(mySavedID == receivedReactionsInfo.messageOwner.userID){ // show reaction if it is done on my message in chat
-
+  else {
+    if (mySavedID == receivedReactionsInfo.messageOwner.userID) { // show reaction if it is done on my message in chat
+      // let notification = displayNotification({
+      //   title: { iconClass: 'bx bxs-wink-smile', titleText: 'Message reaction' },
+      //   body: {
+      //     shortOrImage: { shortOrImagType: shortOrImagType, shortOrImagContent: shortOrImagContent },
+      //     bodyContent: 'Message from ' + expectedUser.name + ' ' + expectedUser.surname + ' : ' + insertedMessage.message
+      //   },
+      //   actions: [
+      //     // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
+      //     { type: 'confirm', displayText: 'Open chat', actionFunction: () => { socket.emit('requestChatContent', chatInfo.roomID) } }
+      //   ],
+      //   obligatoryActions: {
+      //     onDisplay: () => { console.log('Notification Displayed') },
+      //     onHide: () => { console.log('Notification Hidden') },
+      //     onEnd: () => { console.log('Notification Ended') },
+      //   },
+      //   delay: 7000,
+      //   tone: 'notification'
+      // })
     }
   }
 })
 function buildReaction(details, myID) {
   let reactions = details.map(reaction => {
     let reactorsTitle = createElement({ elementType: 'div', class: 'title', textContent: 'Reactions' });
-    let reactorsArray = reaction.users.map(user => {
-      return createElement({ elementType: 'li', textContent: myID == user.userID ? 'Me' : user.name + " " + user.surname })
-    })
+    let reactorsArray = reaction.users.map(user => { return createElement({ elementType: 'li', textContent: myID == user.userID ? 'Me' : user.name + " " + user.surname }) })
     return createElement({
       elementType: 'div', class: 'reactionBox', childrenArray: [
         createElement({ elementType: 'div', class: 'reactionIcon', textContent: reaction.icon }),
@@ -2001,157 +2021,14 @@ function displayChatOnChatArea(openChatInfo) {
   let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
   inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
   let sendMessageButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
-  let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [emojiButton, attachButton, inputContainer, sendMessageButton] })
+  let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [/* emojiButton, attachButton, */ inputContainer, sendMessageButton] })
   let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox] })
   open_chat_box.textContent = '';
   open_chat_box.append(chatBox)
   openchat__box__info.textContent = '' // ensure that no element is inside the message container
-  messagesArray.forEach((message, index) => {
-    addMessageToChat(message, myID)
-    /*
-    if (index === 0) { previousUserId = null; } //excpect set that there was no previous sender
-    //date separation
-    let prevDate = new Date(previousMessageDate)
-    let thisDate = new Date(message.timeStamp)
-    console.log(sameDay(prevDate, thisDate))
-
-    //Preparing the profile Picture
-    let messageUserPicture = makeProfilePicture(message.userInfo)
-
-    //release previous message if it sontains something
-    if (message.userID == myID) {
-      if (receivedGroup.length != 0) {
-        let separator = '';
-        if (!sameDay(prevDate, thisDate)) separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: prevDate.toString('YYYY-MM-dd').substring(0, 15) })] })
-        else separator = '';
-
-        openchat__box__info.prepend(separator, createElement({ // create and release the group with Image
-          elementType: 'div', class: 'message-group-received', childrenArray: [
-            createElement({ elementType: 'div', childrenArray: [profilePictureToReleaseLater] }),
-            createElement({ elementType: 'div', childrenArray: receivedGroup })
-          ]
-        }))
-        receivedGroup = [];
-      }
-
-      //one minute ungrouping of my sent messages
-      if (((prevDate - thisDate) > 60000 || !sameDay(prevDate, thisDate)) && (index !== 0) && previousUserId == myID && sentGroup.length != 0) {
-        let separator = '';
-        if (!sameDay(prevDate, thisDate)) separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: prevDate.toString('YYYY-MM-dd').substring(0, 15) })] })
-        else separator = '';
-        openchat__box__info.prepend(separator,
-          createElement({ elementType: 'div', class: 'message-group-sent', childrenArray: sentGroup })
-        )
-      }
-
-      let tagTemplate = message.tagContent.map(tag => {
-        return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message })
-      })
-      //Prepare reaction template
-      let messageSentText = createElement({ elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
-      let msgGrpComponent = createElement({
-        elementType: 'div', class: 'message-sent', childrenArray: [
-          buildOptions(message, myID, messageSentText),
-          messageSentText,
-          createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [createElement({ elementType: 'img', src: 'https://randomuser.me/api/portraits/med/men/1.jpg' })] })
-        ]
-      })
-      sentGroup.unshift(msgGrpComponent)
-
-      //release my sent message group on the final message
-      if (messagesArray.length == index + 1) {
-        let separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: new Date(message.timeStamp).toString('YYYY-MM-dd').substring(0, 15) })] })
-        openchat__box__info.prepend(separator,
-          createElement({ elementType: 'div', class: 'message-group-sent', childrenArray: sentGroup })
-        )
-        sentGroup = [];
-      }
-
-    }
-    else {
-      //release previous message if it sontains something
-      if (sentGroup.length != 0) {
-        let separator = '';
-        if (!sameDay(prevDate, thisDate)) separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: prevDate.toString('YYYY-MM-dd').substring(0, 15) })] })
-        else separator = '';
-        openchat__box__info.prepend(separator,
-          createElement({ elementType: 'div', class: 'message-group-sent', childrenArray: sentGroup })
-        )
-        sentGroup = [];
-      }
-
-      //if the messageis not from the same person as previously sent, or if it is more than one minute ago
-      if (index != 0 && previousUserId != message.userID + '' && previousUserId != myID + '' && receivedGroup.length != 0) {
-        let separator = '';
-        if (!sameDay(prevDate, thisDate)) separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: prevDate.toString('YYYY-MM-dd').substring(0, 15) })] });
-        else separator = '';
-        openchat__box__info.prepend(separator,
-          createElement({
-            elementType: 'div', class: 'message-group-received', childrenArray: [
-              createElement({ elementType: 'div', childrenArray: [profilePictureToReleaseLater] }),
-              createElement({ elementType: 'div', childrenArray: receivedGroup })
-            ]
-          })
-        )
-        receivedGroup = [];
-      }
-
-      //one minute ungrouping of my sent messages
-      if (receivedGroup.length != 0 && index != 0 && previousUserId == message.userID && ((prevDate - thisDate) > 60000 || !sameDay(prevDate, thisDate))) {
-        let separator = '';
-        if (!sameDay(prevDate, thisDate)) separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: prevDate.toString('YYYY-MM-dd').substring(0, 15) })] })
-        else separator = '';
-        openchat__box__info.prepend(separator,
-          createElement({
-            elementType: 'div', class: 'message-group-received', childrenArray: [
-              createElement({ elementType: 'div', childrenArray: [profilePictureToReleaseLater] }),
-              createElement({ elementType: 'div', childrenArray: receivedGroup }),
-            ]
-          })
-        )
-        receivedGroup = [];
-      }
-
-      let tagTemplate = message.tagContent.map(tag => { return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message }) })
-      //sender's name
-      let sendersName = ''
-      if (receivedGroup.length == 0) {
-        sendersName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
-      }
-      let messageReceivedText = createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
-      receivedGroup.unshift(
-        createElement({
-          elementType: 'div', class: 'message-received', childrenArray: [
-            messageReceivedText,
-            buildOptions(message, myID, messageReceivedText),
-            sendersName
-          ]
-        })
-      )
-
-      //release my received message group on the final message
-      if (messagesArray.length == index + 1) {
-        let separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: new Date(message.timeStamp).toString('YYYY-MM-dd').substring(0, 15) })] })
-        openchat__box__info.prepend(
-          separator,
-          createElement({
-            elementType: 'div', class: 'message-group-received', childrenArray: [
-              createElement({ elementType: 'div', childrenArray: [messageUserPicture] }),
-              createElement({ elementType: 'div', childrenArray: receivedGroup }),
-            ]
-          })
-        )
-        receivedGroup = [];
-      }
-      profilePictureToReleaseLater = makeProfilePicture(message.userInfo)
-    }
-    previousMessageDate = message.timeStamp;
-    previousUserId = message.userID;
-
-    */
-  })
+  messagesArray.forEach((message, index) => { addMessageToChat(message, myID) })
   //scroll bottom
-  openchat__box__info.scrollTop = openchat__box__info.scrollHeight // scrool to the last message
+  scrollToBottom(openchat__box__info) // scrool to the last message
   openchat__box__info.style.scrollBehavior = "smooth" // enable smooth scrolling
 
   if (messagesArray.length < 1) {
@@ -2248,7 +2125,8 @@ function addMessageToChat(message, myID) {
       }
     }
   }
-  displayedMessages.push({ object: message, messageElement: messageElement });
+  displayedMessages.push({ object: message, messageElement: messageElement, reactionsDiv: messageElement.reactionOptions.reactionOptionsDiv });
+  console.log('displayedMessages', displayedMessages)
   scrollToBottom(openchat__box__info) // scroll to bottom
 }
 
@@ -2258,17 +2136,24 @@ function createReceivedMessage(message, myID, showSenderName) {
   let tagTemplate = message.tagContent.map(tag => { return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message }) })
   let messageReceivedText = createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
   let sendersName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
-  let messageElements = [messageReceivedText, buildOptions(message, myID, messageReceivedText)]
+  let reactionOptions = buildOptions(message, myID, messageReceivedText)
+  // reactionOptions.reactionOptionsDiv is the element
+  let messageElements = [messageReceivedText, reactionOptions]
   if (showSenderName == true) messageElements.push(sendersName)
-  return createElement({ elementType: 'div', class: 'message-received', childrenArray: messageElements })
+  let receivedMessage = createElement({ elementType: 'div', class: 'message-received', childrenArray: messageElements })
+  receivedMessage.reactionOptions = reactionOptions
+  return receivedMessage
 }
 
 function createSentMessage(message, myID, statusIcon) {
   let tagTemplate = message.tagContent.map(tag => { return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message }) })
   let messageSentText = createElement({ elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
   let messageStatus = createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [createElement({ elementType: 'i', class: statusIcon })] })
-  let messageElements = [buildOptions(message, myID, messageSentText), messageSentText, messageStatus]
-  return createElement({ elementType: 'div', class: 'message-sent', childrenArray: messageElements })
+  let reactionOptions = buildOptions(message, myID, messageSentText)
+  let messageElements = [reactionOptions, messageSentText, messageStatus]
+  let sentMessage = createElement({ elementType: 'div', class: 'message-sent', childrenArray: messageElements })
+  sentMessage.reactionOptions = reactionOptions
+  return sentMessage
 }
 
 function createReceivedGroup(profilePic, firstMessage) {
@@ -2442,17 +2327,21 @@ function buildOptions(message, myID, messageTextDiv) {
   })
   let messageTime = createElement({ elementType: 'div', class: 'ReactionTime', textContent: new Date(message.timeStamp).toString('YYYY-MM-dd').substring(16, 24) })
   let time_reactionChoice = message.userID == myID ? [messageTime].concat(availableReactions) : availableReactions.concat([messageTime])
+
+  let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(message.reactions.details, myID) })
   let time_reactions_options = [
     createElement({ elementType: 'div', class: 'messageOptions', childrenArray: [referenceBtn, deleteBtn] }),
     createElement({ elementType: 'div', class: 'time_reactionChoice', childrenArray: time_reactionChoice }),
-    createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(message.reactions.details, myID) }),
+    msgReactions,
   ]
   if (message.userID == myID) time_reactions_options.reverse()
   else deleteBtn.remove()
   if (messageTextDiv.textContent == '__deleted message__') {
     deleteBtn.remove();
   }
-  return createElement({ elementType: 'div', class: 'time_reactions_options', childrenArray: time_reactions_options })
+  let timeReactionOptions = createElement({ elementType: 'div', class: 'time_reactions_options', childrenArray: time_reactions_options })
+  timeReactionOptions.reactionOptionsDiv = msgReactions;
+  return timeReactionOptions
 }
 
 function messageReference(msgID, _messageElement, messagesTagsinputArea) {
