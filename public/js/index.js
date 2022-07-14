@@ -4,6 +4,7 @@ var socket = io();
 let taggedMessages = [];
 let openchat__box__info // the actual element holding all messages
 let messageTagsField;
+let inputContainer
 let selectedChatId;
 let selectedReactionId;
 let lastMessageInSelectedChat;
@@ -546,8 +547,8 @@ let functionalityOptionsArray = [
     window.location.href = destination;
   });
   socket.on('feedback', function (feedback) {
-    if (feedback.type == 'negative') console.error(feedback)
-    if (feedback.type == 'positie') console.log(feedback)
+    if (feedback.type == 'negative') console.log('feedback', feedback)
+    if (feedback.type == 'positie') console.log('feedback', feedback)
   })
   socket.on('myId', function (myInformation) {
     console.log('myId :', myInformation);
@@ -1796,71 +1797,59 @@ socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
   let chatContainerDiv = showOnChatList(chatInfo);
   let existingChat = availableChats.find(chat => chat.roomID == chatInfo.roomID)
   if (!existingChat) {
-    availableChats.prepend(existingChat);
+    chatContainer.prepend(chatContainerDiv);
     availableChats.unshift({ roomID: chatInfo.roomID, conversationButton })
   }
   else {
-    existingChat.conversationButton.before(chatContainerDiv)
-    existingChat.conversationButton.remove();
+    chatContainer.prepend(chatContainerDiv);
+    existingChat.conversationButton.remove()
     existingChat.conversationButton = chatContainerDiv
   }
   if (selectedChatId == chatInfo.roomID) { // if this chat is currently opened
-    let lastmessage = displayedMessages[0]
-    if (!lastmessage) {
-      openchat__box__info.textcontent = '';
-
-    }
-    else {
-      openchat__box__info
-    }
+    addMessageToChat(insertedMessage, mySavedID)
   }
-  else { // if this is not the displayed chat, 
+  else { // if this is not the displayed chat, give  notification
+    let shortOrImagType, shortOrImagContent;
+    if (chatInfo.type == 0) {
+      if (expectedUser.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = expectedUser.name.chatAt(0) + expectedUser.surname.charAt(0); }
+      else { shortOrImagType = 'image'; shortOrImagContent = expectedUser.profilePicture; }
+    }
+    if (chatInfo.type == 1) {
+      if (chatInfo.profilePicture == null) { shortOrImagType = 'image'; shortOrImagContent = '/private/profiles/group.jpeg' }
+      else { shortOrImagType = 'image'; shortOrImagContent = chatInfo.profilePicture; }
+    }
+    let notification = displayNotification({
+      title: { iconClass: 'bx bxs-chat', titleText: 'Incoming Message' },
+      body: {
+        shortOrImage: { shortOrImagType: shortOrImagType, shortOrImagContent: shortOrImagContent },
+        bodyContent: 'Message from ' + expectedUser.name + ' ' + expectedUser.surname + ' : ' + insertedMessage.message
+      },
+      actions: [
+        // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
+        { type: 'confirm', displayText: 'Open chat', actionFunction: () => { socket.emit('requestChatContent', chatInfo.roomID) } }
+      ],
+      obligatoryActions: {
+        onDisplay: () => { console.log('Notification Displayed') },
+        onHide: () => { console.log('Notification Hidden') },
+        onEnd: () => { console.log('Notification Ended') },
+      },
+      delay: 7000,
+      tone: 'notification'
+    })
 
   }
 
 });
 socket.on('updateReaction', function (receivedReactionsInfo) {
   console.log("receivedReactionsInfo", receivedReactionsInfo);
-  /*  {
-      "chat": "9",
-      message: reactionIdentifiers.messageId,
-      "details": [
-          {
-              "reactionId": 4,
-              "messageId": 48,
-              "users": [
-                  {
-                      "userID": 1,
-                      "name": "Test1Name",
-                      "surname": "Test1Surname",
-                      "profilePicture": null
-                  }
-              ],
-              "icon": "😨",
-              "name": "Afraid",
-              "description": null
-          },
-          {
-              "reactionId": 5,
-              "messageId": 48,
-              "users": [
-                  {
-                      "userID": 5,
-                      "name": "test5Name",
-                      "surname": "test5Surname",
-                      "profilePicture": null
-                  }
-              ],
-              "icon": "😠",
-              "name": "Angry",
-              "description": null
-          }
-      ]
-  }*/
+  
+  if (selectedChatId == receivedReactionsInfo.chat) { // update reaction in case it is on the open chat
+    //  = buildReaction(receivedReactionsInfo)
+  }
+  else{
+    if(mySavedID == receivedReactionsInfo.messageOwner.userID){ // show reaction if it is done on my message in chat
 
-  if (selectedChatId == receivedReactionsInfo.chat) {
-    let reactionsContainer = document.getElementById(receivedReactionsInfo.message + "-reactions")
-    reactionsContainer.innerHTML = buildReaction(receivedReactionsInfo)
+    }
   }
 })
 function buildReaction(details, myID) {
@@ -1884,6 +1873,7 @@ function scroll() {
 }
 
 function showOnChatList(chat) {
+  console.log('chat', chat)
   let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = chat;
 
   console.log("chat to display on list", chat)
@@ -1893,7 +1883,7 @@ function showOnChatList(chat) {
   switch (type) {
     case 0:
       writenBy = "";
-      let userToDisplay = users.filter(user => user.userID != myID)
+      let userToDisplay = users.filter(user => user.userID != mySavedID)
       if (userToDisplay.length < 1) { // in case we have only one user (viewer)
         chatTitleText = 'Deleted User'
         imageContainer = makeProfilePicture(deletedUser)
@@ -1903,7 +1893,7 @@ function showOnChatList(chat) {
       }
       break;
     case 1:
-      if (myID == lastmessage.from.userID) { writenBy = "Me: "; }
+      if (mySavedID == lastmessage.from.userID) { writenBy = "Me: "; }
       else { writenBy = lastmessage.from.name + ": "; }
       if (profilePicture == null) { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
       else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
@@ -1951,7 +1941,6 @@ function setFocus() {
 
 function displayChatOnChatArea(openChatInfo) {
   let { roomInfo, messagesArray } = openChatInfo
-  displayedMessages = messagesArray // save it to be accessible after the chat creation
   let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = roomInfo
   // let { roomID, roomName, type, profilePicture, myID, messagesArray, usersArray } = roomInfo;
   selectedChatId = roomID
@@ -2003,33 +1992,23 @@ function displayChatOnChatArea(openChatInfo) {
     default:
       break;
   }
-
   openchat__box__info = createElement({ elementType: 'div', class: 'c-openchat__box__info' })
   openchat__box__info.style.scrollBehavior = "auto" // so that it does not show scrolling while inserting
-
   let emojiButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-smile' })] })
   let attachButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })] })
   let inputText = createElement({ elementType: 'div', class: 'w-input-text', contentEditable: true })
   let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeholder', textContent: 'Type a message' })
   let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
-  let inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
+  inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
   let sendMessageButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
   let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [emojiButton, attachButton, inputContainer, sendMessageButton] })
   let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox] })
-
   open_chat_box.textContent = '';
   open_chat_box.append(chatBox)
-
-  let receivedGroup = [];
-  let sentGroup = [];
-
-  let previousMessageDate;
-  let previousUserId;
-  let profilePictureToReleaseLater;
-
   openchat__box__info.textContent = '' // ensure that no element is inside the message container
-
   messagesArray.forEach((message, index) => {
+    addMessageToChat(message, myID)
+    /*
     if (index === 0) { previousUserId = null; } //excpect set that there was no previous sender
     //date separation
     let prevDate = new Date(previousMessageDate)
@@ -2072,7 +2051,7 @@ function displayChatOnChatArea(openChatInfo) {
       let messageSentText = createElement({ elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
       let msgGrpComponent = createElement({
         elementType: 'div', class: 'message-sent', childrenArray: [
-          buildOptions(message, myID, messageSentText, inputContainer),
+          buildOptions(message, myID, messageSentText),
           messageSentText,
           createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [createElement({ elementType: 'img', src: 'https://randomuser.me/api/portraits/med/men/1.jpg' })] })
         ]
@@ -2144,7 +2123,7 @@ function displayChatOnChatArea(openChatInfo) {
         createElement({
           elementType: 'div', class: 'message-received', childrenArray: [
             messageReceivedText,
-            buildOptions(message, myID, messageReceivedText, inputContainer),
+            buildOptions(message, myID, messageReceivedText),
             sendersName
           ]
         })
@@ -2168,6 +2147,8 @@ function displayChatOnChatArea(openChatInfo) {
     }
     previousMessageDate = message.timeStamp;
     previousUserId = message.userID;
+
+    */
   })
   //scroll bottom
   openchat__box__info.scrollTop = openchat__box__info.scrollHeight // scrool to the last message
@@ -2213,22 +2194,98 @@ function displayChatOnChatArea(openChatInfo) {
 
 function addMessageToChat(message, myID) {
   let messageElement
-  if (displayedMessages.length == 0) {
+  if (displayedMessages.length < 1) { // for the first message on chat
+
+    let separator = createSeparator(new Date(message.timeStamp), 'date')
+    let groupMessages;
     if (message.userID == myID) {
-      messageElement = createElement({})
+      messageElement = createSentMessage(message, myID, 'bx bx-check')
+      groupMessages = createSentGroup(messageElement)
     }
     else {
-      messageElement = createElement({})
+      let profilePic = makeProfilePicture(message.userInfo)
+      messageElement = createReceivedMessage(message, myID, true)
+      groupMessages = createReceivedGroup(profilePic, messageElement)
     }
+    openchat__box__info.appendChild(separator)
+    openchat__box__info.appendChild(groupMessages)
   }
   else {
-
+    let lastMessage = displayedMessages[displayedMessages.length - 1]
+    console.log('message, myID', message, myID)
+    let prevDate = new Date(lastMessage.object.timeStamp)
+    let thisDate = new Date(message.timeStamp)
+    if (!sameDay(prevDate, thisDate)) { // first I check if it is from the same date in order to establish a separator
+      let separator = createSeparator(new Date(message.timeStamp), 'date')
+      openchat__box__info.appendChild(separator)
+    }
+    if (message.userID == myID) { // if it is my Message
+      messageElement = createSentMessage(message, myID, 'bx bx-check')
+      if ((thisDate - prevDate) > 60000 || !sameDay(prevDate, thisDate) || message.userID != lastMessage.object.userID) {
+        /* 
+        we create a new group, if:
+        - the message is older than 1 min
+        - if the message is not from the same day
+        - the message is coming from a different user, 
+        */
+        groupMessages = createSentGroup(messageElement)
+        openchat__box__info.append(groupMessages)
+      }
+      else {
+        lastMessage.messageElement.after(messageElement)
+      }
+    }
+    else { // if it is a received message
+      if ((thisDate - prevDate) > 60000 || !sameDay(prevDate, thisDate) || message.userID != lastMessage.object.userID) {
+        messageElement = createReceivedMessage(message, myID, true)
+        let profilePic = makeProfilePicture(message.userInfo)
+        groupMessages = createReceivedGroup(profilePic, messageElement)
+        openchat__box__info.append(groupMessages)
+      }
+      else {
+        messageElement = createReceivedMessage(message, myID, false)
+        lastMessage.messageElement.after(messageElement)
+      }
+    }
   }
-  displayedMessages.push({
-    object: message,
-    messageElement: messageElement
-  });
+  displayedMessages.push({ object: message, messageElement: messageElement });
+  scrollToBottom(openchat__box__info) // scroll to bottom
+}
 
+function createReceivedMessage(message, myID, showSenderName) {
+  console.log('message', message)
+  // senserName: true / false allows the message to have the senders name attached
+  let tagTemplate = message.tagContent.map(tag => { return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message }) })
+  let messageReceivedText = createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
+  let sendersName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
+  let messageElements = [messageReceivedText, buildOptions(message, myID, messageReceivedText)]
+  if (showSenderName == true) messageElements.push(sendersName)
+  return createElement({ elementType: 'div', class: 'message-received', childrenArray: messageElements })
+}
+
+function createSentMessage(message, myID, statusIcon) {
+  let tagTemplate = message.tagContent.map(tag => { return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message }) })
+  let messageSentText = createElement({ elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
+  let messageStatus = createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [createElement({ elementType: 'i', class: statusIcon })] })
+  let messageElements = [buildOptions(message, myID, messageSentText), messageSentText, messageStatus]
+  return createElement({ elementType: 'div', class: 'message-sent', childrenArray: messageElements })
+}
+
+function createReceivedGroup(profilePic, firstMessage) {
+  return receivedGroup = createElement({
+    elementType: 'div', class: 'message-group-received', childrenArray: [createElement({ elementType: 'div', childrenArray: [profilePic] }), createElement({ elementType: 'div', childrenArray: [firstMessage] })]
+  })
+}
+
+function createSentGroup(firstMessage) {
+  return createElement({ elementType: 'div', class: 'message-group-sent', childrenArray: [firstMessage] })
+}
+
+function createSeparator(factor, type) {
+  let separator;
+  if (type == 'date') separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: factor.toString('YYYY-MM-dd').substring(0, 15) })] })
+  if (type == 'unread') separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: 'Unread messages' })] })
+  return separator;
 }
 
 function formatDate(unfDate) {
@@ -2247,238 +2304,9 @@ function scrollToBottom(div) {
   div.scrollTop = div.scrollHeight;
 }
 
-function reactionTo(messageId, reaction) {
-  console.log(messageId, reaction);
-  socket.emit('messageReaction', { messageId, selectedChatId, reaction })
-}
+function reactionTo(messageId, reaction) { socket.emit('messageReaction', { messageId, selectedChatId, reaction }) }
 
-function sameDay(d1, d2) {
-  return d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate();
-}
-function displayMessageOnSelectedChat(expectedUser, message) {
-
-  if (message.roomID == selectedChatId) {
-    //For the first message in chat
-    if (!lastMessageInSelectedChat) {
-      //Preparing the profile Picture
-      let messageUserPicture = '';
-      if (expectedUser.profilePicture === null) { messageUserPicture = `<div class="receivedMessageProfile">${expectedUser.name.charAt(0) + expectedUser.surname.charAt(0)}</div>` }
-      else { messageUserPicture = `<img class="receivedMessageProfile" src="${expectedUser.profilePicture}" alt=""></img>` }
-
-
-      let globalChatContainer = document.querySelector('.c-openchat__box__info');
-      let pushDown = `<div class="push-down"></div>`;
-      let dateSeparator = `<div class="message-separator"><span>${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(0, 15)}</span></div>`
-      if (expectedUser.userID == mySavedID + '') {
-
-        globalChatContainer.innerHTML = pushDown + dateSeparator +
-          `<div class="message-group-sent">
-            <div class="message-sent" id="${message.id}">
-              ${buildOptions(message, true)}
-              <div class="message-sent-text" id="${message.id}-messageText">${buildTags(message.tagContent) + message.message
-          //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-          }</div>
-              <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg" alt=""></div>
-            </div>
-          </div> `
-      }
-      else {
-        globalChatContainer.innerHTML = pushDown + dateSeparator +
-          `<div class="message-group-received">
-              <div>
-                  ${messageUserPicture}
-              </div>
-              <div>
-                <div class="message-received" id="${message.id}">
-                  <div class="message-received-text" id="${message.id}-messageText">${//expectedUser.userID +": " + 
-          buildTags(message.tagContent) + message.message
-          //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-          }</div>
-                  ${buildOptions(message, false)}
-                  <div class="senderOriginName">${
-          //sender's Name 
-          message.userInfo.name + ' ' + message.userInfo.surname}</div>
-                </div>
-              </div>
-          </div>`
-      }
-    }
-
-    //expectedUser.userID == mySavedID //check if it is my message
-    else if (expectedUser.userID == mySavedID + '') {
-      let lastDisplayedMessage = document.getElementById(lastMessageInSelectedChat.id + '');
-
-      // i don't how this error is coming, the lastMessageInSelectedChat is behind for 1 hr
-      let lastselectedChatTime = new Date(lastMessageInSelectedChat.timeStamp);
-      let thisMessageTimestamp = new Date(message.timeStamp)
-      let timeDiff = thisMessageTimestamp - lastselectedChatTime;
-
-
-      let lastDisplayedGroup = lastDisplayedMessage.parentElement;
-      let globalChatContainer = document.querySelector('.c-openchat__box__info');
-
-      //if the previous message was mine
-      if (lastMessageInSelectedChat.userID == mySavedID + '') {
-        //if it is less than one minute
-        if (timeDiff < 60000 && sameDay(thisMessageTimestamp, lastselectedChatTime)) {
-          lastDisplayedGroup.innerHTML +=
-            `<div class="message-sent" id="${message.id}">
-            ${buildOptions(message, true)}
-            <div class="message-sent-text" id="${message.id}-messageText">${buildTags(message.tagContent) + message.message
-            //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-            }</div>
-            <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg" alt=""></div>
-          </div>`;
-        }
-        //here is the only occasion that we create a new group
-        else if (!sameDay(thisMessageTimestamp, lastselectedChatTime)) {
-          globalChatContainer.innerHTML +=
-            `<div class="message-separator"><span>${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(0, 15)}</span></div>
-          <div class="message-group-sent">
-            <div class="message-sent" id="${message.id}">
-              ${buildOptions(message, true)}
-              <div class="message-sent-text" id="${message.id}-messageText">${buildTags(message.tagContent) + message.message
-            //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-            }</div>
-              <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg" alt=""></div>
-            </div>
-          </div> `
-        }
-        else {
-          globalChatContainer.innerHTML +=
-            `<div class="message-group-sent">
-            <div class="message-sent" id="${message.id}">
-              ${buildOptions(message, true)}
-              <div class="message-sent-text" id="${message.id}-messageText">${buildTags(message.tagContent) + message.message
-            //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-            }</div>
-              <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg" alt=""></div>
-            </div>
-          </div> `
-        }
-      }
-      else {
-        //overall chat container
-        let globalChatContainer = lastDisplayedMessage.parentElement.parentElement.parentElement;
-        //here is the only occasion that we create a new group
-        if (!sameDay(thisMessageTimestamp, lastselectedChatTime)) {
-          globalChatContainer.innerHTML +=
-            `<div class="message-separator"><span>${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(0, 15)}</span></div>
-          <div class="message-group-sent">
-            <div class="message-sent" id="${message.id}">
-              ${buildOptions(message, true)}
-              <div class="message-sent-text" id="${message.id}-messageText">${buildTags(message.tagContent) + message.message
-            //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-            }</div>
-              <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg" alt=""></div>
-            </div>
-          </div> `
-        }
-        else {
-          globalChatContainer.innerHTML +=
-            `<div class="message-group-sent">
-            <div class="message-sent" id="${message.id}">
-              ${buildOptions(message, true)}
-              <div class="message-sent-text" id="${message.id}-messageText">${buildTags(message.tagContent) + message.message
-            //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-            }</div>
-              <div class="message-sent-status"><img src="https://randomuser.me/api/portraits/med/men/1.jpg" alt=""></div>
-            </div>
-          </div> `
-        }
-      }
-
-    } else {
-      let lastDisplayedMessage = document.getElementById(lastMessageInSelectedChat.id + '');
-
-      // i don't how this error is coming, the lastMessageInSelectedChat is behind for 1 hr
-      let lastselectedChatTime = new Date(lastMessageInSelectedChat.timeStamp);
-      let thisMessageTimestamp = new Date(message.timeStamp)
-      let timeDiff = thisMessageTimestamp - lastselectedChatTime;
-
-      let lastDisplayedGroup = lastDisplayedMessage.parentElement;
-      let globalChatContainer = document.querySelector('.c-openchat__box__info')
-
-      //first of all chack if it is the same date
-      if (!sameDay(thisMessageTimestamp, lastselectedChatTime)) {
-        //Preparing the profile Picture
-        let messageUserPicture = '';
-        if (expectedUser.profilePicture === null) { messageUserPicture = `<div class="receivedMessageProfile">${expectedUser.name.charAt(0) + expectedUser.surname.charAt(0)}</div>` }
-        else { messageUserPicture = `<img class="receivedMessageProfile" src="${expectedUser.profilePicture}" alt=""></img>` }
-
-        globalChatContainer.innerHTML +=
-          `<div class="message-separator"><span>${new Date(message.timeStamp).toString('YYYY-MM-dd').substring(0, 15)}</span></div>
-        <div class="message-group-received">
-              <div>
-                  ${messageUserPicture}
-              </div>
-              <div>
-                <div class="message-received" id="${message.id}">
-                  <div class="message-received-text" id="${message.id}-messageText">${//expectedUser.userID +": " + 
-          buildTags(message.tagContent) + message.message
-          //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-          }</div>
-                  ${buildOptions(message, false)}
-                  <div class="senderOriginName">${expectedUser.name + ' ' + expectedUser.surname}</div>
-                </div>
-              </div>
-          </div>`
-      }
-      //if  no 60 seconds, same user as previous message, on the same day
-      else if (timeDiff < 60000 && lastMessageInSelectedChat.userID == expectedUser.userID) {
-        lastDisplayedGroup.innerHTML +=
-          `<div class="message-received" id="${message.id}">
-            <div class="message-received-text" id="${message.id}-messageText">${//expectedUser.userID +": " + 
-          buildTags(message.tagContent) + message.message
-          //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-          }</div>
-            ${buildOptions(message, false)}
-        </div>`
-      }
-
-      else {
-        //Preparing the profile Picture
-        let messageUserPicture = '';
-        if (expectedUser.profilePicture === null) { messageUserPicture = `<div class="receivedMessageProfile">${expectedUser.name.charAt(0) + expectedUser.surname.charAt(0)}</div>` }
-        else { messageUserPicture = `<img class="receivedMessageProfile" src="${expectedUser.profilePicture}" alt=""></img>` }
-
-        globalChatContainer.innerHTML +=
-          `<div class="message-group-received">
-              <div>
-                  ${messageUserPicture}
-              </div>
-              <div>
-                <div class="message-received" id="${message.id}">
-                  <div class="message-received-text" id="${message.id}-messageText">${//expectedUser.userID +": " + 
-          buildTags(message.tagContent) + message.message
-          //+" "+new Date(message.timeStamp).toString('YYYY-MM-dd')
-          }</div>
-                  ${buildOptions(message, false)}
-                  <div class="senderOriginName">${expectedUser.name + ' ' + expectedUser.surname}</div>
-                </div>
-              </div>
-          </div>`
-      }
-    }
-
-    lastMessageInSelectedChat = {
-      id: message.id, message: message.message, roomID: message.roomID, userID: expectedUser.userID, timeStamp: message.timeStamp,
-      userInfo: {
-        userID: message.id,
-        name: expectedUser.name,
-        surname: expectedUser.surname,
-        profilePicture: expectedUser.profilePicture
-      }
-    }
-    console.log(lastMessageInSelectedChat)
-    scroll()
-  }
-  else {
-    console.log("received a message from a chat not opened")
-  }
-}
+function sameDay(d1, d2) { return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate(); }
 
 let searchField = document.getElementById('searchField')
 searchField.addEventListener('input', function () {
@@ -2571,7 +2399,7 @@ function chatSearchToogle() {
   chatContainingDiv.classList.toggle("hideLeft")
 }
 
-function buildOptions(message, myID, messageTextDiv, inputContainer) {
+function buildOptions(message, myID, messageTextDiv) {
   let referenceBtn = createElement({
     elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })], onclick: () => {
       messageReference(message.id, messageTextDiv, inputContainer)
@@ -2602,18 +2430,15 @@ function buildOptions(message, myID, messageTextDiv, inputContainer) {
       let constraints = { icon, title, contentElementsArray, actions }
       // actions is an array of a button and a function of what it does
       createInScreenPopup(constraints).then(editPopup => {
-        cancelButton.addEventListener('click', editPopup.closePopup)
-        confirmButton.addEventListener('click', editPopup.closePopup)
+        cancelButton.addEventListener('click', editPopup.closePopup);
+        confirmButton.addEventListener('click', editPopup.closePopup);
       })
     }
   })
   let availableReactions = message.reactions.available.map(reaction => {
-    return createElement({
-      elementType: 'div', class: 'reactionChoice', childrenArray: [
-        createElement({ elementType: 'div', class: 'reactionIconChoose', textContent: reaction.icon }),
-        createElement({ elementType: 'div', class: 'reactionName', textContent: reaction.name }),
-      ]
-    })
+    let reactionIcon = createElement({ elementType: 'div', class: 'reactionIconChoose', textContent: reaction.icon, onclick: () => { reactionTo(message.id, reaction.name) } })
+    let reactionElement = createElement({ elementType: 'div', class: 'reactionChoice', childrenArray: [reactionIcon, createElement({ elementType: 'div', class: 'reactionName', textContent: reaction.name })] })
+    return reactionElement
   })
   let messageTime = createElement({ elementType: 'div', class: 'ReactionTime', textContent: new Date(message.timeStamp).toString('YYYY-MM-dd').substring(16, 24) })
   let time_reactionChoice = message.userID == myID ? [messageTime].concat(availableReactions) : availableReactions.concat([messageTime])
@@ -3854,7 +3679,7 @@ myPeer.on('open', myPeerId => {
           }
         }
         // -------------------------------------------------------------------------------
-        c_openchat__box__info.scrollTop = c_openchat__box__info.scrollHeight;
+        scrollToBottom(c_openchat__box__info)
         prevMsg = message
       }
       function createNewSentGroup(firstMessage) {
@@ -4414,7 +4239,7 @@ function displayNotification(notificationConfig) {
   return notification
 }
 
-//exemplary Notification Code
+//exemplary app entry Notification Code
 let notification = displayNotification({
   title: { iconClass: 'bx bxs-door-open', titleText: 'Welcome' },
   body: {
@@ -4460,28 +4285,20 @@ function createOngoingCallScreen() {
   }
 }
 
-
-
 function createTopBar(callInfo, myInfo) {
   let { callUniqueId, callType, callTitle, isTeam } = callInfo
   let callScreenHeader = document.getElementById('callScreenHeader')
-
-
   let MeetingTitle = createElement({ elementType: 'div', class: 'MeetingTitle', textContent: callTitle })
   let headerLeftPart = createElement({ elementType: 'div', class: 'headerLeftPart', childrenArray: [MeetingTitle] })
-
   let input = createElement({ elementType: 'input', placeHolder: 'Search users' })
   let doneBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-check' }), createElement({ elementType: 'p', textContent: 'Done' })] })
   let searchField = createElement({ elementType: 'div', class: 'searchField', childrenArray: [input, doneBtn] })
-
   let invitedDiv = createElement({ elementType: 'div', class: 'invitedDiv', textContent: 'Type to search ...' })
-
   input.addEventListener('input', () => {
     var searchText = input.value;
     console.log('searching People', callUniqueId, searchText)
     socket.emit('searchPeopleToInviteToCall', { callUniqueId, searchText });
   })
-
   let popDown = createElement({ elementType: 'div', class: 'popdown', childrenArray: [searchField, invitedDiv] })
   let inviteSomeone = createElement({
     elementType: 'button',
@@ -4491,16 +4308,14 @@ function createTopBar(callInfo, myInfo) {
       createElement({ elementType: 'p', textContent: 'Add Participants' }),
     ],
     onclick: () => {
-      input.focus()
-      popDown.classList.toggle('popdownDisplayed')
+      input.focus();
+      popDown.classList.toggle('popdownDisplayed');
     }
   })
   doneBtn.addEventListener('click', () => { popDown.classList.toggle('popdownDisplayed') })
   let headerRightPart = createElement({ elementType: 'div', class: 'headerRightPart', childrenArray: [inviteSomeone, popDown] })
-
   callScreenHeader.textContent = '';
   callScreenHeader.append(headerLeftPart, headerRightPart)
-
   return { callScreenHeader, invitedDiv }
 }
 
@@ -4578,7 +4393,6 @@ async function createProfilePopup(userInfo, editProfile = false) {
 
   //combine cover with user profile
   let mainCentralProfileDiv = createElement({ elementType: 'div', class: 'mainCentralProfileDiv', childrenArray: [coverPhotoDiv, userDataDiv] })
-
 
   if (editProfile == true) {
     // cover edit - buttons
@@ -4729,10 +4543,7 @@ function createBarLoader() {
   let progress_value = createElement({ elementType: 'div', class: 'progress-value' })
   let number = createElement({ elementType: 'div', class: 'number' })
   let progress = createElement({ elementType: 'div', class: 'progress', childrenArray: [progress_value, number] })
-  progress.setPercentage = (percentage) => {
-    number.textContent = percentage + '%';
-    progress_value.style.width = percentage + '%';
-  }
+  progress.setPercentage = (percentage) => { number.textContent = percentage + '%'; progress_value.style.width = percentage + '%'; }
   return progress
 }
 
@@ -4742,37 +4553,9 @@ function createCircleLoader() {
   let progress = createElement({ elementType: 'div', class: 'progressBar', childrenArray: [circular_progress] })
   progress.setPercentage = (percentage) => {
     value_container.textContent = percentage + '%';
-    // progress_value.style.width = percentage + '%';
     circular_progress.style.background = `conic-gradient(#4d5bf9 ${percentage * 3.6}deg, #cadcff ${percentage * 3.6}deg )`
   }
   return progress
-}
-
-// validate ImageUpload
-function ValidateFileUpload() {
-  var fuData = document.getElementById('fileChooser');
-  var FileUploadPath = fuData.value;
-  //To check if user upload any file
-  if (FileUploadPath == '') {
-    alert("Please upload an image");
-  } else {
-    var Extension = FileUploadPath.substring(FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
-    //The file uploaded is an image
-    if (Extension == "gif" || Extension == "png" || Extension == "bmp" || Extension == "jpeg" || Extension == "jpg") {
-      // To Display
-      if (fuData.files && fuData.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-          $('#blah').attr('src', e.target.result);
-        }
-        reader.readAsDataURL(fuData.files[0]);
-      }
-    }
-    //The file upload is NOT an image
-    else {
-      alert("Photo only allows file types of GIF, PNG, JPG, JPEG and BMP. ");
-    }
-  }
 }
 // window.onbeforeunload = function () {
 //   deleteAllCookies()

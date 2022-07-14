@@ -1036,6 +1036,7 @@ body {
 
 
 .c-openchat {
+  display: flex;
   height: calc(100vh - 2rem);
   flex: 1;
   margin: 1rem;

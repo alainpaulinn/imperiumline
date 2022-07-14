@@ -180,20 +180,18 @@ io.on('connection', (socket) => {
     });
     socket.on('message', async (message) => {
       /* message = { toRoom: selectedChatId, message: messageContent.innerText.trim(), timeStamp: new Date().toISOString(), taggedMessages: taggedMessages }; */
-      let roomUsersInfo = await getRoomInfo(message.toRoom, id)
-      let expectedUser = roomUsersInfo.users.find(user => user.userID == id)
-      if(!expectedUser) return console.log('cannot sent a message to a room to which the user is not a member')
-      
+      let _chatInfo = await getRoomInfo(message.toRoom, id)
+      let expectedUser = _chatInfo.users.find(user => user.userID == id)
+      if (!expectedUser) return console.log('cannot sent a message to a room to which the user is not a member')
+
       let fDate = formatDate(new Date())
       if (expectedUser && message.message != "") {
         db.query('INSERT INTO `message`(`message`, `roomID`, `userID`, `timeStamp`) VALUES (?,?,?,?)', [message.message, message.toRoom, id, fDate || message.timeStamp], async (err, participantResult) => {
           if (err) return console.log(err)
           db.query('UPDATE `room` SET `lastActionDate` = ? WHERE `room`.`chatID` = ?;', [fDate || message.timeStamp, message.toRoom], async (err, updateLastAction) => {
             if (err) return console.log(err)
-            let chatInfo = await getRoomInfo(message.toRoom, id);
             db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id`= ?', [participantResult.insertId], async (err, messageResult) => {
               if (err) return console.log(err)
-
               message.taggedMessages.forEach(taggedMessage => {
                 db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id` = ?', [taggedMessage], async (err, referencedMessageResult) => {
                   if (err) return console.log(err)
@@ -213,6 +211,7 @@ io.on('connection', (socket) => {
                 id: messageResult[0].id,
                 roomID: messageResult[0].roomID,
                 message: messageResult[0].message,
+                userID: messageResult[0].userID,
                 timeStamp: messageResult[0].timeStamp,
                 reactions: {
                   chat: messageResult[0].roomID,
@@ -220,9 +219,11 @@ io.on('connection', (socket) => {
                   details: await getMessageReactions(messageResult[0].id),
                   available: await getAvailableMessageReactions()
                 },
-                tagContent: await getMessageTags(messageResult[0].id)
+                tagContent: await getMessageTags(messageResult[0].id),
+                userInfo: await getUserInfo(id)
               }
               console.log("Last inserted ID", participantResult.insertId)
+              let chatInfo  = await getRoomInfo(message.toRoom, id)
               io.sockets.in(message.toRoom).emit('newMessage', { chatInfo, expectedUser, insertedMessage });
             })
           })
@@ -314,6 +315,7 @@ io.on('connection', (socket) => {
                           {
                             chat: reactionIdentifiers.selectedChatId,
                             message: reactionIdentifiers.messageId,
+                            messageOwner: await getUserInfo(messageCheck[0].userID),
                             details: await getMessageReactions(reactionIdentifiers.messageId),
                             available: await getAvailableMessageReactions()
                           }
@@ -1599,7 +1601,7 @@ async function getChatFullInfo(roomId, viewerID) {
 
 function getRoomMessages(roomId) {
   return new Promise(function (resolve, reject) {
-    db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `roomID` = ? ORDER BY timeStamp DESC', [roomId], async (err, messages) => {
+    db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `roomID` = ? ORDER BY timeStamp ASC', [roomId], async (err, messages) => {
       if (err) return console.log(err)
       resolve(
         Promise.all(
