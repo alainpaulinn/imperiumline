@@ -934,6 +934,7 @@ body {
   justify-content: space-between;
   box-shadow: 3px 3px 10px -2px rgba(204, 197, 197, 0.5);
   background-color: white;
+  gap: 0.5rem;
 }
 .c-openchat__box__header .c-chat-title {
   display: flex;
@@ -967,7 +968,6 @@ body {
 .c-openchat__box__name {
   margin-left: 10px;
   color: #747678;
-  display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3013,6 +3013,30 @@ body {
   background-color: #d9e3ee;
 }
 
+.mobileButton {
+  display: none;
+  color: rgb(91, 94, 97);
+  align-items: center;
+  padding: 1rem;
+  transition: all 0.4s;
+  border-radius: 15px;
+  background-color: rgb(235, 240, 246);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  height: 40px;
+  width: 40px;
+}
+.mobileButton i {
+  font-size: 18px;
+}
+.mobileButton p {
+  margin-left: 0.5rem;
+}
+.mobileButton:hover {
+  background-color: #d9e3ee;
+}
+
 .importantButton {
   color: white;
   border-radius: 15px;
@@ -3474,6 +3498,7 @@ body {
   background-color: transparent;
   gap: 1rem;
   margin: 1rem;
+  z-index: 10;
 }
 .notifications .notification {
   display: flex;
@@ -5006,4 +5031,71 @@ body {
   flex-shrink: 0;
   -o-object-fit: cover;
      object-fit: cover;
+}
+
+@media (max-width: 488px) {
+  .c-app {
+    max-height: 100%;
+  }
+  .c-app .c-application {
+    position: relative;
+    min-width: 100%;
+    max-height: 100%;
+  }
+  .c-app .c-application .c-sidepanel {
+    position: absolute;
+    padding: 1rem;
+    min-width: 100%;
+    z-index: 2;
+    box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+  }
+  .c-app .c-application .c-messages_panel {
+    padding-top: calc(30px + 2rem);
+    width: 100%;
+  }
+  .c-app .c-application .c-messages_panel .c-chats {
+    margin: 0;
+    height: 100%;
+    max-width: 100%;
+    width: 100%;
+  }
+  .c-app .c-application .c-messages_panel .c-openchat {
+    margin: 0;
+    height: 100%;
+  }
+
+  .expanded {
+    position: absolute;
+    flex-direction: row;
+    min-width: 100%;
+    width: 100%;
+    height: unset;
+    z-index: 1;
+    padding: 1rem;
+  }
+  .expanded .c-sidepanel__nav {
+    display: none;
+  }
+  .expanded .c-sidepanel__app-header {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  .notifications {
+    right: -50%;
+    transform: translateX(-50%);
+    width: 100%;
+    margin: 0;
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .mobileButton {
+    display: flex;
+  }
+
+  .mobileHiddenElement {
+    display: none;
+  }
 }/*# sourceMappingURL=style.css.map */

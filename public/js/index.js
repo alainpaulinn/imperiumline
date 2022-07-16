@@ -1,6 +1,6 @@
 //Get data from the chatsFromDataServer
 var socket = io();
-
+let displayedScreen = 'chats'
 let taggedMessages = [];
 let openchat__box__info // the actual element holding all messages
 let messageTagsField;
@@ -11,12 +11,11 @@ let lastMessageInSelectedChat;
 let displayedMessages = [];
 let friends = [];
 let chats = [];
-let ITriggeredChatCreation = false;
 let mySavedID;
 let myName, Mysurname;
 
 let deletedUser = { userID: 0, name: 'Deleted', surname: 'User', role: 'Deleted User', profilePicture: null, status: 'offline' }
-// to be used in ca se we have a deleted user
+// to be used in case we have a deleted user
 
 let openChatInfo;
 let availableChats = [];
@@ -90,40 +89,23 @@ let functionalityOptionsArray = [
         sidepanelElements[i].dropIcon.classList.remove('rotate180');
       }
     }
-    else {
-      hamburger.classList.add("active");
-      sidePanelDiv.classList.remove("expanded");
-    }
+    else { hamburger.classList.add("active"); sidePanelDiv.classList.remove("expanded"); }
   }
 
   // dark theme switch
   let darkModeCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle1' })
   darkModeCheckBox.addEventListener('change', (event) => {
-
     let darkClass = 'dark';
-    if (darkModeCheckBox.checked) {
-      body.classList.add(darkClass);
-      alert('darkClass activated');
-    }
-    else {
-      body.classList.remove(darkClass);
-      alert('darkClass deactivated');
-    }
+    if (darkModeCheckBox.checked) { body.classList.add(darkClass); alert('darkClass activated'); }
+    else { body.classList.remove(darkClass); alert('darkClass deactivated'); }
   })
   let darkmodeActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [darkModeCheckBox, createElement({ elementType: 'label', for: 'toggle1' })] })
 
   // silence audio switch
   let silenceCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle2' })
   silenceCheckBox.addEventListener('change', (event) => {
-    let darkClass = 'dark';
-    if (silenceCheckBox.checked) {
-      body.classList.add(darkClass);
-      alert('notifications Ring deactivated');
-    }
-    else {
-      body.classList.remove(darkClass);
-      alert('notifications Ring activated');
-    }
+    if (silenceCheckBox.checked) alert('notifications Ring deactivated');
+    else alert('notifications Ring activated');
   })
   let silenceActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [silenceCheckBox, createElement({ elementType: 'label', for: 'toggle2' })] })
 
@@ -235,13 +217,7 @@ let functionalityOptionsArray = [
   let logoutForm = createElement({ elementType: 'form', action: "/auth/logout", method: "post", childrenArray: [createElement({ elementType: 'input', type: 'text', name: 'logout', hidden: "true" })] })
   let logoutButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Logout', onclick: () => { logoutForm.submit(); } })
   // edit profile form
-  // let editProfilePanel = createInScreenPopup({ title: "Edit Profile", contentElementsArray: [] })
-  let editProfileButton = createElement({
-    elementType: 'button', class: 'importantButton', textContent: 'Edit', onclick: () => {
-      /*editProfilePanel.classList.toggle('visible')*/
-
-    }
-  })
+  let editProfileButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Edit' })
   let defaultOptions = [
     {
       title: "Preferences",
@@ -394,7 +370,10 @@ let functionalityOptionsArray = [
       subMenuDiv: subMenuDiv,
       dropIcon: dropIcon
     }
-  }
+  };
+  // fillMessagesPanel;
+  // createMessagesPanelElements();
+
   // call-log-section ------ createCallLogContactSearch
   (() => {
     let call_log_contact_search_panel = document.getElementById('call_log_contact_search_panel');
@@ -538,7 +517,6 @@ let functionalityOptionsArray = [
         })
         list_call_section_content.append(call_log)
       })
-
     })
     $(".pill").click(function () { $(this).toggleClass("selectedPill"); });
   })()
@@ -621,7 +599,6 @@ let functionalityOptionsArray = [
           // early define the numbers Div
           let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })] })
 
-
           let companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: 'favicon.ico' })
           let companyName = createElement({ elementType: 'div', class: 'companyName', textContent: 'Imperium Line' })
           let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: 'Imperium Line application main administration' })
@@ -629,7 +606,6 @@ let functionalityOptionsArray = [
           let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [companyProfilePic, companyNameDescription] })
           let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv] })
           let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray: [numbersDiv, managementDiv] })
-
 
           // listen for superAdmin numbers
           socket.on('superAdminNumbers', numbersArray => {
@@ -1648,8 +1624,8 @@ let functionalityOptionsArray = [
 
           // -- Preparing the Admin Figures and essential objects
           socket.on('preparePositions', positions => {
-            companyPositions = positions
-            console.log('positions defined')
+            companyPositions = positions;
+            console.log('positions defined');
           })
           socket.on('prepareUsers', users => {
             companyUsers = users
@@ -1682,7 +1658,6 @@ let functionalityOptionsArray = [
             managementDivBodyStored = managementDivBody
             managementDiv.append(managementDivHeader, managementDivBody)
           }
-
           goodselect(companyAdminButton, {
             availableOptions: administeredCompaniesInfo,
             placeHolder: "Select Company",
@@ -1720,12 +1695,10 @@ let functionalityOptionsArray = [
           })
           responsibilitiesContainer.append(companyAdminButton)
         }
-
         adminPanel.append(responsibilitiesPanel, contentPanel)
         return createSidePanelElement(title, icon, subMenu)
       }
     }
-
   });
 })(functionalityOptionsArray);
 function showMessagesPanel() {
@@ -1733,7 +1706,6 @@ function showMessagesPanel() {
   call_log_panel.style.display = "none";
   ongoing_call_panel.style.display = "none";
   time_scheduling_panel.style.display = "none";
-  work_shift_panel.style.display = "none";
 
   document_title.innerText = "Messages";
 }
@@ -1742,7 +1714,6 @@ function showCallHistoryPanel() {
   call_log_panel.style.display = "flex";
   ongoing_call_panel.style.display = "none";
   time_scheduling_panel.style.display = "none";
-  work_shift_panel.style.display = "none";
 
   document_title.innerText = "Calls";
 }
@@ -1751,7 +1722,6 @@ function showOngoingCallSection() {
   call_log_panel.style.display = "none";
   ongoing_call_panel.style.display = "flex";
   time_scheduling_panel.style.display = "none";
-  work_shift_panel.style.display = "none";
 
   document_title.innerText = "ongoing call";
 }
@@ -1760,18 +1730,55 @@ function showTimeSchedulingSection() {
   call_log_panel.style.display = "none";
   ongoing_call_panel.style.display = "none";
   time_scheduling_panel.style.display = "flex";
-  work_shift_panel.style.display = "none";
 
   document_title.innerText = "ongoing call";
 }
-function showWorkShiftsSection() {
-  messages_panel.style.display = "none";
-  call_log_panel.style.display = "none";
-  ongoing_call_panel.style.display = "none";
-  time_scheduling_panel.style.display = "none";
-  work_shift_panel.style.display = "flex";
+// mobule responsiveness functions
+let chats_panel = document.getElementById('chats_panel')
+let chatContent_panel = document.getElementById('chatContent_panel')
+function showChatList() {
+  chats_panel.classList.remove('mobileHiddenElement')
+  chatContent_panel.classList.add('mobileHiddenElement')
+}
+function showChatContent() {
+  chats_panel.classList.add('mobileHiddenElement')
+  chatContent_panel.classList.remove('mobileHiddenElement')
+}
 
-  document_title.innerText = "work shifts";
+////////////////////////////
+function createMessagesPanelElements() {
+  messages_panel.textContent = '';
+  let chatSearch = createElement({
+    elementType: 'div', class: 'chatSearch displayed', childrenArray: [
+      createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), // label
+      createElement({ elementType: 'input', type: 'text', placeholder: 'Search conversations' }), // input
+    ]
+  })
+  let newChatButton = createElement({ elementType: 'button', class: 'newChat rotate45', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })] })
+  let newChatTitle = createElement({
+    elementType: 'div', class: 'newChatTitle unDisplayed', childrenArray: [
+      createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), // label
+      createElement({ elementType: 'input', type: 'text', placeholder: 'Search people' }), // input
+    ]
+  })
+  let chats__header = createElement({ elementType: 'div', class: 'c-chats__header', childrenArray: [chatSearch, newChatButton, newChatTitle] })
+  let place_for_chats = createElement({ elementType: 'ul', class: 'place_for_chats' })
+  let searchResults = createElement({ elementType: 'ul', class: 'searchResults' })
+  let chat_search_content = createElement({ elementType: 'div', class: 'chat-search-content', childrenArray: [place_for_chats, searchResults] })
+  let c_chats = createElement({ elementType: 'div', class: 'c-chats', childrenArray: [chats__header, chat_search_content] })
+  // wide area
+  let c_openchat = createElement({
+    elementType: 'div', class: 'c-openchat', childrenArray: [
+      createElement({
+        elementType: 'div', class: 'c-openchat__selectConversation', childrenArray: [
+          createElement({ elementType: 'img', src: '/images/yourMessagesWillAppearHere.png' }),
+          createElement({ elementType: 'h3', textContent: 'Select any chat or create a new chat to get started with chat' })
+        ]
+      })
+    ]
+  })
+  messages_panel.appendChild(c_chats)
+  messages_panel.appendChild(c_openchat)
 }
 socket.on('displayChat', function (chat) {
   let conversationButton = showOnChatList(chat)
@@ -1811,7 +1818,7 @@ socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
   else { // if this is not the displayed chat, give  notification
     let shortOrImagType, shortOrImagContent;
     if (chatInfo.type == 0) {
-      if (expectedUser.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = expectedUser.name.chatAt(0) + expectedUser.surname.charAt(0); }
+      if (expectedUser.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = expectedUser.name.charAt(0) + expectedUser.surname.charAt(0); }
       else { shortOrImagType = 'image'; shortOrImagContent = expectedUser.profilePicture; }
     }
     if (chatInfo.type == 1) {
@@ -1826,7 +1833,7 @@ socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
       },
       actions: [
         // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
-        { type: 'confirm', displayText: 'Open chat', actionFunction: () => { socket.emit('requestChatContent', chatInfo.roomID) } }
+        { type: 'confirm', displayText: 'Open chat', actionFunction: () => { requestChatContent(chatInfo.roomID) } }
       ],
       obligatoryActions: {
         onDisplay: () => { console.log('Notification Displayed') },
@@ -1840,7 +1847,13 @@ socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
   }
 
 });
+
+function requestChatContent(chatId){
+  socket.emit('requestChatContent', chatId);
+  showChatContent()
+}
 socket.on('updateReaction', function (receivedReactionsInfo) {
+  console.log('updateReaction', receivedReactionsInfo, mySavedID, selectedChatId)
   if (selectedChatId == receivedReactionsInfo.chat) { // update reaction in case it is on the open chat
     //  = buildReaction(receivedReactionsInfo.details)
     let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
@@ -1853,24 +1866,27 @@ socket.on('updateReaction', function (receivedReactionsInfo) {
   }
   else {
     if (mySavedID == receivedReactionsInfo.messageOwner.userID) { // show reaction if it is done on my message in chat
-      // let notification = displayNotification({
-      //   title: { iconClass: 'bx bxs-wink-smile', titleText: 'Message reaction' },
-      //   body: {
-      //     shortOrImage: { shortOrImagType: shortOrImagType, shortOrImagContent: shortOrImagContent },
-      //     bodyContent: 'Message from ' + expectedUser.name + ' ' + expectedUser.surname + ' : ' + insertedMessage.message
-      //   },
-      //   actions: [
-      //     // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
-      //     { type: 'confirm', displayText: 'Open chat', actionFunction: () => { socket.emit('requestChatContent', chatInfo.roomID) } }
-      //   ],
-      //   obligatoryActions: {
-      //     onDisplay: () => { console.log('Notification Displayed') },
-      //     onHide: () => { console.log('Notification Hidden') },
-      //     onEnd: () => { console.log('Notification Ended') },
-      //   },
-      //   delay: 7000,
-      //   tone: 'notification'
-      // })
+      let shortOrImagType, shortOrImagContent;
+      if (receivedReactionsInfo.performer.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = receivedReactionsInfo.performer.name.charAt(0) + receivedReactionsInfo.performer.surname.charAt(0); }
+      else { shortOrImagType = 'image'; shortOrImagContent = receivedReactionsInfo.performer.profilePicture; }
+
+      let notification = displayNotification({
+        title: { iconClass: 'bx bxs-wink-smile', titleText: 'Message reaction' },
+        body: {
+          shortOrImage: { shortOrImagType: shortOrImagType, shortOrImagContent: shortOrImagContent },
+          bodyContent: receivedReactionsInfo.performer.name + ' ' + receivedReactionsInfo.performer.surname + ' reacted to your message'
+        },
+        actions: [ // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
+          { type: 'confirm', displayText: 'Open chat', actionFunction: () => { requestChatContent(receivedReactionsInfo.chat) } }
+        ],
+        obligatoryActions: {
+          onDisplay: () => { console.log('Notification Displayed') },
+          onHide: () => { console.log('Notification Hidden') },
+          onEnd: () => { console.log('Notification Ended') },
+        },
+        delay: 7000,
+        tone: 'notification'
+      })
     }
   }
 })
@@ -1886,10 +1902,6 @@ function buildReaction(details, myID) {
     })
   })
   return reactions;
-}
-
-function scroll() {
-  openchat__box__info.scrollTop = openchat__box__info.scrollHeight;
 }
 
 function showOnChatList(chat) {
@@ -1932,13 +1944,12 @@ function showOnChatList(chat) {
   chatListItem.addEventListener('click', () => {
     open_chat_box.textContent = ''
     open_chat_box.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // append spinner for waiting server response
-    socket.emit('requestChatContent', roomID)
+    requestChatContent(roomID)
     availableChats.forEach(chat => { chat.conversationButton.classList.remove("openedChat") })
     chatListItem.classList.add("openedChat");
   })
   return chatListItem;
 }
-
 function makeProfilePicture(userInfo) {
   let { userID, name, surname, role, profilePicture, status } = userInfo
   let memberProfilePicture;
@@ -1949,7 +1960,6 @@ function makeProfilePicture(userInfo) {
 
 document.getElementById("newChat").addEventListener("click", () => {
   chatSearchToogle()
-
   var searchField = document.getElementById('searchField')
   searchField.focus();
 })
@@ -1969,6 +1979,9 @@ function displayChatOnChatArea(openChatInfo) {
   let chatTitleText = ''
   let openchat__box__header;
   let chatActions = []
+  let mobileButton = createElement({
+    elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showChatList })
+  let backToChatsButton;
   switch (type) {
     case 0:
       let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
@@ -1982,11 +1995,11 @@ function displayChatOnChatArea(openChatInfo) {
       ]
       if (userToDisplay.length < 1) { // in case we have only one user (viewer)
         chatTitleText = 'Deleted User'
-        openchat__box__header = userForAttendanceList(deletedUser, [])
+        openchat__box__header = userForAttendanceList(deletedUser, [], [mobileButton])
       } else {
         chatTitleText = userToDisplay[0].name + ' ' + userToDisplay[0].surname
         imageContainer = makeProfilePicture(userToDisplay[0])
-        openchat__box__header = userForAttendanceList(userToDisplay[0], chatActions)
+        openchat__box__header = userForAttendanceList(userToDisplay[0], chatActions, [mobileButton])
       }
       break;
     case 1:
@@ -1999,6 +2012,7 @@ function displayChatOnChatArea(openChatInfo) {
       let groupMoreButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => { console.log('groupMoreButton clicked') } })
       openchat__box__header = createElement({
         elementType: 'div', class: 'c-openchat__box__header', childrenArray: [
+          mobileButton,
           createElement({
             elementType: 'div', class: 'c-chat-title', childrenArray: [
               imageContainer,
@@ -2027,7 +2041,6 @@ function displayChatOnChatArea(openChatInfo) {
   open_chat_box.append(chatBox)
   openchat__box__info.textContent = '' // ensure that no element is inside the message container
   messagesArray.forEach((message, index) => { addMessageToChat(message, myID) })
-  //scroll bottom
   scrollToBottom(openchat__box__info) // scrool to the last message
   openchat__box__info.style.scrollBehavior = "smooth" // enable smooth scrolling
 
@@ -2076,7 +2089,7 @@ function addMessageToChat(message, myID) {
     let separator = createSeparator(new Date(message.timeStamp), 'date')
     let groupMessages;
     if (message.userID == myID) {
-      messageElement = createSentMessage(message, myID, 'bx bx-check')
+      messageElement = createSentMessage(message, myID, 'bx bxs-check-circle')
       groupMessages = createSentGroup(messageElement)
     }
     else {
@@ -2097,7 +2110,7 @@ function addMessageToChat(message, myID) {
       openchat__box__info.appendChild(separator)
     }
     if (message.userID == myID) { // if it is my Message
-      messageElement = createSentMessage(message, myID, 'bx bx-check')
+      messageElement = createSentMessage(message, myID, 'bx bxs-check-circle')
       if ((thisDate - prevDate) > 60000 || !sameDay(prevDate, thisDate) || message.userID != lastMessage.object.userID) {
         /* 
         we create a new group, if:
@@ -2133,7 +2146,14 @@ function addMessageToChat(message, myID) {
 function createReceivedMessage(message, myID, showSenderName) {
   console.log('message', message)
   // senserName: true / false allows the message to have the senders name attached
-  let tagTemplate = message.tagContent.map(tag => { return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message }) })
+  let tagTemplate = message.tagContent.map(tag => {
+    return createElement({
+      elementType: 'div', class: 'message-tag-text', textContent: tag.message, onclick: () => {
+        let taggedMessage = displayedMessages.find(displayedMessage => displayedMessage.object.id == tag.id)
+        taggedMessage.messageElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    })
+  })
   let messageReceivedText = createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
   let sendersName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
   let reactionOptions = buildOptions(message, myID, messageReceivedText)
@@ -2146,7 +2166,14 @@ function createReceivedMessage(message, myID, showSenderName) {
 }
 
 function createSentMessage(message, myID, statusIcon) {
-  let tagTemplate = message.tagContent.map(tag => { return createElement({ elementType: 'div', class: 'message-tag-text', textContent: tag.message }) })
+  let tagTemplate = message.tagContent.map(tag => {
+    return createElement({
+      elementType: 'div', class: 'message-tag-text', textContent: tag.message, onclick: () => {
+        let taggedMessage = displayedMessages.find(displayedMessage => displayedMessage.object.id == tag.id)
+        taggedMessage.messageElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    })
+  })
   let messageSentText = createElement({ elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
   let messageStatus = createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [createElement({ elementType: 'i', class: statusIcon })] })
   let reactionOptions = buildOptions(message, myID, messageSentText)
@@ -2185,9 +2212,7 @@ function formatDate(unfDate) {
   return fDate;
 }
 
-function scrollToBottom(div) {
-  div.scrollTop = div.scrollHeight;
-}
+function scrollToBottom(div) { div.scrollTop = div.scrollHeight; }
 
 function reactionTo(messageId, reaction) { socket.emit('messageReaction', { messageId, selectedChatId, reaction }) }
 
@@ -2198,76 +2223,27 @@ searchField.addEventListener('input', function () {
   var text = this.value;
   socket.emit('searchPeople', text);
 })
-
 let searchResults = document.getElementById('searchResults')
 
 socket.on('searchPerson', (searchPeople) => {
-  console.log(searchPeople)
-  searchResults.innerHTML = '';
-
-  searchPeople.forEach(searchPerson => {
-    let searchAvatar;
-    if (searchPerson.profilePicture == null) {
-      searchAvatar = `<div>${searchPerson.name.charAt(0) + searchPerson.surname.charAt(0)}</div>`
-    } else {
-      searchAvatar = `<img src="${searchPerson.profilePicture}" alt="">`
-    }
-
-    searchResults.innerHTML +=
-      `<li class="resultItem" id="user${searchPerson.userID}">
-      <div data-id="" class="resultItemBundle" href="" title="">
-        <div class="containerImage">
-          ${searchAvatar}
-        </div>
-        <div class="person-data">
-          <div class="nameSurnamePosition">
-            <p class="resultsNameSurname">${searchPerson.name + " " + searchPerson.surname}</p>
-            <p class="resultsPosition">${searchPerson.email}</p>
-            <p class="resultsquote">${searchPerson.role}</p>
-          </div>
-          <div class="universalCallButtons">
-            <button id="${searchPerson.userID}chatButton" class='searchChatButton'><i class='bx bxs-message-square-dots' ></i></button>
-            <button id="${searchPerson.userID}audioButton" class='searchAudioButton'><i class='bx bxs-phone' ></i></button>
-            <button id="${searchPerson.userID}videoButton" class='searchVideoButton'><i class='bx bxs-video' ></i></button>
-          </div>
-        </div>
-      </div>
-    </li>`;
-  })
-  let searchChatButtons = document.querySelectorAll('.searchChatButton')
-  searchChatButtons.forEach(searchChatButton => {
-    searchChatButton.addEventListener('click', function () {
-      chatSearchToogle();
-      console.log("CHAT", this.id)
-      chat(this.id.slice(0, -10))
-
-      ITriggeredChatCreation = true;
-
-    })
-  })
-  let searchAudioButtons = document.querySelectorAll('.searchAudioButton')
-  searchAudioButtons.forEach(searchAudioButton => {
-    searchAudioButton.addEventListener('click', function () {
-      console.log("AUDIO", this.id)
-      call(this.id.slice(0, -11), true, false, false, false, null)
-    })
-  })
-  let searchVideoButtons = document.querySelectorAll('.searchVideoButton')
-  searchVideoButtons.forEach(searchVideoButton => {
-    searchVideoButton.addEventListener('click', function () {
-      console.log("VIDEO", this.id)
-      call(this.id.slice(0, -11), true, true, false, false, null)
-    })
+  searchResults.textContent = '';
+  searchPeople.forEach(userInfo => {
+    let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+    let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+    let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+    let actions = [
+      { element: chatButton, functionCall: () => { initiateChat(userInfo.userID) } },
+      { element: audioButton, functionCall: () => { call(userInfo.userID, true, false, false, false, null) } },
+      { element: videoButton, functionCall: () => { call(userInfo.userID, true, true, false, false, null) } },
+    ]
+    let resultElement = userForAttendanceList(userInfo, actions)
+    searchResults.appendChild(resultElement)
   })
 })
 
-function initiateChat(userID) {
-  socket.emit('makeChat', userID)
-
-}
+function initiateChat(userID) { socket.emit('makeChat', userID) }
 
 function chatSearchToogle() {
-  var chatContainerHeader = document.querySelector("c-chats__header");
   var newSearchBox = document.getElementById("newChatTitle");
   var oldSearchBox = document.getElementById("chatSearch");
   var chatContainingDiv = document.getElementById("place_for_chats");
@@ -2278,8 +2254,6 @@ function chatSearchToogle() {
   oldSearchBox.classList.toggle('unDisplayed')
   oldSearchBox.classList.toggle('displayed')
   ButtonSearchBox.classList.toggle("rotate45")
-  console.log(newSearchBox);
-  console.log("clicked")
   searchResultsContainer.classList.toggle("searchIntoView")
   chatContainingDiv.classList.toggle("hideLeft")
 }
@@ -2359,7 +2333,6 @@ function messageReference(msgID, _messageElement, messagesTagsinputArea) {
   }
   else {
     taggedMessages.push(msgID)
-
     messageElement = _messageElement.cloneNode(true);
     closeBtn = createElement({ elementType: 'button', class: 'btn-remove-tag', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x-circle' })] })
     messageToShow = createElement({ elementType: 'div', childrenArray: [messageElement, closeBtn] })
@@ -2372,14 +2345,6 @@ function messageReference(msgID, _messageElement, messagesTagsinputArea) {
       messageTagsField.remove();
     }
   })
-}
-
-function buildTags(tagContentArray) {
-  let tagTemplate = ``
-  tagContentArray.forEach(tag => {
-    tagTemplate += `<a href="#${tag.id}" class="message-tag-text">${tag.message}</a>`
-  })
-  return tagTemplate;
 }
 
 socket.on('userDisconnected', disconnectionInfo => {
@@ -3950,7 +3915,7 @@ function createElement(configuration) {
   return elementToReturn
 }
 
-function userForAttendanceList(userInfo, actions) {
+function userForAttendanceList(userInfo, actions, preActions) {
   let { userID, name, surname, role, profilePicture, status } = userInfo
   // actions is an array of buttons where on item is {element, functionCall}
   // container is presentMembersDiv
@@ -3966,11 +3931,13 @@ function userForAttendanceList(userInfo, actions) {
     element.addEventListener('click', functionCall)
     return element;
   })
+  let elementsArray = [memberProfilePicture, memberNameRole].concat(actionElements)
+  if (preActions != undefined) elementsArray = preActions.concat(elementsArray)
 
-  let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole].concat(actionElements) })
+  let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: elementsArray })
   return presentMember
 }
-function companyForList(companyInfo, actions) {
+function companyForList(companyInfo, actions, preActions) {
   let { id, name, description, logo, cover } = companyInfo;
   console.log('companyInfo', companyInfo)
   // actions is an array of buttons where on item is {element, functionCall}
@@ -3983,13 +3950,13 @@ function companyForList(companyInfo, actions) {
   let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
 
   let actionElements = actions.map(action => {
-    //let { element, functionCall } = action
     let { element, functionCall } = action
     element.addEventListener('click', functionCall)
     return element;
   })
-
-  let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole].concat(actionElements) })
+  let elementsArray = [memberProfilePicture, memberNameRole].concat(actionElements)
+  if (preActions != undefined) elementsArray = preActions.concat(elementsArray)
+  let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: elementsArray })
   return presentMember
 }
 
@@ -4143,7 +4110,7 @@ let notification = displayNotification({
     onHide: () => { console.log('Notification Hidden') },
     onEnd: () => { console.log('Notification Ended') },
   },
-  delay: 5000,
+  delay: 60000,
   tone: 'notification'
 })
 

@@ -1140,7 +1140,7 @@ body {
   border-radius: $borderRadius;
   overflow: hidden;
 
-  .listMember{
+  .listMember {
     border-bottom: 1px solid #f1f4f6;
     padding: 1rem 1rem;
     display: flex;
@@ -1151,13 +1151,15 @@ body {
     background-color: white;
 
 
+
     .c-chat-title {
       display: flex;
       flex-direction: row;
       align-items: center;
       min-width: 0;
     }
-    button{
+
+    button {
       width: 40px;
       height: 40px;
       font-size: 18px;
@@ -1176,7 +1178,7 @@ body {
     justify-content: space-between;
     box-shadow: 3px 3px 10px -2px rgba(204, 197, 197, 0.5);
     background-color: white;
-
+    gap: 0.5rem;
 
     .c-chat-title {
       display: flex;
@@ -1215,7 +1217,7 @@ body {
     margin-left: 10px;
     color: #747678;
 
-    display: block;
+    // display: block;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -3699,6 +3701,33 @@ body {
   }
 }
 
+.mobileButton {
+  display: none;
+  color: $body;
+  align-items: center;
+  padding: 1rem;
+  transition: all 0.4s;
+  border-radius: $borderRadius;
+  background-color: $sidepanel;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  height: 40px;
+  width: 40px;
+
+  i {
+    font-size: 18px;
+  }
+
+  p {
+    margin-left: .5rem;
+  }
+
+  &:hover {
+    background-color: darken($sidepanel, 5%)
+  }
+}
+
 .importantButton {
   color: white;
   border-radius: $borderRadius;
@@ -4248,6 +4277,7 @@ body {
   background-color: transparent;
   gap: 1rem;
   margin: 1rem;
+  z-index: 10;
 
   .notification {
     display: flex;
@@ -6056,4 +6086,379 @@ body {
   transition: all 0.4s;
   flex-shrink: 0;
   object-fit: cover;
+}
+
+
+@media (max-width: 742px) {}
+
+@media (max-width: 488px) {
+  .c-app {
+    max-height: 100%;
+    .c-application {
+      position: relative;
+      min-width: 100%;
+      max-height: 100%;
+      // overflow: hidden;
+      .c-sidepanel {
+        position: absolute;
+        padding: 1rem;
+        min-width: 100%;
+        z-index: 2;
+        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+      }
+      .c-messages_panel {
+        padding-top: calc(30px + 2rem);
+        width: 100%;
+    
+        // overflow: hidden;
+        .c-chats {
+          margin: 0;
+          height: 100%;
+          max-width: 100%;
+          width: 100%;
+        }
+        .c-openchat {
+          margin: 0;
+          height: 100%;
+        }
+      }
+    }
+  }
+
+  
+
+  
+
+  .expanded {
+    position: absolute;
+    flex-direction: row;
+    min-width: 100%;
+    width: 100%;
+    height: unset;
+    z-index: 1;
+    padding: 1rem;
+
+    .c-sidepanel__nav {
+      display: none;
+    }
+
+    .c-sidepanel__app-header {
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+  }
+
+  .notifications {
+    right: -50%;
+    transform: translateX(-50%);
+    width: 100%;
+    margin: 0;
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  
+
+  .mobileButton {
+    display: flex;
+  }
+
+  .mobileHiddenElement{
+    display: none;
+  }
+
+  
+
+  // .c-sidepanel {
+  //   flex-basis: 100%;
+  //   height: 100%;
+  //   background-color: $sidepanel-bg;
+  //   padding: 1rem;
+  //   min-width: 300px;
+  //   display: flex;
+  //   flex-direction: column;
+  //   border-radius: 0 0 0 8px;
+  //   overflow-y: auto;
+  //   overflow-x: hidden;
+
+  //   transition: all 0.4s;
+
+  //   //box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+
+  //   &__app-header {
+  //     h1 {
+  //       font-size: 30px;
+  //     }
+
+  //     padding-bottom: 1rem;
+  //     border-bottom: 1px solid #f1f4f6;
+  //     width: 100%;
+  //     display: flex;
+  //     justify-content: space-between;
+  //     align-items: center;
+  //     background-color:#F5F9FD;
+  //     border-radius: $borderRadius $borderRadius 0 0;
+
+  //     border-bottom: 1px solid darken($sidepanel, 3%);
+
+  //     &__hamburger {
+  //       ul {
+  //         position: relative;
+  //         width: 30px;
+  //         height: 30px;
+  //         cursor: pointer;
+  //       }
+
+  //       ul li {
+  //         list-style: none;
+  //         position: absolute;
+  //         left: 5%;
+  //         width: 30px;
+  //         height: 3px;
+  //         transition: .5s;
+  //         background: $notification;
+  //         transform: translateY(-50%) rotate(0);
+  //         opacity: 1;
+  //         border-radius: $borderRadius;
+  //       }
+
+  //       ul li:nth-child(1) {
+  //         top: 20%;
+  //       }
+
+  //       ul li:nth-child(2) {
+  //         top: 50%;
+  //       }
+
+  //       ul li:nth-child(3) {
+  //         top: 80%;
+  //       }
+
+  //       ul.active li:nth-child(1) {
+  //         top: 50%;
+  //         transform: translateY(-50%) rotate(45deg);
+  //       }
+
+  //       ul.active li:nth-child(2) {
+  //         opacity: 0;
+  //       }
+
+  //       ul.active li:nth-child(3) {
+  //         top: 50%;
+  //         transform: translateY(-50%) rotate(-45deg);
+  //       }
+  //     }
+
+
+  //   }
+
+  //   &__nav {
+  //     border-radius: $borderRadius;
+  //     background-color: $sidepanel;
+
+  //     &--spacer {
+  //       margin-top: 1.5rem;
+  //     }
+
+  //     &__li {
+  //       list-style: none;
+  //       position: relative;
+
+  //       .left-spacer {
+  //         padding-left: 1rem;
+  //         border-top: 1px solid darken($sidepanel, 3%);
+  //       }
+
+  //       &:last-of-type {
+
+  //         div,
+  //         li {
+  //           border-bottom: none;
+  //         }
+  //       }
+
+  //       ul {
+  //         transition: all 0.4s;
+  //         flex-direction: column;
+  //         transform: translate(0%);
+  //         visibility: visible;
+  //         opacity: 1;
+  //       }
+
+  //       .droppable {}
+
+  //       .undropped-down {
+  //         height: 0;
+  //         visibility: hidden;
+  //         opacity: 0;
+  //         overflow: hidden;
+  //       }
+  //     }
+
+
+
+  //     .sendButton {
+  //       font-size: 24px;
+  //     }
+
+  //     &__link {
+  //       text-decoration: none;
+  //       padding: 1rem;
+  //       //display: block;
+  //       color: $body;
+  //       display: flex;
+  //       align-items: center;
+  //       cursor: pointer;
+  //       /*
+  //       background-color: transparent;
+  //       width: 100%;
+  //       border:  none; */
+
+  //       transition: all 0.4s ease-in-out;
+
+  //       white-space: nowrap;
+  //       overflow: hidden;
+  //       text-overflow: ellipsis;
+
+  //       //width: 100%;
+  //       p {
+  //         flex: 1;
+  //         white-space: nowrap;
+  //         overflow: hidden;
+  //         text-overflow: ellipsis;
+  //       }
+
+  //       svg,
+  //       i {
+  //         width: 18px;
+  //         margin-right: 10px;
+  //         font-size: 18px;
+  //       }
+
+
+
+  //       &:hover {
+  //         color: rgb(90, 93, 95);
+  //         color: $notification;
+  //         font-weight: bold;
+
+  //         svg,
+  //         i {
+  //           color: $notification;
+  //         }
+
+  //         button {
+  //           i {
+  //             color: white;
+  //           }
+  //         }
+
+  //         &:last-of-type {
+
+  //           div,
+  //           li {
+  //             border-bottom: none;
+  //           }
+  //         }
+  //       }
+
+  //       button {
+  //         padding: .5rem;
+  //         border-radius: $borderRadius;
+  //         background-color: $notification;
+  //         border: none;
+  //         color: white;
+  //         display: inline-block;
+  //         cursor: pointer;
+
+  //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+  //       }
+
+  //       button {
+  //         transition: all 0.4s ease-in-out;
+  //         display: flex;
+  //         align-items: center;
+  //         justify-content: center;
+
+  //         i {
+  //           color: white;
+  //           margin: 0;
+  //           transition: all 0.4s ease-in-out;
+  //         }
+
+  //         .rotate180 {
+  //           transform: rotate(180deg)
+  //         }
+  //       }
+
+
+  //     }
+
+  //   }
+
+  // }
+  // .expanded {
+  //   flex-basis: 100%;
+  //   height: 100%;
+  //   min-width: 100%;
+  //   background-color: $sidepanel-bg;
+  //   padding: 1.5rem;
+  //   display: flex;
+  //   flex: 0 0 0;
+  //   flex-direction: column;
+  //   border-radius: 0 0 0 $borderRadius;
+  //   overflow-y: auto;
+
+  //   transition: all 0.4s;
+  //   justify-content: space-between;
+
+
+  //   .c-sidepanel__app-header {
+  //     display: flex;
+  //     justify-content: space-between;
+  //     align-items: center;
+  //     margin-left: 7px;
+
+  //     h1,
+  //     button {
+  //       // display: none;
+  //     }
+  //   }
+
+  //   .c-sidepanel__header {
+  //     display: flex;
+  //     justify-content: center;
+  //     align-items: center;
+
+  //     h2,
+  //     button {
+  //       // display: none;
+  //     }
+  //   }
+
+  //   .c-sidepanel__nav {
+  //     min-width: 45px;
+
+  //     .c-sidepanel__nav__li {
+  //       .c-sidepanel__nav__link {
+  //         display: flex;
+  //         justify-content: center;
+  //         align-items: center;
+
+  //         i {
+  //           margin: 0;
+  //           padding: 0;
+  //           margin-right: 0;
+  //         }
+  //       }
+  //     }
+
+  //     p,
+  //     button {
+  //       display: none;
+  //     }
+  //   }
+  // }
+
 }

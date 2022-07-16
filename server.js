@@ -317,7 +317,8 @@ io.on('connection', (socket) => {
                             message: reactionIdentifiers.messageId,
                             messageOwner: await getUserInfo(messageCheck[0].userID),
                             details: await getMessageReactions(reactionIdentifiers.messageId),
-                            available: await getAvailableMessageReactions()
+                            available: await getAvailableMessageReactions(),
+                            performer: await getUserInfo(id)
                           }
                         );
                       }
