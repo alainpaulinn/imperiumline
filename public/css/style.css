@@ -2049,6 +2049,9 @@ body {
 }
 .c-call_log_panel .callDetails-section .section-header {
   padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 .c-call_log_panel .callDetails-section .section-header h1 {
   font-size: 1.5rem;
@@ -3014,9 +3017,10 @@ body {
 }
 
 .mobileButton {
-  display: none;
+  display: none !important;
   color: rgb(91, 94, 97);
   align-items: center;
+  justify-content: center;
   padding: 1rem;
   transition: all 0.4s;
   border-radius: 15px;
@@ -3246,6 +3250,7 @@ body {
   border: none;
   outline: none;
   background-color: rgb(235, 240, 246);
+  flex-shrink: 0;
 }
 .universalCallButtons button i {
   font-size: 18px;
@@ -5082,6 +5087,15 @@ body {
     border: none;
   }
 
+  .c-openchat__box__info {
+    margin-bottom: 61.2px;
+  }
+
+  .typingBox {
+    position: fixed;
+    bottom: 0;
+  }
+
   .notifications {
     right: -50%;
     transform: translateX(-50%);
@@ -5091,11 +5105,54 @@ body {
     max-width: 100%;
   }
 
+  .c-call_log_panel {
+    padding-top: calc(30px + 2rem);
+    width: 100%;
+  }
+  .c-call_log_panel .callSearchSection {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+  }
+  .c-call_log_panel .callHistoryPage {
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+  .c-call_log_panel .callHistoryPage .header {
+    max-width: 100%;
+  }
+  .c-call_log_panel .callHistoryPage .header .pillsContainer {
+    max-width: 100%;
+  }
+  .c-call_log_panel .callDetails-section {
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .c-ongoing_call_panel {
+    padding-top: calc(30px + 2rem);
+    width: 100%;
+  }
+
+  .c-time-scheduling_panel {
+    padding-top: calc(30px + 2rem);
+    width: 100%;
+  }
+
+  .c-time-admin_panel {
+    padding-top: calc(30px + 2rem);
+    width: 100%;
+  }
+
   .mobileButton {
-    display: flex;
+    display: flex !important;
   }
 
   .mobileHiddenElement {
-    display: none;
+    display: none !important;
   }
 }/*# sourceMappingURL=style.css.map */

@@ -79,17 +79,21 @@ let functionalityOptionsArray = [
   sidePanelDiv.prepend(logo)
   hamburger.addEventListener('click', toggleExpandSidePanel)
   function toggleExpandSidePanel() {
-    if (hamburger.classList.contains("active")) {
-      sidePanelDiv.classList.add("expanded");
-      hamburger.classList.remove("active");
-      for (let i = 0; i < defaultElements.length; i++) {
-        defaultElements[i].subMenuDiv.classList.add('undropped-down')
-        defaultElements[i].dropIcon.classList.remove('rotate180');
-        sidepanelElements[i].subMenuDiv.classList.add('undropped-down')
-        sidepanelElements[i].dropIcon.classList.remove('rotate180');
-      }
+    if (hamburger.classList.contains("active")) collapseSidePanel()
+    else expandSidepanel()
+  }
+  function collapseSidePanel() {
+    sidePanelDiv.classList.add("expanded");
+    hamburger.classList.remove("active");
+    for (let i = 0; i < defaultElements.length; i++) {
+      defaultElements[i].subMenuDiv.classList.add('undropped-down')
+      defaultElements[i].dropIcon.classList.remove('rotate180');
+      sidepanelElements[i].subMenuDiv.classList.add('undropped-down')
+      sidepanelElements[i].dropIcon.classList.remove('rotate180');
     }
-    else { hamburger.classList.add("active"); sidePanelDiv.classList.remove("expanded"); }
+  }
+  function expandSidepanel(){
+    hamburger.classList.add("active"); sidePanelDiv.classList.remove("expanded");
   }
 
   // dark theme switch
@@ -358,12 +362,13 @@ let functionalityOptionsArray = [
       console.log(dropElement, 'dropElement')
     })
     let childrenArray = [iconElement, textElement]
-    if (subMenu.length > 0) { childrenArray.push(dropElement) }
+    if (subMenu.length > 0) { childrenArray.push(dropElement) } 
 
     let triggerButton = createElement({ elementType: 'div', class: 'c-sidepanel__nav__link remove-rightpadding', childrenArray: childrenArray })
     let optionListitem = createElement({ elementType: 'div', class: 'c-sidepanel__nav__li', childrenArray: [triggerButton, subMenuDiv] })
     let optionContainer = createElement({ elementType: 'nav', class: 'c-sidepanel__nav c-sidepanel__nav--spacer', childrenArray: [optionListitem] })
 
+    if(subMenu.length < 1) triggerButton.addEventListener('click', collapseSidePanel)
     return {
       optionContainer: optionContainer,
       triggerButton: triggerButton,
@@ -373,15 +378,45 @@ let functionalityOptionsArray = [
   };
   // fillMessagesPanel;
   // createMessagesPanelElements();
+  // callPanel Responsiveness functions
+  let call_log_contact_search_panel = document.getElementById('call_log_contact_search_panel');
+  let callHistoryPage = document.getElementById("callHistoryPage")
+  let callDetailsPanel = document.getElementById('callDetails-section')
+  function showCallContactSearchSection() {
+    call_log_contact_search_panel.classList.remove('mobileHiddenElement')
+    callHistoryPage.classList.add('mobileHiddenElement')
+    callDetailsPanel.classList.add('mobileHiddenElement')
+  }
+  function showCallListSection() {
+    call_log_contact_search_panel.classList.add('mobileHiddenElement')
+    callHistoryPage.classList.remove('mobileHiddenElement')
+    callDetailsPanel.classList.add('mobileHiddenElement')
+  }
+  function showCallDetailsSection() {
+    call_log_contact_search_panel.classList.add('mobileHiddenElement')
+    callHistoryPage.classList.add('mobileHiddenElement')
+    callDetailsPanel.classList.remove('mobileHiddenElement')
+  }
 
   // call-log-section ------ createCallLogContactSearch
   (() => {
-    let call_log_contact_search_panel = document.getElementById('call_log_contact_search_panel');
+
     call_log_contact_search_panel.textContent = '';
     let input = createElement({ elementType: 'input', type: 'text', placeholder: 'Search contacts' })
-    let header = createElement({ elementType: 'div', class: 'c-chats__header', childrenArray: [createElement({ elementType: 'div', class: 'chatSearch displayed', childrenArray: [createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), input] })] })
+    let mobileButton = createElement({
+      elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
+    })
+    let header = createElement({
+      elementType: 'div', class: 'c-chats__header', childrenArray: [
+        createElement({
+          elementType: 'div', class: 'chatSearch displayed', childrenArray: [
+            createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), input]
+        }),
+        mobileButton
+      ]
+    })
     input.addEventListener('input', () => { if (input.value != '') { socket.emit('callLogContactSearch', input.value); } })
-    let searchResultsDiv = createElement({ elementType: 'div', class: 'searchResultsDiv' })
+    let searchResultsDiv = createElement({ elementType: 'div', class: 'searchResultsDiv', textContent: 'Type in the search box above to find any contacts to call' })
     call_log_contact_search_panel.append(header, searchResultsDiv)
     socket.on('callLogContactSearch', searchPeople => {
       console.log(searchPeople)
@@ -392,8 +427,8 @@ let functionalityOptionsArray = [
         let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
         let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
         let actions = [
-          { element: audioButton, functionCall: () => { call(searchPerson.userID, true, false, false, false, null) } },
-          { element: videoButton, functionCall: () => { call(searchPerson.userID, true, true, false, false, null) } },
+          { element: audioButton, functionCall: () => { call(searchPerson.userID, true, false, false, false, null); showCallListSection(); } },
+          { element: videoButton, functionCall: () => { call(searchPerson.userID, true, true, false, false, null); showCallListSection(); } },
         ];
         searchPersonElement = userForAttendanceList(searchPerson, actions)
         searchResultsDiv.append(searchPersonElement)
@@ -403,18 +438,21 @@ let functionalityOptionsArray = [
 
   (() => {
     //------------------------ Call Details - 
-    let callDetailsPanel = document.getElementById('callDetails-section')
+
     callDetailsPanel.textContent = ''
 
     //-----------------------
-    let callHistoryPage = document.getElementById("callHistoryPage")
+
     callHistoryPage.textContent = ''
     let callHistoryArray = []
 
-    let incominPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Incoming' })] })] });
-    let outgoingPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Outgoing' })] })] });
+    let searchButton = createElement({
+      elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-contact' })], onclick: showCallContactSearchSection
+    })
+    let incominPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'In' })] })] });
+    let outgoingPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Out' })] })] });
     let missedPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Missed' })] })] });
-    let header = createElement({ elementType: 'div', class: 'header', childrenArray: [createElement({ elementType: 'div', class: 'pillsContainer', childrenArray: [incominPill, outgoingPill, missedPill] })] })
+    let header = createElement({ elementType: 'div', class: 'header', childrenArray: [createElement({ elementType: 'div', class: 'pillsContainer', childrenArray: [searchButton, incominPill, outgoingPill, missedPill] })] })
 
     let section_header = createElement({ elementType: 'div', class: 'section-header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Calls' })] })
     let list_call_section_content = createElement({ elementType: 'div', class: 'list-call-section-content' })
@@ -433,28 +471,35 @@ let functionalityOptionsArray = [
         else profilePicture = createElement({ elementType: 'img', src: logUpdate.initiator.profilePicture })
 
         if (logUpdate.missed == 1) {
-          callDirection = createElement({ elementType: 'div', class: 'callType red', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Missed call' })] })
+          callDirection = createElement({ elementType: 'div', class: 'callType red', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Missed' })] })
         }
         else if (logUpdate.participantId == logUpdate.initiatorId) {
-          callDirection = createElement({ elementType: 'div', class: 'callType green', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-outgoing' }), createElement({ elementType: 'p', textContent: 'Outgoing call' })] })
+          callDirection = createElement({ elementType: 'div', class: 'callType green', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-outgoing' }), createElement({ elementType: 'p', textContent: 'Out' })] })
         }
         else {
-          callDirection = createElement({ elementType: 'div', class: 'callType blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Incoming call' })] })
+          callDirection = createElement({ elementType: 'div', class: 'callType blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'In' })] })
         }
 
         let audioAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(logUpdate.callUniqueId, true, false, true, false, logUpdate.callUniqueId) } })
         let videoAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(logUpdate.callUniqueId, true, true, true, false, logUpdate.callUniqueId) } })
 
-        let moreIcon = createElement({ elementType: 'i', class: 'bx bx-chevron-right' })
         let moreButton = createElement({
-          elementType: 'button', childrenArray: [moreIcon], onclick: () => {
+          elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
             callDetailsPanel.textContent = ''
             let callDirectionIcon;
             if (logUpdate.missed == 1) { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-off' }) }
             else if (logUpdate.participantId == logUpdate.initiatorId) { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-outgoing' }) }
             else { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }) }
 
-            let detailsPanel_header = createElement({ elementType: 'div', class: 'section-header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Call details' })] })
+            let mobileButton = createElement({
+              elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
+            })
+            let detailsPanel_header = createElement({
+              elementType: 'div', class: 'section-header', childrenArray: [
+                mobileButton,
+                createElement({ elementType: 'h1', textContent: 'Call details' })
+              ]
+            })
             let topDetailsCard = createElement({ elementType: 'div', class: 'topDetailsCard', childrenArray: [createElement({ elementType: 'div', class: 'circle', childrenArray: [callDirectionIcon] })] })
             let callTitleContent = createElement({
               elementType: 'div', class: 'callTitleContent', childrenArray: [
@@ -474,8 +519,8 @@ let functionalityOptionsArray = [
               let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
               let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
               let actions = [
-                { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null) } },
-                { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null) } },
+                { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null); showCallListSection(); } },
+                { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null); showCallListSection(); } },
               ];
 
               if (participant.userID == mySavedID) actions = []
@@ -487,14 +532,15 @@ let functionalityOptionsArray = [
               let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
               let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
               let actions = [
-                { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null) } },
-                { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null) } },
+                { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null); showCallListSection(); } },
+                { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null); showCallListSection(); } },
               ];
 
               if (participant.userID == mySavedID) actions = []
               participantElement = userForAttendanceList(participant, actions)
               callParticipantsDiv.append(participantElement)
             })
+            showCallDetailsSection();
           }
         })
 
@@ -1848,7 +1894,7 @@ socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
 
 });
 
-function requestChatContent(chatId){
+function requestChatContent(chatId) {
   socket.emit('requestChatContent', chatId);
   showChatContent()
 }
@@ -1980,7 +2026,8 @@ function displayChatOnChatArea(openChatInfo) {
   let openchat__box__header;
   let chatActions = []
   let mobileButton = createElement({
-    elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showChatList })
+    elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showChatList
+  })
   let backToChatsButton;
   switch (type) {
     case 0:
@@ -2007,8 +2054,8 @@ function displayChatOnChatArea(openChatInfo) {
       else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
       if (roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
       else chatTitleText = roomName;
-      let groupCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(userToDisplay[0].userID, true, false, false, true, null) } })
-      let groupVideoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userToDisplay[0].userID, true, false, false, true, null) } })
+      let groupCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(roomID, true, false, false, true, null) } })
+      let groupVideoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(roomID, true, false, false, true, null) } })
       let groupMoreButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => { console.log('groupMoreButton clicked') } })
       openchat__box__header = createElement({
         elementType: 'div', class: 'c-openchat__box__header', childrenArray: [
@@ -2445,6 +2492,26 @@ myPeer.on('open', myPeerId => {
   let topBar;
   let bottomPanel;
   let callNotifications = []
+
+  // responsive functions
+  let ongoingCallLeftPart = document.getElementById('ongoingCallLeftPart')
+  let callMainScreen = document.getElementById('callMainScreen')
+  let ongoingCallRightPart = document.getElementById('ongoingCallRightPart')
+  function showCallLeftPart(){
+    ongoingCallLeftPart.classList.remove('mobileHiddenElement')
+    callMainScreen.classList.add('mobileHiddenElement')
+    ongoingCallRightPart.classList.add('mobileHiddenElement')
+  }
+  function showCallMainScreen(){
+    ongoingCallLeftPart.classList.add('mobileHiddenElement')
+    callMainScreen.classList.remove('mobileHiddenElement')
+    ongoingCallRightPart.classList.add('mobileHiddenElement')
+  }
+  function showCallLeftPart(){
+    ongoingCallLeftPart.classList.add('mobileHiddenElement')
+    callMainScreen.classList.add('mobileHiddenElement')
+    ongoingCallRightPart.classList.remove('mobileHiddenElement')
+  }
 
   socket.on('prepareCallingOthers', initiatedCallInfo => {
     navigator.getUserMedia({ video: { optional: optionalResolutions }, audio: true }, stream => {
@@ -3406,9 +3473,11 @@ myPeer.on('open', myPeerId => {
     let participantsCount = 0;
     let unreadmessagesCount = 0;
     // Header
+    let backToMainscreenBtn = createElement({elementType:'button', class:'mobileButton', childrenArray:[createElement({elementType:'i', class:'bx bxs-phone-call bx-flashing'})], onclick: showCallMainScreen})
+
     let participantsSelectorBtn = createElement({ elementType: 'div', class: 'rightHeaderItem participants headerItemSelected', textContent: 'Participants ' + participantsCount })
     let messagesSelectorbtn = createElement({ elementType: 'div', class: 'rightHeaderItem callChat', textContent: 'Messages ' + unreadmessagesCount })
-    let rightPartheaderVideoMessaging = createElement({ elementType: 'div', class: 'rightPartheaderVideoMessaging', childrenArray: [participantsSelectorBtn, messagesSelectorbtn] })
+    let rightPartheaderVideoMessaging = createElement({ elementType: 'div', class: 'rightPartheaderVideoMessaging', childrenArray: [backToMainscreenBtn, participantsSelectorBtn, messagesSelectorbtn] })
     let callParticipantsDiv = createElement({ elementType: 'div', class: 'callParticipantsDiv' })
     let c_openchat__box__info = createElement({
       elementType: 'div', class: 'c-openchat__box__info', childrenArray: [
@@ -3584,9 +3653,10 @@ myPeer.on('open', myPeerId => {
   function createLeftPanel() {
     let ongoingCallLeftPart = document.getElementById('ongoingCallLeftPart')
     ongoingCallLeftPart.textContent = '';
+    let backToMainscreenBtn = createElement({elementType:'button', class:'mobileButton', childrenArray:[createElement({elementType:'i', class:'bx bxs-phone-call bx-flashing'})], onclick: showCallMainScreen})
     let presenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem headerItemSelected', textContent: 'Present ' + 1 })
     let absenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem', textContent: 'Absent ' + 2 })
-    let attendanceTitleSection = createElement({ elementType: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn] })
+    let attendanceTitleSection = createElement({ elementType: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn, backToMainscreenBtn] })
 
     let presentMembersDiv = createElement({ elementType: 'div', class: 'presentMembersDiv' })
     let absentMembersDiv = createElement({ elementType: 'div', class: 'absentMembersDiv hiddenDiv' })
@@ -3855,6 +3925,7 @@ myPeer.on('open', myPeerId => {
       availableScreensDiv: availableScreensDiv
     }
   }
+  
   socket.on('searchPeopleToInviteToCall', (searchPeople) => {
     console.log(searchPeople)
     if (searchPeople.length == 0) { return topBar.invitedDiv.textContent = 'No user found.' }
