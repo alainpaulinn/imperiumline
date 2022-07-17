@@ -92,7 +92,7 @@ let functionalityOptionsArray = [
       sidepanelElements[i].dropIcon.classList.remove('rotate180');
     }
   }
-  function expandSidepanel(){
+  function expandSidepanel() {
     hamburger.classList.add("active"); sidePanelDiv.classList.remove("expanded");
   }
 
@@ -362,13 +362,13 @@ let functionalityOptionsArray = [
       console.log(dropElement, 'dropElement')
     })
     let childrenArray = [iconElement, textElement]
-    if (subMenu.length > 0) { childrenArray.push(dropElement) } 
+    if (subMenu.length > 0) { childrenArray.push(dropElement) }
 
     let triggerButton = createElement({ elementType: 'div', class: 'c-sidepanel__nav__link remove-rightpadding', childrenArray: childrenArray })
     let optionListitem = createElement({ elementType: 'div', class: 'c-sidepanel__nav__li', childrenArray: [triggerButton, subMenuDiv] })
     let optionContainer = createElement({ elementType: 'nav', class: 'c-sidepanel__nav c-sidepanel__nav--spacer', childrenArray: [optionListitem] })
 
-    if(subMenu.length < 1) triggerButton.addEventListener('click', collapseSidePanel)
+    if (subMenu.length < 1) triggerButton.addEventListener('click', collapseSidePanel)
     return {
       optionContainer: optionContainer,
       triggerButton: triggerButton,
@@ -627,11 +627,11 @@ let functionalityOptionsArray = [
             })
           ]
         })
-        function showResponsibilitiesPanel(){
+        function showResponsibilitiesPanel() {
           responsibilitiesPanel.classList.remove('mobileHiddenElement')
           contentPanel.classList.add('mobileHiddenElement')
         }
-        function showControlPanel(){
+        function showControlPanel() {
           responsibilitiesPanel.classList.add('mobileHiddenElement')
           contentPanel.classList.remove('mobileHiddenElement')
         }
@@ -2487,17 +2487,17 @@ function toggleFullscreen(element) {
 let ongoingCallLeftPart = document.getElementById('ongoingCallLeftPart')
 let callMainScreen = document.getElementById('callMainScreen')
 let ongoingCallRightPart = document.getElementById('ongoingCallRightPart')
-function showCallLeftPart(){
+function showCallLeftPart() {
   ongoingCallLeftPart.classList.remove('mobileHiddenElement')
   callMainScreen.classList.add('mobileHiddenElement')
   ongoingCallRightPart.classList.add('mobileHiddenElement')
 }
-function showCallMainScreen(){
+function showCallMainScreen() {
   ongoingCallLeftPart.classList.add('mobileHiddenElement')
   callMainScreen.classList.remove('mobileHiddenElement')
   ongoingCallRightPart.classList.add('mobileHiddenElement')
 }
-function showCallRightPart(){
+function showCallRightPart() {
   ongoingCallLeftPart.classList.add('mobileHiddenElement')
   callMainScreen.classList.add('mobileHiddenElement')
   ongoingCallRightPart.classList.remove('mobileHiddenElement')
@@ -2529,7 +2529,7 @@ myPeer.on('open', myPeerId => {
   let bottomPanel;
   let callNotifications = []
 
-  
+
 
   socket.on('prepareCallingOthers', initiatedCallInfo => {
     navigator.getUserMedia({ video: { optional: optionalResolutions }, audio: true }, stream => {
@@ -3491,7 +3491,7 @@ myPeer.on('open', myPeerId => {
     let participantsCount = 0;
     let unreadmessagesCount = 0;
     // Header
-    let backToMainscreenBtn = createElement({elementType:'button', class:'mobileButton', childrenArray:[createElement({elementType:'i', class:'bx bxs-phone-call bx-flashing'})], onclick: showCallMainScreen})
+    let backToMainscreenBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-call bx-flashing' })], onclick: showCallMainScreen })
 
     let participantsSelectorBtn = createElement({ elementType: 'div', class: 'rightHeaderItem participants headerItemSelected', textContent: 'Participants ' + participantsCount })
     let messagesSelectorbtn = createElement({ elementType: 'div', class: 'rightHeaderItem callChat', textContent: 'Messages ' + unreadmessagesCount })
@@ -3671,7 +3671,7 @@ myPeer.on('open', myPeerId => {
   function createLeftPanel() {
     let ongoingCallLeftPart = document.getElementById('ongoingCallLeftPart')
     ongoingCallLeftPart.textContent = '';
-    let backToMainscreenBtn = createElement({elementType:'button', class:'mobileButton', childrenArray:[createElement({elementType:'i', class:'bx bxs-phone-call bx-flashing'})], onclick: showCallMainScreen})
+    let backToMainscreenBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-call bx-flashing' })], onclick: showCallMainScreen })
     let presenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem headerItemSelected', textContent: 'Present ' + 1 })
     let absenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem', textContent: 'Absent ' + 2 })
     let attendanceTitleSection = createElement({ elementType: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn, backToMainscreenBtn] })
@@ -3943,7 +3943,7 @@ myPeer.on('open', myPeerId => {
       availableScreensDiv: availableScreensDiv
     }
   }
-  
+
   socket.on('searchPeopleToInviteToCall', (searchPeople) => {
     console.log(searchPeople)
     if (searchPeople.length == 0) { return topBar.invitedDiv.textContent = 'No user found.' }
@@ -4260,8 +4260,8 @@ function createTopBar(callInfo, myInfo) {
   doneBtn.addEventListener('click', () => { popDown.classList.toggle('popdownDisplayed') })
   let headerRightPart = createElement({ elementType: 'div', class: 'headerRightPart', childrenArray: [inviteSomeone, popDown] })
   callScreenHeader.textContent = '';
-  let showLeftpartBtn = createElement({elementType:'button', class:'mobileButton', childrenArray:[createElement({elementType:'i', class:'bx bx-list-check'})], onclick: showCallLeftPart})
-  let showRightpartBtn = createElement({elementType:'button', class:'mobileButton', childrenArray:[createElement({elementType:'i', class:'bx bxs-chat'})], onclick: showCallRightPart})
+  let showLeftpartBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-list-check' })], onclick: showCallLeftPart })
+  let showRightpartBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-chat' })], onclick: showCallRightPart })
   callScreenHeader.append(showLeftpartBtn, headerLeftPart, headerRightPart, showRightpartBtn)
   return { callScreenHeader, invitedDiv }
 }
@@ -4518,3 +4518,32 @@ function createCircleLoader() {
 //     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
 //   }
 // }
+
+////////////// EVENTS SCHEDULER //////////////////////
+function createCalendarEventSection() {
+
+  time_scheduling_panel.textContent = ''
+
+  let selectionPanel = createElement({ elementType: 'div', class: 'selectionPanel mobileHiddenElement' })
+  let mainScheduleList = createElement({ elementType: 'div', class: 'mainScheduleList' })
+  let scheduleDetailsSection = createElement({ elementType: 'div', class: 'scheduleDetailsSection mobileHiddenElement' })
+  let schedule_container = createElement({ elementType: 'div', class: 'schedule-container', childrenArray: [selectionPanel, mainScheduleList, schedule_container] })
+  time_scheduling_panel.append(schedule_container)
+  function showSelectionPanel() {
+    selectionPanel.classList.remove('scheduleDetailsSection')
+    mainScheduleList.classList.add('scheduleDetailsSection')
+    scheduleDetailsSection.classList.add('scheduleDetailsSection')
+  }
+  function showMainScheduleList() {
+    selectionPanel.classList.add('scheduleDetailsSection')
+    mainScheduleList.classList.remove('scheduleDetailsSection')
+    scheduleDetailsSection.classList.add('scheduleDetailsSection')
+  }
+  function showScheduleDetailsSection() {
+    selectionPanel.classList.remove('scheduleDetailsSection')
+    mainScheduleList.classList.add('scheduleDetailsSection')
+    scheduleDetailsSection.classList.remove('scheduleDetailsSection')
+  }
+
+  
+}

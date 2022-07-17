@@ -736,16 +736,8 @@ function displayDayEvents(givenDate) {
             */
             if (scheduleItem.Participants) {
                 scheduleItem.Participants.forEach(function (participant) {
-                    let {
-                        userInfo,
-                        attending
-                    } = participant;
-                    let {
-                        userID,
-                        name,
-                        surname,
-                        profilePicture
-                    } = userInfo;
+                    let { userInfo, attending } = participant;
+                    let { userID, name, surname, profilePicture } = userInfo;
 
                     //fromm
                     let avatarElement;
