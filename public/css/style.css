@@ -2398,6 +2398,7 @@ body {
 }
 .c-ongoing_call_panel .call-container .callScreenHeader {
   display: flex;
+  gap: 0.5rem;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
@@ -4917,7 +4918,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  min-height: 10rem;
+  min-height: 30rem;
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivHeader {
   padding: 1rem;
@@ -5137,6 +5138,24 @@ body {
     padding-top: calc(30px + 2rem);
     width: 100%;
   }
+  .c-ongoing_call_panel .leftPart {
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+  .c-ongoing_call_panel .call-container {
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+  .c-ongoing_call_panel .rightPart {
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+  }
 
   .c-time-scheduling_panel {
     padding-top: calc(30px + 2rem);
@@ -5145,6 +5164,18 @@ body {
 
   .c-time-admin_panel {
     padding-top: calc(30px + 2rem);
+    width: 100%;
+  }
+  .c-time-admin_panel .left-responsibilities {
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+  .c-time-admin_panel .central-Options {
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
     width: 100%;
   }
 

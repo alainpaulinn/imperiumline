@@ -2956,7 +2956,7 @@ body {
 
     .callScreenHeader {
       display: flex;
-      //flex-direction: row;
+      gap: 0.5rem;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
@@ -5947,7 +5947,7 @@ body {
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        min-height: 10rem;
+        min-height: 30rem;
 
         .managementDivHeader {
           padding: 1rem;
@@ -6196,6 +6196,24 @@ body {
   .c-ongoing_call_panel{
     padding-top: calc(30px + 2rem);
     width: 100%;
+    .leftPart{
+      height: 100%;
+      margin: 0;
+      max-width: 100%;
+      width: 100%;
+    }
+    .call-container{
+      height: 100%;
+      margin: 0;
+      max-width: 100%;
+      width: 100%;
+    }
+    .rightPart{
+      height: 100%;
+      margin: 0;
+      max-width: 100%;
+      width: 100%;
+    }
   }
   .c-time-scheduling_panel{
     padding-top: calc(30px + 2rem);
@@ -6204,6 +6222,18 @@ body {
   .c-time-admin_panel{
     padding-top: calc(30px + 2rem);
     width: 100%;
+    .left-responsibilities{
+      height: 100%;
+      margin: 0;
+      max-width: 100%;
+      width: 100%;
+    }
+    .central-Options{
+      height: 100%;
+      margin: 0;
+      max-width: 100%;
+      width: 100%;
+    }
   }
 
   // generic classification

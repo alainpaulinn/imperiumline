@@ -618,7 +618,7 @@ let functionalityOptionsArray = [
         let responsibilitiesContainer = createElement({ elementType: 'div', class: 'responsibilitiesContainer' })
         let responsibilitiesPanel = createElement({ elementType: 'div', class: 'left-responsibilities', childrenArray: [createElement({ elementType: 'div', class: 'responsibilitiesHeader', textContent: 'Admin Panel' }), responsibilitiesContainer] })
         let contentPanel = createElement({
-          elementType: 'div', class: 'central-Options', childrenArray: [
+          elementType: 'div', class: 'central-Options mobileHiddenElement', childrenArray: [
             createElement({
               elementType: 'div', class: 'adminWelcomeDiv', childrenArray: [
                 createElement({ elementType: 'img', class: 'adminWelcomeImage', src: 'images/adminKeys.png' }),
@@ -627,6 +627,14 @@ let functionalityOptionsArray = [
             })
           ]
         })
+        function showResponsibilitiesPanel(){
+          responsibilitiesPanel.classList.remove('mobileHiddenElement')
+          contentPanel.classList.add('mobileHiddenElement')
+        }
+        function showControlPanel(){
+          responsibilitiesPanel.classList.add('mobileHiddenElement')
+          contentPanel.classList.remove('mobileHiddenElement')
+        }
         if (isSuperAdmin === true) {
           let savedCompanies;
           let savedAdmins;
@@ -646,10 +654,13 @@ let functionalityOptionsArray = [
           let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })] })
 
           let companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: 'favicon.ico' })
+          let backButton = createElement({
+            elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showResponsibilitiesPanel
+          })
           let companyName = createElement({ elementType: 'div', class: 'companyName', textContent: 'Imperium Line' })
           let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: 'Imperium Line application main administration' })
           let companyNameDescription = createElement({ elementType: 'div', class: 'companyNameDescription', childrenArray: [companyName, companyDescription] })
-          let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [companyProfilePic, companyNameDescription] })
+          let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [backButton, companyProfilePic, companyNameDescription] })
           let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv] })
           let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray: [numbersDiv, managementDiv] })
 
@@ -705,6 +716,7 @@ let functionalityOptionsArray = [
             numbersDiv.textContent = ''
             numbersDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
             socket.emit('requestSuperAdminNumbers')
+            showControlPanel();
           })
           function SuperAdmin_createCompaniesMgtBodyElement(companies) {
             contentElements = companies.map((company) => {
@@ -778,12 +790,12 @@ let functionalityOptionsArray = [
               // -- for Admin
               let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
               let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-              let revokeAdminAccessButton = createElement({ elementType: 'button', textContent: 'Revoke admin access' })
+              let revokeAdminAccessButton = createElement({ elementType: 'button', textContent: 'Remove' })
               let actions
               if (admin.userID == mySavedID) actions = []
               else actions = [
                 { element: messageButton, functionCall: () => { initiateChat(admin.userID) } },
-                { element: callButton, functionCall: () => { call(admin.userID, true, false, false, false, null) } },
+                // { element: callButton, functionCall: () => { call(admin.userID, true, false, false, false, null) } },
                 {
                   element: revokeAdminAccessButton, functionCall: () => {
                     // -------------------- Deleting user - on popup;
@@ -848,12 +860,12 @@ let functionalityOptionsArray = [
               // -- for Admin
               let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
               let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-              let revokeAdminAccessButton = createElement({ elementType: 'button', textContent: 'Revoke super admin access' })
+              let revokeAdminAccessButton = createElement({ elementType: 'button', textContent: 'Remove' })
               let actions
               if (admin.userID == mySavedID) actions = []
               else actions = [
                 { element: messageButton, functionCall: () => { initiateChat(admin.userID) } },
-                { element: callButton, functionCall: () => { call(admin.userID, true, false, false, false, null) } },
+                // { element: callButton, functionCall: () => { call(admin.userID, true, false, false, false, null) } },
                 {
                   element: revokeAdminAccessButton, functionCall: () => {
                     // -------------------- Deleting user - on popup;
@@ -1349,7 +1361,7 @@ let functionalityOptionsArray = [
               // -- for Admin
               let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
               let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-              let revokeAdminAccessButton = createElement({ elementType: 'button', textContent: 'Revoke admin access' })
+              let revokeAdminAccessButton = createElement({ elementType: 'button', textContent: 'Remove' })
               let actions
               if (admin.userID == mySavedID) actions = []
               else actions = [
@@ -1724,10 +1736,13 @@ let functionalityOptionsArray = [
                 let companyProfilePic
                 if (option.logo == null) companyProfilePic = createElement({ elementType: 'div', class: 'companyProfilePic', textContent: option.name.substring(0, 2) })
                 else companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: option.logo })
+                let backButton = createElement({
+                  elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showResponsibilitiesPanel
+                })
                 let companyName = createElement({ elementType: 'div', class: 'companyName', textContent: option.name })
                 let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: option.description })
                 let companyNameDescription = createElement({ elementType: 'div', class: 'companyNameDescription', childrenArray: [companyName, companyDescription] })
-                let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [companyProfilePic, companyNameDescription] })
+                let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [backButton, companyProfilePic, companyNameDescription] })
                 let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
                 let universalButtons = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [editButton] })
                 let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv, universalButtons] })
@@ -1735,7 +1750,8 @@ let functionalityOptionsArray = [
                 numbersDiv.textContent = '';
                 numbersDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
                 let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray: [numbersDiv, managementDiv] })
-                contentPanel.append(Header, adminPanelMainContent)
+                contentPanel.append(Header, adminPanelMainContent);
+                showControlPanel();
               }
             }
           })
@@ -2467,6 +2483,26 @@ function toggleFullscreen(element) {
   else { document.exitFullscreen(); }
 }
 
+// responsive functions
+let ongoingCallLeftPart = document.getElementById('ongoingCallLeftPart')
+let callMainScreen = document.getElementById('callMainScreen')
+let ongoingCallRightPart = document.getElementById('ongoingCallRightPart')
+function showCallLeftPart(){
+  ongoingCallLeftPart.classList.remove('mobileHiddenElement')
+  callMainScreen.classList.add('mobileHiddenElement')
+  ongoingCallRightPart.classList.add('mobileHiddenElement')
+}
+function showCallMainScreen(){
+  ongoingCallLeftPart.classList.add('mobileHiddenElement')
+  callMainScreen.classList.remove('mobileHiddenElement')
+  ongoingCallRightPart.classList.add('mobileHiddenElement')
+}
+function showCallRightPart(){
+  ongoingCallLeftPart.classList.add('mobileHiddenElement')
+  callMainScreen.classList.add('mobileHiddenElement')
+  ongoingCallRightPart.classList.remove('mobileHiddenElement')
+}
+
 // when my peer is ready with an ID ---> this means that we cannot receive a call before a peer Id is opened
 myPeer.on('open', myPeerId => {
   console.log('my peer is now connected with id: ' + myPeerId)
@@ -2493,25 +2529,7 @@ myPeer.on('open', myPeerId => {
   let bottomPanel;
   let callNotifications = []
 
-  // responsive functions
-  let ongoingCallLeftPart = document.getElementById('ongoingCallLeftPart')
-  let callMainScreen = document.getElementById('callMainScreen')
-  let ongoingCallRightPart = document.getElementById('ongoingCallRightPart')
-  function showCallLeftPart(){
-    ongoingCallLeftPart.classList.remove('mobileHiddenElement')
-    callMainScreen.classList.add('mobileHiddenElement')
-    ongoingCallRightPart.classList.add('mobileHiddenElement')
-  }
-  function showCallMainScreen(){
-    ongoingCallLeftPart.classList.add('mobileHiddenElement')
-    callMainScreen.classList.remove('mobileHiddenElement')
-    ongoingCallRightPart.classList.add('mobileHiddenElement')
-  }
-  function showCallLeftPart(){
-    ongoingCallLeftPart.classList.add('mobileHiddenElement')
-    callMainScreen.classList.add('mobileHiddenElement')
-    ongoingCallRightPart.classList.remove('mobileHiddenElement')
-  }
+  
 
   socket.on('prepareCallingOthers', initiatedCallInfo => {
     navigator.getUserMedia({ video: { optional: optionalResolutions }, audio: true }, stream => {
@@ -4242,7 +4260,9 @@ function createTopBar(callInfo, myInfo) {
   doneBtn.addEventListener('click', () => { popDown.classList.toggle('popdownDisplayed') })
   let headerRightPart = createElement({ elementType: 'div', class: 'headerRightPart', childrenArray: [inviteSomeone, popDown] })
   callScreenHeader.textContent = '';
-  callScreenHeader.append(headerLeftPart, headerRightPart)
+  let showLeftpartBtn = createElement({elementType:'button', class:'mobileButton', childrenArray:[createElement({elementType:'i', class:'bx bx-list-check'})], onclick: showCallLeftPart})
+  let showRightpartBtn = createElement({elementType:'button', class:'mobileButton', childrenArray:[createElement({elementType:'i', class:'bx bxs-chat'})], onclick: showCallRightPart})
+  callScreenHeader.append(showLeftpartBtn, headerLeftPart, headerRightPart, showRightpartBtn)
   return { callScreenHeader, invitedDiv }
 }
 

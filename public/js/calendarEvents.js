@@ -23,12 +23,7 @@ var nextMonthBtn = document.getElementById("nextMonthBtn")
 var scheduleDetailsSectionDiv = document.getElementById("scheduleDetailsSectionDiv")
 var newScheduleDetailsSection = document.getElementById("newScheduleDetailsSection")
 
-
-
-currentMonth.textContent = date.toLocaleDateString("en-US", {
-    month: 'long',
-    year: 'numeric'
-});
+currentMonth.textContent = date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
 console.log(currentMonth.textContent)
 today.setHours(0, 0, 0, 0);
 renderCalendar();
@@ -56,28 +51,15 @@ function renderCalendar() {
 
         } else if (i <= startWeekDay + totalMonthDay) {
             // adding this month days
-
             date.setDate(day);
             console.log("day:", day, 'loop:', i)
             date.setHours(0, 0, 0, 0);
-
             let dayClass = date.getTime() === today.getTime() ? 'current-day' : 'month-day';
-
-            /*
-            let dateYYYYMMDD_ISO = date.toISOString().slice(0, 10)
-            let dateYYYYMM__ = dateYYYYMMDD_ISO.substring(0, dateYYYYMMDD_ISO.length - 2);
-            let __MM = ((parseInt(dateYYYYMMDD_ISO.slice(-2)) + 1) + "").length > 1 ? "" + (parseInt(dateYYYYMMDD_ISO.slice(-2)) + 1) : "0" + (parseInt(dateYYYYMMDD_ISO.slice(-2)) + 1)
-            let dateYYYYMMDD = dateYYYYMM__ + __MM
-            console.log(dateYYYYMMDD_ISO)*/
-
             let dateYYYYMMDD_ISO = formatDate(date)
-
             let contentClass = 'noMeaning';
             if (calendarObject[dateYYYYMMDD_ISO]) {
                 contentClass = calendarObject[dateYYYYMMDD_ISO].length > 0 ? 'contentDay' : 'noMeaning';
-                //console.log("Yes")
             }
-
             let dayDiv = document.createElement("div");
             dayDiv.textContent = day;
             dayDiv.classList.add(contentClass)
@@ -90,10 +72,7 @@ function renderCalendar() {
                 ckickDateCheck.setDate(day)
                 console.log('day date clicked', ckickDateCheck, day, formatDate(ckickDateCheck))
                 displayDayEvents(formatDate(ckickDateCheck))
-                //console.log(calendarObject[clickedDate.toISOString().slice(0, 10)])
-                //console.log(clickedDate.toISOString().slice(0, 10))
             })
-
         } else {
             // adding next month days
             let dayDiv = document.createElement('div')
@@ -104,53 +83,33 @@ function renderCalendar() {
     }
 }
 
-
 prevMonthBtn.addEventListener("click", function () {
     date.setDate(1)
     date.setMonth(date.getMonth() - 1);
-    currentMonth.textContent = date.toLocaleDateString("en-US", {
-        month: 'long',
-        year: 'numeric'
-    });
+    currentMonth.textContent = date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
     renderCalendar();
     console.log(date.getMonth())
 });
 nextMonthBtn.addEventListener("click", function () {
-    //date = new Date(currentMonth.textContent);
     date.setDate(1)
     date.setMonth(date.getMonth() + 1);
-    currentMonth.textContent = date.toLocaleDateString("en-US", {
-        month: 'long',
-        year: 'numeric'
-    });
+    currentMonth.textContent = date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
     renderCalendar();
     console.log(date.getMonth())
 });
 
 document.querySelectorAll(".btn").forEach(function (element) {
     element.addEventListener("click", function () {
-        //console.log(date)
         let btnClass = element.classList;
-        //date = new Date(currentMonth.textContent);
-        console.log("dateeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", date)
-
         if (btnClass.contains("today"))
             date = new Date();
         else if (btnClass.contains("prev-year"))
             date = new Date(date.getFullYear() - 1, 0, 1);
-        else
-            date = new Date(date.getFullYear() + 1, 0, 1);
-
-        currentMonth.textContent = date.toLocaleDateString("en-US", {
-            month: 'long',
-            year: 'numeric'
-        });
+        else date = new Date(date.getFullYear() + 1, 0, 1);
+        currentMonth.textContent = date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
         renderCalendar();
-
     });
 });
-
-
 
 hidecalendarBtn.addEventListener("click", function (e) {
     this.classList.toggle("rotate180")
@@ -159,24 +118,16 @@ hidecalendarBtn.addEventListener("click", function (e) {
 })
 
 newEventBtn.addEventListener("click", function (e) {
-    console.log("New Event")
-
     scheduleDetailsSectionDiv.classList.add("hidden")
     newScheduleDetailsSection.classList.remove("hidden")
-
 })
-
 let scheduleTypeChoiceElement = document.getElementById("scheduleTypeGoodSelectJs")
 goodselect(scheduleTypeChoiceElement, {
-    availableOptions: [{
-        id: 1,
-        name: "Meeting"
-    }, {
-        id: 2,
-        name: "Task"
-    }],
+    availableOptions: [
+        { id: 1, name: "Meeting" },
+        { id: 2, name: "Task" }
+    ],
     placeHolder: "Type",
-    //selectedOptionId: 1,
     onOptionChange: (option) => {
         !option ? scheduleTypeChoiceElement.classList.add("negativegoodselect") : scheduleTypeChoiceElement.classList.remove("negativegoodselect")
         newEventCreation.type = option.id;
@@ -325,9 +276,6 @@ flatpickr("#planMeetingStart", {
     enableTime: true,
     noCalendar: true,
     dateFormat: "H:i",
-    //minTime: "07:00",
-    //maxTime: "22:00",
-    //defaultDate: "13:30",
     onChange: function (selectedDates, dateStr, instance) {
         !dateStr ? chosenEventStart.classList.add("negativeDate") : chosenEventStart.classList.remove("negativeDate")
         newEventCreation.startTime = dateStr + ":00";
@@ -338,9 +286,6 @@ flatpickr("#planMeetingEnd", {
     enableTime: true,
     noCalendar: true,
     dateFormat: "H:i",
-    //minTime: "07:00",
-    //maxTime: "22:00",
-    //defaultDate: "13:30",
     onChange: function (selectedDates, dateStr, instance) {
         !dateStr ? chosenEventEnd.classList.add("negativeDate") : chosenEventEnd.classList.remove("negativeDate")
         newEventCreation.endTime = dateStr + ":00";
@@ -387,10 +332,6 @@ submitEventButton.addEventListener("click", () => {
     newEventCreation.context = contextField.value;
     newEventCreation.activityLink = linkField.value;
     newEventCreation.details = detailsField.value;
-
-
-    console.log(newEventCreation)
-
     /*
     let chosenEventStart = document.getElementById("planMeetingStart")
     let chosenEventEnd = document.getElementById("planMeetingEnd")
@@ -415,25 +356,19 @@ submitEventButton.addEventListener("click", () => {
 
     //Check Title
     if (checkIfEmpty(createEventTitle) || !newEventCreation.title) return flagIncorrectFied(createEventTitle, "dateSelect")
-
     //check Start
     if (checkIfEmpty(chosenEventStart) || !newEventCreation.startTime) return flagIncorrectFied(chosenEventStart, "dateSelect")
-
     //check End
     if (checkIfEmpty(chosenEventEnd) || !newEventCreation.endTime) return flagIncorrectFied(chosenEventEnd, "dateSelect")
-
     //check Type
     if (!newEventCreation.type) return flagIncorrectFied(scheduleTypeChoiceElement, "goodSelect")
-
     //check Occurence
     if (!newEventCreation.occurrence) return flagIncorrectFied(recurrenceGoodSelectJs, "goodSelect")
-
     //check onetime date
     if (newEventCreation.occurrence == 1) {
         let oneTimeTypeDateDiv = document.getElementById("oneTimeTypeDiv")
         if (!newEventCreation.oneTimeDate || newEventCreation.oneTimeDate == "") return flagIncorrectFied(oneTimeTypeDateDiv, "dateSelect");
     }
-
     if (newEventCreation.occurrence == 2) {
         //check recurrence type
         let _recurrenceTypeDiv = document.getElementById("recurrenceTypeDiv")
@@ -447,41 +382,25 @@ submitEventButton.addEventListener("click", () => {
         let _endRecurrenceTypeDiv = document.getElementById("endRecurrenceTypeDiv")
         if (checkIfEmpty(_endRecurrenceTypeDiv) || !newEventCreation.endRecurrenceDate) return flagIncorrectFied(_endRecurrenceTypeDiv, "dateSelect")
     }
-
     //Check Location
     if (checkIfEmpty(eventLocation) || !newEventCreation.eventLocation) return flagIncorrectFied(eventLocation, "dateSelect")
-
     //Check Context
     if (checkIfEmpty(contextField) || !newEventCreation.eventLocation) return flagIncorrectFied(contextField, "dateSelect")
-
     // check linkField is not mandatory
-
     // check Participants/members/invités is not mandatory
-
     // check detailsField is not mandatory
-
     socket.emit("newEventPlan", newEventCreation)
 
 })
 
 function flagIncorrectFied(element, elementType) {
-    if (elementType == "goodSelect") {
-        element.classList.add("negativegoodselect")
-    }
-    if (elementType == "dateSelect") {
-        element.classList.add("negativeDate")
-    }
-
+    if (elementType == "goodSelect") element.classList.add("negativegoodselect")
+    if (elementType == "dateSelect") element.classList.add("negativeDate")
 }
 
 function unflagIncorrectFied(element, elementType) {
-    if (elementType == "goodSelect") {
-        element.classList.remove("negativegoodselect")
-    }
-    if (elementType == "dateSelect") {
-        element.classList.remove("negativeDate")
-    }
-
+    if (elementType == "goodSelect") element.classList.remove("negativegoodselect")
+    if (elementType == "dateSelect") element.classList.remove("negativeDate")
 }
 
 //insert Invittees
@@ -489,17 +408,12 @@ let addMembersField = document.getElementById("addMembersField")
 let invitedMembersDiv = document.getElementById("invitedMembersDiv")
 let selectedUsersDiv = document.getElementById("selectedUsersDiv")
 newEventCreation.inviteList = []
-//let newEventCreation.inviteList = []
 
 addMembersField.addEventListener("focus", () => {
     invitedMembersDiv.classList.add('is-visible')
     invitedMembersDiv.focus();
 })
-addMembersField.addEventListener('blur', (e) => {
-    //console.log(e.target)
-    //invitedMembersDiv.classList.remove('is-visible')
-    //console.log("helloooooooooooooooooooooo")
-})
+addMembersField.addEventListener('blur', (e) => { })
 
 addMembersField.addEventListener('input', function (evt) {
     console.log(this.value);
@@ -631,12 +545,12 @@ function displayDayEvents(givenDate) {
     let selectedScheduledItemsDiv = document.getElementById("selectedScheduledItemsDiv")
 
     //remove all ecxisting data from the Div
-    removeAllChildren(selectedScheduledItemsDiv)
+    selectedScheduledItemsDiv.textContent = '';
 
     let indicatedDate = new Date(givenDate)
     //console.log(givenDate,indicatedDate)
     //remove spinner
-    removeAllChildren(scheduleTitle)
+    scheduleTitle.textContent = ''
     scheduleTitle.textContent = "Planned for " + indicatedDate.toString().substring(0, 15)
 
 
@@ -779,7 +693,7 @@ function displayDayEvents(givenDate) {
             eventTypediv.append(scheduleIcon)
             eventOwner.textContent = scheduleItem.owner.name + " " + scheduleItem.owner.surname;
 
-            removeAllChildren(eventParticipantsDivResult) //remove all children
+            eventParticipantsDivResult.textContent = '' //remove all children
             /*
             [
                 {
@@ -915,13 +829,12 @@ function displayDayEvents(givenDate) {
             outIcon.classList.add("bx", "bx-link-external")
             eventLinkLink.appendChild(outIcon)
 
-
             //attendingChoices
             let myAttendance = scheduleItem.Participants.find(obj => obj.userInfo.userID == mySavedID);
             if (!myAttendance) return;
             switch (myAttendance.attending) {
                 case 0:
-                    removeAllChildren(attendingChoices)
+                    attendingChoices.textContent = ''
                     attendingAnswer.textContent = " No"
 
                     let yesButtonResponse = createMyElement("button", ["positive"], "Yes")
@@ -933,7 +846,7 @@ function displayDayEvents(givenDate) {
                     addResponseEventListener(notSureButtonResponse, 1)
                     break;
                 case 1:
-                    removeAllChildren(attendingChoices)
+                    attendingChoices.textContent = ''
                     attendingAnswer.textContent = " Not Sure"
 
                     let _yesButtonResponse = createMyElement("button", ["positive"], "Yes")
@@ -945,7 +858,7 @@ function displayDayEvents(givenDate) {
                     addResponseEventListener(_noButtonResponse, 0)
                     break;
                 case 2:
-                    removeAllChildren(attendingChoices)
+                    attendingChoices.textContent = ''
                     attendingAnswer.textContent = " Yes"
 
                     let __notSureButtonResponse = createMyElement("button", ["certain"], "Not Sure")
@@ -959,57 +872,23 @@ function displayDayEvents(givenDate) {
                 default:
                     break;
             }
-
-
-            function addResponseEventListener(element, response) {
-                element.addEventListener("click", function () {
-                    sendEventAttendanceResponse(scheduleItem.eventId, response)
-                    console.log(scheduleItem.eventId, response)
-                })
-            }
-
-            function sendEventAttendanceResponse(eventId, resp) {
-                socket.emit("updateEventAttendance", {
-                    eventId,
-                    resp
-                })
-            }
-
+            function addResponseEventListener(element, response) { element.addEventListener("click", function () { sendEventAttendanceResponse(scheduleItem.eventId, response) }) }
+            function sendEventAttendanceResponse(eventId, resp) { socket.emit("updateEventAttendance", { eventId, resp }) }
         })
     })
 
 }
 
-function removeAllChildren(element) {
-    while (element.firstChild) {
-        element.removeChild(element.firstChild);
-    }
-}
-
 function formatDate(date) {
-    var d = new Date(date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
-
-    if (month.length < 2)
-        month = '0' + month;
-    if (day.length < 2)
-        day = '0' + day;
-
+    var d = new Date(date), month = '' + (d.getMonth() + 1), day = '' + d.getDate(), year = d.getFullYear();
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
     return [year, month, day].join('-');
 }
-
 function createMyElement(elementType, classList, textContent) {
     // elementType: string, classList: array of strings, textContent: string
     let newElem = document.createElement(elementType + "")
     newElem.textContent = textContent
-    classList.forEach(classString => {
-        newElem.classList.add(classString)
-    })
+    classList.forEach(classString => { newElem.classList.add(classString) })
     return newElem;
-}
-
-function createmainEventsScreen(callObject){
-    
 }
