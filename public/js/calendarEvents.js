@@ -29,11 +29,9 @@ today.setHours(0, 0, 0, 0);
 renderCalendar();
 
 function renderCalendar() {
-    console.log(date.toISOString())
     const prevLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
     const totalMonthDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
     const startWeekDay = new Date(date.getFullYear(), date.getMonth(), 0).getDay();
-    console.log("start weeeek day", startWeekDay, "prevLastDay", prevLastDay, "totalMonthDay", totalMonthDay)
     calendarDays.innerHTML = "";
 
     let totalCalendarDay = 6 * 7;

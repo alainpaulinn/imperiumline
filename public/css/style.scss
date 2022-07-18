@@ -4383,6 +4383,7 @@ body {
       width: 100%;
       //height: fit-content;
       background-color: var(--foreground-color);
+      border-radius: $borderRadius;
 
       .calendar {
         display: flex;

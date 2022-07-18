@@ -4520,14 +4520,33 @@ function createCircleLoader() {
 // }
 
 ////////////// EVENTS SCHEDULER //////////////////////
+createCalendarEventSection()
 function createCalendarEventSection() {
-
+  console.log('happenneddd')
   time_scheduling_panel.textContent = ''
+  let weekDays = createElement({
+    elementType: 'div', class: 'weekdays', childrenArray: [
+      createElement({ elementType: 'div', class: 'weekday-name', title: 'Sunday', textContent: 'Su' }),
+      createElement({ elementType: 'div', class: 'weekday-name', title: 'Monday', textContent: 'Mo' }),
+      createElement({ elementType: 'div', class: 'weekday-name', title: 'Tuesday', textContent: 'Tu' }),
+      createElement({ elementType: 'div', class: 'weekday-name', title: 'Wednesday', textContent: 'We' }),
+      createElement({ elementType: 'div', class: 'weekday-name', title: 'Thursday', textContent: 'Th' }),
+      createElement({ elementType: 'div', class: 'weekday-name', title: 'Friday', textContent: 'Fr' }),
+      createElement({ elementType: 'div', class: 'weekday-name', title: 'Saturday', textContent: 'Sa' }),
+    ]
+  })
+  let calendarDays = createElement({ elementType: 'div', class: 'calendar-days' })
+  // card components
+  let calendarToolBar = createElement({ elementType: 'div', class: 'calendar-toolbar' })
+  let calendar = createElement({ elementType: 'div', class: 'calendar', childrenArray: [weekDays, calendarDays] })
+  let jumpButtons = createElement({ elementType: 'div', class: 'goto-buttons' })
 
-  let selectionPanel = createElement({ elementType: 'div', class: 'selectionPanel mobileHiddenElement' })
+  let calendarCard = createElement({ elementType: 'div', class: 'card', childrenArray: [calendarToolBar, calendar, jumpButtons] })
+  // main
+  let selectionPanel = createElement({ elementType: 'div', class: 'selectionPanel mobileHiddenElement', childrenArray: [calendarCard] })
   let mainScheduleList = createElement({ elementType: 'div', class: 'mainScheduleList' })
   let scheduleDetailsSection = createElement({ elementType: 'div', class: 'scheduleDetailsSection mobileHiddenElement' })
-  let schedule_container = createElement({ elementType: 'div', class: 'schedule-container', childrenArray: [selectionPanel, mainScheduleList, schedule_container] })
+  let schedule_container = createElement({ elementType: 'div', class: 'schedule-container', childrenArray: [selectionPanel, mainScheduleList, scheduleDetailsSection] })
   time_scheduling_panel.append(schedule_container)
   function showSelectionPanel() {
     selectionPanel.classList.remove('scheduleDetailsSection')
@@ -4545,5 +4564,44 @@ function createCalendarEventSection() {
     scheduleDetailsSection.classList.remove('scheduleDetailsSection')
   }
 
-  
+  let today = new Date();
+  let date = new Date();
+  today.setHours(0, 0, 0, 0);
+  const prevLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
+  const totalMonthDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  const startWeekDay = new Date(date.getFullYear(), date.getMonth(), 0).getDay();
+  calendarDays.textContent = '';
+  let totalCalendarDay = 6 * 7;
+  for (let i = 0; i < totalCalendarDay; i++) {
+    let day = i - startWeekDay;
+    if (i <= startWeekDay) {
+      // adding previous month days
+      let dayDiv = createElement({ elementType: 'div' })
+      dayDiv.textContent = prevLastDay + i - startWeekDay;
+      dayDiv.classList.add("padding-day");
+      calendarDays.appendChild(dayDiv);
+
+    }
+    else if (i <= startWeekDay + totalMonthDay) {
+      // adding this month days
+      date.setDate(day);
+      date.setHours(0, 0, 0, 0);
+      let dayClass = date.getTime() === today.getTime() ? 'current-day' : 'month-day';
+      let dateYYYYMMDD_ISO = formatDate(date)
+      let contentClass = 'noMeaning';
+      if (calendarObject[dateYYYYMMDD_ISO]) contentClass = calendarObject[dateYYYYMMDD_ISO].length > 0 ? 'contentDay' : 'noMeaning';
+      let dayDiv = createElement({
+        elementType: 'div', class: contentClass + ' ' + dayClass, textContent: day + '', onclick: () => {
+          let ckickDateCheck = date;
+          ckickDateCheck.setDate(day);
+        }
+      })
+      calendarDays.appendChild(dayDiv)
+
+    } else {
+      // adding next month days
+      let dayDiv = createElement({ elementtype: 'div', class: 'padding-day', textContent: (day - totalMonthDay) + "" })
+      calendarDays.appendChild(dayDiv)
+    }
+  }
 }

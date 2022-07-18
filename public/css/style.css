@@ -3587,6 +3587,7 @@ body {
 .schedule-container .selectionPanel .card {
   width: 100%;
   background-color: var(--foreground-color);
+  border-radius: 15px;
 }
 .schedule-container .selectionPanel .card .calendar {
   display: flex;
