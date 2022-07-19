@@ -3602,64 +3602,24 @@ body {
   padding: 1rem;
   padding-bottom: 15px;
   border-bottom: var(--border-width) solid var(--box-shadow);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
-.schedule-container .selectionPanel .card .calendar-toolbar > .current-month {
-  font-size: 20px;
-  flex: 1;
-  font-weight: bold;
-  color: rgb(91, 94, 97);
-  text-align: center;
+.schedule-container .selectionPanel .card .calendar-toolbar p {
+  font-size: 1.2rem;
 }
-.schedule-container .selectionPanel .card .calendar-toolbar > [class$=month-btn] {
-  width: 40px;
-  margin: 0 1rem;
-  aspect-ratio: 1;
-  text-align: center;
-  font-size: 20px;
-  color: rgb(91, 94, 97);
+.schedule-container .selectionPanel .card .calendar-toolbar button {
   background: var(--btn-bg);
   border: none;
   border-radius: 15px;
-}
-.schedule-container .selectionPanel .card .calendar-toolbar > [class$=month-btn] i {
-  font-size: 20px;
-}
-.schedule-container .selectionPanel .card .calendar-toolbar > [class$=headerButton] {
-  transition: 0.5s;
+  padding: 11px 13px;
+  color: rgb(91, 94, 97);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-right: 1px;
+  box-shadow: 0px 0px 0px var(--box-shadow);
   cursor: pointer;
-  width: 40px;
-  aspect-ratio: 1;
-  font-size: 20px;
-  color: white;
-  background: rgb(0, 48, 97);
-  border: none;
-  border-radius: 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.schedule-container .selectionPanel .card .calendar-toolbar > [class$=headerButton] i {
-  font-size: 20px;
-  transition: all 0.5s;
-}
-.schedule-container .selectionPanel .card .calendar-toolbar > [class$="headerButton rotate180"] {
-  transition: 0.5s;
-  cursor: pointer;
-  width: 40px;
-  aspect-ratio: 1;
-  font-size: 20px;
-  color: white;
-  background: rgb(0, 48, 97);
-  border: none;
-  border-radius: 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.schedule-container .selectionPanel .card .calendar-toolbar > [class$="headerButton rotate180"] i {
-  font-size: 20px;
-  transition: all 0.5s;
-  transform: rotate(180deg);
 }
 .schedule-container .selectionPanel .card .weekdays,
 .schedule-container .selectionPanel .card .calendar-days {
@@ -3744,7 +3704,15 @@ body {
   display: flex;
   justify-content: space-between;
 }
-.schedule-container .selectionPanel .card .btn {
+.schedule-container .selectionPanel .card .goto-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.schedule-container .selectionPanel .card .goto-option div {
+  flex: 1;
+}
+.schedule-container .selectionPanel .card .goto-option button {
   background: var(--btn-bg);
   border: none;
   border-radius: 15px;
@@ -3754,9 +3722,7 @@ body {
   font-size: 0.9rem;
   margin-right: 1px;
   box-shadow: 0px 0px 0px var(--box-shadow);
-}
-.schedule-container .selectionPanel .card .minimized {
-  display: none;
+  cursor: pointer;
 }
 .schedule-container .selectionPanel .pannedItems {
   display: flex;
@@ -3770,88 +3736,6 @@ body {
   color: rgb(91, 94, 97);
   padding: 1rem;
   border-bottom: 1px solid #f1f4f6;
-}
-.schedule-container .selectionPanel .pannedItems .planneditemsContent .plannedItem {
-  background-color: transparent;
-  cursor: pointer;
-  display: flex;
-  padding: 1rem;
-  border-bottom: 1px solid #f1f4f6;
-}
-.schedule-container .selectionPanel .pannedItems .planneditemsContent .plannedItem .resultItemBundle {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-.schedule-container .selectionPanel .pannedItems .planneditemsContent .plannedItem .resultItemBundle div:first-of-type {
-  flex-basis: 10%;
-}
-.schedule-container .selectionPanel .pannedItems .planneditemsContent .plannedItem .resultItemBundle div:first-of-type img {
-  -o-object-fit: cover;
-     object-fit: cover;
-  border: 1px solid rgb(0, 48, 97);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  background-color: rgb(0, 48, 97);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-}
-.schedule-container .selectionPanel .pannedItems .planneditemsContent .plannedItem .resultItemBundle div:first-of-type div {
-  border: 1px solid rgb(0, 48, 97);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  background-color: rgb(0, 48, 97);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
-}
-.schedule-container .selectionPanel .pannedItems .planneditemsContent .plannedItem .resultItemBundle .meeting-data {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  min-width: 0;
-}
-.schedule-container .selectionPanel .pannedItems .planneditemsContent .plannedItem .resultItemBundle .meeting-data .nameScopeTime {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-}
-.schedule-container .selectionPanel .pannedItems .planneditemsContent .plannedItem .resultItemBundle .meeting-data .nameScopeTime .time {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 12px;
-  color: #c5c5c5;
-}
-.schedule-container .selectionPanel .pannedItems .planneditemsContent .plannedItem .resultItemBundle .meeting-data .nameScopeTime .meetingName {
-  white-space: nowrap;
-  font-size: 14px;
-  color: rgb(91, 94, 97);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 100%;
-}
-.schedule-container .selectionPanel .pannedItems .planneditemsContent .plannedItem .resultItemBundle .meeting-data .nameScopeTime .scope {
-  color: #b6b6b6;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-  font-size: 12px;
-}
-.schedule-container .selectionPanel .pannedItems .planneditemsContent .plannedItem:hover {
-  background-color: #f7f7f7;
 }
 .schedule-container .mainScheduleList {
   flex: 1;

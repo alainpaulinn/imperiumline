@@ -4400,76 +4400,25 @@ body {
         padding: 1rem;
         padding-bottom: 15px;
         border-bottom: var(--border-width) solid var(--box-shadow);
-      }
-
-      .calendar-toolbar>.current-month {
-        font-size: 20px;
-        flex: 1;
-        font-weight: bold;
-        color: $body;
-        text-align: center;
-      }
-
-      .calendar-toolbar>[class$="month-btn"] {
-        width: 40px;
-        margin: 0 1rem;
-        aspect-ratio: 1;
-        text-align: center;
-        font-size: 20px;
-        color: $body;
-        background: var(--btn-bg);
-        border: none;
-        border-radius: $borderRadius;
-
-        //display: flex;
-        //justify-content: center;
-        //align-items: center;
-
-        i {
-          font-size: 20px;
-        }
-      }
-
-      .calendar-toolbar>[class$="headerButton"] {
-        transition: 0.5s;
-        cursor: pointer;
-        width: 40px;
-        aspect-ratio: 1;
-        font-size: 20px;
-        color: white;
-        background: $notification;
-        border: none;
-        border-radius: $borderRadius;
 
         display: flex;
-        justify-content: center;
         align-items: center;
-
-        i {
-          font-size: 20px;
-          transition: all 0.5s
+        gap: 0.5rem;
+        p {
+          font-size: 1.2rem;
         }
-      }
 
-      .calendar-toolbar>[class$="headerButton rotate180"] {
-        transition: 0.5s;
-        cursor: pointer;
-        width: 40px;
-        aspect-ratio: 1;
-        font-size: 20px;
-        color: white;
-        background: $notification;
-        border: none;
-        border-radius: $borderRadius;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        i {
-          font-size: 20px;
-          transition: all 0.5s;
-          transform: rotate(180deg);
+        button {
+          background: var(--btn-bg);
+          border: none;
+          border-radius: $borderRadius;
+          padding: 11px 13px;
+          color: $body;
+          font-weight: 600;
+          font-size: 0.9rem;
+          margin-right: 1px;
+          box-shadow: 0px 0px 0px var(--box-shadow);
+          cursor: pointer;
         }
       }
 
@@ -4576,21 +4525,39 @@ body {
         justify-content: space-between;
       }
 
-      .btn {
-        background: var(--btn-bg);
-        border: none;
-        border-radius: $borderRadius;
-        padding: 11px 13px;
-        color: $body;
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-right: 1px;
-        box-shadow: 0px 0px 0px var(--box-shadow);
+      // .btn {
+      //   background: var(--btn-bg);
+      //   border: none;
+      //   border-radius: $borderRadius;
+      //   padding: 11px 13px;
+      //   color: $body;
+      //   font-weight: 600;
+      //   font-size: 0.9rem;
+      //   margin-right: 1px;
+      //   box-shadow: 0px 0px 0px var(--box-shadow);
+      // }
+      .goto-option {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        div {
+          flex: 1;
+        }
+
+        button {
+          background: var(--btn-bg);
+          border: none;
+          border-radius: $borderRadius;
+          padding: 11px 13px;
+          color: $body;
+          font-weight: 600;
+          font-size: 0.9rem;
+          margin-right: 1px;
+          box-shadow: 0px 0px 0px var(--box-shadow);
+          cursor: pointer;
+        }
       }
 
-      .minimized {
-        display: none;
-      }
     }
 
     .pannedItems {
@@ -4607,112 +4574,6 @@ body {
         border-bottom: 1px solid #f1f4f6;
       }
 
-      .planneditemsContent {
-
-
-        .plannedItem {
-
-          background-color: transparent;
-          cursor: pointer;
-          display: flex;
-          padding: 1rem;
-          border-bottom: 1px solid #f1f4f6;
-
-          .resultItemBundle {
-            display: flex;
-            align-items: center;
-            width: 100%;
-
-            div:first-of-type {
-              flex-basis: 10%;
-
-              img {
-                object-fit: cover;
-                border: 1px solid $notification;
-                width: 40px;
-                height: 40px;
-                margin-right: 10px;
-                //display: block;
-                border-radius: $borderRadius;
-
-                text-transform: uppercase;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: white;
-                background-color: $notification;
-
-                box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-              }
-
-              div {
-                border: 1px solid $notification;
-                width: 40px;
-                height: 40px;
-                margin-right: 10px;
-                border-radius: $borderRadius;
-                text-transform: uppercase;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: white;
-                background-color: $notification;
-                box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
-              }
-            }
-
-            .meeting-data {
-              display: flex;
-              align-items: center;
-              width: 100%;
-              min-width: 0;
-
-              .nameScopeTime {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                min-width: 0;
-
-                .time {
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-
-                  font-size: 12px;
-                  color: #c5c5c5;
-
-                }
-
-                .meetingName {
-                  white-space: nowrap;
-                  font-size: 14px;
-                  color: $body;
-
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  min-width: 100%;
-
-                }
-
-                .scope {
-                  color: #b6b6b6;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  min-width: 0;
-                  font-size: 12px;
-                }
-              }
-
-            }
-
-
-          }
-
-          &:hover {
-            background-color: #f7f7f7;
-          }
-        }
-      }
     }
 
   }
@@ -6101,10 +5962,12 @@ body {
 @media (max-width: 488px) {
   .c-app {
     max-height: 100%;
+
     .c-application {
       position: relative;
       min-width: 100%;
       max-height: 100%;
+
       // overflow: hidden;
       .c-sidepanel {
         position: absolute;
@@ -6113,10 +5976,11 @@ body {
         z-index: 2;
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
       }
+
       .c-messages_panel {
         padding-top: calc(30px + 2rem);
         width: 100%;
-    
+
         // overflow: hidden;
         .c-chats {
           margin: 0;
@@ -6124,6 +5988,7 @@ body {
           max-width: 100%;
           width: 100%;
         }
+
         .c-openchat {
           margin: 0;
           height: 100%;
@@ -6131,6 +5996,7 @@ body {
       }
     }
   }
+
   .expanded {
     position: absolute;
     flex-direction: row;
@@ -6150,14 +6016,17 @@ body {
       border: none;
     }
   }
-  .c-openchat__box__info{
+
+  .c-openchat__box__info {
     margin-bottom: 61.2px;
   }
-  .typingBox{
+
+  .typingBox {
     position: fixed;
     bottom: 0;
 
   }
+
   .notifications {
     right: -50%;
     transform: translateX(-50%);
@@ -6166,70 +6035,84 @@ body {
     padding: 1rem;
     max-width: 100%;
   }
+
   // calls panel
-  .c-call_log_panel{
+  .c-call_log_panel {
     padding-top: calc(30px + 2rem);
     width: 100%;
-    .callSearchSection{
+
+    .callSearchSection {
       height: 100%;
       width: 100%;
       margin: 0;
     }
-    .callHistoryPage{
+
+    .callHistoryPage {
       height: 100%;
       margin: 0;
       max-width: 100%;
       width: 100%;
-      .header{
+
+      .header {
         max-width: 100%;
-        .pillsContainer{
+
+        .pillsContainer {
           max-width: 100%;
         }
       }
     }
-    .callDetails-section{
+
+    .callDetails-section {
       height: 100%;
       margin: 0;
       max-width: 100%;
       width: 100%;
     }
   }
-  .c-ongoing_call_panel{
+
+  .c-ongoing_call_panel {
     padding-top: calc(30px + 2rem);
     width: 100%;
-    .leftPart{
+
+    .leftPart {
       height: 100%;
       margin: 0;
       max-width: 100%;
       width: 100%;
     }
-    .call-container{
+
+    .call-container {
       height: 100%;
       margin: 0;
       max-width: 100%;
       width: 100%;
     }
-    .rightPart{
+
+    .rightPart {
       height: 100%;
       margin: 0;
       max-width: 100%;
       width: 100%;
     }
   }
-  .c-time-scheduling_panel{
+
+  .c-time-scheduling_panel {
     padding-top: calc(30px + 2rem);
     width: 100%;
   }
-  .c-time-admin_panel{
+
+  .c-time-admin_panel {
     padding-top: calc(30px + 2rem);
     width: 100%;
-    .left-responsibilities{
+
+    .left-responsibilities {
       height: 100%;
       margin: 0;
       max-width: 100%;
       width: 100%;
     }
-    .central-Options{
+
+    .central-Options {
       height: 100%;
       margin: 0;
       max-width: 100%;
@@ -6242,7 +6125,7 @@ body {
     display: flex !important;
   }
 
-  .mobileHiddenElement{
+  .mobileHiddenElement {
     display: none !important;
   }
 
