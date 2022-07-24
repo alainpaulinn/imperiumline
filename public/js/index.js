@@ -4520,13 +4520,22 @@ function createCircleLoader() {
 // }
 
 ////////////// EVENTS SCHEDULER //////////////////////
+let eventsContainer
+let scheduleDetailsSection
 createCalendarEventSection()
+socket.on('updateCalendar', (calendarEventObj => {
+  for (const key in calendarEventObj) {
+    if (Object.hasOwnProperty.call(calendarEventObj, key)) {
+      const dayEventsArray = calendarEventObj[key];
+      if (dayEventsArray.length > 0) eventsContainer.appendChild(makeDay(key, dayEventsArray))
+    }
+  }
+}))
 function createCalendarEventSection() {
   time_scheduling_panel.textContent = ''
   let today = new Date();
   let date = new Date();
   today.setHours(0, 0, 0, 0);
-
 
   let weekDays = createElement({
     elementType: 'div', class: 'weekdays', childrenArray: [
@@ -4542,24 +4551,23 @@ function createCalendarEventSection() {
   let calendarDays = createElement({ elementType: 'div', class: 'calendar-days' })
   // card components
   let calendarTitle = createElement({ elementType: 'p', textContent: date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' }) })
-  let todayButton = createElement({elementType:'button', textContent:'Today', onclick:()=>{
-    date = new Date();
-    updateCalendarDisplay();
-  }})
-  let mobileButton = createElement({ elementType: 'button', class:'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-arrow-back' })]})
+  let todayButton = createElement({
+    elementType: 'button', textContent: 'Today', onclick: () => {
+      date = new Date();
+      updateCalendarDisplay();
+    }
+  })
+  let mobileButton = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-arrow-back' })], onclick: showMainScheduleList })
   let calendarToolBar = createElement({ elementType: 'div', class: 'calendar-toolbar', childrenArray: [todayButton, calendarTitle, mobileButton] })
   let calendar = createElement({ elementType: 'div', class: 'calendar', childrenArray: [weekDays, calendarDays] })
   let yearMinus = createElement({
     elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-minus' })], onclick: () => {
-      // date = new Date(date.getFullYear() - 1, 0, 1);
       date = new Date(date.setFullYear(date.getFullYear() - 1))
-
       updateCalendarDisplay();
     }
   })
   let yearPlus = createElement({
     elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })], onclick: () => {
-      // date = new Date(date.getFullYear() + 1, 0, 1);
       date = new Date(date.setFullYear(date.getFullYear() + 1))
       updateCalendarDisplay();
     }
@@ -4567,7 +4575,7 @@ function createCalendarEventSection() {
   let yearAdjust = createElement({ elementType: 'div', class: 'goto-option', childrenArray: [yearMinus, createElement({ elementType: 'p', textContent: 'Year' }), yearPlus] })
   let monthMinus = createElement({
     elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-minus' })], onclick: () => {
-      date.setDate(1)
+      date.setDate(1);
       date.setMonth(date.getMonth() - 1);
       updateCalendarDisplay();
     }
@@ -4584,10 +4592,20 @@ function createCalendarEventSection() {
   let calendarCard = createElement({ elementType: 'div', class: 'card', childrenArray: [calendarToolBar, calendar, jumpButtons] })
   // main
   let selectionPanel = createElement({ elementType: 'div', class: 'selectionPanel mobileHiddenElement', childrenArray: [calendarCard] })
-  let mainScheduleList = createElement({ elementType: 'div', class: 'mainScheduleList' })
-  let scheduleDetailsSection = createElement({ elementType: 'div', class: 'scheduleDetailsSection mobileHiddenElement' })
+
+  // main schedule List
+  let gotoCalendatButton = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-calendar' })], onclick: showSelectionPanel })
+  let mainScheduleListTitle = createElement({ elementType: 'div', class: 'mainScheduleListTitle', textContent: 'Scheduled Events' })
+  let allEventsBtn = createElement({ elementType: 'button', class: 'allEventsBtn', textContent: 'Show All' })
+  let ListHeader = createElement({ elementType: 'div', class: 'listHeader', childrenArray: [gotoCalendatButton, mainScheduleListTitle, allEventsBtn] })
+
+  eventsContainer = createElement({ elementType: 'div', class: 'eventsContainer', childrenArray: [] })
+  let mainScheduleList = createElement({ elementType: 'div', class: 'mainScheduleList', childrenArray: [ListHeader, eventsContainer] })
+  scheduleDetailsSection = createElement({ elementType: 'div', class: 'scheduleDetailsSection mobileHiddenElement', childElement:[createElement({ elementType: 'div', class:'dummyTemplateElement', textContent: 'Select > button on any event to see its more details here'})] })
   let schedule_container = createElement({ elementType: 'div', class: 'schedule-container', childrenArray: [selectionPanel, mainScheduleList, scheduleDetailsSection] })
   time_scheduling_panel.append(schedule_container)
+  console.log('happened, appended')
+
   function showSelectionPanel() {
     selectionPanel.classList.remove('mobileHiddenElement')
     mainScheduleList.classList.add('mobileHiddenElement')
@@ -4604,7 +4622,7 @@ function createCalendarEventSection() {
     scheduleDetailsSection.classList.remove('scheduleDetailsSection')
   }
 
-  function updateCalendarDisplay(){
+  function updateCalendarDisplay() {
     calendarTitle.textContent = date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
     renderCalendar();
   }
@@ -4640,5 +4658,53 @@ function createCalendarEventSection() {
       }
     }
   }
+
   renderCalendar()
+}
+
+function makeDay(dayKey, dayEventsArray) {
+  let dayTitle = createElement({ elementType: 'div', class: 'dayTitle', textContent: new Date(dayKey).toString('YYYY-MM-dd').substring(0, 15) })
+  let dayContentsArray = dayEventsArray.map(dayEvent => {
+    let { eventId, owner, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate, Participants } = dayEvent;
+    let timeDiv = createElement({ elementType: 'div', class: 'hourDiv', textContent: startTime.substring(0, 5) })
+
+    let scheduleHeader = createElement({
+      elementType: 'div', class: 'scheduleHeader', childrenArray: [
+        createElement({ elementType: 'div', class: 'scheduleTitle', textContent: title }),
+        createElement({ elementType: 'div', class: 'scheduleContext', textContent: " #" + context }),
+      ]
+    })
+    let scheduleBody = createElement({ elementType: 'div', class: 'scheduleBody', textContent: details })
+    let sheduleTimeInFull = createElement({ elementType: 'div', class: 'scheduleTimeInFull', textContent: startTime + ' - ' + endTime })
+    let organizer = userForAttendanceList(owner, [
+      {
+        element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }),
+        functionCall: () => { call(owner.userID, true, false, false, false, null) }
+      }
+    ])
+    let headerTimeDiv = createElement({ elementType: 'div', class: 'headerTimeDiv', childrenArray: [scheduleHeader, sheduleTimeInFull] })
+    let eventTopSection = createElement({
+      elementType: 'div', class: 'eventTopSection', childrenArray: [
+        headerTimeDiv,
+        createElement({
+          elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: () => {
+
+          }
+        }),
+        createElement({
+          elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-right' })], onclick: () => {
+            scheduleDetailsSection.textContent = '';
+
+          }
+        }),
+      ]
+    })
+    let participantsProfilePics = Participants.map(participant => makeProfilePicture(participant.userInfo))
+    let sheduleParticipantsDiv = createElement({ elementType: 'div', class: 'sheduleParticipantsDiv', childrenArray: participantsProfilePics })
+    let sheduleContentDiv = createElement({ elementType: 'div', class: 'sheduleContentDiv', childrenArray: [eventTopSection, scheduleBody, organizer, sheduleParticipantsDiv] })
+    return createElement({ elementType: 'div', class: 'scheduleDiv', childrenArray: [timeDiv, sheduleContentDiv] })
+  })
+  let dayContentDiv = createElement({ elementType: 'div', class: 'dayContentDiv', childrenArray: dayContentsArray })
+  let dayElement = createElement({ elementType: 'div', class: 'scheduleDay', childrenArray: [dayTitle, dayContentDiv] })
+  return dayElement
 }

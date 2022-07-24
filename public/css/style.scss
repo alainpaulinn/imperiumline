@@ -3663,14 +3663,14 @@ body {
     .memberName {
       font-weight: bolder;
       display: block;
-      white-space: nowrap;
+      // white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .memberRole {
       display: block;
-      white-space: nowrap;
+      // white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -4369,6 +4369,7 @@ body {
   display: flex;
   flex: 1;
   background-color: $sidepanel;
+  max-width: 100%;
 
   .selectionPanel {
     display: flex;
@@ -4404,6 +4405,7 @@ body {
         display: flex;
         align-items: center;
         gap: 0.5rem;
+
         p {
           font-size: 1.2rem;
         }
@@ -4540,6 +4542,7 @@ body {
         display: flex;
         align-items: center;
         gap: 0.5rem;
+
         div {
           flex: 1;
         }
@@ -4573,402 +4576,521 @@ body {
         padding: 1rem;
         border-bottom: 1px solid #f1f4f6;
       }
-
     }
-
   }
 
   .mainScheduleList {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     flex: 1;
     background-color: white;
     margin: 1rem;
     border-radius: $borderRadius;
-    padding: 1rem;
-  }
 
-  .scheduleDetailsSection,
-  .newScheduleDetailsSection {
-    width: 350px;
-    height: calc(100vh - 2rem);
-    background-color: $sidepanel;
-    // padding: 1rem;
-    margin: 1rem 1rem 1rem 0rem;
-    display: flex;
-    flex-direction: column;
-    //justify-content: center;
-    //align-items: center;
-    // height: 100%;
+    box-sizing: border-box;
 
-    .header {
-      padding: 1rem;
+    .listHeader {
       display: flex;
-      justify-content: space-between;
-      //align-items: center;
-      background-color: white;
-      color: $body;
-
-      border-radius: $borderRadius $borderRadius 0 0;
-      border-bottom: 1px solid #f1f4f6;
-
-      .rightPart {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-
-        .title,
-        .title>* {
-          font-weight: bold;
-          font-size: 20px;
-          display: flex;
-          //align-items: center;
-
-          i {
-            font-size: 20px;
-            margin-right: 1rem;
-          }
-        }
-
-        .duration {
-          display: flex;
-          // align-items: center;
-          font-weight: bold;
-
-          i {
-            font-size: 20px;
-            margin-right: 1rem;
-          }
-        }
-      }
-
-      .leftPart {
-        display: flex;
-        padding: 1rem 0;
-
-        .meetingType {
-          width: 6rem;
-          background-color: $notification;
-          color: white;
-          border-radius: $borderRadius;
-          padding: 1rem;
-          font-weight: bold;
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-
-          i {
-            font-size: 30px;
-          }
-        }
-
-        button {
-          display: flex;
-          align-items: center;
-
-          border: none;
-          cursor: pointer;
-          padding: 1rem;
-          background-color: white;
-          color: red;
-          font-size: 20px;
-          border-radius: $borderRadius;
-          align-self: flex-start;
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
-          margin-left: 1rem;
-
-          i {
-            //font-size: 20px;
-            margin-left: 1rem;
-          }
-
-          &:hover {
-            background-color: $warning-bg;
-          }
-        }
-
-      }
-    }
-
-    .scheduleBody {
-      flex: 1 0 1;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      background-color: white;
-      flex: 1;
-
-      color: $body;
-      border-radius: 0 0 $borderRadius $borderRadius;
-
-      //overflow: hidden;
-      .ongoing {
-        padding: 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #003061;
-
-        .ongoingTitle {
-          color: white;
-          font-weight: bold;
-
-        }
-
-        .joinMeeting {
-          outline: none;
-          background-color: white;
-          color: red;
-          font-weight: bold;
-          border-radius: $borderRadius;
-          border: none;
-          padding: 1rem;
-          cursor: pointer;
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-        }
-      }
-
-      .detailSection {
-        padding: 1rem;
-        display: flex;
-        position: relative;
-        transition: all 0.4s;
-
-        i {
-          font-size: 20px;
-          margin-right: 1rem;
-        }
-
-        .remTop {
-          margin-top: 1rem;
-        }
-
-        .alignItems {
-          align-items: center;
-        }
-
-        p>a {
-          display: flex;
-          align-items: center;
-          color: $notification;
-          //aspect-ratio: 1;
-          font-size: 13px;
-          padding: .8rem;
-          background-color: rgb(218, 218, 248);
-          text-decoration: none;
-          border-radius: $borderRadius;
-
-          i {
-            font-size: 13px;
-            margin: 0;
-            margin-left: .5rem;
-          }
-        }
-
-        .invitedMembersDiv {
-          transition: all 0.4s;
-          visibility: hidden;
-          opacity: 0;
-          position: absolute;
-          top: 4rem;
-          left: 4rem;
-          background-color: white;
-          border-radius: $borderRadius;
-          min-height: 6rem;
-          max-height: 15rem;
-          overflow-y: auto;
-          padding: 1rem;
-          z-index: 2;
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-          margin-right: 1rem;
-
-          display: flex;
-          flex-wrap: wrap;
-          min-width: 300px;
-        }
-
-        .is-visible {
-          visibility: visible;
-          opacity: 1;
-        }
-
-        .invitedMemberDiv {
-          background-color: transparent;
-          display: flex;
-          padding: 1rem;
-          border-bottom: 1px solid #f1f4f6;
-          border-radius: $borderRadius;
-          cursor: pointer;
-
-          .resultItemBundle {
-            display: flex;
-            align-items: center;
-            width: 100%;
-
-            div:first-of-type {
-              flex-basis: 10%;
-
-              img {
-                object-fit: cover;
-                border: 1px solid $notification;
-                width: 25px;
-                height: 25px;
-                margin-right: 10px;
-                //display: block;
-                border-radius: $borderRadius;
-
-                text-transform: uppercase;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: white;
-                background-color: $notification;
-
-                box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-              }
-
-              div {
-                border: 1px solid $notification;
-                width: 25px;
-                height: 25px;
-                margin-right: 10px;
-                border-radius: $borderRadius;
-                text-transform: uppercase;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: white;
-                background-color: $notification;
-                box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
-              }
-            }
-
-            .meeting-data {
-              display: flex;
-              align-items: center;
-              width: 100%;
-              min-width: 0;
-
-              .nameScopeTime {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                min-width: 0;
-
-                .meetingName {
-                  white-space: nowrap;
-                  font-size: 14px;
-                  color: $body;
-
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  min-width: 100%;
-
-                }
-
-                .scope {
-                  color: #b6b6b6;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  min-width: 0;
-                  font-size: 12px;
-                }
-
-
-              }
-
-              .removePerson {
-                border-radius: $borderRadius;
-                width: 30px;
-                height: 30px;
-                background-color: $sidepanel;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border: none;
-                color: $body;
-                cursor: pointer;
-
-                i {
-                  margin: 0;
-                  padding: 0;
-                }
-              }
-
-            }
-
-
-          }
-
-          &:hover {
-            background-color: #f7f7f7;
-          }
-        }
-
-        .selectedUsersDiv {
-          display: flex;
-          flex-wrap: wrap;
-
-          .invitedMemberDiv {
-            cursor: default;
-          }
-        }
-      }
-    }
-
-    .attending {
-      display: flex;
-      justify-content: space-between;
+      flex-direction: row;
       align-items: center;
       padding: 1rem;
-      margin-top: auto;
-      border-top: 1px solid #f1f4f6;
-      border-radius: 0 0 $borderRadius $borderRadius;
-      background-color: white;
+      width: 100%;
+      gap: 0.5rem;
+      box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
 
-      .attendingTitle {
-        display: flex;
+      .mainScheduleListTitle {
+        font-size: 1.2rem;
+        flex: 1;
       }
+    }
 
-      .attendingResponse {
-        * {
-          font-weight: bold;
+    .eventsContainer {
+      width: 100%;
+      flex: 1;
+      overflow-y: auto;
+      .scheduleDay {
+        width: 100%;
+        max-width: 100%;
+
+        .dayTitle {
+          padding: 0.5rem;
+          // background-color: $notification;
+          // color: white;
+          text-align: center;
+        }
+
+        .dayContentDiv {
           padding: 1rem;
-          border-radius: $borderRadius;
-          border: none;
-          outline: none;
-          background-color: white;
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-          cursor: pointer;
-          margin: 0 .2rem;
-        }
 
-        .positive {
-          color: green;
+          .scheduleDiv {
+            display: flex;
+            gap: 1rem;
+            max-width: 100%;
 
-          &:hover {
-            background-color: rgb(188, 255, 188);
-          }
-        }
+            .hourDiv {
+              font-size: 1.5rem;
+              flex-basis: 15%;
 
-        .certain {
-          color: orange;
+              &:before {
+                content: "";
+                display: block;
+                width: calc(1.5px * 2);
+                background-image: -o-radial-gradient(black 1.5px, rgba(0, 0, 0, 0) 1.5px);
+                background-image: radial-gradient(black 1.5px, rgba(0, 0, 0, 0) 1.5px);
+                background-position: calc(16px / 2 + 1.5px) calc(16px / 2 + 1.5px);
+                background-size: 16px 16px;
+              }
+            }
 
-          &:hover {
-            background-color: rgb(255, 240, 211);
-          }
-        }
+            .sheduleContentDiv {
+              background-color: $sidepanel;
+              display: flex;
+              flex-direction: column;
+              gap: 0.5rem;
+              flex: 1;
+              padding: 1rem;
+              border-radius: $borderRadius;
+              box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
 
-        .negative {
-          color: red;
+              .eventTopSection{
+                display: flex;
+                gap: 0.5rem;
+                .headerTimeDiv{
+                  flex: 1;
+                  .scheduleHeader {
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    // text-align: bottom;
+                    margin-top: auto;
+                    .scheduleTitle{
+                      font-size: 1.4rem;
+                      font-weight: bold;
+                    }
+                    .scheduleContext{
 
-          &:hover {
-            background-color: $warning-bg;
+                    }
+    
+                  }
+                }
+                
+              }
+
+              .listMember {
+                border-radius: $borderRadius;
+              }
+
+              .sheduleParticipantsDiv {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+              }
+            }
           }
         }
       }
     }
+
+    button {
+      background: var(--btn-bg);
+      border: none;
+      border-radius: $borderRadius;
+      padding: 11px 13px;
+      color: $body;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-right: 1px;
+      box-shadow: 0px 0px 0px var(--box-shadow);
+      cursor: pointer;
+      max-height: 40px;
+    }
+
   }
+
+  // .scheduleDetailsSection,
+  // .newScheduleDetailsSection {
+  //   width: 350px;
+  //   height: calc(100vh - 2rem);
+  //   background-color: $sidepanel;
+  //   // padding: 1rem;
+  //   margin: 1rem 1rem 1rem 0rem;
+  //   display: flex;
+  //   flex-direction: column;
+  //   //justify-content: center;
+  //   //align-items: center;
+  //   // height: 100%;
+
+  //   .header {
+  //     padding: 1rem;
+  //     display: flex;
+  //     justify-content: space-between;
+  //     //align-items: center;
+  //     background-color: white;
+  //     color: $body;
+
+  //     border-radius: $borderRadius $borderRadius 0 0;
+  //     border-bottom: 1px solid #f1f4f6;
+
+  //     .rightPart {
+  //       display: flex;
+  //       flex-direction: column;
+  //       gap: 1rem;
+
+  //       .title,
+  //       .title>* {
+  //         font-weight: bold;
+  //         font-size: 20px;
+  //         display: flex;
+  //         //align-items: center;
+
+  //         i {
+  //           font-size: 20px;
+  //           margin-right: 1rem;
+  //         }
+  //       }
+
+  //       .duration {
+  //         display: flex;
+  //         // align-items: center;
+  //         font-weight: bold;
+
+  //         i {
+  //           font-size: 20px;
+  //           margin-right: 1rem;
+  //         }
+  //       }
+  //     }
+
+  //     .leftPart {
+  //       display: flex;
+  //       padding: 1rem 0;
+
+  //       .meetingType {
+  //         width: 6rem;
+  //         background-color: $notification;
+  //         color: white;
+  //         border-radius: $borderRadius;
+  //         padding: 1rem;
+  //         font-weight: bold;
+  //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
+  //         display: flex;
+  //         flex-direction: column;
+  //         align-items: center;
+
+  //         i {
+  //           font-size: 30px;
+  //         }
+  //       }
+
+  //       button {
+  //         display: flex;
+  //         align-items: center;
+
+  //         border: none;
+  //         cursor: pointer;
+  //         padding: 1rem;
+  //         background-color: white;
+  //         color: red;
+  //         font-size: 20px;
+  //         border-radius: $borderRadius;
+  //         align-self: flex-start;
+  //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
+  //         margin-left: 1rem;
+
+  //         i {
+  //           //font-size: 20px;
+  //           margin-left: 1rem;
+  //         }
+
+  //         &:hover {
+  //           background-color: $warning-bg;
+  //         }
+  //       }
+
+  //     }
+  //   }
+
+  //   .scheduleBody {
+  //     flex: 1 0 1;
+  //     overflow-y: auto;
+  //     display: flex;
+  //     flex-direction: column;
+  //     background-color: white;
+  //     flex: 1;
+
+  //     color: $body;
+  //     border-radius: 0 0 $borderRadius $borderRadius;
+
+  //     //overflow: hidden;
+  //     .ongoing {
+  //       padding: 1rem;
+  //       display: flex;
+  //       justify-content: space-between;
+  //       align-items: center;
+  //       background-color: #003061;
+
+  //       .ongoingTitle {
+  //         color: white;
+  //         font-weight: bold;
+
+  //       }
+
+  //       .joinMeeting {
+  //         outline: none;
+  //         background-color: white;
+  //         color: red;
+  //         font-weight: bold;
+  //         border-radius: $borderRadius;
+  //         border: none;
+  //         padding: 1rem;
+  //         cursor: pointer;
+  //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+  //       }
+  //     }
+
+  //     .detailSection {
+  //       padding: 1rem;
+  //       display: flex;
+  //       position: relative;
+  //       transition: all 0.4s;
+
+  //       i {
+  //         font-size: 20px;
+  //         margin-right: 1rem;
+  //       }
+
+  //       .remTop {
+  //         margin-top: 1rem;
+  //       }
+
+  //       .alignItems {
+  //         align-items: center;
+  //       }
+
+  //       p>a {
+  //         display: flex;
+  //         align-items: center;
+  //         color: $notification;
+  //         //aspect-ratio: 1;
+  //         font-size: 13px;
+  //         padding: .8rem;
+  //         background-color: rgb(218, 218, 248);
+  //         text-decoration: none;
+  //         border-radius: $borderRadius;
+
+  //         i {
+  //           font-size: 13px;
+  //           margin: 0;
+  //           margin-left: .5rem;
+  //         }
+  //       }
+
+  //       .invitedMembersDiv {
+  //         transition: all 0.4s;
+  //         visibility: hidden;
+  //         opacity: 0;
+  //         position: absolute;
+  //         top: 4rem;
+  //         left: 4rem;
+  //         background-color: white;
+  //         border-radius: $borderRadius;
+  //         min-height: 6rem;
+  //         max-height: 15rem;
+  //         overflow-y: auto;
+  //         padding: 1rem;
+  //         z-index: 2;
+  //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+  //         margin-right: 1rem;
+
+  //         display: flex;
+  //         flex-wrap: wrap;
+  //         min-width: 300px;
+  //       }
+
+  //       .is-visible {
+  //         visibility: visible;
+  //         opacity: 1;
+  //       }
+
+  //       .invitedMemberDiv {
+  //         background-color: transparent;
+  //         display: flex;
+  //         padding: 1rem;
+  //         border-bottom: 1px solid #f1f4f6;
+  //         border-radius: $borderRadius;
+  //         cursor: pointer;
+
+  //         .resultItemBundle {
+  //           display: flex;
+  //           align-items: center;
+  //           width: 100%;
+
+  //           div:first-of-type {
+  //             flex-basis: 10%;
+
+  //             img {
+  //               object-fit: cover;
+  //               border: 1px solid $notification;
+  //               width: 25px;
+  //               height: 25px;
+  //               margin-right: 10px;
+  //               //display: block;
+  //               border-radius: $borderRadius;
+
+  //               text-transform: uppercase;
+  //               display: flex;
+  //               justify-content: center;
+  //               align-items: center;
+  //               color: white;
+  //               background-color: $notification;
+
+  //               box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+  //             }
+
+  //             div {
+  //               border: 1px solid $notification;
+  //               width: 25px;
+  //               height: 25px;
+  //               margin-right: 10px;
+  //               border-radius: $borderRadius;
+  //               text-transform: uppercase;
+  //               display: flex;
+  //               justify-content: center;
+  //               align-items: center;
+  //               color: white;
+  //               background-color: $notification;
+  //               box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
+  //             }
+  //           }
+
+  //           .meeting-data {
+  //             display: flex;
+  //             align-items: center;
+  //             width: 100%;
+  //             min-width: 0;
+
+  //             .nameScopeTime {
+  //               flex: 1;
+  //               display: flex;
+  //               flex-direction: column;
+  //               justify-content: center;
+  //               min-width: 0;
+
+  //               .meetingName {
+  //                 white-space: nowrap;
+  //                 font-size: 14px;
+  //                 color: $body;
+
+  //                 overflow: hidden;
+  //                 text-overflow: ellipsis;
+  //                 min-width: 100%;
+
+  //               }
+
+  //               .scope {
+  //                 color: #b6b6b6;
+  //                 overflow: hidden;
+  //                 text-overflow: ellipsis;
+  //                 min-width: 0;
+  //                 font-size: 12px;
+  //               }
+
+
+  //             }
+
+  //             .removePerson {
+  //               border-radius: $borderRadius;
+  //               width: 30px;
+  //               height: 30px;
+  //               background-color: $sidepanel;
+  //               display: flex;
+  //               align-items: center;
+  //               justify-content: center;
+  //               border: none;
+  //               color: $body;
+  //               cursor: pointer;
+
+  //               i {
+  //                 margin: 0;
+  //                 padding: 0;
+  //               }
+  //             }
+
+  //           }
+
+
+  //         }
+
+  //         &:hover {
+  //           background-color: #f7f7f7;
+  //         }
+  //       }
+
+  //       .selectedUsersDiv {
+  //         display: flex;
+  //         flex-wrap: wrap;
+
+  //         .invitedMemberDiv {
+  //           cursor: default;
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   .attending {
+  //     display: flex;
+  //     justify-content: space-between;
+  //     align-items: center;
+  //     padding: 1rem;
+  //     margin-top: auto;
+  //     border-top: 1px solid #f1f4f6;
+  //     border-radius: 0 0 $borderRadius $borderRadius;
+  //     background-color: white;
+
+  //     .attendingTitle {
+  //       display: flex;
+  //     }
+
+  //     .attendingResponse {
+  //       * {
+  //         font-weight: bold;
+  //         padding: 1rem;
+  //         border-radius: $borderRadius;
+  //         border: none;
+  //         outline: none;
+  //         background-color: white;
+  //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+  //         cursor: pointer;
+  //         margin: 0 .2rem;
+  //       }
+
+  //       .positive {
+  //         color: green;
+
+  //         &:hover {
+  //           background-color: rgb(188, 255, 188);
+  //         }
+  //       }
+
+  //       .certain {
+  //         color: orange;
+
+  //         &:hover {
+  //           background-color: rgb(255, 240, 211);
+  //         }
+  //       }
+
+  //       .negative {
+  //         color: red;
+
+  //         &:hover {
+  //           background-color: $warning-bg;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   .hidden {
     display: none;
@@ -6099,6 +6221,29 @@ body {
   .c-time-scheduling_panel {
     padding-top: calc(30px + 2rem);
     width: 100%;
+
+    .selectionPanel {
+      height: calc(100% - 2rem);
+      margin: 1rem;
+      max-width: 100%;
+      width: 100%;
+    }
+
+    .mainScheduleList {
+      height: 100%;
+      margin: 0;
+      // padding: 0;
+      max-width: 100%;
+      width: 100%;
+
+    }
+
+    .scheduleDetailsSection {
+      height: 100%;
+      margin: 0;
+      max-width: 100%;
+      width: 100%;
+    }
   }
 
   .c-time-admin_panel {

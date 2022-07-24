@@ -203,12 +203,9 @@
 .flatpickr-months .flatpickr-next-month.flatpickr-prev-month {
   /*
     /*rtl:begin:ignore*/
-  left: 0;
-  /*
-  /*rtl:end:ignore*/
-}
-
-/*
+  left: 0; /*
+/*rtl:end:ignore*/
+} /*
     /*rtl:begin:ignore*/
 /*
       /*rtl:end:ignore*/
@@ -216,12 +213,9 @@
 .flatpickr-months .flatpickr-next-month.flatpickr-next-month {
   /*
     /*rtl:begin:ignore*/
-  right: 0;
-  /*
-  /*rtl:end:ignore*/
-}
-
-/*
+  right: 0; /*
+/*rtl:end:ignore*/
+} /*
     /*rtl:begin:ignore*/
 /*
       /*rtl:end:ignore*/

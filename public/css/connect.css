@@ -504,14 +504,12 @@ body {
   .content-container .appIntro {
     max-width: 100%;
   }
-
   .feature-section {
     grid-template-columns: repeat(2, 200px);
   }
   .feature-section .get-involved {
     grid-column: span 2;
   }
-
   .cta .cta-btn {
     padding: 80px 0;
   }
@@ -531,14 +529,12 @@ body {
   .content-container .appIntro {
     max-width: 100%;
   }
-
   .feature-section {
     grid-template-columns: repeat(2, 140px);
   }
   .feature-section .get-involved {
     grid-column: span 2;
   }
-
   .notifications {
     right: -50%;
     transform: translateX(-50%);

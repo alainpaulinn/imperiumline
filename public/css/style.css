@@ -2985,13 +2985,11 @@ body {
 .listMember .memberNameRole .memberName {
   font-weight: bolder;
   display: block;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .listMember .memberNameRole .memberRole {
   display: block;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -3574,6 +3572,7 @@ body {
   display: flex;
   flex: 1;
   background-color: rgb(235, 240, 246);
+  max-width: 100%;
 }
 .schedule-container .selectionPanel {
   display: flex;
@@ -3738,370 +3737,108 @@ body {
   border-bottom: 1px solid #f1f4f6;
 }
 .schedule-container .mainScheduleList {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
   flex: 1;
   background-color: white;
   margin: 1rem;
   border-radius: 15px;
+  box-sizing: border-box;
+}
+.schedule-container .mainScheduleList .listHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 1rem;
+  width: 100%;
+  gap: 0.5rem;
+  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+}
+.schedule-container .mainScheduleList .listHeader .mainScheduleListTitle {
+  font-size: 1.2rem;
+  flex: 1;
+}
+.schedule-container .mainScheduleList .eventsContainer {
+  width: 100%;
+  flex: 1;
+  overflow-y: auto;
+}
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay {
+  width: 100%;
+  max-width: 100%;
+}
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayTitle {
+  padding: 0.5rem;
+  text-align: center;
+}
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv {
   padding: 1rem;
 }
-.schedule-container .scheduleDetailsSection,
-.schedule-container .newScheduleDetailsSection {
-  width: 350px;
-  height: calc(100vh - 2rem);
-  background-color: rgb(235, 240, 246);
-  margin: 1rem 1rem 1rem 0rem;
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv {
   display: flex;
-  flex-direction: column;
-}
-.schedule-container .scheduleDetailsSection .header,
-.schedule-container .newScheduleDetailsSection .header {
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  background-color: white;
-  color: rgb(91, 94, 97);
-  border-radius: 15px 15px 0 0;
-  border-bottom: 1px solid #f1f4f6;
-}
-.schedule-container .scheduleDetailsSection .header .rightPart,
-.schedule-container .newScheduleDetailsSection .header .rightPart {
-  display: flex;
-  flex-direction: column;
   gap: 1rem;
+  max-width: 100%;
 }
-.schedule-container .scheduleDetailsSection .header .rightPart .title,
-.schedule-container .scheduleDetailsSection .header .rightPart .title > *,
-.schedule-container .newScheduleDetailsSection .header .rightPart .title,
-.schedule-container .newScheduleDetailsSection .header .rightPart .title > * {
-  font-weight: bold;
-  font-size: 20px;
-  display: flex;
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .hourDiv {
+  font-size: 1.5rem;
+  flex-basis: 15%;
 }
-.schedule-container .scheduleDetailsSection .header .rightPart .title i,
-.schedule-container .scheduleDetailsSection .header .rightPart .title > * i,
-.schedule-container .newScheduleDetailsSection .header .rightPart .title i,
-.schedule-container .newScheduleDetailsSection .header .rightPart .title > * i {
-  font-size: 20px;
-  margin-right: 1rem;
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .hourDiv:before {
+  content: "";
+  display: block;
+  width: 3px;
+  background-image: radial-gradient(black 1.5px, rgba(0, 0, 0, 0) 1.5px);
+  background-position: 9.5px 9.5px;
+  background-size: 16px 16px;
 }
-.schedule-container .scheduleDetailsSection .header .rightPart .duration,
-.schedule-container .newScheduleDetailsSection .header .rightPart .duration {
-  display: flex;
-  font-weight: bold;
-}
-.schedule-container .scheduleDetailsSection .header .rightPart .duration i,
-.schedule-container .newScheduleDetailsSection .header .rightPart .duration i {
-  font-size: 20px;
-  margin-right: 1rem;
-}
-.schedule-container .scheduleDetailsSection .header .leftPart,
-.schedule-container .newScheduleDetailsSection .header .leftPart {
-  display: flex;
-  padding: 1rem 0;
-}
-.schedule-container .scheduleDetailsSection .header .leftPart .meetingType,
-.schedule-container .newScheduleDetailsSection .header .leftPart .meetingType {
-  width: 6rem;
-  background-color: rgb(0, 48, 97);
-  color: white;
-  border-radius: 15px;
-  padding: 1rem;
-  font-weight: bold;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.schedule-container .scheduleDetailsSection .header .leftPart .meetingType i,
-.schedule-container .newScheduleDetailsSection .header .leftPart .meetingType i {
-  font-size: 30px;
-}
-.schedule-container .scheduleDetailsSection .header .leftPart button,
-.schedule-container .newScheduleDetailsSection .header .leftPart button {
-  display: flex;
-  align-items: center;
-  border: none;
-  cursor: pointer;
-  padding: 1rem;
-  background-color: white;
-  color: red;
-  font-size: 20px;
-  border-radius: 15px;
-  align-self: flex-start;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
-  margin-left: 1rem;
-}
-.schedule-container .scheduleDetailsSection .header .leftPart button i,
-.schedule-container .newScheduleDetailsSection .header .leftPart button i {
-  margin-left: 1rem;
-}
-.schedule-container .scheduleDetailsSection .header .leftPart button:hover,
-.schedule-container .newScheduleDetailsSection .header .leftPart button:hover {
-  background-color: rgb(255, 212, 212);
-}
-.schedule-container .scheduleDetailsSection .scheduleBody,
-.schedule-container .newScheduleDetailsSection .scheduleBody {
-  flex: 1 0 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-  flex: 1;
-  color: rgb(91, 94, 97);
-  border-radius: 0 0 15px 15px;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .ongoing,
-.schedule-container .newScheduleDetailsSection .scheduleBody .ongoing {
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #003061;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .ongoing .ongoingTitle,
-.schedule-container .newScheduleDetailsSection .scheduleBody .ongoing .ongoingTitle {
-  color: white;
-  font-weight: bold;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .ongoing .joinMeeting,
-.schedule-container .newScheduleDetailsSection .scheduleBody .ongoing .joinMeeting {
-  outline: none;
-  background-color: white;
-  color: red;
-  font-weight: bold;
-  border-radius: 15px;
-  border: none;
-  padding: 1rem;
-  cursor: pointer;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection {
-  padding: 1rem;
-  display: flex;
-  position: relative;
-  transition: all 0.4s;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection i,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection i {
-  font-size: 20px;
-  margin-right: 1rem;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .remTop,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .remTop {
-  margin-top: 1rem;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .alignItems,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .alignItems {
-  align-items: center;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection p > a,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection p > a {
-  display: flex;
-  align-items: center;
-  color: rgb(0, 48, 97);
-  font-size: 13px;
-  padding: 0.8rem;
-  background-color: rgb(218, 218, 248);
-  text-decoration: none;
-  border-radius: 15px;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection p > a i,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection p > a i {
-  font-size: 13px;
-  margin: 0;
-  margin-left: 0.5rem;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMembersDiv,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMembersDiv {
-  transition: all 0.4s;
-  visibility: hidden;
-  opacity: 0;
-  position: absolute;
-  top: 4rem;
-  left: 4rem;
-  background-color: white;
-  border-radius: 15px;
-  min-height: 6rem;
-  max-height: 15rem;
-  overflow-y: auto;
-  padding: 1rem;
-  z-index: 2;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-  margin-right: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  min-width: 300px;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .is-visible,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .is-visible {
-  visibility: visible;
-  opacity: 1;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv {
-  background-color: transparent;
-  display: flex;
-  padding: 1rem;
-  border-bottom: 1px solid #f1f4f6;
-  border-radius: 15px;
-  cursor: pointer;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle div:first-of-type,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle div:first-of-type {
-  flex-basis: 10%;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle div:first-of-type img,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle div:first-of-type img {
-  -o-object-fit: cover;
-     object-fit: cover;
-  border: 1px solid rgb(0, 48, 97);
-  width: 25px;
-  height: 25px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  background-color: rgb(0, 48, 97);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle div:first-of-type div,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle div:first-of-type div {
-  border: 1px solid rgb(0, 48, 97);
-  width: 25px;
-  height: 25px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  background-color: rgb(0, 48, 97);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle .meeting-data,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle .meeting-data {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  min-width: 0;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle .meeting-data .nameScopeTime,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle .meeting-data .nameScopeTime {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle .meeting-data .nameScopeTime .meetingName,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle .meeting-data .nameScopeTime .meetingName {
-  white-space: nowrap;
-  font-size: 14px;
-  color: rgb(91, 94, 97);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 100%;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle .meeting-data .nameScopeTime .scope,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle .meeting-data .nameScopeTime .scope {
-  color: #b6b6b6;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-  font-size: 12px;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle .meeting-data .removePerson,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle .meeting-data .removePerson {
-  border-radius: 15px;
-  width: 30px;
-  height: 30px;
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .sheduleContentDiv {
   background-color: rgb(235, 240, 246);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  color: rgb(91, 94, 97);
-  cursor: pointer;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle .meeting-data .removePerson i,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv .resultItemBundle .meeting-data .removePerson i {
-  margin: 0;
-  padding: 0;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv:hover,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .invitedMemberDiv:hover {
-  background-color: #f7f7f7;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .selectedUsersDiv,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .selectedUsersDiv {
-  display: flex;
-  flex-wrap: wrap;
-}
-.schedule-container .scheduleDetailsSection .scheduleBody .detailSection .selectedUsersDiv .invitedMemberDiv,
-.schedule-container .newScheduleDetailsSection .scheduleBody .detailSection .selectedUsersDiv .invitedMemberDiv {
-  cursor: default;
-}
-.schedule-container .scheduleDetailsSection .attending,
-.schedule-container .newScheduleDetailsSection .attending {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  margin-top: auto;
-  border-top: 1px solid #f1f4f6;
-  border-radius: 0 0 15px 15px;
-  background-color: white;
-}
-.schedule-container .scheduleDetailsSection .attending .attendingTitle,
-.schedule-container .newScheduleDetailsSection .attending .attendingTitle {
-  display: flex;
-}
-.schedule-container .scheduleDetailsSection .attending .attendingResponse *,
-.schedule-container .newScheduleDetailsSection .attending .attendingResponse * {
-  font-weight: bold;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
   padding: 1rem;
   border-radius: 15px;
+  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+}
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .sheduleContentDiv .eventTopSection {
+  display: flex;
+  gap: 0.5rem;
+}
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .sheduleContentDiv .eventTopSection .headerTimeDiv {
+  flex: 1;
+}
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .sheduleContentDiv .eventTopSection .headerTimeDiv .scheduleHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: auto;
+}
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .sheduleContentDiv .eventTopSection .headerTimeDiv .scheduleHeader .scheduleTitle {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .sheduleContentDiv .listMember {
+  border-radius: 15px;
+}
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .sheduleContentDiv .sheduleParticipantsDiv {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.schedule-container .mainScheduleList button {
+  background: var(--btn-bg);
   border: none;
-  outline: none;
-  background-color: white;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+  border-radius: 15px;
+  padding: 11px 13px;
+  color: rgb(91, 94, 97);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-right: 1px;
+  box-shadow: 0px 0px 0px var(--box-shadow);
   cursor: pointer;
-  margin: 0 0.2rem;
-}
-.schedule-container .scheduleDetailsSection .attending .attendingResponse .positive,
-.schedule-container .newScheduleDetailsSection .attending .attendingResponse .positive {
-  color: green;
-}
-.schedule-container .scheduleDetailsSection .attending .attendingResponse .positive:hover,
-.schedule-container .newScheduleDetailsSection .attending .attendingResponse .positive:hover {
-  background-color: rgb(188, 255, 188);
-}
-.schedule-container .scheduleDetailsSection .attending .attendingResponse .certain,
-.schedule-container .newScheduleDetailsSection .attending .attendingResponse .certain {
-  color: orange;
-}
-.schedule-container .scheduleDetailsSection .attending .attendingResponse .certain:hover,
-.schedule-container .newScheduleDetailsSection .attending .attendingResponse .certain:hover {
-  background-color: rgb(255, 240, 211);
-}
-.schedule-container .scheduleDetailsSection .attending .attendingResponse .negative,
-.schedule-container .newScheduleDetailsSection .attending .attendingResponse .negative {
-  color: red;
-}
-.schedule-container .scheduleDetailsSection .attending .attendingResponse .negative:hover,
-.schedule-container .newScheduleDetailsSection .attending .attendingResponse .negative:hover {
-  background-color: rgb(255, 212, 212);
+  max-height: 40px;
 }
 .schedule-container .hidden {
   display: none;
@@ -4954,7 +4691,6 @@ body {
     margin: 0;
     height: 100%;
   }
-
   .expanded {
     position: absolute;
     flex-direction: row;
@@ -4972,16 +4708,13 @@ body {
     padding: 0;
     border: none;
   }
-
   .c-openchat__box__info {
     margin-bottom: 61.2px;
   }
-
   .typingBox {
     position: fixed;
     bottom: 0;
   }
-
   .notifications {
     right: -50%;
     transform: translateX(-50%);
@@ -4990,7 +4723,6 @@ body {
     padding: 1rem;
     max-width: 100%;
   }
-
   .c-call_log_panel {
     padding-top: calc(30px + 2rem);
     width: 100%;
@@ -5018,7 +4750,6 @@ body {
     max-width: 100%;
     width: 100%;
   }
-
   .c-ongoing_call_panel {
     padding-top: calc(30px + 2rem);
     width: 100%;
@@ -5041,12 +4772,28 @@ body {
     max-width: 100%;
     width: 100%;
   }
-
   .c-time-scheduling_panel {
     padding-top: calc(30px + 2rem);
     width: 100%;
   }
-
+  .c-time-scheduling_panel .selectionPanel {
+    height: calc(100% - 2rem);
+    margin: 1rem;
+    max-width: 100%;
+    width: 100%;
+  }
+  .c-time-scheduling_panel .mainScheduleList {
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+  .c-time-scheduling_panel .scheduleDetailsSection {
+    height: 100%;
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+  }
   .c-time-admin_panel {
     padding-top: calc(30px + 2rem);
     width: 100%;
@@ -5063,11 +4810,9 @@ body {
     max-width: 100%;
     width: 100%;
   }
-
   .mobileButton {
     display: flex !important;
   }
-
   .mobileHiddenElement {
     display: none !important;
   }

@@ -649,6 +649,14 @@ io.on('connection', (socket) => {
         })
     })
 
+    socket.on('dayEventsRequested', async dateReceived =>{
+      let eventParticipants = await getEventParticipants(dateReceived)
+      let thisParticipant = eventParticipants.find(participant => participant.userInfo.userID == id)
+      if(!thisParticipant) return console.log('cannot view the event where you do not participate')
+
+      socket.emit('dayEvents', {})
+    })
+
 
     socket.on('videoStateChange', async changeData => {
       let { callUniqueId, state } = changeData
@@ -1060,8 +1068,6 @@ function getEvents(userId, initalDate, endDate) {
     db.query('SELECT `id`, `eventId`, `participantId`, `attending` FROM `eventparticipants` WHERE `participantId` = ?',
       [userId], async (err, _myEvents) => {
         if (err) return console.log(err);
-        //if (_myEvents.length < 1) return console.log("no participated events found for this user")
-        //console.log("my Events", _myEvents)
         //create an object with properties which represent all of the dates between thos intervals
         let eventDates = {};
         let currentDate = initalDate
@@ -1179,7 +1185,6 @@ function getEvents(userId, initalDate, endDate) {
 
             //weekend
             else if (eventdetails.recurrenceType == 4) {
-
               for (let i = 0; i < dayDifference; i++) {
                 console.log("weekend loop running", i)
                 let operationDateString = operationDate.toISOString().slice(0, 10)
@@ -1202,16 +1207,13 @@ function getEvents(userId, initalDate, endDate) {
 
 const dayDif = (date1, date2) => Math.ceil(Math.abs(date1.getTime() - date2.getTime()) / 86400000)
 
-
-
 function getEventDetails(givenEventId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `eventId`, `ownerId`, `title`, `eventLocation`, `context`, `activityLink`, `details`, `startTime`, `endTime`, `occurrence`, `recurrenceType`, `startRecurrenceDate`, `endRecurrenceDate`, `type`, `oneTimeDate` FROM `events` WHERE `eventId` = ? LIMIT 1',
       [givenEventId], async (err, myEventResults) => {
         if (err) return console.log(err);
-        if (myEventResults.length != 1) return console.log("no event found with that Id");
+        if (myEventResults.length < 1) return console.log("no event found with that Id");
         let { eventId, ownerId, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate } = myEventResults[0];
-
         var _myEventResults = {
           eventId,
           owner: await getUserInfo(ownerId),
@@ -1230,7 +1232,6 @@ function getEventDetails(givenEventId) {
           oneTimeDate,
           Participants: await getEventParticipants(givenEventId)
         }
-
         resolve(_myEventResults)
       })
   })
