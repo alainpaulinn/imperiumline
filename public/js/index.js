@@ -4670,8 +4670,8 @@ function makeDay(dayKey, dayEventsArray) {
 
     let scheduleHeader = createElement({
       elementType: 'div', class: 'scheduleHeader', childrenArray: [
-        createElement({ elementType: 'div', class: 'scheduleTitle', textContent: title }),
-        createElement({ elementType: 'div', class: 'scheduleContext', textContent: " #" + context }),
+        createElement({ elementType: 'div', class: 'scheduleTitle', textContent: title + '    ' }),
+        createElement({ elementType: 'div', class: 'scheduleContext', textContent: "♦" + context }),
       ]
     })
     let scheduleBody = createElement({ elementType: 'div', class: 'scheduleBody', textContent: details })
@@ -4683,18 +4683,23 @@ function makeDay(dayKey, dayEventsArray) {
       }
     ])
     let headerTimeDiv = createElement({ elementType: 'div', class: 'headerTimeDiv', childrenArray: [scheduleHeader, sheduleTimeInFull] })
+    function joinEvent(){
+      call(owner.userID, true, false, false, false, null) 
+    }
     let eventTopSection = createElement({
       elementType: 'div', class: 'eventTopSection', childrenArray: [
         headerTimeDiv,
-        createElement({
-          elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: () => {
-
-          }
-        }),
+        createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: joinEvent }),
         createElement({
           elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-right' })], onclick: () => {
             scheduleDetailsSection.textContent = '';
-
+            let eventDetailsBackButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-left' })], onclick: showMainScheduleList })
+            let eventDetailsJoinButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: joinEvent })
+            let eventDetailsTitle = createElement({ elementType: 'div', class: 'eventDetailsTitle', textContent: title})
+            let eventDetailsTopSection = createElement({ elementType: 'div', class: 'eventDetailsTopSection', childrenArray:[eventDetailsBackButton, eventDetailsTitle, eventDetailsJoinButton]})
+            scheduleDetailsSection.appendChild(eventDetailsTopSection)
+          
+          
           }
         }),
       ]

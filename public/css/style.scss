@@ -4587,8 +4587,7 @@ body {
     background-color: white;
     margin: 1rem;
     border-radius: $borderRadius;
-
-    box-sizing: border-box;
+    overflow: hidden;
 
     .listHeader {
       display: flex;
@@ -4609,6 +4608,7 @@ body {
       width: 100%;
       flex: 1;
       overflow-y: auto;
+
       .scheduleDay {
         width: 100%;
         max-width: 100%;
@@ -4653,28 +4653,30 @@ body {
               border-radius: $borderRadius;
               box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
 
-              .eventTopSection{
+              .eventTopSection {
                 display: flex;
                 gap: 0.5rem;
-                .headerTimeDiv{
+
+                .headerTimeDiv {
                   flex: 1;
+
                   .scheduleHeader {
                     display: flex;
                     flex-wrap: wrap;
                     align-items: center;
                     // text-align: bottom;
                     margin-top: auto;
-                    .scheduleTitle{
+
+                    .scheduleTitle {
                       font-size: 1.4rem;
                       font-weight: bold;
                     }
-                    .scheduleContext{
 
-                    }
-    
+                    .scheduleContext {}
+
                   }
                 }
-                
+
               }
 
               .listMember {
@@ -4706,6 +4708,21 @@ body {
       max-height: 40px;
     }
 
+  }
+
+  .scheduleDetailsSection {
+    width: 350px;
+    height: calc(100vh - 2rem);
+    // padding: 1rem;
+    margin: 1rem 1rem 1rem 0rem;
+    display: flex;
+    flex-direction: column;
+
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: $borderRadius;
+    
   }
 
   // .scheduleDetailsSection,
