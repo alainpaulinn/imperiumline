@@ -655,7 +655,7 @@ function displayDayEvents(givenDate) {
                         let dayName = new Date(scheduleItem.startRecurrenceDate).toLocaleDateString('en-US', {
                             weekday: 'long'
                         })
-                        occurrenceText = 'Occurs every ' + dayName + ' at ' + scheduleItem.startTime + " - " + scheduleItem.endTime +
+                        occurrenceText = 'Occurs every ' + dayName + ' at ' + scheduleItem.startTime + " until " + scheduleItem.endTime +
                             " Since " + new Date(scheduleItem.startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) +
                             " Until " + new Date(scheduleItem.endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
                         break;

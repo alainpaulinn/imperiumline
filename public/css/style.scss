@@ -4622,7 +4622,9 @@ body {
 
         .dayContentDiv {
           padding: 1rem;
-
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
           .scheduleDiv {
             display: flex;
             gap: 1rem;
@@ -4694,19 +4696,7 @@ body {
       }
     }
 
-    button {
-      background: var(--btn-bg);
-      border: none;
-      border-radius: $borderRadius;
-      padding: 11px 13px;
-      color: $body;
-      font-weight: 600;
-      font-size: 0.9rem;
-      margin-right: 1px;
-      box-shadow: 0px 0px 0px var(--box-shadow);
-      cursor: pointer;
-      max-height: 40px;
-    }
+    
 
   }
 
@@ -4722,7 +4712,59 @@ body {
     flex-direction: column;
     background-color: white;
     border-radius: $borderRadius;
+    overflow: hidden;
+
+    .eventDetailsTopSection{
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+      .eventDetailsTitle{
+        flex: 1;
+        font-size: 1.2rem;
+      }
+    }
+    .eventDetailsContentDiv{
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+      background-color: white;
+      overflow-y: auto;
+      
+      .detailBlock{
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+        border-radius: $borderRadius;
+        padding: 1rem;
+        background-color: $sidepanel;
+        .listMember{
+          border-radius: $borderRadius;
+        }
+        .listMemberWrapper{
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
     
+        }
+      }
+    }
+  }
+
+  button {
+    background: var(--btn-bg);
+    border: none;
+    border-radius: $borderRadius;
+    padding: 11px 13px;
+    color: $body;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-right: 1px;
+    box-shadow: 0px 0px 0px var(--box-shadow);
+    cursor: pointer;
+    max-height: 40px;
   }
 
   // .scheduleDetailsSection,
