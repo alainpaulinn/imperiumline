@@ -649,12 +649,15 @@ io.on('connection', (socket) => {
         })
     })
 
-    socket.on('dayEventsRequested', async dateReceived =>{
-      let eventParticipants = await getEventParticipants(dateReceived)
-      let thisParticipant = eventParticipants.find(participant => participant.userInfo.userID == id)
-      if(!thisParticipant) return console.log('cannot view the event where you do not participate')
-
-      socket.emit('dayEvents', {})
+    socket.on('dayEvents', async dateReceived =>{
+      // let eventParticipants = await getEventParticipants(dateReceived)
+      // let thisParticipant = eventParticipants.find(participant => participant.userInfo.userID == id)
+      // if(!thisParticipant) return console.log('cannot view the event where you do not participate')
+      let initialDate = new Date(dateReceived)
+      let endDate = new Date(dateReceived)
+      let dateEvents = await getEvents(id, initialDate, endDate)
+      console.log('datEvents', dateEvents)
+      socket.emit('dayEvents', dateEvents)
     })
 
 
