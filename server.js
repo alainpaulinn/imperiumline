@@ -116,7 +116,7 @@ io.on('connection', (socket) => {
       lastYear.setFullYear(today.getFullYear() - 1)
       let nextYear = new Date()
       nextYear.setFullYear(today.getFullYear() + 1)
-      socket.emit('updateCalendar', await getEvents(id, lastYear, nextYear))
+      socket.emit('initialFillCalendar', await getEvents(id, lastYear, nextYear))
     })
     // prepare to receive files
     // Make an instance of SocketIOFileUpload and listen on this socket:
@@ -650,14 +650,20 @@ io.on('connection', (socket) => {
     })
 
     socket.on('dayEvents', async dateReceived =>{
-      // let eventParticipants = await getEventParticipants(dateReceived)
-      // let thisParticipant = eventParticipants.find(participant => participant.userInfo.userID == id)
-      // if(!thisParticipant) return console.log('cannot view the event where you do not participate')
       let initialDate = new Date(dateReceived)
       let endDate = new Date(dateReceived)
       let dateEvents = await getEvents(id, initialDate, endDate)
       console.log('datEvents', dateEvents)
       socket.emit('dayEvents', dateEvents)
+    })
+
+    socket.on('initialFillCalendar',  async (dateReceived) =>{
+      let today = new Date()
+      let lastYear = new Date()
+      lastYear.setFullYear(today.getFullYear() - 1)
+      let nextYear = new Date()
+      nextYear.setFullYear(today.getFullYear() + 1)
+      socket.emit('initialFillCalendar', await getEvents(id, lastYear, nextYear))
     })
 
 
