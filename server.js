@@ -612,7 +612,7 @@ io.on('connection', (socket) => {
       })
     })
     ///////////New Event/schedule/meeting plan////////////////////////////////
-    socket.on('newEventPlan', (newEventCreation) => {
+    socket.on('newEventCreation', (newEventCreation) => {
       console.log("newEventCreation", newEventCreation)
       let { inviteList, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate } = newEventCreation;
       db.query("INSERT INTO `events`(`ownerId`, `title`, `eventLocation`, `context`, `activityLink`, `details`, `startTime`, `endTime`, `occurrence`, `recurrenceType`, `startRecurrenceDate`, `endRecurrenceDate`, `type`, `oneTimeDate`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",

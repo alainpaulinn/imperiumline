@@ -4888,7 +4888,9 @@ function createCalendarEventSection() {
       let actions = [
         {
           element: submitButton, functionCall: () => {
-            socket.emit('ok', {})
+            let { inviteList, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate } = newEventCreation;
+            console.log('newEventCreation', newEventCreation)
+            // socket.emit('newEventCreation', newEventCreation)
           }
         }
       ]
