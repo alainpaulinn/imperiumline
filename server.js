@@ -619,23 +619,14 @@ io.on('connection', (socket) => {
         [id, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate],
         async (err, EventInsertResult) => {
           if (err) return console.log(err);
-          if (inviteList) {
-            inviteList.forEach(invite => {
-              insertEventParticipant(EventInsertResult.insertId, invite)
-            })
-          }
+          inviteList.forEach(invite => { insertEventParticipant(EventInsertResult.insertId, invite) })
           insertEventParticipant(EventInsertResult.insertId, id)
-
           let today = new Date()
-
           let lastYear = new Date()
           lastYear.setFullYear(today.getFullYear() - 1)
-
           let nextYear = new Date()
           nextYear.setFullYear(today.getFullYear() + 1)
-
           let eventsToSend = await getEvents(id, lastYear, nextYear);
-
           socket.emit('updateCalendar', eventsToSend)
           for (let i = 0; i < inviteList.length; i++) {
             const invite = inviteList[i];
@@ -664,6 +655,17 @@ io.on('connection', (socket) => {
       let nextYear = new Date()
       nextYear.setFullYear(today.getFullYear() + 1)
       socket.emit('initialFillCalendar', await getEvents(id, lastYear, nextYear))
+    })
+
+    socket.on('deleteEvent',  async (eventId) =>{
+
+      let foundEvent = await getEventDetails(eventId)
+      if (foundEvent?.owner.userID == id){
+        console.log('event found')
+      }
+      else{
+        console.log('event not found')
+      }
     })
 
 
