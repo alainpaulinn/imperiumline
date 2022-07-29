@@ -357,6 +357,7 @@ body {
   align-items: center;
   gap: 1rem;
   min-width: 300px;
+  max-width: 100%;
 }
 .inScreenPanel .popupBody .editBlock input,
 .inScreenPanel .popupBody .editBlock textarea {
@@ -377,6 +378,27 @@ body {
 .inScreenPanel .popupBody .editBlock .editBlockButtons {
   padding: 1rem;
   cursor: pointer;
+}
+.inScreenPanel .popupBody .editBlock .flex-1 {
+  flex: 1;
+}
+.inScreenPanel .popupBody .editBlock .flex {
+  display: flex;
+}
+.inScreenPanel .popupBody .editBlock .flex-Wrap {
+  flex-wrap: wrap;
+}
+.inScreenPanel .popupBody .editBlock .flex-gap-half-rem {
+  gap: 0.5rem;
+}
+.inScreenPanel .popupBody .editBlock .flex-gap-1-rem {
+  gap: 1rem;
+}
+.inScreenPanel .popupBody .editBlock .full-width {
+  width: 100%;
+}
+.inScreenPanel .popupBody .flex-column {
+  flex-direction: column;
 }
 .inScreenPanel .popupBottom {
   border-top: 1px solid #f1f4f6;

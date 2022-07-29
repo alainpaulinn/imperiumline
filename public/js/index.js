@@ -402,7 +402,7 @@ let functionalityOptionsArray = [
   (() => {
 
     call_log_contact_search_panel.textContent = '';
-    let input = createElement({ elementType: 'input', type: 'text', placeholder: 'Search contacts' })
+    let input = createElement({ elementType: 'input', type: 'text', placeHolder: 'Search contacts' })
     let mobileButton = createElement({
       elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
     })
@@ -1813,14 +1813,14 @@ function createMessagesPanelElements() {
   let chatSearch = createElement({
     elementType: 'div', class: 'chatSearch displayed', childrenArray: [
       createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), // label
-      createElement({ elementType: 'input', type: 'text', placeholder: 'Search conversations' }), // input
+      createElement({ elementType: 'input', type: 'text', placeHolder: 'Search conversations' }), // input
     ]
   })
   let newChatButton = createElement({ elementType: 'button', class: 'newChat rotate45', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })] })
   let newChatTitle = createElement({
     elementType: 'div', class: 'newChatTitle unDisplayed', childrenArray: [
       createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), // label
-      createElement({ elementType: 'input', type: 'text', placeholder: 'Search people' }), // input
+      createElement({ elementType: 'input', type: 'text', placeHolder: 'Search people' }), // input
     ]
   })
   let chats__header = createElement({ elementType: 'div', class: 'c-chats__header', childrenArray: [chatSearch, newChatButton, newChatTitle] })
@@ -2094,7 +2094,7 @@ function displayChatOnChatArea(openChatInfo) {
   let emojiButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-smile' })] })
   let attachButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })] })
   let inputText = createElement({ elementType: 'div', class: 'w-input-text', contentEditable: true })
-  let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeholder', textContent: 'Type a message' })
+  let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeHolder', textContent: 'Type a message' })
   let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
   inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
   let sendMessageButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
@@ -3510,7 +3510,7 @@ myPeer.on('open', myPeerId => {
     c_openchat__box__info.style.scrollBehavior = "smooth";
     let iconButton = createElement({ elementType: 'button', class: 'chat-options', title: 'Send a Sticker', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-smile' })] })
     let inputText = createElement({ elementType: 'div', class: 'w-input-text', contentEditable: true })
-    let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeholder', textContent: 'Type a message' })
+    let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeHolder', textContent: 'Type a message' })
     let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
     let inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
     let Message = createElement({ elementType: 'button', class: 'chat-options', title: 'Send Message', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
@@ -3985,7 +3985,7 @@ function createElement(configuration) {
   if (configuration.onclick) elementToReturn.addEventListener('click', configuration.onclick)
   if (configuration.autoPlay) elementToReturn.setAttribute('autoplay', 'true')
   if (configuration.type) elementToReturn.setAttribute('type', configuration.type)
-  if (configuration.placeHolder) elementToReturn.setAttribute('placeholder', configuration.placeHolder)
+  if (configuration.placeHolder) elementToReturn.setAttribute('placeHolder', configuration.placeHolder)
   if (configuration.contentEditable) elementToReturn.setAttribute('contentEditable', configuration.contentEditable)
   if (configuration.for) elementToReturn.setAttribute('for', configuration.for)
   if (configuration.method) elementToReturn.setAttribute('method', configuration.method)
@@ -4632,30 +4632,25 @@ function createCalendarEventSection() {
   let newEventBtn = createElement({
     elementType: 'button', class: 'allEventsBtn', textContent: 'New + ', onclick: () => {
       // show a popup to create a new event
-      let roleBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'The Position will automatically be set to the Company Administrator.' })
-
-      let chooseLabel = createElement({ elementType: 'label', for: 'choose' + 'chooseNew', textContent: 'choose' })
-      let chooseInput = createElement({ elementType: 'button', id: 'choose' + 'chooseNew', placeHolder: 'choose' })
-      let chooseBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chooseLabel, chooseInput] })
 
       let submitButton = createElement({ elementType: 'button', textContent: 'Create Event' })
 
       // <div class="scheduleBody">
       //       <div class="detailSection remTop alignItems">
       //           <i class='bx bx-sync'></i>
-      //           <div id="recurrenceGoodSelectJs"></div>
+      //           <div id="recurrenceInput"></div>
       //       </div>
       //       <div class="detailSection alignItems">
       //           <i class='bx bxs-map-pin'></i>
-      //           <input type="text" name="location" id="eventLocation" placeholder="Location" class="textField">
+      //           <input type="text" name="location" id="eventLocation" placeHolder="Location" class="textField">
       //       </div>
       //       <div class="detailSection alignItems">
       //           <i class='bx bxs-tag-alt'></i>
-      //           <input type="text" name="context" id="contextField" placeholder="Context" class="textField">
+      //           <input type="text" name="context" id="contextField" placeHolder="Context" class="textField">
       //       </div>
       //       <div class="detailSection alignItems">
       //           <i class='bx bx-link'></i>
-      //           <input type="text" name="Link" id="linkField" placeholder="Meeting Link" class="textField">
+      //           <input type="text" name="Link" id="linkField" placeHolder="Meeting Link" class="textField">
       //       </div>
 
       //       <div class="detailSection alignItems">
@@ -4666,7 +4661,7 @@ function createCalendarEventSection() {
 
       //       <div class="detailSection alignItems">
       //           <i class='bx bx-user-plus'></i>
-      //           <input type="text" name="Link" id="addMembersField" placeholder="Add Members" class="textField"
+      //           <input type="text" name="Link" id="addMembersField" placeHolder="Add Members" class="textField"
       //               autocomplete="off">
       //           <div class="invitedMembersDiv iis-visible" id="invitedMembersDiv">
 
@@ -4676,143 +4671,220 @@ function createCalendarEventSection() {
       //       <div class="detailSection">
       //           <i class='bx bx-detail'></i>
       //           <textarea id="detailsField" name="txtname" class="textField" rows="4" cols="50" maxlength="200"
-      //               placeholder="Description"></textarea>
+      //               placeHolder="Description"></textarea>
       //       </div>
 
-      let titleInput = createElement({ elementType: 'input', class: 'textField', name: 'title', type: 'text', placeholder: 'Title' })
+      let newEventCreation = {}
+
+      // title
+      let titleInput = createElement({ elementType: 'input', class: 'textField', name: 'title', type: 'text', placeHolder: 'Title' })
       let titleBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [titleInput] })
 
-      let meetingStartInput = createElement({ elementType: 'div', class: 'textField', placeholder: 'Start' })
-      let meetingEndInput = createElement({ elementType: 'div', class: 'textField', placeholder: 'End' })
-      let start_endBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [meetingStartInput, meetingEndInput] })
-
-      let eventType = createElement({ elementType: 'div', class: 'eventType' })
+      // event type
+      let eventType = createElement({ elementType: 'div', class: 'eventType flex-1' })
       let eventTypeBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [eventType] })
       goodselect(eventType, {
         availableOptions: [{ id: 1, name: "Meeting" }, { id: 2, name: "Task" }],
         placeHolder: "Meeting Type",
-        onOptionChange: (option) => { consolelog(option)        }
+        selectorWidth: '100%',
+        onOptionChange: (option) => { console.log(option) }
       });
-
-      let recurrenceInput = createElement({elementType: 'div', class: 'recurrenceInput'})
-      let recurrenceBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray:[recurrenceInput]})
-      goodselect(recurrenceGoodSelectJs, {
+      // start - end time
+      let timeEventStartTimeInput = createElement({ elementType: 'input', class: 'flex-1', id: 'timeEventStartTimeInput', placeHolder: 'Start Time' })
+      let timeEventEndTimeInput = createElement({ elementType: 'input',class: 'flex-1', id: 'timeEventEndTimeInput', placeHolder: 'End Time' })
+      let timeStartEndDiv = createElement({ elementType: 'div', class: 'onTimeStartEndDiv flex flex-Wrap flex-gap-1-rem full-width', childrenArray: [timeEventStartTimeInput, timeEventEndTimeInput] })
+      let timeStartEndBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [timeStartEndDiv] })
+      let recurrenceInput = createElement({ elementType: 'div', class: 'recurrenceInput full-width' })
+      let recurrenceBlock = createElement({ elementType: 'div', class: 'editBlock flex-column', childrenArray: [recurrenceInput] })
+      let oneTimeEventDateInput = createElement({ elementType: 'input', id: 'oneTimeEventDateInput', textContent: 'One time Event Date', class: 'full-width' })
+      let recurrenceStartDateInput = createElement({ elementType: 'input', id: 'recurrenceStartDateInput', textContent: 'Recurrence Start Date', class: 'flex-1'})
+      let recurrenceEndDateInput = createElement({ elementType: 'input', id: 'recurrenceEndDateInput', textContent: 'Recurrence End Date', class: 'flex-1' })
+      let recurrenceDatesDiv = createElement({ elementType: 'div', class: 'recurrenceDatesDiv flex flex-Wrap flex-gap-1-rem full-width', childrenArray: [recurrenceStartDateInput, recurrenceEndDateInput] })
+      
+      //recurrence type
+      let recurrenceTypeInput = createElement({ elementType: 'div', class: 'recurrenceTypeInput full-width' })
+      let recurrenceTypeBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [recurrenceTypeInput] })
+      goodselect(recurrenceTypeInput, {
+        availableOptions: [{ id: 1, name: "Every Day" }, { id: 2, name: "Every Week" }, { id: 3, name: "Monday - Friday" }, { id: 4, name: "Weekend" }],
+        placeHolder: "Recurrence Type",
+        selectorWidth: '100%',
+        onOptionChange: (option) => {}
+      })
+      
+      goodselect(recurrenceInput, {
         availableOptions: [{ id: 1, name: "One Time" }, { id: 2, name: "Repetitive (Regular)" }],
         placeHolder: "Event Ocurrence",
+        selectorWidth: '100%',
         onOptionChange: (option) => {
-            !option ? recurrenceGoodSelectJs.classList.add("negativegoodselect") : recurrenceGoodSelectJs.classList.remove("negativegoodselect")
-    
-            newEventCreation.occurrence = option.id;
-            let recurrenceDivCheck = document.getElementById("recurrenceTypeDiv")
-            if (option.id == 2) {
-                let oneTimeTypeDiv = document.getElementById("oneTimeType")
-                if (oneTimeTypeDiv) oneTimeTypeDiv.remove();
-                newEventCreation.oneTimeDate = null;
-                let oneTimeTypeDateDiv = document.getElementById("oneTimeTypeDiv")
-                if (oneTimeTypeDateDiv) oneTimeTypeDateDiv.remove();
-                newEventCreation.oneTimeDate = null;
-    
-                if (recurrenceDivCheck) return;
-                let recurrenceParentEmelent = recurrenceGoodSelectJs.parentElement;
-                let recurrenceTypeDiv = document.createElement("div");
-                recurrenceTypeDiv.id = "recurrenceTypeDiv";
-                goodselect(recurrenceTypeDiv, {
-                    availableOptions: [{ id: 1, name: "Every Day" },
-                    { id: 2, name: "Every Week" },
-                    { id: 3, name: "Monday - Friday" },
-                    { id: 4, name: "Weekend" }],
-                    placeHolder: "Event Recurrence",
-                    marginRight: '1rem',
-                    onOptionChange: (option) => {
-                        !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
-                        newEventCreation.recurrenceType = option.id;
-                    }
-                })
-                recurrenceParentEmelent.appendChild(recurrenceTypeDiv)
-                //////////////////////
-    
-                //let startRecurrenceParentEmelent = recurrenceGoodSelectJs.parentElement;
-                let startRecurrenceTypeDiv = document.createElement("input");
-                startRecurrenceTypeDiv.id = "startRecurrenceTypeDiv";
-                startRecurrenceTypeDiv.classList.add("textField")
-                startRecurrenceTypeDiv.placeholder = "Start Date"
-                startRecurrenceTypeDiv.style.marginRight = '1rem';
-                recurrenceParentEmelent.appendChild(startRecurrenceTypeDiv)
-                flatpickr("#startRecurrenceTypeDiv", {
-                    time_24hr: true,
-                    enableTime: false,
-                    noCalendar: false,
-                    dateFormat: "Y-m-d",
-                    //defaultDate: "13:30",
-                    onChange: function (selectedDates, dateStr, instance) {
-                        !dateStr ? startRecurrenceTypeDiv.classList.add("negativeDate") : startRecurrenceTypeDiv.classList.remove("negativeDate")
-                        newEventCreation.startRecurrenceDate = dateStr;
-                    }
-                });
-    
-                //////////////////////
-                //let endRecurrenceParentEmelent = recurrenceGoodSelectJs.parentElement;
-                let endRecurrenceTypeDiv = document.createElement("input");
-                endRecurrenceTypeDiv.id = "endRecurrenceTypeDiv";
-                endRecurrenceTypeDiv.classList.add("textField")
-                endRecurrenceTypeDiv.placeholder = "End Date"
-                recurrenceParentEmelent.appendChild(endRecurrenceTypeDiv)
-                flatpickr("#endRecurrenceTypeDiv", {
-                    time_24hr: true,
-                    enableTime: false,
-                    noCalendar: false,
-                    dateFormat: "Y-m-d",
-                    //defaultDate: "13:30",
-                    onChange: function (selectedDates, dateStr, instance) {
-                        !dateStr ? endRecurrenceTypeDiv.classList.add("negativeDate") : endRecurrenceTypeDiv.classList.remove("negativeDate")
-                        newEventCreation.endRecurrenceDate = dateStr;
-                    }
-                });
-    
-            } else {
-                let oneTimeTypeDivCheck = document.getElementById("oneTimeTypeDiv")
-                if (oneTimeTypeDivCheck) return;
-    
-                let recurrenceParentEmelent = recurrenceGoodSelectJs.parentElement;
-    
-                let recurrenceTypeDiv = document.getElementById("recurrenceTypeDiv")
-                let startRecurrenceTypeDiv = document.getElementById("startRecurrenceTypeDiv")
-                let endRecurrenceTypeDiv = document.getElementById("endRecurrenceTypeDiv")
-    
-                if (recurrenceTypeDiv) recurrenceTypeDiv.remove();
-                newEventCreation.recurrenceType = null;
-                if (startRecurrenceTypeDiv) startRecurrenceTypeDiv.remove();
-                newEventCreation.startRecurrenceDate = null;
-                if (endRecurrenceTypeDiv) endRecurrenceTypeDiv.remove();
-                newEventCreation.endRecurrenceDate = null;
-    
-    
-                let oneTimeTypeDiv = document.createElement("input");
-                oneTimeTypeDiv.id = "oneTimeTypeDiv";
-                oneTimeTypeDiv.classList.add("textField")
-                oneTimeTypeDiv.placeholder = "End Date"
-                recurrenceParentEmelent.appendChild(oneTimeTypeDiv)
-                flatpickr("#oneTimeTypeDiv", {
-                    time_24hr: true,
-                    enableTime: false,
-                    noCalendar: false,
-                    dateFormat: "Y-m-d",
-                    //defaultDate: "13:30",
-                    onChange: function (selectedDates, dateStr, instance) {
-                        !dateStr ? oneTimeTypeDiv.classList.add("negativeDate") : oneTimeTypeDiv.classList.remove("negativeDate")
-                        newEventCreation.oneTimeDate = dateStr;
-                    }
-                });
-            }
+          if (option == null) { newEventCreation.occurrence = option; return; }
+          newEventCreation.occurrence = option.id;
+          if (option?.id == 1) {
+            recurrenceBlock.appendChild(oneTimeEventDateInput) // append it to the recurrence block
+            recurrenceDatesDiv.remove();
+            recurrenceTypeBlock.remove();
+            flatpickr("#oneTimeEventDateInput", {
+              time_24hr: true,
+              enableTime: false,
+              noCalendar: false,
+              dateFormat: "Y-m-d",
+              //defaultDate: "13:30",
+              onChange: function (selectedDates, dateStr, instance) {
+                newEventCreation.oneTimeDate = dateStr;
+              }
+            });
+          }
+          else if (option?.id == 2) {
+            recurrenceBlock.appendChild(recurrenceDatesDiv)
+            oneTimeEventDateInput.remove();
+            recurrenceBlock.after(recurrenceTypeBlock)
+            flatpickr("#recurrenceStartDateInput", {
+              time_24hr: true,
+              enableTime: false,
+              noCalendar: false,
+              dateFormat: "Y-m-d",
+              //defaultDate: "13:30",
+              onChange: function (selectedDates, dateStr, instance) {
+                newEventCreation.startRecurrenceDate = dateStr;
+              }
+            });
+
+            flatpickr("#recurrenceEndDateInput", {
+              time_24hr: true,
+              enableTime: false,
+              noCalendar: false,
+              dateFormat: "Y-m-d",
+              //defaultDate: "13:30",
+              onChange: function (selectedDates, dateStr, instance) {
+                newEventCreation.endRecurrenceDate = dateStr;
+              }
+            });
+          }
+
+
+          // let recurrenceDivCheck = document.getElementById("recurrenceTypeDiv")
+          // if (option.id == 2) {
+          //   let oneTimeTypeDiv = document.getElementById("oneTimeType")
+          //   if (oneTimeTypeDiv) oneTimeTypeDiv.remove();
+          //   newEventCreation.oneTimeDate = null;
+          //   let oneTimeTypeDateDiv = document.getElementById("oneTimeTypeDiv")
+          //   if (oneTimeTypeDateDiv) oneTimeTypeDateDiv.remove();
+          //   newEventCreation.oneTimeDate = null;
+
+          //   if (recurrenceDivCheck) return;
+          //   let recurrenceParentEmelent = recurrenceInput.parentElement;
+          //   let recurrenceTypeDiv = document.createElement("div");
+          //   recurrenceTypeDiv.id = "recurrenceTypeDiv";
+          //   goodselect(recurrenceTypeDiv, {
+          //     availableOptions: [{ id: 1, name: "Every Day" },
+          //     { id: 2, name: "Every Week" },
+          //     { id: 3, name: "Monday - Friday" },
+          //     { id: 4, name: "Weekend" }],
+          //     placeHolder: "Event Recurrence",
+          //     marginRight: '1rem',
+          //     onOptionChange: (option) => {
+          //       !option ? recurrenceTypeDiv.classList.add("negativegoodselect") : recurrenceTypeDiv.classList.remove("negativegoodselect")
+          //       newEventCreation.recurrenceType = option.id;
+          //     }
+          //   })
+          //   recurrenceParentEmelent.appendChild(recurrenceTypeDiv)
+          //   //////////////////////
+
+          //   //let startRecurrenceParentEmelent = recurrenceInput.parentElement;
+          //   let startRecurrenceTypeDiv = document.createElement("input");
+          //   startRecurrenceTypeDiv.id = "startRecurrenceTypeDiv";
+          //   startRecurrenceTypeDiv.classList.add("textField")
+          //   startRecurrenceTypeDiv.placeHolder = "Start Date"
+          //   startRecurrenceTypeDiv.style.marginRight = '1rem';
+          //   recurrenceParentEmelent.appendChild(startRecurrenceTypeDiv)
+          //   flatpickr("#startRecurrenceTypeDiv", {
+          //     time_24hr: true,
+          //     enableTime: false,
+          //     noCalendar: false,
+          //     dateFormat: "Y-m-d",
+          //     //defaultDate: "13:30",
+          //     onChange: function (selectedDates, dateStr, instance) {
+          //       !dateStr ? startRecurrenceTypeDiv.classList.add("negativeDate") : startRecurrenceTypeDiv.classList.remove("negativeDate")
+          //       newEventCreation.startRecurrenceDate = dateStr;
+          //     }
+          //   });
+
+          //   //////////////////////
+          //   //let endRecurrenceParentEmelent = recurrenceInput.parentElement;
+          //   let endRecurrenceTypeDiv = document.createElement("input");
+          //   endRecurrenceTypeDiv.id = "endRecurrenceTypeDiv";
+          //   endRecurrenceTypeDiv.classList.add("textField")
+          //   endRecurrenceTypeDiv.placeHolder = "End Date"
+          //   recurrenceParentEmelent.appendChild(endRecurrenceTypeDiv)
+          //   flatpickr("#endRecurrenceTypeDiv", {
+          //     time_24hr: true,
+          //     enableTime: false,
+          //     noCalendar: false,
+          //     dateFormat: "Y-m-d",
+          //     //defaultDate: "13:30",
+          //     onChange: function (selectedDates, dateStr, instance) {
+          //       !dateStr ? endRecurrenceTypeDiv.classList.add("negativeDate") : endRecurrenceTypeDiv.classList.remove("negativeDate")
+          //       newEventCreation.endRecurrenceDate = dateStr;
+          //     }
+          //   });
+
+          // } else {
+          //   let oneTimeTypeDivCheck = document.getElementById("oneTimeTypeDiv")
+          //   if (oneTimeTypeDivCheck) return;
+
+          //   let recurrenceParentEmelent = recurrenceInput.parentElement;
+
+          //   let recurrenceTypeDiv = document.getElementById("recurrenceTypeDiv")
+          //   let startRecurrenceTypeDiv = document.getElementById("startRecurrenceTypeDiv")
+          //   let endRecurrenceTypeDiv = document.getElementById("endRecurrenceTypeDiv")
+
+          //   if (recurrenceTypeDiv) recurrenceTypeDiv.remove();
+          //   newEventCreation.recurrenceType = null;
+          //   if (startRecurrenceTypeDiv) startRecurrenceTypeDiv.remove();
+          //   newEventCreation.startRecurrenceDate = null;
+          //   if (endRecurrenceTypeDiv) endRecurrenceTypeDiv.remove();
+          //   newEventCreation.endRecurrenceDate = null;
+
+
+          //   let oneTimeTypeDiv = document.createElement("input");
+          //   oneTimeTypeDiv.id = "oneTimeTypeDiv";
+          //   oneTimeTypeDiv.classList.add("textField")
+          //   oneTimeTypeDiv.placeHolder = "End Date"
+          //   recurrenceParentEmelent.appendChild(oneTimeTypeDiv)
+          //   flatpickr("#oneTimeTypeDiv", {
+          //     time_24hr: true,
+          //     enableTime: false,
+          //     noCalendar: false,
+          //     dateFormat: "Y-m-d",
+          //     //defaultDate: "13:30",
+          //     onChange: function (selectedDates, dateStr, instance) {
+          //       !dateStr ? oneTimeTypeDiv.classList.add("negativeDate") : oneTimeTypeDiv.classList.remove("negativeDate")
+          //       newEventCreation.oneTimeDate = dateStr;
+          //     }
+          //   });
+          // }
         }
-    })
+      })
+
+      
+
+      let contextInput = createElement({ elementType: 'input', class: 'textField', name: 'context', type: 'text', placeHolder: 'Context' })
+      let contextBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [contextInput] })
+
+      let locationInput = createElement({ elementType: 'input', class: 'textField', name: 'location', type: 'text', placeHolder: 'Location' })
+      let locationBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [locationInput] })
+
+      let linkInput = createElement({ elementType: 'input', class: 'textField', name: 'link', type: 'text', placeHolder: 'Link' })
+      let linkBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [linkInput] })
+
+      let detailsInput = createElement({ elementType: 'textarea', class: 'textField', name: 'details', type: 'text', placeHolder: 'Details' })
+      let detailsBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [detailsInput] })
 
 
 
       ///////////Implementing the POPUP DIV
       let icon = 'bx bxs-calendar'
       let title = 'Create new event'
-      let contentElementsArray = [roleBlock, chooseBlock]
+      let contentElementsArray = [titleBlock, eventTypeBlock, timeStartEndBlock, recurrenceBlock, contextBlock, locationBlock, linkBlock, detailsBlock]
       let actions = [
         {
           element: submitButton, functionCall: () => {
@@ -4822,12 +4894,28 @@ function createCalendarEventSection() {
       ]
       let constraints = { icon, title, contentElementsArray, actions }
       createInScreenPopup(constraints).then(editPopup => {
+        submitButton.addEventListener('click', editPopup.closePopup);
+        // prepare date elements
+        flatpickr("#timeEventStartTimeInput", {
+          time_24hr: true,
+          enableTime: true,
+          noCalendar: true,
+          dateFormat: "H:i",
+          onChange: function (selectedDates, dateStr, instance) {
+            newEventCreation.startTime = dateStr + ":00";
+          }
+        });
 
-        submitButton.addEventListener('click', () => {
-          editPopup.closePopup();
+        flatpickr("#timeEventEndTimeInput", {
+          time_24hr: true,
+          enableTime: true,
+          noCalendar: true,
+          dateFormat: "H:i",
+          onChange: function (selectedDates, dateStr, instance) {
+            newEventCreation.startTime = dateStr + ":00";
+          }
         });
       })
-
     }
   })
   let ListHeader = createElement({ elementType: 'div', class: 'listHeader', childrenArray: [gotoCalendatButton, mainScheduleListTitle, allEventsBtn, newEventBtn] })
