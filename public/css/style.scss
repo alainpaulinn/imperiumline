@@ -461,6 +461,7 @@ body {
       gap: 1rem;
       min-width: 300px;
       max-width: 100%;
+
       input,
       textarea {
         flex: 1;
@@ -484,26 +485,32 @@ body {
         cursor: pointer;
       }
 
-      .flex-1{
+      .flex-1 {
         flex: 1;
       }
-      .flex{
+
+      .flex {
         display: flex;
       }
-      .flex-Wrap{
+
+      .flex-Wrap {
         flex-wrap: wrap;
       }
-      .flex-gap-half-rem{
+
+      .flex-gap-half-rem {
         gap: 0.5rem;
       }
-      .flex-gap-1-rem{
+
+      .flex-gap-1-rem {
         gap: 1rem;
       }
-      .full-width{
+
+      .full-width {
         width: 100%;
       }
     }
-    .flex-column{
+
+    .flex-column {
       flex-direction: column;
     }
 
@@ -1884,7 +1891,7 @@ body {
   transition: 0.2s padding ease-in-out;
   //background-color: #37d420;
   padding: .5rem .5rem .5rem .5rem;
-  
+
 }
 
 .w-input-text {
@@ -2191,7 +2198,8 @@ body {
   color: $body;
 
   .callSearchSection {
-    width: 350px;
+    // width: 350px;
+    flex-basis: 30%;
     height: calc(100vh - 2rem);
     background-color: white;
     border-radius: $borderRadius;
@@ -2290,7 +2298,8 @@ body {
     height: calc(100vh - 2rem);
     display: flex;
     flex-direction: column;
-    flex: 1;
+    // flex: 1;
+    flex-basis: 40%;
     background-color: white;
     margin: 1rem;
     border-radius: $borderRadius;
@@ -2544,7 +2553,8 @@ body {
 
   .callDetails-section {
     height: calc(100vh - 2rem);
-    width: 350px;
+    // width: 350px;
+    flex-basis: 30%;
     margin: 1rem 1rem 1rem 0rem;
     padding: 1rem;
     display: flex;
@@ -4649,6 +4659,7 @@ body {
           display: flex;
           flex-direction: column;
           gap: 1rem;
+
           .scheduleDiv {
             display: flex;
             gap: 1rem;
@@ -4720,7 +4731,7 @@ body {
       }
     }
 
-    
+
 
   }
 
@@ -4738,40 +4749,44 @@ body {
     border-radius: $borderRadius;
     overflow: hidden;
 
-    .eventDetailsTopSection{
+    .eventDetailsTopSection {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       padding: 1rem;
       box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-      .eventDetailsTitle{
+
+      .eventDetailsTitle {
         flex: 1;
         font-size: 1.2rem;
       }
     }
-    .eventDetailsContentDiv{
+
+    .eventDetailsContentDiv {
       display: flex;
       flex-direction: column;
       gap: 1rem;
       padding: 1rem;
       background-color: white;
       overflow-y: auto;
-      
-      .detailBlock{
+
+      .detailBlock {
         display: flex;
         flex-direction: column;
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
         border-radius: $borderRadius;
         padding: 1rem;
         background-color: $sidepanel;
-        .listMember{
+
+        .listMember {
           border-radius: $borderRadius;
         }
-        .listMemberWrapper{
+
+        .listMemberWrapper {
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
-    
+
         }
       }
     }
@@ -4790,397 +4805,17 @@ body {
     cursor: pointer;
     max-height: 40px;
   }
-  .dummyTemplateElement{
+
+  .dummyTemplateElement {
     display: flex;
-    width: 100%;
-    height: 100%;
+    width: calc(100% - 4rem);
+    height: calc(100% - 4rem);
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
+    margin: 2rem;
+    text-align: center;
   }
-  // .scheduleDetailsSection,
-  // .newScheduleDetailsSection {
-  //   width: 350px;
-  //   height: calc(100vh - 2rem);
-  //   background-color: $sidepanel;
-  //   // padding: 1rem;
-  //   margin: 1rem 1rem 1rem 0rem;
-  //   display: flex;
-  //   flex-direction: column;
-  //   //justify-content: center;
-  //   //align-items: center;
-  //   // height: 100%;
-
-  //   .header {
-  //     padding: 1rem;
-  //     display: flex;
-  //     justify-content: space-between;
-  //     //align-items: center;
-  //     background-color: white;
-  //     color: $body;
-
-  //     border-radius: $borderRadius $borderRadius 0 0;
-  //     border-bottom: 1px solid #f1f4f6;
-
-  //     .rightPart {
-  //       display: flex;
-  //       flex-direction: column;
-  //       gap: 1rem;
-
-  //       .title,
-  //       .title>* {
-  //         font-weight: bold;
-  //         font-size: 20px;
-  //         display: flex;
-  //         //align-items: center;
-
-  //         i {
-  //           font-size: 20px;
-  //           margin-right: 1rem;
-  //         }
-  //       }
-
-  //       .duration {
-  //         display: flex;
-  //         // align-items: center;
-  //         font-weight: bold;
-
-  //         i {
-  //           font-size: 20px;
-  //           margin-right: 1rem;
-  //         }
-  //       }
-  //     }
-
-  //     .leftPart {
-  //       display: flex;
-  //       padding: 1rem 0;
-
-  //       .meetingType {
-  //         width: 6rem;
-  //         background-color: $notification;
-  //         color: white;
-  //         border-radius: $borderRadius;
-  //         padding: 1rem;
-  //         font-weight: bold;
-  //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
-  //         display: flex;
-  //         flex-direction: column;
-  //         align-items: center;
-
-  //         i {
-  //           font-size: 30px;
-  //         }
-  //       }
-
-  //       button {
-  //         display: flex;
-  //         align-items: center;
-
-  //         border: none;
-  //         cursor: pointer;
-  //         padding: 1rem;
-  //         background-color: white;
-  //         color: red;
-  //         font-size: 20px;
-  //         border-radius: $borderRadius;
-  //         align-self: flex-start;
-  //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.5);
-  //         margin-left: 1rem;
-
-  //         i {
-  //           //font-size: 20px;
-  //           margin-left: 1rem;
-  //         }
-
-  //         &:hover {
-  //           background-color: $warning-bg;
-  //         }
-  //       }
-
-  //     }
-  //   }
-
-  //   .scheduleBody {
-  //     flex: 1 0 1;
-  //     overflow-y: auto;
-  //     display: flex;
-  //     flex-direction: column;
-  //     background-color: white;
-  //     flex: 1;
-
-  //     color: $body;
-  //     border-radius: 0 0 $borderRadius $borderRadius;
-
-  //     //overflow: hidden;
-  //     .ongoing {
-  //       padding: 1rem;
-  //       display: flex;
-  //       justify-content: space-between;
-  //       align-items: center;
-  //       background-color: #003061;
-
-  //       .ongoingTitle {
-  //         color: white;
-  //         font-weight: bold;
-
-  //       }
-
-  //       .joinMeeting {
-  //         outline: none;
-  //         background-color: white;
-  //         color: red;
-  //         font-weight: bold;
-  //         border-radius: $borderRadius;
-  //         border: none;
-  //         padding: 1rem;
-  //         cursor: pointer;
-  //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-  //       }
-  //     }
-
-  //     .detailSection {
-  //       padding: 1rem;
-  //       display: flex;
-  //       position: relative;
-  //       transition: all 0.4s;
-
-  //       i {
-  //         font-size: 20px;
-  //         margin-right: 1rem;
-  //       }
-
-  //       .remTop {
-  //         margin-top: 1rem;
-  //       }
-
-  //       .alignItems {
-  //         align-items: center;
-  //       }
-
-  //       p>a {
-  //         display: flex;
-  //         align-items: center;
-  //         color: $notification;
-  //         //aspect-ratio: 1;
-  //         font-size: 13px;
-  //         padding: .8rem;
-  //         background-color: rgb(218, 218, 248);
-  //         text-decoration: none;
-  //         border-radius: $borderRadius;
-
-  //         i {
-  //           font-size: 13px;
-  //           margin: 0;
-  //           margin-left: .5rem;
-  //         }
-  //       }
-
-  //       .invitedMembersDiv {
-  //         transition: all 0.4s;
-  //         visibility: hidden;
-  //         opacity: 0;
-  //         position: absolute;
-  //         top: 4rem;
-  //         left: 4rem;
-  //         background-color: white;
-  //         border-radius: $borderRadius;
-  //         min-height: 6rem;
-  //         max-height: 15rem;
-  //         overflow-y: auto;
-  //         padding: 1rem;
-  //         z-index: 2;
-  //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-  //         margin-right: 1rem;
-
-  //         display: flex;
-  //         flex-wrap: wrap;
-  //         min-width: 300px;
-  //       }
-
-  //       .is-visible {
-  //         visibility: visible;
-  //         opacity: 1;
-  //       }
-
-  //       .invitedMemberDiv {
-  //         background-color: transparent;
-  //         display: flex;
-  //         padding: 1rem;
-  //         border-bottom: 1px solid #f1f4f6;
-  //         border-radius: $borderRadius;
-  //         cursor: pointer;
-
-  //         .resultItemBundle {
-  //           display: flex;
-  //           align-items: center;
-  //           width: 100%;
-
-  //           div:first-of-type {
-  //             flex-basis: 10%;
-
-  //             img {
-  //               object-fit: cover;
-  //               border: 1px solid $notification;
-  //               width: 25px;
-  //               height: 25px;
-  //               margin-right: 10px;
-  //               //display: block;
-  //               border-radius: $borderRadius;
-
-  //               text-transform: uppercase;
-  //               display: flex;
-  //               justify-content: center;
-  //               align-items: center;
-  //               color: white;
-  //               background-color: $notification;
-
-  //               box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-  //             }
-
-  //             div {
-  //               border: 1px solid $notification;
-  //               width: 25px;
-  //               height: 25px;
-  //               margin-right: 10px;
-  //               border-radius: $borderRadius;
-  //               text-transform: uppercase;
-  //               display: flex;
-  //               justify-content: center;
-  //               align-items: center;
-  //               color: white;
-  //               background-color: $notification;
-  //               box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
-  //             }
-  //           }
-
-  //           .meeting-data {
-  //             display: flex;
-  //             align-items: center;
-  //             width: 100%;
-  //             min-width: 0;
-
-  //             .nameScopeTime {
-  //               flex: 1;
-  //               display: flex;
-  //               flex-direction: column;
-  //               justify-content: center;
-  //               min-width: 0;
-
-  //               .meetingName {
-  //                 white-space: nowrap;
-  //                 font-size: 14px;
-  //                 color: $body;
-
-  //                 overflow: hidden;
-  //                 text-overflow: ellipsis;
-  //                 min-width: 100%;
-
-  //               }
-
-  //               .scope {
-  //                 color: #b6b6b6;
-  //                 overflow: hidden;
-  //                 text-overflow: ellipsis;
-  //                 min-width: 0;
-  //                 font-size: 12px;
-  //               }
-
-
-  //             }
-
-  //             .removePerson {
-  //               border-radius: $borderRadius;
-  //               width: 30px;
-  //               height: 30px;
-  //               background-color: $sidepanel;
-  //               display: flex;
-  //               align-items: center;
-  //               justify-content: center;
-  //               border: none;
-  //               color: $body;
-  //               cursor: pointer;
-
-  //               i {
-  //                 margin: 0;
-  //                 padding: 0;
-  //               }
-  //             }
-
-  //           }
-
-
-  //         }
-
-  //         &:hover {
-  //           background-color: #f7f7f7;
-  //         }
-  //       }
-
-  //       .selectedUsersDiv {
-  //         display: flex;
-  //         flex-wrap: wrap;
-
-  //         .invitedMemberDiv {
-  //           cursor: default;
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   .attending {
-  //     display: flex;
-  //     justify-content: space-between;
-  //     align-items: center;
-  //     padding: 1rem;
-  //     margin-top: auto;
-  //     border-top: 1px solid #f1f4f6;
-  //     border-radius: 0 0 $borderRadius $borderRadius;
-  //     background-color: white;
-
-  //     .attendingTitle {
-  //       display: flex;
-  //     }
-
-  //     .attendingResponse {
-  //       * {
-  //         font-weight: bold;
-  //         padding: 1rem;
-  //         border-radius: $borderRadius;
-  //         border: none;
-  //         outline: none;
-  //         background-color: white;
-  //         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-  //         cursor: pointer;
-  //         margin: 0 .2rem;
-  //       }
-
-  //       .positive {
-  //         color: green;
-
-  //         &:hover {
-  //           background-color: rgb(188, 255, 188);
-  //         }
-  //       }
-
-  //       .certain {
-  //         color: orange;
-
-  //         &:hover {
-  //           background-color: rgb(255, 240, 211);
-  //         }
-  //       }
-
-  //       .negative {
-  //         color: red;
-
-  //         &:hover {
-  //           background-color: $warning-bg;
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
 
   .hidden {
     display: none;
@@ -6169,9 +5804,7 @@ body {
 }
 
 
-@media (max-width: 742px) {}
-
-@media (max-width: 488px) {
+@media (max-width: 450px) {
   .c-app {
     max-height: 100%;
 
@@ -6185,6 +5818,7 @@ body {
         position: absolute;
         padding: 1rem;
         min-width: 100%;
+        height: 100%;
         z-index: 2;
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
       }
@@ -6212,9 +5846,9 @@ body {
   .expanded {
     position: absolute;
     flex-direction: row;
-    min-width: 100%;
+    min-width: 100% !important;
     width: 100%;
-    height: unset;
+    height: unset !important;
     z-index: 1;
     padding: 1rem;
 
@@ -6257,6 +5891,7 @@ body {
       height: 100%;
       width: 100%;
       margin: 0;
+      min-width: 100%;
     }
 
     .callHistoryPage {
@@ -6290,6 +5925,7 @@ body {
       height: 100%;
       margin: 0;
       max-width: 100%;
+      min-width: 100%;
       width: 100%;
     }
 
@@ -6297,6 +5933,7 @@ body {
       height: 100%;
       margin: 0;
       max-width: 100%;
+      min-width: 100%;
       width: 100%;
     }
 
@@ -6304,6 +5941,7 @@ body {
       height: 100%;
       margin: 0;
       max-width: 100%;
+      min-width: 100%;
       width: 100%;
     }
   }
@@ -6362,6 +6000,109 @@ body {
 
   .mobileHiddenElement {
     display: none !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .tabletHiddenElement {
+    display: none !important;
+  }
+
+  .tabletButton {
+    display: flex !important;
+  }
+
+  .c-call_log_panel {
+    .callSearchSection {
+      flex-basis: 40%;
+    }
+
+    .callHistoryPage {
+      flex-basis: 60%;
+    }
+
+    .callDetails-section {
+      position: absolute;
+      right: 0;
+      width: 350px;
+      border-radius: 15px;
+      box-shadow: black;
+      box-shadow: 0px 0px 20px -7px rgb(0, 0, 0);
+    }
+  }
+
+  .c-ongoing_call_panel {
+
+    .leftPart {
+      position: absolute;
+      left: 0;
+      border-radius: 15px;
+      box-shadow: black;
+      box-shadow: 0px 0px 20px -7px rgb(0, 0, 0);
+
+      box-shadow: 0px 0px 20px -7px rgb(0 0 0);
+      height: calc(100% - 2rem);
+      z-index: 2;
+    }
+
+    .call-container {
+      flex-basis: 60%;
+    }
+
+    .rightPart {
+      flex-basis: 40%;
+    }
+  }
+
+  .c-time-scheduling_panel {
+    .selectionPanel {}
+
+    .mainScheduleList {}
+
+    .scheduleDetailsSection {
+      position: absolute;
+      right: 0;
+      width: 350px;
+      border-radius: 15px;
+      box-shadow: black;
+      box-shadow: 0px 0px 20px -7px rgb(0, 0, 0);
+    }
+  }
+
+  .c-app {
+    .c-application {
+      .c-sidepanel {
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 1rem;
+        min-width: 370px;
+        z-index: 2;
+        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.836);
+
+        &.expanded {
+          position: static;
+          width: 82px;
+          min-width: 82px;
+          max-width: 82px;
+
+          flex-basis: 5%;
+          height: 100%;
+          background-color: $sidepanel-bg;
+          padding: 1.5rem;
+          min-width: 82px;
+          display: flex;
+          flex: 0 0 0;
+          flex-direction: column;
+          border-radius: 0 0 0 $borderRadius;
+          overflow-y: auto;
+
+          transition: all 0.4s;
+          justify-content: space-between;
+          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0);
+        }
+      }
+    }
   }
 
 }

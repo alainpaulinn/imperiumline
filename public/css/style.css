@@ -1777,7 +1777,7 @@ body {
   color: rgb(91, 94, 97);
 }
 .c-call_log_panel .callSearchSection {
-  width: 350px;
+  flex-basis: 30%;
   height: calc(100vh - 2rem);
   background-color: white;
   border-radius: 15px;
@@ -1861,7 +1861,7 @@ body {
   height: calc(100vh - 2rem);
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex-basis: 40%;
   background-color: white;
   margin: 1rem;
   border-radius: 15px;
@@ -2062,7 +2062,7 @@ body {
 }
 .c-call_log_panel .callDetails-section {
   height: calc(100vh - 2rem);
-  width: 350px;
+  flex-basis: 30%;
   margin: 1rem 1rem 1rem 0rem;
   padding: 1rem;
   display: flex;
@@ -3915,11 +3915,13 @@ body {
 }
 .schedule-container .dummyTemplateElement {
   display: flex;
-  width: 100%;
-  height: 100%;
+  width: calc(100% - 4rem);
+  height: calc(100% - 4rem);
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
+  margin: 2rem;
+  text-align: center;
 }
 .schedule-container .hidden {
   display: none;
@@ -4742,7 +4744,7 @@ body {
      object-fit: cover;
 }
 
-@media (max-width: 488px) {
+@media (max-width: 450px) {
   .c-app {
     max-height: 100%;
   }
@@ -4755,6 +4757,7 @@ body {
     position: absolute;
     padding: 1rem;
     min-width: 100%;
+    height: 100%;
     z-index: 2;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
   }
@@ -4775,9 +4778,9 @@ body {
   .expanded {
     position: absolute;
     flex-direction: row;
-    min-width: 100%;
+    min-width: 100% !important;
     width: 100%;
-    height: unset;
+    height: unset !important;
     z-index: 1;
     padding: 1rem;
   }
@@ -4812,6 +4815,7 @@ body {
     height: 100%;
     width: 100%;
     margin: 0;
+    min-width: 100%;
   }
   .c-call_log_panel .callHistoryPage {
     height: 100%;
@@ -4839,18 +4843,21 @@ body {
     height: 100%;
     margin: 0;
     max-width: 100%;
+    min-width: 100%;
     width: 100%;
   }
   .c-ongoing_call_panel .call-container {
     height: 100%;
     margin: 0;
     max-width: 100%;
+    min-width: 100%;
     width: 100%;
   }
   .c-ongoing_call_panel .rightPart {
     height: 100%;
     margin: 0;
     max-width: 100%;
+    min-width: 100%;
     width: 100%;
   }
   .c-time-scheduling_panel {
@@ -4896,5 +4903,79 @@ body {
   }
   .mobileHiddenElement {
     display: none !important;
+  }
+}
+@media (max-width: 1200px) {
+  .tabletHiddenElement {
+    display: none !important;
+  }
+  .tabletButton {
+    display: flex !important;
+  }
+  .c-call_log_panel .callSearchSection {
+    flex-basis: 40%;
+  }
+  .c-call_log_panel .callHistoryPage {
+    flex-basis: 60%;
+  }
+  .c-call_log_panel .callDetails-section {
+    position: absolute;
+    right: 0;
+    width: 350px;
+    border-radius: 15px;
+    box-shadow: black;
+    box-shadow: 0px 0px 20px -7px rgb(0, 0, 0);
+  }
+  .c-ongoing_call_panel .leftPart {
+    position: absolute;
+    left: 0;
+    border-radius: 15px;
+    box-shadow: black;
+    box-shadow: 0px 0px 20px -7px rgb(0, 0, 0);
+    box-shadow: 0px 0px 20px -7px rgb(0, 0, 0);
+    height: calc(100% - 2rem);
+    z-index: 2;
+  }
+  .c-ongoing_call_panel .call-container {
+    flex-basis: 60%;
+  }
+  .c-ongoing_call_panel .rightPart {
+    flex-basis: 40%;
+  }
+  .c-time-scheduling_panel .scheduleDetailsSection {
+    position: absolute;
+    right: 0;
+    width: 350px;
+    border-radius: 15px;
+    box-shadow: black;
+    box-shadow: 0px 0px 20px -7px rgb(0, 0, 0);
+  }
+  .c-app .c-application .c-sidepanel {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 1rem;
+    min-width: 370px;
+    z-index: 2;
+    box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.836);
+  }
+  .c-app .c-application .c-sidepanel.expanded {
+    position: static;
+    width: 82px;
+    min-width: 82px;
+    max-width: 82px;
+    flex-basis: 5%;
+    height: 100%;
+    background-color: rgb(245, 249, 253);
+    padding: 1.5rem;
+    min-width: 82px;
+    display: flex;
+    flex: 0 0 0;
+    flex-direction: column;
+    border-radius: 0 0 0 15px;
+    overflow-y: auto;
+    transition: all 0.4s;
+    justify-content: space-between;
+    box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0);
   }
 }/*# sourceMappingURL=style.css.map */

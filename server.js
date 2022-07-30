@@ -223,7 +223,7 @@ io.on('connection', (socket) => {
                 userInfo: await getUserInfo(id)
               }
               console.log("Last inserted ID", participantResult.insertId)
-              let chatInfo  = await getRoomInfo(message.toRoom, id)
+              let chatInfo = await getRoomInfo(message.toRoom, id)
               io.sockets.in(message.toRoom).emit('newMessage', { chatInfo, expectedUser, insertedMessage });
             })
           })
@@ -634,13 +634,15 @@ io.on('connection', (socket) => {
               const connectedUser = connectedUsers[j];
               if (connectedUser.id == invite) {
                 socket.to(connectedUser.socket.id).emit('updateCalendar', await getEvents(id, lastYear, nextYear));
+                socket.to(connectedUser.socket.id).emit('initialFillCalendar', await getEvents(id, lastYear, nextYear));
               }
             }
           }
-        })
+        }
+      )
     })
 
-    socket.on('dayEvents', async dateReceived =>{
+    socket.on('dayEvents', async dateReceived => {
       let initialDate = new Date(dateReceived)
       let endDate = new Date(dateReceived)
       let dateEvents = await getEvents(id, initialDate, endDate)
@@ -648,7 +650,7 @@ io.on('connection', (socket) => {
       socket.emit('dayEvents', dateEvents)
     })
 
-    socket.on('initialFillCalendar',  async (dateReceived) =>{
+    socket.on('initialFillCalendar', async (dateReceived) => {
       let today = new Date()
       let lastYear = new Date()
       lastYear.setFullYear(today.getFullYear() - 1)
@@ -657,13 +659,15 @@ io.on('connection', (socket) => {
       socket.emit('initialFillCalendar', await getEvents(id, lastYear, nextYear))
     })
 
-    socket.on('deleteEvent',  async (eventId) =>{
-
+    socket.on('deleteEvent', async (eventId) => {
       let foundEvent = await getEventDetails(eventId)
-      if (foundEvent?.owner.userID == id){
+      if (foundEvent?.owner.userID == id) {
+        db.query("DELETE FROM `events` where eventId = ?", [eventId], async (err, result) => { })
+        socket.emit('feedback', [{ type: 'positive', message: 'the event was deleted successfully' }])
         console.log('event found')
       }
-      else{
+      else {
+        socket.emit('feedback', [{ type: 'negative', message: 'An error occurred while deleting the event' }])
         console.log('event not found')
       }
     })

@@ -391,11 +391,14 @@ let functionalityOptionsArray = [
     call_log_contact_search_panel.classList.add('mobileHiddenElement')
     callHistoryPage.classList.remove('mobileHiddenElement')
     callDetailsPanel.classList.add('mobileHiddenElement')
+    callDetailsPanel.classList.add('tabletHiddenElement')
+
   }
   function showCallDetailsSection() {
     call_log_contact_search_panel.classList.add('mobileHiddenElement')
     callHistoryPage.classList.add('mobileHiddenElement')
     callDetailsPanel.classList.remove('mobileHiddenElement')
+    callDetailsPanel.classList.remove('tabletHiddenElement')
   }
 
   // call-log-section ------ createCallLogContactSearch
@@ -492,7 +495,7 @@ let functionalityOptionsArray = [
             else { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }) }
 
             let mobileButton = createElement({
-              elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
+              elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
             })
             let detailsPanel_header = createElement({
               elementType: 'div', class: 'section-header', childrenArray: [
@@ -2489,16 +2492,19 @@ let callMainScreen = document.getElementById('callMainScreen')
 let ongoingCallRightPart = document.getElementById('ongoingCallRightPart')
 function showCallLeftPart() {
   ongoingCallLeftPart.classList.remove('mobileHiddenElement')
+  ongoingCallLeftPart.classList.remove('tabletHiddenElement')
   callMainScreen.classList.add('mobileHiddenElement')
   ongoingCallRightPart.classList.add('mobileHiddenElement')
 }
 function showCallMainScreen() {
   ongoingCallLeftPart.classList.add('mobileHiddenElement')
+  ongoingCallLeftPart.classList.add('tabletHiddenElement')
   callMainScreen.classList.remove('mobileHiddenElement')
   ongoingCallRightPart.classList.add('mobileHiddenElement')
 }
 function showCallRightPart() {
   ongoingCallLeftPart.classList.add('mobileHiddenElement')
+  ongoingCallLeftPart.classList.add('tabletHiddenElement')
   callMainScreen.classList.add('mobileHiddenElement')
   ongoingCallRightPart.classList.remove('mobileHiddenElement')
 }
@@ -3671,7 +3677,7 @@ myPeer.on('open', myPeerId => {
   function createLeftPanel() {
     let ongoingCallLeftPart = document.getElementById('ongoingCallLeftPart')
     ongoingCallLeftPart.textContent = '';
-    let backToMainscreenBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-call bx-flashing' })], onclick: showCallMainScreen })
+    let backToMainscreenBtn = createElement({ elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-call bx-flashing' })], onclick: showCallMainScreen })
     let presenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem headerItemSelected', textContent: 'Present ' + 1 })
     let absenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem', textContent: 'Absent ' + 2 })
     let attendanceTitleSection = createElement({ elementType: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn, backToMainscreenBtn] })
@@ -4260,7 +4266,7 @@ function createTopBar(callInfo, myInfo) {
   doneBtn.addEventListener('click', () => { popDown.classList.toggle('popdownDisplayed') })
   let headerRightPart = createElement({ elementType: 'div', class: 'headerRightPart', childrenArray: [inviteSomeone, popDown] })
   callScreenHeader.textContent = '';
-  let showLeftpartBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-list-check' })], onclick: showCallLeftPart })
+  let showLeftpartBtn = createElement({ elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-list-check' })], onclick: showCallLeftPart })
   let showRightpartBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-chat' })], onclick: showCallRightPart })
   callScreenHeader.append(showLeftpartBtn, headerLeftPart, headerRightPart, showRightpartBtn)
   return { callScreenHeader, invitedDiv }
@@ -4862,7 +4868,7 @@ function createCalendarEventSection() {
 
   let eventsContainer = createElement({ elementType: 'div', class: 'eventsContainer', childrenArray: [] })
   let mainScheduleList = createElement({ elementType: 'div', class: 'mainScheduleList', childrenArray: [ListHeader, eventsContainer] })
-  let scheduleDetailsSection = createElement({ elementType: 'div', class: 'scheduleDetailsSection mobileHiddenElement', childElement: [createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any event to see its more details here' })] })
+  let scheduleDetailsSection = createElement({ elementType: 'div', class: 'scheduleDetailsSection mobileHiddenElement tabletHiddenElement', childrenArray: [createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any event to see its more details here' })] })
   let schedule_container = createElement({ elementType: 'div', class: 'schedule-container', childrenArray: [selectionPanel, mainScheduleList, scheduleDetailsSection] })
   time_scheduling_panel.append(schedule_container)
 
@@ -4870,16 +4876,19 @@ function createCalendarEventSection() {
     selectionPanel.classList.remove('mobileHiddenElement')
     mainScheduleList.classList.add('mobileHiddenElement')
     scheduleDetailsSection.classList.add('mobileHiddenElement')
+    scheduleDetailsSection.classList.add('tabletHiddenElement')
   }
   function showMainScheduleList() {
     selectionPanel.classList.add('mobileHiddenElement')
     mainScheduleList.classList.remove('mobileHiddenElement')
     scheduleDetailsSection.classList.add('mobileHiddenElement')
+    scheduleDetailsSection.classList.add('tabletHiddenElement')
   }
   function showScheduleDetailsSection() {
     selectionPanel.classList.add('mobileHiddenElement')
     mainScheduleList.classList.add('mobileHiddenElement')
     scheduleDetailsSection.classList.remove('mobileHiddenElement')
+    scheduleDetailsSection.classList.remove('tabletHiddenElement')
   }
 
   function updateCalendarDisplay() {
@@ -4980,10 +4989,34 @@ function createCalendarEventSection() {
           createElement({
             elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-right' })], onclick: () => {
               scheduleDetailsSection.textContent = '';
-              let eventDetailsBackButton = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-left' })], onclick: showMainScheduleList })
+              let eventDetailsBackButton = createElement({ elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-left' })], onclick: showMainScheduleList })
               let eventDetailsJoinButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: joinEvent })
               let eventDetailsTitle = createElement({ elementType: 'div', class: 'eventDetailsTitle', textContent: title })
-              let deleteEventButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })], onclick: () => { socket.emit('deleteEvent', eventId) } })
+              let deleteEventButton = createElement({
+                elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })], onclick: () => {
+                  // -------------------- Deleting event - on popup;
+                  let question = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Are you sure you want to delete this event?' })
+
+                  let icon = 'bx bxs-trash-alt'
+                  let title = 'Delete a Planned event'
+                  let contentElementsArray = [question]
+                  let cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel' })
+                  let deleteButton = createElement({ elementType: 'button', textContent: 'Yes, Delete' })
+                  let actions = [
+                    { element: cancelButton, functionCall: () => { } },
+                    {
+                      element: deleteButton, functionCall: () => {
+                        socket.emit('deleteEvent', eventId)
+                      }
+                    }
+                  ]
+                  let constraints = { icon, title, contentElementsArray, actions }
+                  createInScreenPopup(constraints).then(editPopup => {
+                    cancelButton.addEventListener('click', editPopup.closePopup);
+                    deleteButton.addEventListener('click', editPopup.closePopup);
+                  })
+                }
+              })
               let headerElementsArray = [eventDetailsBackButton, eventDetailsTitle, eventDetailsJoinButton]
               if (owner.userID == mySavedID) headerElementsArray.push(deleteEventButton)
               let eventDetailsTopSection = createElement({ elementType: 'div', class: 'eventDetailsTopSection', childrenArray: headerElementsArray })
