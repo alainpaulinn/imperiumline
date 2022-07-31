@@ -624,7 +624,7 @@ let functionalityOptionsArray = [
           elementType: 'div', class: 'central-Options mobileHiddenElement', childrenArray: [
             createElement({
               elementType: 'div', class: 'adminWelcomeDiv', childrenArray: [
-                createElement({ elementType: 'img', class: 'adminWelcomeImage', src: 'images/adminKeys.png' }),
+                createElement({ elementType: 'div', class: 'adminWelcomeImage', childrenArray: [createElement({ elementType:'i', class:'bx bx-key'})]}),
                 createElement({ elementType: 'p', textContent: 'Click on the menu to choose Groups to manage. Please remember that this Admin panel should only be opened in a safe place with full privacy' })
               ]
             })
@@ -3499,7 +3499,7 @@ myPeer.on('open', myPeerId => {
     // Header
     let backToMainscreenBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-call bx-flashing' })], onclick: showCallMainScreen })
 
-    let participantsSelectorBtn = createElement({ elementType: 'div', class: 'rightHeaderItem participants headerItemSelected', textContent: 'Participants ' + participantsCount })
+    let participantsSelectorBtn = createElement({ elementType: 'div', class: 'rightHeaderItem participants headerItemSelected', textContent: 'Correspondants ' + participantsCount })
     let messagesSelectorbtn = createElement({ elementType: 'div', class: 'rightHeaderItem callChat', textContent: 'Messages ' + unreadmessagesCount })
     let rightPartheaderVideoMessaging = createElement({ elementType: 'div', class: 'rightPartheaderVideoMessaging', childrenArray: [backToMainscreenBtn, participantsSelectorBtn, messagesSelectorbtn] })
     let callParticipantsDiv = createElement({ elementType: 'div', class: 'callParticipantsDiv' })
@@ -3548,7 +3548,7 @@ myPeer.on('open', myPeerId => {
       inputText.textContent = '';
     }
     function incrementUnreadCount() { unreadmessagesCount = unreadmessagesCount + 1; messagesSelectorbtn.textContent = ('Messages ' + unreadmessagesCount) }
-    function setParticipantsCount(count) { participantsSelectorBtn.textContent = ('Participants ' + count) }
+    function setParticipantsCount(count) { participantsSelectorBtn.textContent = ('Correspondants ' + count) }
 
     let rightPartContentDiv = createElement({ elementType: 'div', class: 'rightPartContentDiv', childrenArray: [callParticipantsDiv, callMessagingDiv] })
 
@@ -3635,8 +3635,8 @@ myPeer.on('open', myPeerId => {
       }
       function createNewReceivedGroup(firstMessage) {
         let receivedMessageProfile;
-        if (message.userInfo.profilePicture == null) receivedMessageProfile = createElement({ elementType: 'div', class: 'receivedMessageProfile', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
-        else receivedMessageProfile = createElement({ elementType: 'img', class: 'receivedMessageProfile', src: message.userInfo.profilePicture })
+        if (message.userInfo.profilePicture == null) receivedMessageProfile = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
+        else receivedMessageProfile = createElement({ elementType: 'img', class: 'memberProfilePicture', src: message.userInfo.profilePicture })
         let receivedMessageProfileContainter = createElement({ elementType: 'div', childrenArray: [receivedMessageProfile] })
         let senderOriginName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
         let receivedMessagesHolder = createElement({ elementType: 'div', childrenArray: [firstMessage, senderOriginName] })
@@ -4553,10 +4553,14 @@ socket.on('updateCalendar', (calendarEventObj => {
 }))
 socket.on('initialFillCalendar', (calendarEventObj => {
   calendarObject = calendarEventObj
+  let deleteOldEvents = true;
   for (const key in calendarEventObj) {
     if (Object.hasOwnProperty.call(calendarEventObj, key)) {
       const dayEventsArray = calendarEventObj[key];
-      if (dayEventsArray.length > 0) eventSectionObject.addDayOnScheduleList(key, dayEventsArray)
+      if (dayEventsArray.length > 0) {
+        eventSectionObject.addDayOnScheduleList(key, dayEventsArray, deleteOldEvents)
+        deleteOldEvents = false; // done in order to clear the container before filling
+      }
     }
   }
   eventSectionObject.renderCalendar()
@@ -4932,7 +4936,8 @@ function createCalendarEventSection() {
     }
   }
 
-  function addDayOnScheduleList(key, dayEventsArray) {
+  function addDayOnScheduleList(key, dayEventsArray, deleteOldEvents) {
+    if(deleteOldEvents == true) eventsContainer.textContent = '';
     let dayDiv = makeDay(key, dayEventsArray)
     eventsContainer.appendChild(dayDiv)
     mainScheduleListTitle.textContent = 'Scheduled Events'

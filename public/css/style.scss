@@ -93,14 +93,12 @@ body {
   height: 100%;
   width: 100%;
   min-width: 0;
-  //overflow: auto;
+  background-color: var(--focusAreaBackgroundColor);
 }
 
 .controls {
   display: none;
 }
-
-
 
 .c-sidepanel {
   flex-basis: 20%;
@@ -133,7 +131,7 @@ body {
     background-color:var(--focusAreaBackgroundColor);
     border-radius: $borderRadius $borderRadius 0 0;
 
-    border-bottom: 1px solid $darkenSidepanel;
+    border-bottom: 1px solid var(--secondaryBackground);
 
     &__hamburger {
       ul {
@@ -480,7 +478,6 @@ body {
   display: flex;
   flex: 0 0 0;
   flex-direction: column;
-  border-radius: 0 0 0 $borderRadius;
   overflow-y: auto;
 
   transition: all 0.4s;
@@ -639,6 +636,7 @@ body {
   height: 300px;
   background: var(--secondaryBackground);
   overflow-y: scroll;
+  color: var(--lightText);
 
   //searchboxe
   .resultItem {
@@ -742,15 +740,12 @@ body {
 }
 
 .c-chats {
-  //padding: 1rem 0;
   height: calc(100vh - 2rem);
   margin: 1rem 0rem 1rem 1rem;
   border-radius: $borderRadius;
   overflow: hidden;
-  border-right: 1px solid #f1f4f6;
   background: var(--secondaryBackground);
   width: 350px;
-  //height: 100%;
 
   display: flex;
   flex-direction: column;
@@ -758,7 +753,6 @@ body {
   ul {
     height: 100%;
     overflow-y: auto;
-    //padding: 0rem 0rem 0 0rem;
   }
 
   &__info {
@@ -775,7 +769,7 @@ body {
     width: 100%;
     position: relative;
     top: 0;
-    background-color: $c-chats;
+    background-color: var(--secondaryBackground);
     z-index: 1;
     padding: 1rem;
 
@@ -784,19 +778,26 @@ body {
       display: inline-block;
     }
 
-    .chatSearch {
-      transition: all 0.4s;
-
-    }
-
+    .chatSearch,
     .newChatTitle {
       transition: all 0.4s;
+      color: var(--lightText);
+      background-color: var(--primaryBackground);
 
+      input {
+        background-color: var(--primaryBackground);
+        outline: none;
+        width: 100%;
+        padding: 10px 10px 10px 40px;
+        font-size: 13px;
+        border-radius: $borderRadius;
+        border: 1px solid var(--lightText);
+        color: var(--lightText);
+      }
     }
 
     .newChat {
       background-color: $notification;
-      //padding: 1rem;
       width: 40px;
       height: 40px;
       border-radius: $borderRadius;
@@ -808,14 +809,12 @@ body {
     button {
       display: inline-block;
       transition: all 0.8s ease-in-out;
-      //display: flex;
       align-items: center;
       justify-content: center;
       outline: none;
       border: none;
       cursor: pointer;
 
-      //margin: 0 1rem;
       svg,
       i {
         transition: all 0.8s ease-in-out;
@@ -823,14 +822,7 @@ body {
       }
     }
 
-    input {
-      width: 100%;
-      padding: 10px 10px 10px 40px;
-      font-size: 13px;
-      border-radius: $borderRadius;
-      border: 1px solid #f1f4f6;
-      color: var(--lightText);
-    }
+    input {}
 
     label {
       position: absolute;
@@ -861,7 +853,7 @@ body {
     border-bottom: 1px solid var(--primaryBackground);
 
     &:hover {
-      background-color: rgb(247, 247, 247);
+      background-color: var(--primaryBackground);
     }
 
   }
@@ -983,7 +975,7 @@ body {
 }
 
 .openedChat {
-  background-color: #eee;
+  background-color: var(--focusAreaBackgroundColor);
   box-shadow: 0px 0px 5px rgba(0, 0, 0, .2);
 }
 
@@ -1089,7 +1081,7 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background: var(--secondaryBackground);
 
   border-radius: $borderRadius;
   overflow: hidden;
@@ -1101,16 +1093,16 @@ body {
     gap: .5rem;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 3px 3px 10px -2px rgba(204, 197, 197, 0.5);
-    background-color: white;
-
-
+    box-shadow: 3px 3px 10px -2px rgba(0, 0, 0, 0.5);
+    background-color: var(--secondaryBackground);
+    color: var(--lightText);
 
     .c-chat-title {
       display: flex;
       flex-direction: row;
       align-items: center;
       min-width: 0;
+      flex: 1;
     }
 
     button {
@@ -1124,14 +1116,13 @@ body {
   }
 
   &__header {
-    //padding:1rem 0;
     border-bottom: 1px solid var(--primaryBackground);
     padding: 1rem 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 3px 3px 10px -2px rgba(204, 197, 197, 0.5);
-    background-color: white;
+    box-shadow: 3px 3px 10px -2px rgba(0, 0, 0, 0.5);
+    background-color: var(--secondaryBackground);
     gap: 0.5rem;
 
     .c-chat-title {
@@ -1139,6 +1130,7 @@ body {
       flex-direction: row;
       align-items: center;
       min-width: 0;
+      flex: 1;
     }
 
   }
@@ -1179,8 +1171,7 @@ body {
 }
 
 .c-openchat__box__info {
-  //transition: all 500ms ease-in-out 25ms;
-  //min-width: 100%;
+  background: var(--tertiaryBackground);
   max-width: 100%;
   overflow-y: auto;
   overflow-x: Hidden;
@@ -1217,7 +1208,7 @@ body {
   span {
     border-radius: $borderRadius;
     color: var(--lightText);
-    background: rgb(250, 250, 250);
+    background-color: var(--primaryBackground);
     padding: 0 10px;
     -webkit-box-shadow: 0px 0px 17px -7px rgba (0, 0, 0, 0.5);
     -moz-box-shadow: 0px 0px 17px -7px rgba (0, 0, 0, 0.5);
@@ -1276,17 +1267,16 @@ body {
   align-items: center;
 
   .time_reactions_options {
-    color: $notification;
-
-
+    color: var(--lightText);
+    ;
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
     white-space: nowrap;
     transition: all 0.4s ease-in-out;
 
-    border: 1px solid #eee;
-    background-color: #fff;
+    border: 1px solid var(--tertiaryBackground);
+    background-color: var(--focusAreaBackgroundColor);
     border-radius: 50px;
     padding: 0.5rem;
     margin-left: 0.5rem;
@@ -1371,7 +1361,7 @@ body {
     }
 
     .messageOptions {
-      color: $notification;
+      color: var(--lightText);
       display: flex;
 
       button {
@@ -1379,14 +1369,14 @@ body {
         border-radius: 50px;
         width: 20px;
         height: 20px;
-
+        color: var(--lightText);
         cursor: pointer;
         outline: none;
-        border: rgb(97, 100, 102);
-        background-color: #eee;
         display: flex;
         align-items: center;
         justify-content: center;
+        background-color: var(--tertiaryBackground);
+        border: 1px solid var(--secondaryBackground);
 
       }
     }
@@ -1426,7 +1416,7 @@ body {
     margin-bottom: 0.5rem;
     padding: 10px;
     min-height: 20px;
-    //background: var(--primaryBackground);
+    // background: var(--primaryBackground);
     background: $notification;
     border-radius: $borderRadius;
 
@@ -1469,17 +1459,15 @@ body {
   align-items: center;
 
   .time_reactions_options {
-    color: $notification;
-
-
+    color: var(--lightText);
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
     white-space: nowrap;
     transition: all 0.4s ease-in-out;
 
-    border: 1px solid #eee;
-    background-color: #fff;
+    border: 1px solid var(--tertiaryBackground);
+    background-color: var(--focusAreaBackgroundColor);
     border-radius: 50px;
     padding: 0.5rem;
     margin-right: 0.5rem;
@@ -1564,7 +1552,7 @@ body {
     }
 
     .messageOptions {
-      color: $notification;
+      color: var(--lightText);
       display: flex;
 
       button {
@@ -1575,12 +1563,12 @@ body {
 
         cursor: pointer;
         outline: none;
-        border: rgb(97, 100, 102);
-        background-color: #eee;
+        background-color: var(--tertiaryBackground);
+        border: 1px solid var(--secondaryBackground);
         display: flex;
         align-items: center;
         justify-content: center;
-
+        color: var(--lightText)
       }
     }
 
@@ -1615,7 +1603,7 @@ body {
     min-height: 20px;
     padding: 10px;
     //color: var(--primaryBackground);
-    color: $notification;
+    color: var(--lightText);
 
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
     cursor: pointer;
@@ -1674,8 +1662,8 @@ body {
   max-width: 100%;
   align-items: center;
   padding: .8rem;
-  background-color: white;
-  box-shadow: 3px -3px 10px -2px rgba(204, 197, 197, 0.5);
+  background: var(--secondaryBackground);
+  box-shadow: 3px -3px 10px -2px rgba(0, 0, 0, 0.5);
 
   .chat-options {
     text-decoration: none;
@@ -1724,6 +1712,8 @@ body {
     margin: 1rem;
     display: flex;
     flex-wrap: wrap;
+    max-height: 15rem;
+    overflow-y: auto;
 
     div {
       display: flex;
@@ -2095,6 +2085,7 @@ body {
   display: flex;
   flex: 1;
   background-color: var(--primaryBackground);
+  max-width: calc(100% - 45px - 3rem);
 }
 
 .c-call_log_panel {
@@ -2104,10 +2095,9 @@ body {
   color: var(--lightText);
 
   .callSearchSection {
-    // width: 350px;
     flex-basis: 30%;
     height: calc(100vh - 2rem);
-    background-color: white;
+    background-color: var(--secondaryBackground);
     border-radius: $borderRadius;
     margin: 1rem 0rem 1rem 1rem;
     overflow: hidden;
@@ -2119,10 +2109,10 @@ body {
       flex-direction: column;
       overflow-y: auto;
       padding: 1rem;
-      background-color: white;
+      background-color: var(--secondaryBackground);
 
       .listMember {
-        background-color: white;
+        background-color: var(--secondaryBackground);
         display: flex;
         gap: 1rem;
         padding: .5rem;
@@ -2142,7 +2132,7 @@ body {
           justify-content: center;
           align-items: center;
           color: var(--lightText);
-          background-color: $sidepanel;
+          background-color: $notification;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
           transition: all 0.4s;
           flex-shrink: 0;
@@ -2154,18 +2144,21 @@ body {
           flex-direction: column;
           flex: 1;
           overflow: hidden;
+          color: var(--lightText);
 
           .memberName {
             font-weight: bolder;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--lightText);
           }
 
           .memberRole {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--lightText);
           }
 
         }
@@ -2206,9 +2199,10 @@ body {
     flex-direction: column;
     // flex: 1;
     flex-basis: 40%;
-    background-color: white;
+    background-color: var(--secondaryBackground);
     margin: 1rem;
     border-radius: $borderRadius;
+    overflow: hidden;
 
     .header {
       border-bottom: 1px solid var(--primaryBackground);
@@ -2221,7 +2215,7 @@ body {
       -ms-flex-pack: justify;
       justify-content: space-between;
 
-      box-shadow: 3px 3px 10px -2px rgba(204, 197, 197, 0.5);
+      box-shadow: 3px 3px 10px -2px rgba(0, 0, 0, 0.5);
 
       h1 {
         font-size: 2rem;
@@ -2276,7 +2270,7 @@ body {
 
             box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
             border-radius: $borderRadius;
-            background-color: #fff;
+            background-color: var(--primaryBackground);
             margin-bottom: 1rem;
             padding: 1rem;
 
@@ -2414,7 +2408,7 @@ body {
               color: var(--lightText);
               border: none;
               outline: none;
-              background-color: var(--primaryBackground);
+              background-color: var(--secondaryBackground);
 
               i {
                 font-size: 18px;
@@ -2422,8 +2416,8 @@ body {
               }
 
               &:hover {
-                color: var(--lightText);
                 transition: all 0.4s;
+                color: $notification;
               }
             }
           }
@@ -2465,7 +2459,7 @@ body {
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    background-color: white;
+    background-color: var(--secondaryBackground);
     border-radius: $borderRadius;
 
     .section-header {
@@ -2659,7 +2653,7 @@ body {
     border-radius: $borderRadius;
     margin: 1rem 0rem 1rem 1rem;
     overflow: hidden;
-
+    background-color: var(--secondaryBackground);
 
     // padding: 1rem;
     display: flex;
@@ -2679,7 +2673,7 @@ body {
       gap: .5rem;
       width: 100%;
       box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
-
+      color: var(--lightText);
 
       .leftHeaderItem {
         padding: 1rem;
@@ -2710,15 +2704,16 @@ body {
         min-height: 0;
         overflow-y: auto;
         padding: 1rem;
+        color: var(--lightText);
 
         .listMember {
-          background-color: white;
+          background-color: var(--secondaryBackground);
           display: flex;
           padding: 1rem;
           gap: 1rem;
           align-items: center;
           height: 100%;
-
+          color: var(--lightText);
 
           .memberProfilePicture {
             border: 1px solid $notification;
@@ -2784,7 +2779,8 @@ body {
             }
 
             &:hover {
-              background-color: $darkenSidepanel;
+              // background-color: $darkenSidepanel;
+              color: $notification;
             }
           }
         }
@@ -2795,9 +2791,10 @@ body {
         flex-direction: column;
         overflow-y: auto;
         padding: 1rem;
+        color: var(--lightText);
 
         .listMember {
-          background-color: white;
+          background-color: var(--secondaryBackground);
           display: flex;
           padding: 1rem;
           gap: 1rem;
@@ -2870,7 +2867,8 @@ body {
             }
 
             &:hover {
-              background-color: $darkenSidepanel;
+              // background-color: $darkenSidepanel;
+              color: $notification;
             }
           }
         }
@@ -2890,9 +2888,10 @@ body {
     margin: 1rem;
     padding: 1rem;
     border-radius: $borderRadius;
-    background-color: white;
+    background-color: var(--secondaryBackground);
     display: flex;
     flex-direction: column;
+    color: var(--lightText);
 
     .callScreenHeader {
       display: flex;
@@ -2963,16 +2962,17 @@ body {
             width: 10px;
             height: 10px;
             transform: rotate(45deg);
-            background-color: white;
+            background-color: var(--focusAreaBackgroundColor);
             top: -0.4rem;
             right: 1.5rem;
           }
 
+          color: var(--lightText);
           width: 350px;
           max-height: 350px;
           padding: 1rem;
           position: absolute;
-          background-color: white;
+          background-color: var(--focusAreaBackgroundColor);
           border-radius: $borderRadius;
           top: calc(100% + 0rem);
           right: 0;
@@ -3000,7 +3000,7 @@ body {
             input {
               border-radius: $borderRadius;
               outline: none;
-              background: white;
+              background-color: var(--secondaryBackground);
               border: none;
               flex: 1;
               color: var(--lightText);
@@ -3010,6 +3010,7 @@ body {
 
             button {
               background: var(--primaryBackground);
+              color: var(--lightText);
               border-radius: $borderRadius;
               outline: none;
               border: none;
@@ -3039,7 +3040,7 @@ body {
             flex: 1;
 
             .listMember {
-              background-color: white;
+              background-color: var(--secondaryBackground);
               display: flex;
               padding: 1rem;
               gap: 1rem;
@@ -3111,7 +3112,8 @@ body {
                 }
 
                 &:hover {
-                  background-color: $darkenSidepanel;
+                  // background-color: $darkenSidepanel;
+                  color: $notification;
                 }
               }
             }
@@ -3403,6 +3405,7 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    background-color: var(--secondaryBackground);
 
     .rightPartheaderVideoMessaging {
       padding: 1rem;
@@ -3410,6 +3413,7 @@ body {
       width: 100%;
       gap: 0.5rem;
       box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
+      color: var(--lightText);
 
       .rightHeaderItem {
         padding: 1rem;
@@ -3588,7 +3592,7 @@ body {
 
 ////////////////////FINIFSH ONGOING CALL PAGE///////////
 .listMember {
-  background-color: white;
+  background-color: var(--secondaryBackground);
   display: flex;
   padding: 1rem;
   gap: 1rem;
@@ -3639,7 +3643,8 @@ body {
     }
 
     &:hover {
-      background-color: $darkenSidepanel;
+      // background-color: $darkenSidepanel;
+      color: $notification;
     }
   }
 }
@@ -4078,12 +4083,13 @@ body {
     border-radius: $borderRadius;
 
     .listMember {
-      background-color: white;
+      background-color: var(--secondaryBackground);
       display: flex;
       padding: 1rem;
       gap: 1rem;
       align-items: center;
       border-radius: $borderRadius;
+      color: var(--lightText);
       // margin-bottom: .5rem;
 
       .memberProfilePicture {
@@ -4150,7 +4156,8 @@ body {
         }
 
         &:hover {
-          background-color: $darkenSidepanel;
+          // background-color: $darkenSidepanel;
+          color: $notification;
         }
       }
     }
@@ -4319,11 +4326,12 @@ body {
     border-radius: $borderRadius;
     overflow: hidden;
     height: calc(100vh - 2rem);
+    color: var(--lightText);
 
     .card {
       width: 100%;
       //height: fit-content;
-      background-color: var(--foreground-color);
+      background-color: var(--secondaryBackground);
       border-radius: $borderRadius;
 
       .calendar {
@@ -4342,6 +4350,7 @@ body {
         padding-bottom: 15px;
         border-bottom: 1px solid var(--primaryBackground);
 
+
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -4351,7 +4360,7 @@ body {
         }
 
         button {
-          background: var(--btn-bg);
+          background: var(--primaryBackground);
           border: none;
           border-radius: $borderRadius;
           padding: 11px 13px;
@@ -4359,8 +4368,11 @@ body {
           font-weight: 600;
           font-size: 0.9rem;
           margin-right: 1px;
-          box-shadow: 0px 0px 0px var(--box-shadow);
           cursor: pointer;
+
+          &:hover {
+            color: var(--notification);
+          }
         }
       }
 
@@ -4411,21 +4423,17 @@ body {
       [class$="-day"] {
         width: 40px;
         height: 40px;
-        //color: var(--text-color);
         text-align: center;
         line-height: 40px;
         //font-weight: 500;
         font-size: 1rem;
       }
 
-      .weekday-name {
-        //color: var(--highlight-text-color);
-        //font-weight: 700;
-      }
+      .weekday-name {}
 
       .current-day {
-        background-color: var(--color-accent);
-        color: var(--active-text-color);
+        background-color: var(--notification);
+        color: var(--lightText);
         border-radius: $borderRadius;
         font-weight: 700;
         transition: 0.5s;
@@ -4433,51 +4441,43 @@ body {
       }
 
       .padding-day {
-        color: var(--inactive-text-color);
+        color: #636363;
         -webkit-user-select: none;
         -ms-user-select: none;
         user-select: none;
+      }
+
+      .selected-day {
+        border: 1px solid var(--lightText);
+        border-radius: $borderRadius;
       }
 
       .calendar-toolbar>[class$="month-btn"]:hover,
       .month-day:hover,
       .btn:hover {
         border-radius: $borderRadius;
-        background-color: var(--btn-bg);
-        color: var(--color-accent);
+        background-color: var(--primaryBackground);
+        color: var(--notification);
         border-radius: $borderRadius;
         transition: 0.1s;
         cursor: pointer;
-        box-shadow: inset 0px 0px 0px 1.5px var(--color-accent);
+        box-shadow: inset 0px 0px 0px 1.5px var(--notification);
       }
 
       .calendar-toolbar>[class$="month-btn"]:focus,
       .month-day:focus,
       .btn:focus {
         border-radius: $borderRadius;
-        background-color: var(--color-accent);
-        color: var(--active-text-color);
+        background-color: var(--notification);
+        color: var(--lightText);
       }
 
       .goto-buttons {
-        border-top: var(--border-width) solid var(--box-shadow);
-        //padding-block: 1rem;
         padding: 1rem;
         display: flex;
         justify-content: space-between;
       }
 
-      // .btn {
-      //   background: var(--btn-bg);
-      //   border: none;
-      //   border-radius: $borderRadius;
-      //   padding: 11px 13px;
-      //   color: var(--lightText);
-      //   font-weight: 600;
-      //   font-size: 0.9rem;
-      //   margin-right: 1px;
-      //   box-shadow: 0px 0px 0px var(--box-shadow);
-      // }
       .goto-option {
         display: flex;
         align-items: center;
@@ -4488,7 +4488,7 @@ body {
         }
 
         button {
-          background: var(--btn-bg);
+          background: var(--primaryBackground);
           border: none;
           border-radius: $borderRadius;
           padding: 11px 13px;
@@ -4496,8 +4496,11 @@ body {
           font-weight: 600;
           font-size: 0.9rem;
           margin-right: 1px;
-          box-shadow: 0px 0px 0px var(--box-shadow);
           cursor: pointer;
+
+          &:hover {
+            color: var(--notification);
+          }
         }
       }
 
@@ -4537,6 +4540,8 @@ body {
       width: 100%;
       gap: 0.5rem;
       box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+      border-bottom: 1px solid var(--primaryBackground);
+      color: var(--lightText);
 
       .mainScheduleListTitle {
         font-size: 1.2rem;
@@ -4573,17 +4578,8 @@ body {
 
             .hourDiv {
               font-size: 1.5rem;
-              flex-basis: 15%;
-
-              &:before {
-                content: "";
-                display: block;
-                width: calc(1.5px * 2);
-                background-image: -o-radial-gradient(black 1.5px, rgba(0, 0, 0, 0) 1.5px);
-                background-image: radial-gradient(black 1.5px, rgba(0, 0, 0, 0) 1.5px);
-                background-position: calc(16px / 2 + 1.5px) calc(16px / 2 + 1.5px);
-                background-size: 16px 16px;
-              }
+              flex-basis: 10%;
+              color: var(--lightText)
             }
 
             .sheduleContentDiv {
@@ -4595,6 +4591,7 @@ body {
               padding: 1rem;
               border-radius: $borderRadius;
               box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+              color: var(--lightText);
 
               .eventTopSection {
                 display: flex;
@@ -4618,6 +4615,10 @@ body {
                     .scheduleContext {}
 
                   }
+                }
+
+                button {
+                  background: var(--secondaryBackground)
                 }
 
               }
@@ -4648,12 +4649,13 @@ body {
     margin: 1rem 1rem 1rem 0rem;
     display: flex;
     flex-direction: column;
-
+    color: var(--lightText);
     display: flex;
     flex-direction: column;
-    background-color: white;
+    background-color: var(--secondaryBackground);
     border-radius: $borderRadius;
     overflow: hidden;
+
 
     .eventDetailsTopSection {
       display: flex;
@@ -4661,6 +4663,7 @@ body {
       gap: 0.5rem;
       padding: 1rem;
       box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+      border-bottom: 1px solid var(--primaryBackground);
 
       .eventDetailsTitle {
         flex: 1;
@@ -4673,7 +4676,7 @@ body {
       flex-direction: column;
       gap: 1rem;
       padding: 1rem;
-      background-color: white;
+      background-color: var(--secondaryBackground);
       overflow-y: auto;
 
       .detailBlock {
@@ -4699,7 +4702,7 @@ body {
   }
 
   button {
-    background: var(--btn-bg);
+    background-color: var(--primaryBackground);
     border: none;
     border-radius: $borderRadius;
     padding: 11px 13px;
@@ -4707,9 +4710,14 @@ body {
     font-weight: 600;
     font-size: 0.9rem;
     margin-right: 1px;
-    box-shadow: 0px 0px 0px var(--box-shadow);
+
     cursor: pointer;
     max-height: 40px;
+    transition: all 0.4s;
+
+    &:hover {
+      color: var(--notification);
+    }
   }
 
   .dummyTemplateElement {
@@ -4721,6 +4729,7 @@ body {
     font-size: 1.2rem;
     margin: 2rem;
     text-align: center;
+    color: var(--lightText);
   }
 
   .hidden {
@@ -4757,267 +4766,10 @@ body {
 }
 
 :root {
-  --color-accent: #003061;
-  --background-color: #f8f7fa;
-  --foreground-color: #ffffff;
-  --text-color: #19181a;
-  --highlight-text-color: var(--text-color);
   --active-text-color: #f8f7fa;
-  --inactive-text-color: #a5a5a5;
-  --btn-bg: #f8f7fa;
-  --box-shadow: #efefef;
-
-  --border-width: 1px;
-  --border-radius: 15px;
-  --spacing: 18px;
+  --spacing: 10px;
 }
 
-
-////////WorkShifts
-.work_shifts_Panel {
-  display: none;
-  flex: 1;
-  color: var(--lightText);
-  flex-direction: column;
-  padding: 1rem;
-  height: calc(100vh);
-
-  .workShiftTitleBar {
-    h1 {
-      font-size: 18px;
-      color: var(--lightText);
-    }
-
-
-    padding: 1rem;
-    background: white;
-    box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.16);
-    border-radius: $borderRadius;
-  }
-
-  .workshiftMatrix {
-    flex: 1;
-    width: 100%;
-    overflow-y: auto;
-    background: white;
-    border-radius: $borderRadius;
-    margin-top: 1rem;
-    padding: 1rem;
-    box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.16);
-
-    .subTitleBar {
-      display: flex;
-      flex-wrap: wrap;
-      flex-direction: column;
-
-      .workshiftCommandBar {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-
-        .commandButton {
-          transition: .3s;
-          background: white;
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
-          border-radius: $borderRadius;
-          border: none;
-          cursor: pointer;
-
-          .active {
-            background-color: $notification;
-          }
-
-          &:hover {
-            background: var(--primaryBackground);
-          }
-        }
-      }
-
-      .navigateWeeks {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        position: relative;
-
-        .commandButton {
-          transition: .3s;
-          background: $notification;
-          color: var(--lightText);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
-          border-radius: $borderRadius;
-          border: none;
-          cursor: pointer;
-
-          i {
-            font-size: 18px;
-            padding: 0 .5rem;
-          }
-
-          display: flex;
-          align-items: center
-        }
-      }
-
-      .workshiftEditButtons {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-
-        .commandButton {
-          transition: .3s;
-          background: white;
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
-          border-radius: $borderRadius;
-          border: none;
-          cursor: pointer;
-
-          .active {
-            background-color: $notification;
-          }
-
-          &:hover {
-            background: var(--primaryBackground);
-          }
-        }
-      }
-
-      .workshiftKeyLegend {
-        width: 100%;
-        min-height: 40px;
-
-        .indicator {
-          width: 40px;
-          height: 40px;
-        }
-      }
-    }
-
-    .workshiftMatrixCanvas {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      -webkit-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-
-      overflow-x: auto;
-      padding: 1rem;
-      //width: 150px;
-
-      .slotNameRow {
-        display: flex;
-        align-items: center;
-        gap: 3px;
-
-        .slotNameCell {
-          width: 30px;
-          min-width: 30px;
-          //height: 30px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          border-left: 1px solid #cccfd1;
-          writing-mode: vertical-rl;
-          -webkit-text-orientation: mixed;
-          text-orientation: mixed;
-        }
-      }
-
-      .dayparts-cell-test {
-        transition: .3s;
-        background-color: var(--primaryBackground);
-        width: 30px;
-        min-width: 30px;
-        height: 30px;
-        margin: 0;
-        padding: 0;
-        //border: 1px solid #ededed;
-        cursor: pointer;
-
-        &.active-test {
-          background: #003061;
-        }
-
-        &.active-test-last {
-          border-top-right-radius: 15px;
-          border-bottom-right-radius: 15px;
-        }
-
-        &.active-test-first {
-          border-top-left-radius: 15px;
-          border-bottom-left-radius: 15px;
-        }
-      }
-
-      .day-test {
-        display: flex;
-        flex-direction: row;
-        gap: 3px;
-      }
-
-      .dayparts-cell-test:hover {
-        background-color: #b1d1f8;
-      }
-
-      .dayName-test {
-        // position: -webkit-sticky;
-        // position: sticky;
-        width: 6rem;
-        min-width: 6rem;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-      }
-    }
-
-    .moreOptionsOnShifts {
-      .workShiftsLegend {
-        padding: 1rem;
-
-        .my-legend {
-          border-radius: $borderRadius;
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.733);
-
-
-          .legend-title {
-            text-align: left;
-            margin-bottom: 5px;
-            font-weight: bold;
-
-          }
-
-          .legend-scale {
-            ul {
-              margin: 0;
-              margin-bottom: 5px;
-              padding: 0;
-              float: left;
-              list-style: none;
-
-              li {
-
-                list-style: none;
-                margin-left: 0;
-                line-height: 18px;
-                margin-bottom: 2px;
-
-                span {
-                  display: block;
-                  float: left;
-                  height: 16px;
-                  width: 30px;
-                  margin-right: 5px;
-                  margin-left: 0;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
 
 .halfRemMargin {
   margin: .5rem;
@@ -5375,10 +5127,11 @@ body {
   width: 100%;
   height: 100%;
   background-color: var(--primaryBackground);
+  color: var(--lightText);
 
   .left-responsibilities {
     width: 350px;
-    background-color: white;
+    background-color: var(--secondaryBackground);
     border-radius: $borderRadius;
     margin: 1rem 0rem 1rem 1rem;
     overflow: hidden;
@@ -5393,6 +5146,7 @@ body {
       width: 100%;
       font-size: 1.5rem;
       box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.451);
+      border-bottom: 1px solid var(--primaryBackground);
     }
 
     .responsibilitiesContainer {
@@ -5432,7 +5186,7 @@ body {
     margin: 1rem;
 
     border-radius: 15px;
-    background-color: white;
+    background-color: var(--secondaryBackground);
     display: flex;
     flex-direction: column;
 
@@ -5443,7 +5197,13 @@ body {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
+      padding: 3rem;
+      .adminWelcomeImage{
+        i{
+          font-size: 30rem;
+          color: var(--lightText);
+        }
+      }
     }
 
     .centralHeader {
@@ -5454,6 +5214,7 @@ body {
 
       justify-content: space-between;
       align-items: center;
+      border-bottom: 1px solid var(--primaryBackground);
 
       .companyInfoDiv {
         display: flex;
@@ -5510,6 +5271,7 @@ body {
           text-align: center;
           transition: all 0.4s;
           position: relative;
+          background: var(--primaryBackground);
 
           .valueDiv {
             font-size: 3rem;
@@ -5564,6 +5326,7 @@ body {
         flex-direction: column;
         overflow: hidden;
         min-height: 30rem;
+        background: var(--primaryBackground);
 
         .managementDivHeader {
           padding: 1rem;
@@ -5571,7 +5334,8 @@ body {
           align-items: center;
           flex-wrap: wrap;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
-
+          border-bottom: 1px solid var(--secondaryBackground);
+          background-color: var(--primaryBackground);
           .headerText {
             flex: 1;
             display: flex;
@@ -5593,13 +5357,20 @@ body {
             display: flex;
             align-items: center;
             gap: 0.5em;
+            
 
             input {
               padding: 1rem;
               border-radius: $borderRadius;
-              background-color: var(--primaryBackground);
+              background-color: var(--secondaryBackground);
               border: none;
               outline: none;
+              color: var(--lightText);
+            }
+            .universalCallButtons{
+              button{
+                background: var(--secondaryBackground) !important;
+              }
             }
           }
         }
@@ -5617,7 +5388,7 @@ body {
 
           //flex-direction: column;
           .listMember {
-            background-color: white;
+            background-color: var(--secondaryBackground);
             display: flex;
             padding: 1rem;
             gap: 1rem;
@@ -5629,7 +5400,7 @@ body {
           .adminContainer {
             display: flex;
             flex-direction: column;
-            background-color: white;
+            background-color: var(--secondaryBackground);
             border-radius: $borderRadius;
 
             .delegatedByDiv {
@@ -5660,7 +5431,7 @@ body {
           .positionDiv {
             display: flex;
             padding: 0.5rem;
-            background-color: white;
+            background-color: var(--secondaryBackground);
             border-radius: $borderRadius;
             align-items: center;
 
@@ -5751,20 +5522,22 @@ body {
       }
 
       .c-messages_panel {
-        padding-top: calc(30px + 2rem);
+        padding-top: calc(30px + 3rem);
         width: 100%;
+        min-width: 100%;
 
         // overflow: hidden;
         .c-chats {
           margin: 0;
           height: 100%;
-          max-width: 100%;
-          width: 100%;
+          min-width: 100%;
+
         }
 
         .c-openchat {
           margin: 0;
           height: 100%;
+          width: 100%;
         }
       }
     }
@@ -5793,7 +5566,7 @@ body {
 
   // calls panel
   .c-call_log_panel {
-    padding-top: calc(30px + 2rem);
+    padding-top: calc(30px + 3rem);
     width: 100%;
 
     .callSearchSection {
@@ -5827,7 +5600,7 @@ body {
   }
 
   .c-ongoing_call_panel {
-    padding-top: calc(30px + 2rem);
+    padding-top: calc(30px + 3rem);
     width: 100%;
 
     .leftPart {
@@ -5856,7 +5629,7 @@ body {
   }
 
   .c-time-scheduling_panel {
-    padding-top: calc(30px + 2rem);
+    padding-top: calc(30px + 3rem);
     width: 100%;
 
     .selectionPanel {
@@ -5879,12 +5652,13 @@ body {
       height: 100%;
       margin: 0;
       max-width: 100%;
-      width: 100%;
+      width: 100% !important;
+      max-height: calc(100% - 30px - 3rem);
     }
   }
 
   .c-time-admin_panel {
-    padding-top: calc(30px + 2rem);
+    padding-top: calc(30px + 3rem);
     width: 100%;
 
     .left-responsibilities {
@@ -6002,7 +5776,7 @@ body {
           display: flex;
           flex: 0 0 0;
           flex-direction: column;
-          border-radius: 0 0 0 $borderRadius;
+          // border-radius: 0 0 0 $borderRadius;
           overflow-y: auto;
 
           transition: all 0.4s;

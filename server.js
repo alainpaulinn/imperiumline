@@ -542,7 +542,7 @@ io.on('connection', (socket) => {
     // search to add new users to call
     socket.on('searchPeopleToInviteToCall', async (callSearchData) => {
       let access = await checkCallAccess(id, callSearchData.callUniqueId)
-      if (access != true) { return console.log('User :', id, ' cannot search to add a person to call because he has no access to this call :', identifications.callUniqueId) }
+      if (access != true) { return console.log('User :', id, ' cannot search to add a person to call because he has no access to this call :', callSearchData.callUniqueId) }
       let { callUniqueId, searchText } = callSearchData
       console.log('callSearchData', callSearchData)
       db.query("SELECT `id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchText + '%', '%' + searchText + '%', '%' + searchText + '%'], async (err, userSearchResult) => {
@@ -557,6 +557,7 @@ io.on('connection', (socket) => {
         socket.emit('searchPeopleToInviteToCall', foundUsers)
       })
     })
+
     socket.on('addUserToCall', async identifications => {
       let access = await checkCallAccess(id, identifications.callUniqueId)
       if (access != true) { return console.log('User :', id, ' cannot add user :', identifications.userID, ' to call because he has no access to this call :', identifications.callUniqueId) }

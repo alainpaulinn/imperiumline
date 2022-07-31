@@ -74,6 +74,7 @@ body {
   height: 100%;
   width: 100%;
   min-width: 0;
+  background-color: var(--focusAreaBackgroundColor);
 }
 
 .controls {
@@ -102,7 +103,7 @@ body {
   align-items: center;
   background-color: var(--focusAreaBackgroundColor);
   border-radius: 15px 15px 0 0;
-  border-bottom: 1px solid rgb(150, 162, 177);
+  border-bottom: 1px solid var(--secondaryBackground);
 }
 .c-sidepanel__app-header h1 {
   font-size: 30px;
@@ -375,7 +376,6 @@ body {
   display: flex;
   flex: 0 0 0;
   flex-direction: column;
-  border-radius: 0 0 0 15px;
   overflow-y: auto;
   transition: all 0.4s;
   justify-content: space-between;
@@ -500,6 +500,7 @@ body {
   height: 300px;
   background: var(--secondaryBackground);
   overflow-y: scroll;
+  color: var(--lightText);
 }
 .searchResults .resultItem {
   background-color: transparent;
@@ -587,7 +588,6 @@ body {
   margin: 1rem 0rem 1rem 1rem;
   border-radius: 15px;
   overflow: hidden;
-  border-right: 1px solid #f1f4f6;
   background: var(--secondaryBackground);
   width: 350px;
   display: flex;
@@ -610,7 +610,7 @@ body {
   width: 100%;
   position: relative;
   top: 0;
-  background-color: rgb(255, 255, 255);
+  background-color: var(--secondaryBackground);
   z-index: 1;
   padding: 1rem;
 }
@@ -618,11 +618,22 @@ body {
   position: relative;
   display: inline-block;
 }
-.c-chats__header .chatSearch {
-  transition: all 0.4s;
-}
+.c-chats__header .chatSearch,
 .c-chats__header .newChatTitle {
   transition: all 0.4s;
+  color: var(--lightText);
+  background-color: var(--primaryBackground);
+}
+.c-chats__header .chatSearch input,
+.c-chats__header .newChatTitle input {
+  background-color: var(--primaryBackground);
+  outline: none;
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  font-size: 13px;
+  border-radius: 15px;
+  border: 1px solid var(--lightText);
+  color: var(--lightText);
 }
 .c-chats__header .newChat {
   background-color: rgb(0, 48, 97);
@@ -645,14 +656,6 @@ body {
 .c-chats__header button i {
   transition: all 0.8s ease-in-out;
   font-size: 20px;
-}
-.c-chats__header input {
-  width: 100%;
-  padding: 10px 10px 10px 40px;
-  font-size: 13px;
-  border-radius: 15px;
-  border: 1px solid #f1f4f6;
-  color: var(--lightText);
 }
 .c-chats__header label {
   position: absolute;
@@ -678,7 +681,7 @@ body {
   border-bottom: 1px solid var(--primaryBackground);
 }
 .c-chats__list:hover {
-  background-color: rgb(247, 247, 247);
+  background-color: var(--primaryBackground);
 }
 .c-chats__link {
   text-decoration: none;
@@ -775,7 +778,7 @@ body {
 }
 
 .openedChat {
-  background-color: #eee;
+  background-color: var(--focusAreaBackgroundColor);
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
 }
 
@@ -863,7 +866,7 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background: var(--secondaryBackground);
   border-radius: 15px;
   overflow: hidden;
 }
@@ -874,14 +877,16 @@ body {
   gap: 0.5rem;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 3px 3px 10px -2px rgba(204, 197, 197, 0.5);
-  background-color: white;
+  box-shadow: 3px 3px 10px -2px rgba(0, 0, 0, 0.5);
+  background-color: var(--secondaryBackground);
+  color: var(--lightText);
 }
 .c-openchat__box .listMember .c-chat-title {
   display: flex;
   flex-direction: row;
   align-items: center;
   min-width: 0;
+  flex: 1;
 }
 .c-openchat__box .listMember button {
   width: 40px;
@@ -897,8 +902,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 3px 3px 10px -2px rgba(204, 197, 197, 0.5);
-  background-color: white;
+  box-shadow: 3px 3px 10px -2px rgba(0, 0, 0, 0.5);
+  background-color: var(--secondaryBackground);
   gap: 0.5rem;
 }
 .c-openchat__box__header .c-chat-title {
@@ -906,6 +911,7 @@ body {
   flex-direction: row;
   align-items: center;
   min-width: 0;
+  flex: 1;
 }
 .c-openchat__box__status {
   width: 10px;
@@ -939,6 +945,7 @@ body {
 }
 
 .c-openchat__box__info {
+  background: var(--tertiaryBackground);
   max-width: 100%;
   overflow-y: auto;
   overflow-x: Hidden;
@@ -966,7 +973,7 @@ body {
 .message-separator span {
   border-radius: 15px;
   color: var(--lightText);
-  background: rgb(250, 250, 250);
+  background-color: var(--primaryBackground);
   padding: 0 10px;
   box-shadow: 0px 0px 17px -7px rgba 0, 0, 0, 0.5;
 }
@@ -1016,14 +1023,14 @@ body {
   align-items: center;
 }
 .message-received .time_reactions_options {
-  color: rgb(0, 48, 97);
+  color: var(--lightText);
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
   white-space: nowrap;
   transition: all 0.4s ease-in-out;
-  border: 1px solid #eee;
-  background-color: #fff;
+  border: 1px solid var(--tertiaryBackground);
+  background-color: var(--focusAreaBackgroundColor);
   border-radius: 50px;
   padding: 0.5rem;
   margin-left: 0.5rem;
@@ -1091,7 +1098,7 @@ body {
   opacity: 1;
 }
 .message-received .time_reactions_options .messageOptions {
-  color: rgb(0, 48, 97);
+  color: var(--lightText);
   display: flex;
 }
 .message-received .time_reactions_options .messageOptions button {
@@ -1099,13 +1106,14 @@ body {
   border-radius: 50px;
   width: 20px;
   height: 20px;
+  color: var(--lightText);
   cursor: pointer;
   outline: none;
-  border: rgb(97, 100, 102);
-  background-color: #eee;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--tertiaryBackground);
+  border: 1px solid var(--secondaryBackground);
 }
 .message-received:hover .time_reactionChoice {
   width: -moz-fit-content;
@@ -1172,14 +1180,14 @@ body {
   align-items: center;
 }
 .message-sent .time_reactions_options {
-  color: rgb(0, 48, 97);
+  color: var(--lightText);
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
   white-space: nowrap;
   transition: all 0.4s ease-in-out;
-  border: 1px solid #eee;
-  background-color: #fff;
+  border: 1px solid var(--tertiaryBackground);
+  background-color: var(--focusAreaBackgroundColor);
   border-radius: 50px;
   padding: 0.5rem;
   margin-right: 0.5rem;
@@ -1245,7 +1253,7 @@ body {
   opacity: 1;
 }
 .message-sent .time_reactions_options .messageOptions {
-  color: rgb(0, 48, 97);
+  color: var(--lightText);
   display: flex;
 }
 .message-sent .time_reactions_options .messageOptions button {
@@ -1255,11 +1263,12 @@ body {
   height: 20px;
   cursor: pointer;
   outline: none;
-  border: rgb(97, 100, 102);
-  background-color: #eee;
+  background-color: var(--tertiaryBackground);
+  border: 1px solid var(--secondaryBackground);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--lightText);
 }
 .message-sent:hover .time_reactionChoice {
   width: -moz-fit-content;
@@ -1285,7 +1294,7 @@ body {
   border-radius: 15px;
   min-height: 20px;
   padding: 10px;
-  color: rgb(0, 48, 97);
+  color: var(--lightText);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
   cursor: pointer;
   text-decoration: none;
@@ -1335,8 +1344,8 @@ body {
   max-width: 100%;
   align-items: center;
   padding: 0.8rem;
-  background-color: white;
-  box-shadow: 3px -3px 10px -2px rgba(204, 197, 197, 0.5);
+  background: var(--secondaryBackground);
+  box-shadow: 3px -3px 10px -2px rgba(0, 0, 0, 0.5);
 }
 .typingBox .chat-options {
   text-decoration: none;
@@ -1373,6 +1382,8 @@ body {
   margin: 1rem;
   display: flex;
   flex-wrap: wrap;
+  max-height: 15rem;
+  overflow-y: auto;
 }
 .w-input-container .taggedMessageInTying div {
   display: flex;
@@ -1706,6 +1717,7 @@ body {
   display: flex;
   flex: 1;
   background-color: var(--primaryBackground);
+  max-width: calc(100% - 45px - 3rem);
 }
 
 .c-call_log_panel {
@@ -1717,7 +1729,7 @@ body {
 .c-call_log_panel .callSearchSection {
   flex-basis: 30%;
   height: calc(100vh - 2rem);
-  background-color: white;
+  background-color: var(--secondaryBackground);
   border-radius: 15px;
   margin: 1rem 0rem 1rem 1rem;
   overflow: hidden;
@@ -1729,10 +1741,10 @@ body {
   flex-direction: column;
   overflow-y: auto;
   padding: 1rem;
-  background-color: white;
+  background-color: var(--secondaryBackground);
 }
 .c-call_log_panel .callSearchSection .searchResultsDiv .listMember {
-  background-color: white;
+  background-color: var(--secondaryBackground);
   display: flex;
   gap: 1rem;
   padding: 0.5rem;
@@ -1749,7 +1761,7 @@ body {
   justify-content: center;
   align-items: center;
   color: var(--lightText);
-  background-color: rgb(235, 240, 246);
+  background-color: rgb(0, 48, 97);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
   flex-shrink: 0;
@@ -1761,17 +1773,20 @@ body {
   flex-direction: column;
   flex: 1;
   overflow: hidden;
+  color: var(--lightText);
 }
 .c-call_log_panel .callSearchSection .searchResultsDiv .listMember .memberNameRole .memberName {
   font-weight: bolder;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--lightText);
 }
 .c-call_log_panel .callSearchSection .searchResultsDiv .listMember .memberNameRole .memberRole {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--lightText);
 }
 .c-call_log_panel .callSearchSection .searchResultsDiv .listMember button {
   color: var(--lightText);
@@ -1800,9 +1815,10 @@ body {
   display: flex;
   flex-direction: column;
   flex-basis: 40%;
-  background-color: white;
+  background-color: var(--secondaryBackground);
   margin: 1rem;
   border-radius: 15px;
+  overflow: hidden;
 }
 .c-call_log_panel .callHistoryPage .header {
   border-bottom: 1px solid var(--primaryBackground);
@@ -1810,7 +1826,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 3px 3px 10px -2px rgba(204, 197, 197, 0.5);
+  box-shadow: 3px 3px 10px -2px rgba(0, 0, 0, 0.5);
 }
 .c-call_log_panel .callHistoryPage .header h1 {
   font-size: 2rem;
@@ -1850,7 +1866,7 @@ body {
   flex-direction: column;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
   border-radius: 15px;
-  background-color: #fff;
+  background-color: var(--primaryBackground);
   margin-bottom: 1rem;
   padding: 1rem;
   transition: all 0.4s;
@@ -1965,15 +1981,15 @@ body {
   color: var(--lightText);
   border: none;
   outline: none;
-  background-color: var(--primaryBackground);
+  background-color: var(--secondaryBackground);
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button i {
   font-size: 18px;
   transition: all 0.4s;
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button:hover {
-  color: var(--lightText);
   transition: all 0.4s;
+  color: rgb(0, 48, 97);
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .picture {
   background-color: light(rgb(0, 48, 97));
@@ -2005,7 +2021,7 @@ body {
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background-color: var(--secondaryBackground);
   border-radius: 15px;
 }
 .c-call_log_panel .callDetails-section .section-header {
@@ -2163,6 +2179,7 @@ body {
   border-radius: 15px;
   margin: 1rem 0rem 1rem 1rem;
   overflow: hidden;
+  background-color: var(--secondaryBackground);
   display: flex;
   flex-direction: column;
 }
@@ -2177,6 +2194,7 @@ body {
   gap: 0.5rem;
   width: 100%;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
+  color: var(--lightText);
 }
 .c-ongoing_call_panel .leftPart .attendanceTitleSection .leftHeaderItem {
   padding: 1rem;
@@ -2202,14 +2220,16 @@ body {
   min-height: 0;
   overflow-y: auto;
   padding: 1rem;
+  color: var(--lightText);
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember {
-  background-color: white;
+  background-color: var(--secondaryBackground);
   display: flex;
   padding: 1rem;
   gap: 1rem;
   align-items: center;
   height: 100%;
+  color: var(--lightText);
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberProfilePicture {
   border: 1px solid rgb(0, 48, 97);
@@ -2268,16 +2288,17 @@ body {
   margin-left: 0.5rem;
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember button:hover {
-  background-color: rgb(150, 162, 177);
+  color: rgb(0, 48, 97);
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   padding: 1rem;
+  color: var(--lightText);
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember {
-  background-color: white;
+  background-color: var(--secondaryBackground);
   display: flex;
   padding: 1rem;
   gap: 1rem;
@@ -2340,7 +2361,7 @@ body {
   margin-left: 0.5rem;
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember button:hover {
-  background-color: rgb(150, 162, 177);
+  color: rgb(0, 48, 97);
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .hiddenDiv {
   display: none;
@@ -2353,9 +2374,10 @@ body {
   margin: 1rem;
   padding: 1rem;
   border-radius: 15px;
-  background-color: white;
+  background-color: var(--secondaryBackground);
   display: flex;
   flex-direction: column;
+  color: var(--lightText);
 }
 .c-ongoing_call_panel .call-container .callScreenHeader {
   display: flex;
@@ -2412,11 +2434,12 @@ body {
   background-color: rgb(150, 162, 177);
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown {
+  color: var(--lightText);
   width: 350px;
   max-height: 350px;
   padding: 1rem;
   position: absolute;
-  background-color: white;
+  background-color: var(--focusAreaBackgroundColor);
   border-radius: 15px;
   top: calc(100% + 0rem);
   right: 0;
@@ -2435,7 +2458,7 @@ body {
   width: 10px;
   height: 10px;
   transform: rotate(45deg);
-  background-color: white;
+  background-color: var(--focusAreaBackgroundColor);
   top: -0.4rem;
   right: 1.5rem;
 }
@@ -2452,7 +2475,7 @@ body {
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .searchField input {
   border-radius: 15px;
   outline: none;
-  background: white;
+  background-color: var(--secondaryBackground);
   border: none;
   flex: 1;
   color: var(--lightText);
@@ -2461,6 +2484,7 @@ body {
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .searchField button {
   background: var(--primaryBackground);
+  color: var(--lightText);
   border-radius: 15px;
   outline: none;
   border: none;
@@ -2481,7 +2505,7 @@ body {
   flex: 1;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember {
-  background-color: white;
+  background-color: var(--secondaryBackground);
   display: flex;
   padding: 1rem;
   gap: 1rem;
@@ -2546,7 +2570,7 @@ body {
   margin-left: 0.5rem;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember button:hover {
-  background-color: rgb(150, 162, 177);
+  color: rgb(0, 48, 97);
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv {
   border-radius: 15px;
@@ -2780,6 +2804,7 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  background-color: var(--secondaryBackground);
 }
 .c-ongoing_call_panel .rightPart .rightPartheaderVideoMessaging {
   padding: 1rem;
@@ -2787,6 +2812,7 @@ body {
   width: 100%;
   gap: 0.5rem;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.453);
+  color: var(--lightText);
 }
 .c-ongoing_call_panel .rightPart .rightPartheaderVideoMessaging .rightHeaderItem {
   padding: 1rem;
@@ -2931,7 +2957,7 @@ body {
   display: none;
 }
 .listMember {
-  background-color: white;
+  background-color: var(--secondaryBackground);
   display: flex;
   padding: 1rem;
   gap: 1rem;
@@ -2973,7 +2999,7 @@ body {
   margin-left: 0.5rem;
 }
 .listMember button:hover {
-  background-color: rgb(150, 162, 177);
+  color: rgb(0, 48, 97);
 }
 
 .mobileButton {
@@ -3349,12 +3375,13 @@ body {
   border-radius: 15px;
 }
 .videoCoverDiv .calleesDiv .listMember {
-  background-color: white;
+  background-color: var(--secondaryBackground);
   display: flex;
   padding: 1rem;
   gap: 1rem;
   align-items: center;
   border-radius: 15px;
+  color: var(--lightText);
 }
 .videoCoverDiv .calleesDiv .listMember .memberProfilePicture {
   border: 1px solid rgb(0, 48, 97);
@@ -3413,7 +3440,7 @@ body {
   margin-left: 0.5rem;
 }
 .videoCoverDiv .calleesDiv .listMember button:hover {
-  background-color: rgb(150, 162, 177);
+  color: rgb(0, 48, 97);
 }
 .videoCoverDiv .waitingCallControls {
   margin-top: auto;
@@ -3543,10 +3570,11 @@ body {
   border-radius: 15px;
   overflow: hidden;
   height: calc(100vh - 2rem);
+  color: var(--lightText);
 }
 .schedule-container .selectionPanel .card {
   width: 100%;
-  background-color: var(--foreground-color);
+  background-color: var(--secondaryBackground);
   border-radius: 15px;
 }
 .schedule-container .selectionPanel .card .calendar {
@@ -3570,7 +3598,7 @@ body {
   font-size: 1.2rem;
 }
 .schedule-container .selectionPanel .card .calendar-toolbar button {
-  background: var(--btn-bg);
+  background: var(--primaryBackground);
   border: none;
   border-radius: 15px;
   padding: 11px 13px;
@@ -3578,8 +3606,10 @@ body {
   font-weight: 600;
   font-size: 0.9rem;
   margin-right: 1px;
-  box-shadow: 0px 0px 0px var(--box-shadow);
   cursor: pointer;
+}
+.schedule-container .selectionPanel .card .calendar-toolbar button:hover {
+  color: var(--notification);
 }
 .schedule-container .selectionPanel .card .weekdays,
 .schedule-container .selectionPanel .card .calendar-days {
@@ -3626,40 +3656,43 @@ body {
   font-size: 1rem;
 }
 .schedule-container .selectionPanel .card .current-day {
-  background-color: var(--color-accent);
-  color: var(--active-text-color);
+  background-color: var(--notification);
+  color: var(--lightText);
   border-radius: 15px;
   font-weight: 700;
   transition: 0.5s;
   cursor: pointer;
 }
 .schedule-container .selectionPanel .card .padding-day {
-  color: var(--inactive-text-color);
+  color: #636363;
   -webkit-user-select: none;
   -ms-user-select: none;
   -moz-user-select: none;
        user-select: none;
 }
+.schedule-container .selectionPanel .card .selected-day {
+  border: 1px solid var(--lightText);
+  border-radius: 15px;
+}
 .schedule-container .selectionPanel .card .calendar-toolbar > [class$=month-btn]:hover,
 .schedule-container .selectionPanel .card .month-day:hover,
 .schedule-container .selectionPanel .card .btn:hover {
   border-radius: 15px;
-  background-color: var(--btn-bg);
-  color: var(--color-accent);
+  background-color: var(--primaryBackground);
+  color: var(--notification);
   border-radius: 15px;
   transition: 0.1s;
   cursor: pointer;
-  box-shadow: inset 0px 0px 0px 1.5px var(--color-accent);
+  box-shadow: inset 0px 0px 0px 1.5px var(--notification);
 }
 .schedule-container .selectionPanel .card .calendar-toolbar > [class$=month-btn]:focus,
 .schedule-container .selectionPanel .card .month-day:focus,
 .schedule-container .selectionPanel .card .btn:focus {
   border-radius: 15px;
-  background-color: var(--color-accent);
-  color: var(--active-text-color);
+  background-color: var(--notification);
+  color: var(--lightText);
 }
 .schedule-container .selectionPanel .card .goto-buttons {
-  border-top: var(--border-width) solid var(--box-shadow);
   padding: 1rem;
   display: flex;
   justify-content: space-between;
@@ -3673,7 +3706,7 @@ body {
   flex: 1;
 }
 .schedule-container .selectionPanel .card .goto-option button {
-  background: var(--btn-bg);
+  background: var(--primaryBackground);
   border: none;
   border-radius: 15px;
   padding: 11px 13px;
@@ -3681,8 +3714,10 @@ body {
   font-weight: 600;
   font-size: 0.9rem;
   margin-right: 1px;
-  box-shadow: 0px 0px 0px var(--box-shadow);
   cursor: pointer;
+}
+.schedule-container .selectionPanel .card .goto-option button:hover {
+  color: var(--notification);
 }
 .schedule-container .selectionPanel .pannedItems {
   display: flex;
@@ -3715,6 +3750,8 @@ body {
   width: 100%;
   gap: 0.5rem;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  border-bottom: 1px solid var(--primaryBackground);
+  color: var(--lightText);
 }
 .schedule-container .mainScheduleList .listHeader .mainScheduleListTitle {
   font-size: 1.2rem;
@@ -3746,15 +3783,8 @@ body {
 }
 .schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .hourDiv {
   font-size: 1.5rem;
-  flex-basis: 15%;
-}
-.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .hourDiv:before {
-  content: "";
-  display: block;
-  width: 3px;
-  background-image: radial-gradient(black 1.5px, rgba(0, 0, 0, 0) 1.5px);
-  background-position: 9.5px 9.5px;
-  background-size: 16px 16px;
+  flex-basis: 10%;
+  color: var(--lightText);
 }
 .schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .sheduleContentDiv {
   background-color: var(--primaryBackground);
@@ -3765,6 +3795,7 @@ body {
   padding: 1rem;
   border-radius: 15px;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  color: var(--lightText);
 }
 .schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .sheduleContentDiv .eventTopSection {
   display: flex;
@@ -3783,6 +3814,9 @@ body {
   font-size: 1.4rem;
   font-weight: bold;
 }
+.schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .sheduleContentDiv .eventTopSection button {
+  background: var(--secondaryBackground);
+}
 .schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .sheduleContentDiv .listMember {
   border-radius: 15px;
 }
@@ -3797,9 +3831,10 @@ body {
   margin: 1rem 1rem 1rem 0rem;
   display: flex;
   flex-direction: column;
+  color: var(--lightText);
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background-color: var(--secondaryBackground);
   border-radius: 15px;
   overflow: hidden;
 }
@@ -3809,6 +3844,7 @@ body {
   gap: 0.5rem;
   padding: 1rem;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  border-bottom: 1px solid var(--primaryBackground);
 }
 .schedule-container .scheduleDetailsSection .eventDetailsTopSection .eventDetailsTitle {
   flex: 1;
@@ -3819,7 +3855,7 @@ body {
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
-  background-color: white;
+  background-color: var(--secondaryBackground);
   overflow-y: auto;
 }
 .schedule-container .scheduleDetailsSection .eventDetailsContentDiv .detailBlock {
@@ -3839,7 +3875,7 @@ body {
   gap: 0.5rem;
 }
 .schedule-container button {
-  background: var(--btn-bg);
+  background-color: var(--primaryBackground);
   border: none;
   border-radius: 15px;
   padding: 11px 13px;
@@ -3847,9 +3883,12 @@ body {
   font-weight: 600;
   font-size: 0.9rem;
   margin-right: 1px;
-  box-shadow: 0px 0px 0px var(--box-shadow);
   cursor: pointer;
   max-height: 40px;
+  transition: all 0.4s;
+}
+.schedule-container button:hover {
+  color: var(--notification);
 }
 .schedule-container .dummyTemplateElement {
   display: flex;
@@ -3860,6 +3899,7 @@ body {
   font-size: 1.2rem;
   margin: 2rem;
   text-align: center;
+  color: var(--lightText);
 }
 .schedule-container .hidden {
   display: none;
@@ -3886,215 +3926,8 @@ body {
 }
 
 :root {
-  --color-accent: #003061;
-  --background-color: #f8f7fa;
-  --foreground-color: #ffffff;
-  --text-color: #19181a;
-  --highlight-text-color: var(--text-color);
   --active-text-color: #f8f7fa;
-  --inactive-text-color: #a5a5a5;
-  --btn-bg: #f8f7fa;
-  --box-shadow: #efefef;
-  --border-width: 1px;
-  --border-radius: 15px;
-  --spacing: 18px;
-}
-
-.work_shifts_Panel {
-  display: none;
-  flex: 1;
-  color: var(--lightText);
-  flex-direction: column;
-  padding: 1rem;
-  height: 100vh;
-}
-.work_shifts_Panel .workShiftTitleBar {
-  padding: 1rem;
-  background: white;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.16);
-  border-radius: 15px;
-}
-.work_shifts_Panel .workShiftTitleBar h1 {
-  font-size: 18px;
-  color: var(--lightText);
-}
-.work_shifts_Panel .workshiftMatrix {
-  flex: 1;
-  width: 100%;
-  overflow-y: auto;
-  background: white;
-  border-radius: 15px;
-  margin-top: 1rem;
-  padding: 1rem;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.16);
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftCommandBar {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftCommandBar .commandButton {
-  transition: 0.3s;
-  background: white;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
-  border-radius: 15px;
-  border: none;
-  cursor: pointer;
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftCommandBar .commandButton .active {
-  background-color: rgb(0, 48, 97);
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftCommandBar .commandButton:hover {
-  background: var(--primaryBackground);
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .navigateWeeks {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  position: relative;
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .navigateWeeks .commandButton {
-  transition: 0.3s;
-  background: rgb(0, 48, 97);
-  color: var(--lightText);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
-  border-radius: 15px;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .navigateWeeks .commandButton i {
-  font-size: 18px;
-  padding: 0 0.5rem;
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftEditButtons {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftEditButtons .commandButton {
-  transition: 0.3s;
-  background: white;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
-  border-radius: 15px;
-  border: none;
-  cursor: pointer;
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftEditButtons .commandButton .active {
-  background-color: rgb(0, 48, 97);
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftEditButtons .commandButton:hover {
-  background: var(--primaryBackground);
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftKeyLegend {
-  width: 100%;
-  min-height: 40px;
-}
-.work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftKeyLegend .indicator {
-  width: 40px;
-  height: 40px;
-}
-.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-       user-select: none;
-  overflow-x: auto;
-  padding: 1rem;
-}
-.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .slotNameRow {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .slotNameRow .slotNameCell {
-  width: 30px;
-  min-width: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-left: 1px solid #cccfd1;
-  -ms-writing-mode: tb-rl;
-      writing-mode: vertical-rl;
-  text-orientation: mixed;
-}
-.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayparts-cell-test {
-  transition: 0.3s;
-  background-color: var(--primaryBackground);
-  width: 30px;
-  min-width: 30px;
-  height: 30px;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-}
-.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayparts-cell-test.active-test {
-  background: #003061;
-}
-.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayparts-cell-test.active-test-last {
-  border-top-right-radius: 15px;
-  border-bottom-right-radius: 15px;
-}
-.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayparts-cell-test.active-test-first {
-  border-top-left-radius: 15px;
-  border-bottom-left-radius: 15px;
-}
-.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .day-test {
-  display: flex;
-  flex-direction: row;
-  gap: 3px;
-}
-.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayparts-cell-test:hover {
-  background-color: #b1d1f8;
-}
-.work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayName-test {
-  width: 6rem;
-  min-width: 6rem;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-.work_shifts_Panel .workshiftMatrix .moreOptionsOnShifts .workShiftsLegend {
-  padding: 1rem;
-}
-.work_shifts_Panel .workshiftMatrix .moreOptionsOnShifts .workShiftsLegend .my-legend {
-  border-radius: 15px;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.733);
-}
-.work_shifts_Panel .workshiftMatrix .moreOptionsOnShifts .workShiftsLegend .my-legend .legend-title {
-  text-align: left;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-.work_shifts_Panel .workshiftMatrix .moreOptionsOnShifts .workShiftsLegend .my-legend .legend-scale ul {
-  margin: 0;
-  margin-bottom: 5px;
-  padding: 0;
-  float: left;
-  list-style: none;
-}
-.work_shifts_Panel .workshiftMatrix .moreOptionsOnShifts .workShiftsLegend .my-legend .legend-scale ul li {
-  list-style: none;
-  margin-left: 0;
-  line-height: 18px;
-  margin-bottom: 2px;
-}
-.work_shifts_Panel .workshiftMatrix .moreOptionsOnShifts .workShiftsLegend .my-legend .legend-scale ul li span {
-  display: block;
-  float: left;
-  height: 16px;
-  width: 30px;
-  margin-right: 5px;
-  margin-left: 0;
+  --spacing: 10px;
 }
 
 .halfRemMargin {
@@ -4403,10 +4236,11 @@ body {
   width: 100%;
   height: 100%;
   background-color: var(--primaryBackground);
+  color: var(--lightText);
 }
 .c-time-admin_panel .left-responsibilities {
   width: 350px;
-  background-color: white;
+  background-color: var(--secondaryBackground);
   border-radius: 15px;
   margin: 1rem 0rem 1rem 1rem;
   overflow: hidden;
@@ -4421,6 +4255,7 @@ body {
   width: 100%;
   font-size: 1.5rem;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.451);
+  border-bottom: 1px solid var(--primaryBackground);
 }
 .c-time-admin_panel .left-responsibilities .responsibilitiesContainer {
   padding: 1rem;
@@ -4451,7 +4286,7 @@ body {
   gap: 1rem;
   margin: 1rem;
   border-radius: 15px;
-  background-color: white;
+  background-color: var(--secondaryBackground);
   display: flex;
   flex-direction: column;
 }
@@ -4462,7 +4297,11 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 3rem;
+}
+.c-time-admin_panel .central-Options .adminWelcomeDiv .adminWelcomeImage i {
+  font-size: 30rem;
+  color: var(--lightText);
 }
 .c-time-admin_panel .central-Options .centralHeader {
   display: flex;
@@ -4471,6 +4310,7 @@ body {
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.451);
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid var(--primaryBackground);
 }
 .c-time-admin_panel .central-Options .centralHeader .companyInfoDiv {
   display: flex;
@@ -4523,6 +4363,7 @@ body {
   text-align: center;
   transition: all 0.4s;
   position: relative;
+  background: var(--primaryBackground);
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .numbersDiv .numberOption .valueDiv {
   font-size: 3rem;
@@ -4563,6 +4404,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   min-height: 30rem;
+  background: var(--primaryBackground);
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivHeader {
   padding: 1rem;
@@ -4570,6 +4412,8 @@ body {
   align-items: center;
   flex-wrap: wrap;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
+  border-bottom: 1px solid var(--secondaryBackground);
+  background-color: var(--primaryBackground);
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivHeader .headerText {
   flex: 1;
@@ -4592,9 +4436,13 @@ body {
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivHeader .actionPart input {
   padding: 1rem;
   border-radius: 15px;
-  background-color: var(--primaryBackground);
+  background-color: var(--secondaryBackground);
   border: none;
   outline: none;
+  color: var(--lightText);
+}
+.c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivHeader .actionPart .universalCallButtons button {
+  background: var(--secondaryBackground) !important;
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody {
   flex: 1;
@@ -4606,7 +4454,7 @@ body {
   overflow-y: auto;
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .listMember {
-  background-color: white;
+  background-color: var(--secondaryBackground);
   display: flex;
   padding: 1rem;
   gap: 1rem;
@@ -4616,7 +4464,7 @@ body {
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer {
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background-color: var(--secondaryBackground);
   border-radius: 15px;
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer .delegatedByDiv {
@@ -4642,7 +4490,7 @@ body {
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .positionDiv {
   display: flex;
   padding: 0.5rem;
-  background-color: white;
+  background-color: var(--secondaryBackground);
   border-radius: 15px;
   align-items: center;
 }
@@ -4718,18 +4566,19 @@ body {
     border: none;
   }
   .c-app .c-application .c-messages_panel {
-    padding-top: calc(30px + 2rem);
+    padding-top: calc(30px + 3rem);
     width: 100%;
+    min-width: 100%;
   }
   .c-app .c-application .c-messages_panel .c-chats {
     margin: 0;
     height: 100%;
-    max-width: 100%;
-    width: 100%;
+    min-width: 100%;
   }
   .c-app .c-application .c-messages_panel .c-openchat {
     margin: 0;
     height: 100%;
+    width: 100%;
   }
   .c-openchat__box__info {
     margin-bottom: 61.2px;
@@ -4747,7 +4596,7 @@ body {
     max-width: 100%;
   }
   .c-call_log_panel {
-    padding-top: calc(30px + 2rem);
+    padding-top: calc(30px + 3rem);
     width: 100%;
   }
   .c-call_log_panel .callSearchSection {
@@ -4775,7 +4624,7 @@ body {
     width: 100%;
   }
   .c-ongoing_call_panel {
-    padding-top: calc(30px + 2rem);
+    padding-top: calc(30px + 3rem);
     width: 100%;
   }
   .c-ongoing_call_panel .leftPart {
@@ -4800,7 +4649,7 @@ body {
     width: 100%;
   }
   .c-time-scheduling_panel {
-    padding-top: calc(30px + 2rem);
+    padding-top: calc(30px + 3rem);
     width: 100%;
   }
   .c-time-scheduling_panel .selectionPanel {
@@ -4819,10 +4668,11 @@ body {
     height: 100%;
     margin: 0;
     max-width: 100%;
-    width: 100%;
+    width: 100% !important;
+    max-height: calc(100% - 30px - 3rem);
   }
   .c-time-admin_panel {
-    padding-top: calc(30px + 2rem);
+    padding-top: calc(30px + 3rem);
     width: 100%;
   }
   .c-time-admin_panel .left-responsibilities {
@@ -4910,7 +4760,6 @@ body {
     display: flex;
     flex: 0 0 0;
     flex-direction: column;
-    border-radius: 0 0 0 15px;
     overflow-y: auto;
     transition: all 0.4s;
     justify-content: space-between;
