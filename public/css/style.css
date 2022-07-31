@@ -1,4 +1,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+.dark {
+  --focusAreaBackgroundColor: rgb(24, 27, 31);
+  --primaryBackground: rgb(12, 18, 26);
+  --darkenSidepanel: rgb(150, 162, 177);
+  --lightenSidepanel: rgb(239, 242, 245);
+  --lightText: rgb(205, 210, 214);
+  --lightText-grey: rgb(205, 210, 214);
+  --darkText: rgb(0, 0, 0);
+  --primaryBackground: rgb(12, 18, 26);
+  --secondaryBackground: rgb(6, 9, 14);
+  --tertiaryBackground: rgb(0, 0, 0);
+  --notification: rgb(0, 48, 97);
+  --c-chats: rgb(255, 255, 255);
+  --warning-bg: rgb(255, 212, 212);
+  --borderRadius: 15px;
+  --white: rgb(255, 255, 255);
+}
+
 /* width */
 *::-webkit-scrollbar {
   width: 5px;
@@ -38,7 +56,7 @@ body {
 }
 
 body {
-  background: rgb(250, 250, 250);
+  background: var(--focusAreaBackgroundColor);
   height: 100vh;
 }
 
@@ -48,77 +66,6 @@ body {
   width: 100%;
   box-shadow: -1px 1px 10px 2px rgba(204, 197, 197, 0.5);
   height: 100%;
-}
-
-.incomingCallPopup {
-  display: none;
-  width: 300px;
-  height: 200px;
-  background-color: rgb(0, 48, 97);
-  position: fixed;
-  overflow: hidden;
-  right: 2rem;
-  top: 6rem;
-  border-radius: 15px;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-  padding: 1rem;
-  flex-direction: column;
-  align-items: center;
-  color: white;
-}
-.incomingCallPopup .topCard {
-  height: 100px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.incomingCallPopup .topCard i {
-  font-size: 56px;
-  background: rgb(0, 48, 97);
-  padding: 1rem;
-  background: rgba(0, 48, 97, 0.589);
-  border-radius: 15px;
-}
-.incomingCallPopup .topCard img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: white;
-  border-radius: 15px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  z-index: -1;
-  filter: blur(3px) brightness(50%);
-}
-.incomingCallPopup .incominCallname {
-  font-size: 18px;
-}
-.incomingCallPopup .incomingCallOptions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-}
-.incomingCallPopup .incomingCallOptions button {
-  color: white;
-  cursor: pointer;
-  width: 60px;
-  border-radius: 15px;
-  outline: none;
-  border: none;
-  padding: 0.8rem;
-  margin: 0.2rem;
-}
-.incomingCallPopup .closePopup {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .c-application {
@@ -136,7 +83,7 @@ body {
 .c-sidepanel {
   flex-basis: 20%;
   height: 100%;
-  background-color: rgb(245, 249, 253);
+  background-color: var(--focusAreaBackgroundColor);
   padding: 1rem;
   min-width: 300px;
   display: flex;
@@ -153,12 +100,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #F5F9FD;
+  background-color: var(--focusAreaBackgroundColor);
   border-radius: 15px 15px 0 0;
-  border-bottom: 1px solid #e0e8f1;
+  border-bottom: 1px solid rgb(150, 162, 177);
 }
 .c-sidepanel__app-header h1 {
   font-size: 30px;
+  color: var(--lightText);
 }
 .c-sidepanel__app-header__hamburger ul {
   position: relative;
@@ -173,7 +121,8 @@ body {
   width: 30px;
   height: 3px;
   transition: 0.5s;
-  background: rgb(0, 48, 97);
+  background: var(--lightText);
+  color: var(--lightText);
   transform: translateY(-50%) rotate(0);
   opacity: 1;
   border-radius: 15px;
@@ -200,7 +149,7 @@ body {
 }
 .c-sidepanel__nav {
   border-radius: 15px;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
 }
 .c-sidepanel__nav--spacer {
   margin-top: 1.5rem;
@@ -211,7 +160,7 @@ body {
 }
 .c-sidepanel__nav__li .left-spacer {
   padding-left: 1rem;
-  border-top: 1px solid #e0e8f1;
+  border-top: 1px solid rgb(150, 162, 177);
 }
 .c-sidepanel__nav__li:last-of-type div,
 .c-sidepanel__nav__li:last-of-type li {
@@ -236,7 +185,7 @@ body {
 .c-sidepanel__nav__link {
   text-decoration: none;
   padding: 1rem;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -262,7 +211,6 @@ body {
   font-size: 18px;
 }
 .c-sidepanel__nav__link:hover {
-  color: rgb(90, 93, 95);
   color: rgb(0, 48, 97);
   font-weight: bold;
 }
@@ -271,7 +219,7 @@ body {
   color: rgb(0, 48, 97);
 }
 .c-sidepanel__nav__link:hover button i {
-  color: white;
+  color: var(--lightText);
 }
 .c-sidepanel__nav__link:hover:last-of-type div,
 .c-sidepanel__nav__link:hover:last-of-type li {
@@ -282,7 +230,7 @@ body {
   border-radius: 15px;
   background-color: rgb(0, 48, 97);
   border: none;
-  color: white;
+  color: var(--lightText);
   display: inline-block;
   cursor: pointer;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
@@ -294,7 +242,7 @@ body {
   justify-content: center;
 }
 .c-sidepanel__nav__link button i {
-  color: white;
+  color: var(--lightText);
   margin: 0;
   transition: all 0.4s ease-in-out;
 }
@@ -343,7 +291,7 @@ body {
   padding: 0.5rem;
   border-radius: 15px;
   background-color: rgb(0, 48, 97);
-  color: white;
+  color: var(--lightText);
 }
 .inScreenPanel .popupBody {
   flex: 1;
@@ -364,14 +312,14 @@ body {
 .inScreenPanel .popupBody .editBlock textarea {
   flex: 1;
   padding: 1rem;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   outline: none;
   border-radius: 15px;
   border: none;
 }
 .inScreenPanel .popupBody .editBlock button {
   flex: 1;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   outline: none;
   border-radius: 15px;
   border: none;
@@ -421,7 +369,7 @@ body {
 .expanded {
   flex-basis: 5%;
   height: 100%;
-  background-color: rgb(245, 249, 253);
+  background-color: var(--focusAreaBackgroundColor);
   padding: 1.5rem;
   min-width: 82px;
   display: flex;
@@ -489,7 +437,7 @@ body {
   font-weight: 300;
   font-size: 12px;
   margin-left: auto;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
 }
 .c-friends__list {
   list-style: none;
@@ -550,7 +498,7 @@ body {
   transition: all 0.4s;
   width: 0;
   height: 300px;
-  background: rgb(255, 255, 255);
+  background: var(--secondaryBackground);
   overflow-y: scroll;
 }
 .searchResults .resultItem {
@@ -579,7 +527,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: rgb(0, 48, 97);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
 }
@@ -593,7 +541,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: rgb(0, 48, 97);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
 }
@@ -610,22 +558,16 @@ body {
   justify-content: center;
   min-width: 0;
 }
-.searchResults .resultItem .resultItemBundle .person-data .nameSurnamePosition .resultsquote {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 12px;
-  color: #c5c5c5;
-}
 .searchResults .resultItem .resultItemBundle .person-data .nameSurnamePosition .resultsNameSurname {
   white-space: nowrap;
   font-size: 14px;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 100%;
 }
 .searchResults .resultItem .resultItemBundle .person-data .nameSurnamePosition .resultsPosition {
-  color: #b6b6b6;
+  color: var(--lightText);
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
@@ -646,7 +588,7 @@ body {
   border-radius: 15px;
   overflow: hidden;
   border-right: 1px solid #f1f4f6;
-  background: rgb(255, 255, 255);
+  background: var(--secondaryBackground);
   width: 350px;
   display: flex;
   flex-direction: column;
@@ -664,7 +606,7 @@ body {
   gap: 0.5rem;
   align-items: center;
   padding: 1rem 0;
-  border-bottom: 1px solid #f1f4f6;
+  border-bottom: 1px solid var(--primaryBackground);
   width: 100%;
   position: relative;
   top: 0;
@@ -687,7 +629,7 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 15px;
-  color: white;
+  color: var(--lightText);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
 }
 .c-chats__header button {
@@ -710,7 +652,7 @@ body {
   font-size: 13px;
   border-radius: 15px;
   border: 1px solid #f1f4f6;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
 }
 .c-chats__header label {
   position: absolute;
@@ -723,7 +665,7 @@ body {
 .c-chats__header label i {
   width: 15px;
   height: auto;
-  color: #a8abad;
+  color: var(--lightText);
 }
 .c-chats .chat-search-content {
   flex: 1 1 1px;
@@ -733,7 +675,7 @@ body {
 .c-chats__list {
   list-style: none;
   padding: 5px 1rem;
-  border-bottom: 1px solid #f1f4f6;
+  border-bottom: 1px solid var(--primaryBackground);
 }
 .c-chats__list:hover {
   background-color: rgb(247, 247, 247);
@@ -782,7 +724,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: rgb(0, 48, 97);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
 }
@@ -796,7 +738,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: rgb(0, 48, 97);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
 }
@@ -805,7 +747,7 @@ body {
 }
 .c-chats__title {
   font-size: 14px;
-  color: #7a7c7e;
+  color: var(--lightText);
   font-weight: 500;
   display: block;
   white-space: nowrap;
@@ -814,14 +756,14 @@ body {
 }
 .c-chats span {
   font-size: 10px;
-  color: #c5c5c5;
+  color: var(--lightText);
   display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .c-chats__excerpt {
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   display: block;
   white-space: nowrap;
   overflow: hidden;
@@ -858,7 +800,7 @@ body {
 }
 .c-openchat__selectConversation h3 {
   font-size: 24px;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
 }
 .c-openchat__selectConversation h3 i {
   font-size: 24px;
@@ -890,7 +832,7 @@ body {
 }
 .c-openchat__link {
   text-decoration: none;
-  color: rgb(150, 150, 150);
+  color: var(--lightText);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -902,7 +844,7 @@ body {
 
 .c-notification {
   font-size: 10px;
-  color: rgb(255, 255, 255);
+  color: var(--lightText);
   background-color: rgb(0, 48, 97);
   padding: 3px 5px;
   border-radius: 15px;
@@ -926,7 +868,7 @@ body {
   overflow: hidden;
 }
 .c-openchat__box .listMember {
-  border-bottom: 1px solid #f1f4f6;
+  border-bottom: 1px solid var(--primaryBackground);
   padding: 1rem 1rem;
   display: flex;
   gap: 0.5rem;
@@ -950,7 +892,7 @@ body {
   align-items: center;
 }
 .c-openchat__box__header {
-  border-bottom: 1px solid #f1f4f6;
+  border-bottom: 1px solid var(--primaryBackground);
   padding: 1rem 1rem;
   display: flex;
   align-items: center;
@@ -984,13 +926,13 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: rgb(0, 48, 97);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
 }
 .c-openchat__box__name {
   margin-left: 10px;
-  color: #747678;
+  color: var(--lightText);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1017,13 +959,13 @@ body {
 .message-separator {
   width: 100%;
   text-align: center;
-  border-bottom: 1px solid rgba(83, 83, 83, 0.075);
+  border-bottom: 1px solid var(--primaryBackground);
   line-height: 0.1em;
   margin: 20px 0 20px;
 }
 .message-separator span {
   border-radius: 15px;
-  color: rgba(83, 83, 83, 0.459);
+  color: var(--lightText);
   background: rgb(250, 250, 250);
   padding: 0 10px;
   box-shadow: 0px 0px 17px -7px rgba 0, 0, 0, 0.5;
@@ -1053,7 +995,7 @@ body {
   -o-object-fit: cover;
      object-fit: cover;
   background: rgb(0, 48, 97);
-  color: white;
+  color: var(--lightText);
   text-transform: uppercase;
   display: flex;
   justify-content: center;
@@ -1066,7 +1008,7 @@ body {
   max-width: 100%;
   margin: 2px 0;
   display: flex;
-  color: black;
+  color: var(--lightText);
   white-space: pre-line;
   /*-ms-hyphens: auto;
   -webkit-hyphens: auto;
@@ -1101,18 +1043,18 @@ body {
   opacity: 0;
   position: absolute;
   transition: all 0.4s ease-in-out;
-  color: rgb(122, 122, 122);
+  color: var(--lightText);
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-content: flex-start;
-  background-color: #F5F9FD;
+  background-color: var(--focusAreaBackgroundColor);
   border-radius: 0.4rem;
   border: 1px solid #cfcfcf;
 }
 .message-received .time_reactions_options .messageReactions .reactionBox .reactorList .title {
   padding: 0 0.4rem;
-  border-bottom: 1px solid #c7c7c7;
+  border-bottom: 1px solid var(--primaryBackground);
 }
 .message-received .time_reactions_options .messageReactions .reactionBox .reactorList li {
   list-style: none;
@@ -1123,7 +1065,7 @@ body {
   opacity: 1;
 }
 .message-received .time_reactions_options .time_reactionChoice {
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   display: flex;
   align-items: center;
   width: 0;
@@ -1185,7 +1127,7 @@ body {
 .message-received-text {
   padding: 10px;
   min-height: 20px;
-  background: #ebf0f6;
+  background: var(--primaryBackground);
   border-radius: 4px 15px 15px 4px;
   max-width: 60%;
   display: flex;
@@ -1198,7 +1140,7 @@ body {
   background: rgb(0, 48, 97);
   border-radius: 15px;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-  color: rgb(235, 240, 246);
+  color: var(--lightText);
   cursor: pointer;
   text-decoration: none;
 }
@@ -1213,7 +1155,7 @@ body {
   position: absolute;
   top: 100%;
   font-size: 11px;
-  color: grey;
+  color: var(--lightText);
 }
 
 .message-group-sent {
@@ -1257,18 +1199,18 @@ body {
   opacity: 0;
   position: absolute;
   transition: all 0.4s ease-in-out;
-  color: rgb(122, 122, 122);
+  color: var(--lightText);
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-content: flex-start;
-  background-color: #F5F9FD;
+  background-color: var(--focusAreaBackgroundColor);
   border-radius: 0.4rem;
   border: 1px solid #cfcfcf;
 }
 .message-sent .time_reactions_options .messageReactions .reactionBox .reactorList .title {
   padding: 0 0.4rem;
-  border-bottom: 1px solid #c7c7c7;
+  border-bottom: 1px solid var(--primaryBackground);
 }
 .message-sent .time_reactions_options .messageReactions .reactionBox .reactorList li {
   list-style: none;
@@ -1279,7 +1221,7 @@ body {
   opacity: 1;
 }
 .message-sent .time_reactions_options .time_reactionChoice {
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   display: flex;
   align-items: center;
   width: 0;
@@ -1332,14 +1274,14 @@ body {
   border-radius: 15px 4px 4px 15px;
   min-height: 20px;
   padding: 10px;
-  color: #ebf0f6;
+  color: var(--lightText);
   max-width: 60%;
   display: flex;
   flex-direction: column;
 }
 .message-sent-text .message-tag-text {
   margin-bottom: 0.5rem;
-  background: rgb(235, 240, 246);
+  background: var(--primaryBackground);
   border-radius: 15px;
   min-height: 20px;
   padding: 10px;
@@ -1362,7 +1304,7 @@ body {
   display: flex;
   margin-left: 5px;
   font-size: 15px;
-  color: rgba(134, 142, 153, 0.5);
+  color: var(--lightText);
 }
 .message-sent-status img,
 .message-sent-status div {
@@ -1376,14 +1318,14 @@ body {
   font-size: 10px;
   text-align: right;
   white-space: nowrap;
-  color: rgba(255, 255, 255, 0.507);
+  color: var(--lightText);
 }
 
 .received-message-time {
   font-size: 10px;
   text-align: left;
   white-space: nowrap;
-  color: rgba(0, 0, 0, 0.507);
+  color: var(--lightText);
 }
 
 .typingBox {
@@ -1400,7 +1342,7 @@ body {
   text-decoration: none;
   outline: none;
   border: none;
-  color: white;
+  color: var(--lightText);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1422,8 +1364,8 @@ body {
 /** This is the css of the input **/
 .w-input-container {
   flex: 1;
-  color: #76797c;
-  background-color: #EBF0F6;
+  color: var(--lightText);
+  background-color: var(--primaryBackground);
   border-radius: 15px;
   align-items: center;
 }
@@ -1465,7 +1407,7 @@ body {
   outline: none;
   border: none;
   background-color: rgb(0, 48, 97);
-  color: white;
+  color: var(--lightText);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
 }
 .w-input-container .taggedMessageInTying div button i {
@@ -1483,7 +1425,7 @@ body {
 }
 
 .w-placeHolder {
-  color: #a0a0a0;
+  color: var(--lightText);
   top: 0.6rem;
   left: 0.4rem;
   pointer-events: none;
@@ -1550,12 +1492,12 @@ body {
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
-  background-color: #EBF0F6;
+  background-color: var(--primaryBackground);
   border: 1px solid rgba(0, 0, 0, 0.04);
   box-shadow: -1px 1px 10px 2px rgba(204, 197, 197, 0.5);
   border-radius: 15px;
   padding: 1rem 0;
-  color: #969696;
+  color: var(--lightText);
   display: none;
   flex-direction: column;
 }
@@ -1571,11 +1513,11 @@ body {
   margin: 1rem;
 }
 .profile-logout .pic-name h3 {
-  color: #797979;
+  color: var(--lightText);
   font-size: 15px;
 }
 .profile-logout .pic-name p {
-  color: #888888;
+  color: var(--lightText);
 }
 .profile-logout ul {
   list-style: none;
@@ -1595,7 +1537,7 @@ body {
   width: 100%;
   border: none;
   cursor: pointer;
-  color: #797979;
+  color: var(--lightText);
   display: flex;
   align-items: center;
 }
@@ -1634,11 +1576,7 @@ body {
   background-color: transparent;
   cursor: pointer;
   text-decoration: none;
-  color: rgb(150, 150, 150);
-}
-
-:root {
-  --clr: rgb(255, 255, 255);
+  color: var(--lightText);
 }
 
 .navigation {
@@ -1686,7 +1624,7 @@ body {
   font-size: 1.5em;
   text-align: center;
   transition: 0.5s;
-  color: var(--clr);
+  color: var(--lightText);
 }
 
 .navigation ul li.active a .icon {
@@ -1697,7 +1635,7 @@ body {
   position: absolute;
   transform: translateY(20px);
   opacity: 0;
-  color: var(--clr);
+  color: var(--lightText);
   font-weight: 400;
   font-size: 0.75em;
   letter-spacing: 0.05em;
@@ -1716,7 +1654,7 @@ body {
   height: 70px;
   background: #002fff;
   border-radius: 100%;
-  border: 6px solid var(--clr);
+  border: 6px solid rgb(255, 255, 255);
   cursor: pointer;
   transition: 0.5s;
 }
@@ -1729,7 +1667,7 @@ body {
   width: 20px;
   height: 20px;
   border-top-right-radius: 15px;
-  box-shadow: 1px -10px 0 0 var(--clr);
+  box-shadow: 1px -10px 0 0 rgb(255, 255, 255);
 }
 
 .indicator::after {
@@ -1740,7 +1678,7 @@ body {
   width: 20px;
   height: 20px;
   border-top-left-radius: 15px;
-  box-shadow: -1px -10px 0 0 var(--clr);
+  box-shadow: -1px -10px 0 0 rgb(255, 255, 255);
 }
 
 .navigation ul li:nth-child(2).active ~ .indicator {
@@ -1767,14 +1705,14 @@ body {
 .c-messages_panel {
   display: flex;
   flex: 1;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
 }
 
 .c-call_log_panel {
   display: none;
   flex: 1;
-  background-color: #ebf0f6;
-  color: rgb(91, 94, 97);
+  background-color: var(--primaryBackground);
+  color: var(--lightText);
 }
 .c-call_log_panel .callSearchSection {
   flex-basis: 30%;
@@ -1810,8 +1748,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
-  background-color: #003061;
+  color: var(--lightText);
+  background-color: rgb(235, 240, 246);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
   flex-shrink: 0;
@@ -1836,14 +1774,14 @@ body {
   text-overflow: ellipsis;
 }
 .c-call_log_panel .callSearchSection .searchResultsDiv .listMember button {
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
   transition: all 0.4s;
   border-radius: 15px;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   border: none;
   outline: none;
   cursor: pointer;
@@ -1855,7 +1793,7 @@ body {
   margin-left: 0.5rem;
 }
 .c-call_log_panel .callSearchSection .searchResultsDiv .listMember button:hover {
-  background-color: #d9e3ee;
+  background-color: rgb(150, 162, 177);
 }
 .c-call_log_panel .callHistoryPage {
   height: calc(100vh - 2rem);
@@ -1867,7 +1805,7 @@ body {
   border-radius: 15px;
 }
 .c-call_log_panel .callHistoryPage .header {
-  border-bottom: 1px solid #f1f4f6;
+  border-bottom: 1px solid var(--primaryBackground);
   padding: 1rem 1rem;
   display: flex;
   align-items: center;
@@ -1932,7 +1870,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture img,
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture div {
@@ -1995,14 +1933,14 @@ body {
   background-color: rgb(0, 48, 97);
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log:hover {
-  background-color: rgb(245, 249, 253);
+  background-color: var(--focusAreaBackgroundColor);
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .missed {
   background-color: #ffe0e0;
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .ongoing {
   background-color: rgb(0, 48, 97);
-  color: white;
+  color: var(--lightText);
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .ongoing:hover {
   background-color: #002348;
@@ -2024,17 +1962,17 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: grey;
+  color: var(--lightText);
   border: none;
   outline: none;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button i {
   font-size: 18px;
   transition: all 0.4s;
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button:hover {
-  color: dark(rgb(235, 240, 246));
+  color: var(--lightText);
   transition: all 0.4s;
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .picture {
@@ -2099,7 +2037,7 @@ body {
   justify-content: center;
   align-items: center;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-  color: white;
+  color: var(--lightText);
 }
 .c-call_log_panel .callDetails-section .details-section-content .topDetailsCard .circle i {
   font-size: 30px;
@@ -2145,16 +2083,16 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   border: none;
   outline: none;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
 }
 .c-call_log_panel .callDetails-section .details-section-content .allPartifipantDiv .header button i {
   font-size: 18px;
 }
 .c-call_log_panel .callDetails-section .details-section-content .allPartifipantDiv .header button:hover {
-  color: rgb(0, 48, 97);
+  color: var(--lightText);
 }
 .c-call_log_panel .callDetails-section .details-section-content .callParticipants {
   width: 100%;
@@ -2172,7 +2110,7 @@ body {
   margin-top: 0.3rem;
 }
 .c-call_log_panel .callDetails-section .details-section-content .callParticipants .callParticipant .partifipantPicture {
-  color: white;
+  color: var(--lightText);
   background-color: rgb(0, 48, 97);
   width: 40px;
   height: 40px;
@@ -2186,7 +2124,7 @@ body {
 }
 .c-call_log_panel .callDetails-section .details-section-content .callParticipants .callParticipant .partifipantPicture img,
 .c-call_log_panel .callDetails-section .details-section-content .callParticipants .callParticipant .partifipantPicture div {
-  color: white;
+  color: var(--lightText);
   width: 38px;
   height: 38px;
   border-radius: 15px;
@@ -2217,7 +2155,7 @@ body {
   display: none;
   width: 100%;
   height: 100%;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
 }
 .c-ongoing_call_panel .leftPart {
   width: 350px;
@@ -2249,10 +2187,10 @@ body {
   cursor: pointer;
 }
 .c-ongoing_call_panel .leftPart .attendanceTitleSection .leftHeaderItem:hover {
-  background-color: rgb(245, 249, 253);
+  background-color: var(--focusAreaBackgroundColor);
 }
 .c-ongoing_call_panel .leftPart .attendanceTitleSection .leftHeaderItem.headerItemSelected {
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv {
   min-height: 0;
@@ -2283,7 +2221,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
@@ -2311,13 +2249,13 @@ body {
   text-overflow: ellipsis;
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember button {
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   display: flex;
   align-items: center;
   padding: 1rem;
   transition: all 0.4s;
   border-radius: 15px;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   border: none;
   outline: none;
   cursor: pointer;
@@ -2330,7 +2268,7 @@ body {
   margin-left: 0.5rem;
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember button:hover {
-  background-color: #d9e3ee;
+  background-color: rgb(150, 162, 177);
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv {
   display: flex;
@@ -2356,7 +2294,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
@@ -2382,14 +2320,14 @@ body {
   text-overflow: ellipsis;
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember button {
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
   transition: all 0.4s;
   border-radius: 15px;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   border: none;
   outline: none;
   cursor: pointer;
@@ -2402,7 +2340,7 @@ body {
   margin-left: 0.5rem;
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember button:hover {
-  background-color: #d9e3ee;
+  background-color: rgb(150, 162, 177);
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .hiddenDiv {
   display: none;
@@ -2459,19 +2397,19 @@ body {
   text-align: center;
   border-radius: 15px;
   cursor: pointer;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   outline: none;
   border: none;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   position: relative;
   display: flex;
   align-items: center;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .inviteSomeone p {
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .inviteSomeone:hover {
-  background-color: #d9e3ee;
+  background-color: rgb(150, 162, 177);
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown {
   width: 350px;
@@ -2517,12 +2455,12 @@ body {
   background: white;
   border: none;
   flex: 1;
-  color: rgb(91, 94, 97);
-  background: #f6f8fb;
+  color: var(--lightText);
+  background: rgb(239, 242, 245);
   padding: 0.5rem 1rem;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .searchField button {
-  background: rgb(235, 240, 246);
+  background: var(--primaryBackground);
   border-radius: 15px;
   outline: none;
   border: none;
@@ -2535,7 +2473,7 @@ body {
   font-size: 1.5rem;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .searchField button:hover {
-  background: #d9e3ee;
+  background: rgb(150, 162, 177);
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv {
   overflow-y: auto;
@@ -2561,7 +2499,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
@@ -2589,13 +2527,13 @@ body {
   text-overflow: ellipsis;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember button {
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   display: flex;
   align-items: center;
   padding: 1rem;
   transition: all 0.4s;
   border-radius: 15px;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   border: none;
   outline: none;
   cursor: pointer;
@@ -2608,7 +2546,7 @@ body {
   margin-left: 0.5rem;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember button:hover {
-  background-color: #d9e3ee;
+  background-color: rgb(150, 162, 177);
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv {
   border-radius: 15px;
@@ -2617,7 +2555,7 @@ body {
   flex: 1;
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv .callTopBar {
-  color: white;
+  color: var(--lightText);
   position: absolute;
   top: 0;
   left: 0;
@@ -2645,7 +2583,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
@@ -2672,7 +2610,7 @@ body {
   border: none;
   outline: none;
   background: rgba(0, 0, 0, 0.5);
-  color: white;
+  color: var(--lightText);
   cursor: pointer;
   width: 40px;
   height: 40px;
@@ -2697,7 +2635,7 @@ body {
   -o-object-fit: cover;
      object-fit: cover;
   border-radius: 15px;
-  background-color: rgb(245, 249, 253);
+  background-color: var(--focusAreaBackgroundColor);
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv .mainVideoElement.fitVideoToWindow {
   width: 100%;
@@ -2716,7 +2654,7 @@ body {
   height: 100%;
   justify-content: center;
   align-items: center;
-  background-color: #c8d6e6;
+  background-color: rgb(150, 162, 177);
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv .audioCallCover .profilePicture {
   border: 1px solid rgb(0, 48, 97);
@@ -2728,7 +2666,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
 }
@@ -2752,7 +2690,7 @@ body {
   border: none;
   outline: none;
   background: rgba(0, 0, 0, 0.1);
-  color: white;
+  color: var(--lightText);
   cursor: pointer;
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv .callControls .alwaysVisibleControls .callControl:hover {
@@ -2773,7 +2711,7 @@ body {
   border: none;
   outline: none;
   background: rgba(0, 0, 0, 0.5);
-  color: white;
+  color: var(--lightText);
   cursor: pointer;
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv .callControls .hiddableControls .callControl:hover {
@@ -2815,7 +2753,7 @@ body {
   border-radius: 100%;
   height: 4rem;
   width: 4rem;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   display: flex;
   cursor: pointer;
   justify-content: center;
@@ -2828,7 +2766,7 @@ body {
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.719);
 }
 .c-ongoing_call_panel .call-container .availableScreens .screenItem:hover {
-  background-color: #d9e3ee;
+  background-color: rgb(150, 162, 177);
 }
 .c-ongoing_call_panel .call-container .availableScreens .screenItem.screen {
   border-radius: 5px;
@@ -2860,10 +2798,10 @@ body {
   cursor: pointer;
 }
 .c-ongoing_call_panel .rightPart .rightPartheaderVideoMessaging .rightHeaderItem:hover {
-  background-color: rgb(245, 249, 253);
+  background-color: var(--focusAreaBackgroundColor);
 }
 .c-ongoing_call_panel .rightPart .rightPartheaderVideoMessaging .rightHeaderItem.headerItemSelected {
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
 }
 .c-ongoing_call_panel .rightPart .rightPartContentDiv {
   flex: 1;
@@ -2920,7 +2858,7 @@ body {
   border: none;
   outline: none;
   background: rgba(0, 0, 0, 0.5);
-  color: white;
+  color: var(--lightText);
   cursor: pointer;
 }
 .c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button:hover {
@@ -2939,7 +2877,7 @@ body {
 }
 .c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls .miniVideowner {
   flex: 1;
-  color: white;
+  color: var(--lightText);
   padding: 1rem;
 }
 .c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .audioCallCover {
@@ -2953,7 +2891,7 @@ body {
   height: 100%;
   justify-content: center;
   align-items: center;
-  background-color: #c8d6e6;
+  background-color: rgb(150, 162, 177);
 }
 .c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .audioCallCover .profilePicture {
   border: 1px solid rgb(0, 48, 97);
@@ -2965,7 +2903,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
 }
@@ -2979,7 +2917,7 @@ body {
 .c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .muteIndicator .muteIndicatorContent {
   padding: 0.5rem;
   display: flex;
-  color: white;
+  color: var(--lightText);
   background: black;
   border-radius: 15px;
 }
@@ -3017,13 +2955,13 @@ body {
   text-overflow: ellipsis;
 }
 .listMember button {
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   display: flex;
   align-items: center;
   padding: 1rem;
   transition: all 0.4s;
   border-radius: 15px;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   border: none;
   outline: none;
   cursor: pointer;
@@ -3035,18 +2973,18 @@ body {
   margin-left: 0.5rem;
 }
 .listMember button:hover {
-  background-color: #d9e3ee;
+  background-color: rgb(150, 162, 177);
 }
 
 .mobileButton {
   display: none !important;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   align-items: center;
   justify-content: center;
   padding: 1rem;
   transition: all 0.4s;
   border-radius: 15px;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   border: none;
   outline: none;
   cursor: pointer;
@@ -3060,11 +2998,11 @@ body {
   margin-left: 0.5rem;
 }
 .mobileButton:hover {
-  background-color: #d9e3ee;
+  background-color: rgb(150, 162, 177);
 }
 
 .importantButton {
-  color: white;
+  color: var(--lightText);
   border-radius: 15px;
   background-color: rgb(0, 48, 97);
   padding: 1rem !important;
@@ -3093,7 +3031,7 @@ body {
 .white-bg {
   background-color: #ffffff !important;
   background: #ffffff !important;
-  color: rgb(91, 94, 97) !important;
+  color: var(--lightText) !important;
 }
 
 .red {
@@ -3135,8 +3073,8 @@ body {
   align-items: center;
   flex-direction: row-reverse;
   height: 3rem;
-  background: rgb(235, 240, 246);
-  color: rgb(91, 94, 97);
+  background: var(--primaryBackground);
+  color: var(--lightText);
   padding: 0 0.75rem 0 1.5rem;
   margin-left: 0.5rem;
   border-radius: 15px;
@@ -3153,7 +3091,7 @@ body {
   padding-right: 0.2rem;
 }
 .pillsContainer .pill:hover {
-  background-color: #d9e3ee;
+  background-color: rgb(150, 162, 177);
 }
 .pillsContainer .pill:hover .pill-label {
   color: rgb(0, 48, 97);
@@ -3268,10 +3206,10 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   border: none;
   outline: none;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   flex-shrink: 0;
 }
 .universalCallButtons button i {
@@ -3371,7 +3309,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   height: 100%;
   width: 100%;
   display: flex;
@@ -3394,7 +3332,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
@@ -3407,7 +3345,7 @@ body {
   max-width: 100%;
   gap: 0.5em;
   padding: 1rem;
-  background-color: rgb(245, 249, 253);
+  background-color: var(--focusAreaBackgroundColor);
   border-radius: 15px;
 }
 .videoCoverDiv .calleesDiv .listMember {
@@ -3428,7 +3366,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
@@ -3456,13 +3394,13 @@ body {
   text-overflow: ellipsis;
 }
 .videoCoverDiv .calleesDiv .listMember button {
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   display: flex;
   align-items: center;
   padding: 1rem;
   transition: all 0.4s;
   border-radius: 15px;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   border: none;
   outline: none;
   cursor: pointer;
@@ -3475,7 +3413,7 @@ body {
   margin-left: 0.5rem;
 }
 .videoCoverDiv .calleesDiv .listMember button:hover {
-  background-color: #d9e3ee;
+  background-color: rgb(150, 162, 177);
 }
 .videoCoverDiv .waitingCallControls {
   margin-top: auto;
@@ -3489,7 +3427,7 @@ body {
   border: none;
   outline: none;
   background: rgba(0, 0, 0, 0.5);
-  color: white;
+  color: var(--lightText);
   cursor: pointer;
 }
 .videoCoverDiv .waitingCallControls .callControl:hover {
@@ -3530,7 +3468,7 @@ body {
 .notifications .notification {
   display: flex;
   flex-direction: column;
-  background: rgb(245, 249, 253);
+  background: var(--focusAreaBackgroundColor);
   border-radius: 15px;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   overflow: hidden;
@@ -3557,7 +3495,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
@@ -3579,12 +3517,12 @@ body {
   cursor: pointer;
 }
 .notifications .notification .notificationActions .normal {
-  background-color: rgb(235, 240, 246);
-  color: rgb(91, 94, 97);
+  background-color: var(--primaryBackground);
+  color: var(--lightText);
 }
 .notifications .notification .notificationActions .confirm {
   background-color: rgb(0, 48, 97);
-  color: white;
+  color: var(--lightText);
 }
 .notifications .notification .notificationProgressBar {
   height: 3px;
@@ -3594,7 +3532,7 @@ body {
 .schedule-container {
   display: flex;
   flex: 1;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   max-width: 100%;
 }
 .schedule-container .selectionPanel {
@@ -3623,7 +3561,7 @@ body {
   align-items: center;
   padding: 1rem;
   padding-bottom: 15px;
-  border-bottom: var(--border-width) solid var(--box-shadow);
+  border-bottom: 1px solid var(--primaryBackground);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -3636,7 +3574,7 @@ body {
   border: none;
   border-radius: 15px;
   padding: 11px 13px;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   font-weight: 600;
   font-size: 0.9rem;
   margin-right: 1px;
@@ -3739,7 +3677,7 @@ body {
   border: none;
   border-radius: 15px;
   padding: 11px 13px;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   font-weight: 600;
   font-size: 0.9rem;
   margin-right: 1px;
@@ -3755,16 +3693,16 @@ body {
 .schedule-container .selectionPanel .pannedItems .pannedItems-Header {
   font-size: 20px;
   font-weight: bold;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   padding: 1rem;
-  border-bottom: 1px solid #f1f4f6;
+  border-bottom: 1px solid var(--primaryBackground);
 }
 .schedule-container .mainScheduleList {
   display: flex;
   align-items: center;
   flex-direction: column;
   flex: 1;
-  background-color: white;
+  background-color: var(--secondaryBackground);
   margin: 1rem;
   border-radius: 15px;
   overflow: hidden;
@@ -3819,7 +3757,7 @@ body {
   background-size: 16px 16px;
 }
 .schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv .scheduleDiv .sheduleContentDiv {
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -3890,7 +3828,7 @@ body {
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   border-radius: 15px;
   padding: 1rem;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
 }
 .schedule-container .scheduleDetailsSection .eventDetailsContentDiv .detailBlock .listMember {
   border-radius: 15px;
@@ -3905,7 +3843,7 @@ body {
   border: none;
   border-radius: 15px;
   padding: 11px 13px;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   font-weight: 600;
   font-size: 0.9rem;
   margin-right: 1px;
@@ -3930,11 +3868,11 @@ body {
   border: none;
   outline: none;
   padding: 1rem;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   border-radius: 15px;
   flex: 1;
   overflow-y: auto;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   transition: all 0.4s;
 }
 .schedule-container .negativeDate {
@@ -3965,7 +3903,7 @@ body {
 .work_shifts_Panel {
   display: none;
   flex: 1;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
   flex-direction: column;
   padding: 1rem;
   height: 100vh;
@@ -3978,7 +3916,7 @@ body {
 }
 .work_shifts_Panel .workShiftTitleBar h1 {
   font-size: 18px;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
 }
 .work_shifts_Panel .workshiftMatrix {
   flex: 1;
@@ -4012,7 +3950,7 @@ body {
   background-color: rgb(0, 48, 97);
 }
 .work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftCommandBar .commandButton:hover {
-  background: rgb(235, 240, 246);
+  background: var(--primaryBackground);
 }
 .work_shifts_Panel .workshiftMatrix .subTitleBar .navigateWeeks {
   display: flex;
@@ -4023,7 +3961,7 @@ body {
 .work_shifts_Panel .workshiftMatrix .subTitleBar .navigateWeeks .commandButton {
   transition: 0.3s;
   background: rgb(0, 48, 97);
-  color: white;
+  color: var(--lightText);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
   border-radius: 15px;
   border: none;
@@ -4052,7 +3990,7 @@ body {
   background-color: rgb(0, 48, 97);
 }
 .work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftEditButtons .commandButton:hover {
-  background: rgb(235, 240, 246);
+  background: var(--primaryBackground);
 }
 .work_shifts_Panel .workshiftMatrix .subTitleBar .workshiftKeyLegend {
   width: 100%;
@@ -4091,7 +4029,7 @@ body {
 }
 .work_shifts_Panel .workshiftMatrix .workshiftMatrixCanvas .dayparts-cell-test {
   transition: 0.3s;
-  background-color: #EBF0F6;
+  background-color: var(--primaryBackground);
   width: 30px;
   min-width: 30px;
   height: 30px;
@@ -4208,7 +4146,7 @@ body {
      object-fit: cover;
   background-color: rgb(0, 48, 97);
   font-size: 6rem;
-  color: white;
+  color: var(--lightText);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -4246,7 +4184,7 @@ body {
   -o-object-fit: cover;
      object-fit: cover;
   font-size: 4rem;
-  color: white;
+  color: var(--lightText);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -4314,10 +4252,10 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: rgb(77, 77, 77);
+  color: var(--lightText);
   border: none;
   outline: none;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
 }
 .photoActions .photoAction button i {
   font-size: 18px;
@@ -4364,10 +4302,10 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: rgb(77, 77, 77);
+  color: var(--lightText);
   border: none;
   outline: none;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   box-shadow: 0px 0px 17px -7px rgb(0, 0, 0);
 }
 .uploadIcon i {
@@ -4404,7 +4342,7 @@ body {
   font-weight: bold;
   width: 100%;
   text-align: center;
-  color: white;
+  color: var(--lightText);
   mix-blend-mode: difference;
 }
 .progress .progress-value {
@@ -4451,7 +4389,7 @@ body {
 }
 .progressBar .value-container {
   position: relative;
-  color: white;
+  color: var(--lightText);
   mix-blend-mode: difference;
 }
 .progressBar.visible {
@@ -4464,7 +4402,7 @@ body {
   display: none;
   width: 100%;
   height: 100%;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
 }
 .c-time-admin_panel .left-responsibilities {
   width: 350px;
@@ -4493,14 +4431,14 @@ body {
 }
 .c-time-admin_panel .left-responsibilities .responsibilitiesContainer .responsibilityOptionButton {
   padding: 1rem;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   border-radius: 15px;
   border: none;
   outline: none;
   cursor: pointer;
 }
 .c-time-admin_panel .left-responsibilities .responsibilitiesContainer .responsibilityOptionDropDown {
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   border-radius: 15px;
   border: none;
   outline: none;
@@ -4552,7 +4490,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
 }
@@ -4606,6 +4544,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 15px;
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .numbersDiv .numberOption .manageButton i {
   font-size: 4rem;
@@ -4614,7 +4553,7 @@ body {
 .c-time-admin_panel .central-Options .adminPanelMainContent .numbersDiv .numberOption:hover > .manageButton {
   visibility: visible;
   opacity: 1;
-  background: rgb(235, 240, 246);
+  background: var(--primaryBackground);
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv {
   border-radius: 15px;
@@ -4643,7 +4582,7 @@ body {
   padding: 0.5rem;
   border-radius: 15px;
   background-color: rgb(0, 48, 97);
-  color: white;
+  color: var(--lightText);
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivHeader .actionPart {
   display: flex;
@@ -4653,14 +4592,14 @@ body {
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivHeader .actionPart input {
   padding: 1rem;
   border-radius: 15px;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   border: none;
   outline: none;
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody {
   flex: 1;
   padding: 1rem;
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   display: flex;
   gap: 1rem;
   flex-direction: column;
@@ -4691,7 +4630,7 @@ body {
   padding: 1rem;
   background-color: rgb(0, 48, 97);
   border-radius: 15px;
-  color: white;
+  color: var(--lightText);
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer .delegatedByDiv .listMember {
   flex: 1;
@@ -4735,7 +4674,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
@@ -4761,6 +4700,23 @@ body {
     z-index: 2;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
   }
+  .c-app .c-application .c-sidepanel.expanded {
+    position: absolute !important;
+    flex-direction: row;
+    min-width: 100% !important;
+    width: 100%;
+    height: unset !important;
+    z-index: 1;
+    padding: 1rem;
+  }
+  .c-app .c-application .c-sidepanel.expanded .c-sidepanel__nav {
+    display: none;
+  }
+  .c-app .c-application .c-sidepanel.expanded .c-sidepanel__app-header {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
   .c-app .c-application .c-messages_panel {
     padding-top: calc(30px + 2rem);
     width: 100%;
@@ -4774,23 +4730,6 @@ body {
   .c-app .c-application .c-messages_panel .c-openchat {
     margin: 0;
     height: 100%;
-  }
-  .expanded {
-    position: absolute;
-    flex-direction: row;
-    min-width: 100% !important;
-    width: 100%;
-    height: unset !important;
-    z-index: 1;
-    padding: 1rem;
-  }
-  .expanded .c-sidepanel__nav {
-    display: none;
-  }
-  .expanded .c-sidepanel__app-header {
-    margin: 0;
-    padding: 0;
-    border: none;
   }
   .c-openchat__box__info {
     margin-bottom: 61.2px;
@@ -4955,18 +4894,17 @@ body {
     left: 0;
     top: 0;
     padding: 1rem;
-    min-width: 370px;
+    min-width: 350px;
     z-index: 2;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.836);
   }
   .c-app .c-application .c-sidepanel.expanded {
     position: static;
     width: 82px;
-    min-width: 82px;
     max-width: 82px;
     flex-basis: 5%;
     height: 100%;
-    background-color: rgb(245, 249, 253);
+    background-color: var(--focusAreaBackgroundColor);
     padding: 1.5rem;
     min-width: 82px;
     display: flex;

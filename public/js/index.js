@@ -272,7 +272,7 @@ let functionalityOptionsArray = [
         sidepanelElements[i].dropIcon.classList.remove('rotate180');
       }
       else {
-        if (sidepanelElements[i].redirect) return window.location.replace(sidepanelElements[i].redirect);
+        if (sidepanelElements[i].redirect) window.location.replace(sidepanelElements[i].redirect);
 
         sidepanelElements[i].panel.style.display = "flex";
         sidepanelElements[i].subMenuDiv.classList.remove('undropped-down')

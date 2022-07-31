@@ -1,22 +1,44 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
-//@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
 
 $sidepanel-bg: rgb(245, 249, 253);
 $sidepanel: rgb(235, 240, 246); //OG
-$sidepanel: rgb(235, 240, 246);
+$darkenSidepanel: rgb(150, 162, 177);
+$lightenSidepanel: rgb(239, 242, 245);
+$lightText:rgb(255, 255, 255);
+$darkText:rgb(0, 48, 97);
 $body: rgb(91, 94, 97);
-//$body: rgb(91, 94, 97);
 $notification: rgb(0, 48, 97);
-//$notification: rgb(31, 141, 251);
-//$notification: rgba(0, 77, 4, 0.801);
 $c-chats: rgb(255, 255, 255);
 $warning-bg: rgb(255, 212, 212);
 $borderRadius: 15px;
+$white: rgb(255, 255, 255);
+
+
+.dark {
+  --focusAreaBackgroundColor: rgb(24, 27, 31);
+  --primaryBackground: rgb(12, 18, 26); //OG
+  --darkenSidepanel: rgb(150, 162, 177);
+  --lightenSidepanel: rgb(239, 242, 245);
+  // text color:
+  --lightText: rgb(205, 210, 214);
+  --lightText-grey: rgb(205, 210, 214);
+  --darkText: rgb(0, 0, 0);
+  // background-color:
+  --primaryBackground: rgb(12, 18, 26);
+  --secondaryBackground: rgb(6, 9, 14);
+  --tertiaryBackground: rgb(0, 0, 0);
+
+  --notification: rgb(0, 48, 97);
+  --c-chats: rgb(255, 255, 255);
+  --warning-bg: rgb(255, 212, 212);
+  --borderRadius: 15px;
+  --white: rgb(255, 255, 255);
+}
+
 
 /* width */
 *::-webkit-scrollbar {
   width: 5px;
-
 }
 
 /* Track */
@@ -49,14 +71,11 @@ $borderRadius: 15px;
 
 html,
 body {
-  //height: 100%;
   font-family: "Roboto", sans-serif;
-  //font-family: 'Poppins', sans-serif;
-
 }
 
 body {
-  background: rgb(250, 250, 250);
+  background: var(--focusAreaBackgroundColor);
   height: 100vh;
 }
 
@@ -64,96 +83,9 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  //margin: 2rem auto;
   box-shadow: -1px 1px 10px 2px rgba(204, 197, 197, 0.5);
-  //border-radius: 8px;
-  //max-height: 900px;
   height: 100%;
-  //min-height: 0;
 }
-
-.incomingCallPopup {
-  display: none;
-  width: 300px;
-  height: 200px;
-  background-color: $notification;
-
-  position: fixed;
-  overflow: hidden;
-  right: 2rem;
-  top: 6rem;
-  border-radius: $borderRadius;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-  padding: 1rem;
-
-  flex-direction: column;
-  align-items: center;
-
-  color: white;
-
-  .topCard {
-    height: 100px;
-    width: 100%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    i {
-      font-size: 56px;
-      background: $notification;
-      padding: 1rem;
-      background: rgba(0, 48, 97, 0.589);
-      border-radius: $borderRadius;
-    }
-
-    img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: white;
-      border-radius: $borderRadius;
-      object-fit: cover;
-      z-index: -1;
-      filter: blur(3px) brightness(50%);
-    }
-  }
-
-  .incominCallname {
-    font-size: 18px;
-  }
-
-  .incomingCallOptions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
-
-    button {
-      color: white;
-      cursor: pointer;
-      width: 60px;
-      border-radius: $borderRadius;
-      outline: none;
-      border: none;
-      padding: 0.8rem;
-      margin: 0.2rem;
-    }
-  }
-
-  .closePopup {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-  }
-}
-
 
 .c-application {
   display: flex;
@@ -173,7 +105,7 @@ body {
 .c-sidepanel {
   flex-basis: 20%;
   height: 100%;
-  background-color: $sidepanel-bg;
+  background-color: var(--focusAreaBackgroundColor);
   padding: 1rem;
   min-width: 300px;
   display: flex;
@@ -189,6 +121,7 @@ body {
   &__app-header {
     h1 {
       font-size: 30px;
+      color: var(--lightText);
     }
 
     padding-bottom: 1rem;
@@ -197,10 +130,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color:#F5F9FD;
+    background-color:var(--focusAreaBackgroundColor);
     border-radius: $borderRadius $borderRadius 0 0;
 
-    border-bottom: 1px solid darken($sidepanel, 3%);
+    border-bottom: 1px solid $darkenSidepanel;
 
     &__hamburger {
       ul {
@@ -217,7 +150,8 @@ body {
         width: 30px;
         height: 3px;
         transition: .5s;
-        background: $notification;
+        background: var(--lightText);
+        color: var(--lightText);
         transform: translateY(-50%) rotate(0);
         opacity: 1;
         border-radius: $borderRadius;
@@ -255,7 +189,7 @@ body {
 
   &__nav {
     border-radius: $borderRadius;
-    background-color: $sidepanel;
+    background-color: var(--primaryBackground);
 
     &--spacer {
       margin-top: 1.5rem;
@@ -267,7 +201,7 @@ body {
 
       .left-spacer {
         padding-left: 1rem;
-        border-top: 1px solid darken($sidepanel, 3%);
+        border-top: 1px solid $darkenSidepanel;
       }
 
       &:last-of-type {
@@ -306,7 +240,7 @@ body {
       text-decoration: none;
       padding: 1rem;
       //display: block;
-      color: $body;
+      color: var(--lightText);
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -339,7 +273,6 @@ body {
 
 
       &:hover {
-        color: rgb(90, 93, 95);
         color: $notification;
         font-weight: bold;
 
@@ -350,7 +283,7 @@ body {
 
         button {
           i {
-            color: white;
+            color: var(--lightText);
           }
         }
 
@@ -368,7 +301,7 @@ body {
         border-radius: $borderRadius;
         background-color: $notification;
         border: none;
-        color: white;
+        color: var(--lightText);
         display: inline-block;
         cursor: pointer;
 
@@ -382,7 +315,7 @@ body {
         justify-content: center;
 
         i {
-          color: white;
+          color: var(--lightText);
           margin: 0;
           transition: all 0.4s ease-in-out;
         }
@@ -442,7 +375,7 @@ body {
         padding: 0.5rem;
         border-radius: $borderRadius;
         background-color: $notification;
-        color: white;
+        color: var(--lightText);
       }
     }
   }
@@ -466,7 +399,7 @@ body {
       textarea {
         flex: 1;
         padding: 1rem;
-        background-color: $sidepanel;
+        background-color: var(--primaryBackground);
         outline: none;
         border-radius: $borderRadius;
         border: none;
@@ -474,7 +407,7 @@ body {
 
       button {
         flex: 1;
-        background-color: $sidepanel;
+        background-color: var(--primaryBackground);
         outline: none;
         border-radius: $borderRadius;
         border: none;
@@ -541,7 +474,7 @@ body {
 .expanded {
   flex-basis: 5%;
   height: 100%;
-  background-color: $sidepanel-bg;
+  background-color: var(--focusAreaBackgroundColor);
   padding: 1.5rem;
   min-width: 82px;
   display: flex;
@@ -625,7 +558,7 @@ body {
     font-weight: 300;
     font-size: 12px;
     margin-left: auto;
-    color: $body;
+    color: var(--lightText);
 
   }
 
@@ -704,7 +637,7 @@ body {
   transition: all 0.4s;
   width: 0;
   height: 300px;
-  background: rgb(255, 255, 255);
+  background: var(--secondaryBackground);
   overflow-y: scroll;
 
   //searchboxe
@@ -736,7 +669,7 @@ body {
           display: flex;
           justify-content: center;
           align-items: center;
-          color: white;
+          color: var(--lightText);
           background-color: $notification;
 
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
@@ -752,7 +685,7 @@ body {
           display: flex;
           justify-content: center;
           align-items: center;
-          color: white;
+          color: var(--lightText);
           background-color: $notification;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
         }
@@ -771,19 +704,10 @@ body {
           justify-content: center;
           min-width: 0;
 
-          .resultsquote {
-            overflow: hidden;
-            text-overflow: ellipsis;
-
-            font-size: 12px;
-            color: #c5c5c5;
-
-          }
-
           .resultsNameSurname {
             white-space: nowrap;
             font-size: 14px;
-            color: $body;
+            color: var(--lightText);
 
             overflow: hidden;
             text-overflow: ellipsis;
@@ -792,7 +716,7 @@ body {
           }
 
           .resultsPosition {
-            color: #b6b6b6;
+            color: var(--lightText);
             overflow: hidden;
             text-overflow: ellipsis;
             min-width: 0;
@@ -824,7 +748,7 @@ body {
   border-radius: $borderRadius;
   overflow: hidden;
   border-right: 1px solid #f1f4f6;
-  background: rgb(255, 255, 255);
+  background: var(--secondaryBackground);
   width: 350px;
   //height: 100%;
 
@@ -847,7 +771,7 @@ body {
     gap: 0.5rem;
     align-items: center;
     padding: 1rem 0;
-    border-bottom: 1px solid #f1f4f6;
+    border-bottom: 1px solid var(--primaryBackground);
     width: 100%;
     position: relative;
     top: 0;
@@ -876,7 +800,7 @@ body {
       width: 40px;
       height: 40px;
       border-radius: $borderRadius;
-      color: white;
+      color: var(--lightText);
       box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
 
     }
@@ -905,7 +829,7 @@ body {
       font-size: 13px;
       border-radius: $borderRadius;
       border: 1px solid #f1f4f6;
-      color: $body;
+      color: var(--lightText);
     }
 
     label {
@@ -919,7 +843,7 @@ body {
       i {
         width: 15px;
         height: auto;
-        color: #a8abad;
+        color: var(--lightText);
       }
     }
   }
@@ -934,7 +858,7 @@ body {
   &__list {
     list-style: none;
     padding: 5px 1rem;
-    border-bottom: 1px solid #f1f4f6;
+    border-bottom: 1px solid var(--primaryBackground);
 
     &:hover {
       background-color: rgb(247, 247, 247);
@@ -993,7 +917,7 @@ body {
         display: flex;
         justify-content: center;
         align-items: center;
-        color: white;
+        color: var(--lightText);
         background-color: $notification;
 
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
@@ -1009,7 +933,7 @@ body {
         display: flex;
         justify-content: center;
         align-items: center;
-        color: white;
+        color: var(--lightText);
         background-color: $notification;
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
       }
@@ -1022,7 +946,7 @@ body {
 
   &__title {
     font-size: 14px;
-    color: #7a7c7e;
+    color: var(--lightText);
     font-weight: 500;
 
     display: block;
@@ -1033,7 +957,7 @@ body {
 
   span {
     font-size: 10px;
-    color: #c5c5c5;
+    color: var(--lightText);
     // margin: 5px 0;
     display: block;
     white-space: nowrap;
@@ -1042,7 +966,7 @@ body {
   }
 
   &__excerpt {
-    color: $body;
+    color: var(--lightText);
 
     display: block;
     white-space: nowrap;
@@ -1087,7 +1011,7 @@ body {
 
     h3 {
       font-size: 24px;
-      color: $body;
+      color: var(--lightText);
 
       i {
         font-size: 24px;
@@ -1128,7 +1052,7 @@ body {
 
   &__link {
     text-decoration: none;
-    color: rgb(150, 150, 150);
+    color: var(--lightText);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1142,7 +1066,7 @@ body {
 
 .c-notification {
   font-size: 10px;
-  color: rgb(255, 255, 255);
+  color: var(--lightText);
   background-color: $notification;
   padding: 3px 5px;
 
@@ -1171,7 +1095,7 @@ body {
   overflow: hidden;
 
   .listMember {
-    border-bottom: 1px solid #f1f4f6;
+    border-bottom: 1px solid var(--primaryBackground);
     padding: 1rem 1rem;
     display: flex;
     gap: .5rem;
@@ -1201,7 +1125,7 @@ body {
 
   &__header {
     //padding:1rem 0;
-    border-bottom: 1px solid #f1f4f6;
+    border-bottom: 1px solid var(--primaryBackground);
     padding: 1rem 1rem;
     display: flex;
     align-items: center;
@@ -1238,14 +1162,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: var(--lightText);
     background-color: $notification;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
   }
 
   &__name {
     margin-left: 10px;
-    color: #747678;
+    color: var(--lightText);
 
     // display: block;
     white-space: nowrap;
@@ -1286,13 +1210,13 @@ body {
 .message-separator {
   width: 100%;
   text-align: center;
-  border-bottom: 1px solid rgba(83, 83, 83, 0.075);
+  border-bottom: 1px solid var(--primaryBackground);
   line-height: 0.1em;
   margin: 20px 0 20px;
 
   span {
     border-radius: $borderRadius;
-    color: rgba(83, 83, 83, 0.459);
+    color: var(--lightText);
     background: rgb(250, 250, 250);
     padding: 0 10px;
     -webkit-box-shadow: 0px 0px 17px -7px rgba (0, 0, 0, 0.5);
@@ -1328,7 +1252,7 @@ body {
   width: 25px;
   object-fit: cover;
   background: $notification;
-  color: white;
+  color: var(--lightText);
   text-transform: uppercase;
   display: flex;
   justify-content: center;
@@ -1337,26 +1261,13 @@ body {
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
 }
 
-// .message-group-received>div:first-child>div {
-//   border-radius: $borderRadius;
-//   height: 25px;
-//   width: 25px;
-//   background: $notification;
-//   color: white;
-//   text-transform: uppercase;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-
-//   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-// }
 
 .message-received {
   word-break: break-all;
   max-width: 100%;
   margin: 2px 0;
   display: flex;
-  color: black;
+  color: var(--lightText);
   white-space: pre-line;
   /*-ms-hyphens: auto;
   -webkit-hyphens: auto;
@@ -1397,18 +1308,18 @@ body {
           opacity: 0;
           position: absolute;
           transition: all 0.4s ease-in-out;
-          color: rgb(122, 122, 122);
+          color: var(--lightText);
           z-index: 1;
           display: flex;
           flex-direction: column;
           align-content: flex-start;
-          background-color: #F5F9FD;
+          background-color: var(--focusAreaBackgroundColor);
           border-radius: .4rem;
           border: 1px solid #cfcfcf;
 
           .title {
             padding: 0 .4rem;
-            border-bottom: 1px solid #c7c7c7;
+            border-bottom: 1px solid var(--primaryBackground);
           }
 
           li {
@@ -1427,7 +1338,7 @@ body {
     }
 
     .time_reactionChoice {
-      color: $body;
+      color: var(--lightText);
       display: flex;
       align-items: center;
       width: 0;
@@ -1503,7 +1414,7 @@ body {
 .message-received-text {
   padding: 10px;
   min-height: 20px;
-  background: #ebf0f6;
+  background: var(--primaryBackground);
   border-radius: 4px $borderRadius $borderRadius 4px;
 
   max-width: 60%;
@@ -1515,12 +1426,12 @@ body {
     margin-bottom: 0.5rem;
     padding: 10px;
     min-height: 20px;
-    //background: #ebf0f6;
+    //background: var(--primaryBackground);
     background: $notification;
     border-radius: $borderRadius;
 
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-    color: $sidepanel;
+    color: var(--lightText);
     cursor: pointer;
 
     text-decoration: none;
@@ -1539,7 +1450,7 @@ body {
 
   top: 100%;
   font-size: 11px;
-  color: grey;
+  color: var(--lightText);
 }
 
 .message-group-sent {
@@ -1590,18 +1501,18 @@ body {
           opacity: 0;
           position: absolute;
           transition: all 0.4s ease-in-out;
-          color: rgb(122, 122, 122);
+          color: var(--lightText);
           z-index: 1;
           display: flex;
           flex-direction: column;
           align-content: flex-start;
-          background-color: #F5F9FD;
+          background-color: var(--focusAreaBackgroundColor);
           border-radius: .4rem;
           border: 1px solid #cfcfcf;
 
           .title {
             padding: 0 .4rem;
-            border-bottom: 1px solid #c7c7c7;
+            border-bottom: 1px solid var(--primaryBackground);
           }
 
           li {
@@ -1620,7 +1531,7 @@ body {
     }
 
     .time_reactionChoice {
-      color: $body;
+      color: var(--lightText);
       display: flex;
       align-items: center;
       width: 0;
@@ -1691,7 +1602,7 @@ body {
   border-radius: $borderRadius 4px 4px $borderRadius;
   min-height: 20px;
   padding: 10px;
-  color: #ebf0f6;
+  color: var(--lightText);
   max-width: 60%;
   display: flex;
   flex-direction: column;
@@ -1699,11 +1610,11 @@ body {
   .message-tag-text {
     margin-bottom: 0.5rem;
     //background: rgb(31, 141, 251);
-    background: $sidepanel;
+    background: var(--primaryBackground);
     border-radius: $borderRadius;
     min-height: 20px;
     padding: 10px;
-    //color: #ebf0f6;
+    //color: var(--primaryBackground);
     color: $notification;
 
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
@@ -1726,7 +1637,7 @@ body {
   display: flex;
   margin-left: 5px;
   font-size: 15px;
-  color: rgba(134, 142, 153, 0.5);
+  color: var(--lightText);
 
   img,
   div {
@@ -1741,14 +1652,14 @@ body {
   font-size: 10px;
   text-align: right;
   white-space: nowrap;
-  color: rgba(255, 255, 255, 0.507)
+  color: var(--lightText);
 }
 
 .received-message-time {
   font-size: 10px;
   text-align: left;
   white-space: nowrap;
-  color: rgba(0, 0, 0, 0.507)
+  color: var(--lightText);
 }
 
 //messages list END
@@ -1770,7 +1681,7 @@ body {
     text-decoration: none;
     outline: none;
     border: none;
-    color: white;
+    color: var(--lightText);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1799,10 +1710,10 @@ body {
 /** This is the css of the input **/
 .w-input-container {
   flex: 1;
-  color: #76797c;
+  color: var(--lightText);
   //margin: 0px 10px;
   //background-color: #fff;
-  background-color: #EBF0F6;
+  background-color: var(--primaryBackground);
   border-radius: $borderRadius;
   //border: black solid;
   //box-shadow: -1px 1px 10px 2px rgba(204, 197, 197, 0.5);
@@ -1855,7 +1766,7 @@ body {
         outline: none;
         border: none;
         background-color: $notification;
-        color: white;
+        color: var(--lightText);
 
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
 
@@ -1879,7 +1790,7 @@ body {
 }
 
 .w-placeHolder {
-  color: #a0a0a0;
+  color: var(--lightText);
   top: .6rem;
   left: .4rem;
   pointer-events: none;
@@ -1949,13 +1860,13 @@ body {
   top: 3.3rem;
   width: 20rem;
   height: fit-content;
-  background-color: #EBF0F6;
+  background-color: var(--primaryBackground);
   border: 1px solid rgba(0, 0, 0, 0.04);
   box-shadow: -1px 1px 10px 2px rgba(204, 197, 197, 0.5);
   border-radius: $borderRadius;
   padding: 1rem 0;
 
-  color: #969696;
+  color: var(--lightText);
 
   display: none;
   flex-direction: column;
@@ -1973,12 +1884,12 @@ body {
     }
 
     h3 {
-      color: #797979;
+      color: var(--lightText);
       font-size: 15px;
     }
 
     p {
-      color: #888888;
+      color: var(--lightText);
     }
   }
 
@@ -2009,7 +1920,7 @@ body {
         width: 100%;
         border: none;
         cursor: pointer;
-        color: #797979;
+        color: var(--lightText);
         display: flex;
         align-items: center;
       }
@@ -2048,13 +1959,8 @@ body {
   background-color: transparent;
   cursor: pointer;
   text-decoration: none;
-  color: rgb(150, 150, 150);
+  color: var(--lightText);
 }
-
-:root {
-  --clr: rgb(255, 255, 255);
-}
-
 
 .navigation {
   position: fixed;
@@ -2103,7 +2009,7 @@ body {
   font-size: 1.5em;
   text-align: center;
   transition: 0.5s;
-  color: var(--clr);
+  color: var(--lightText);
 }
 
 .navigation ul li.active a .icon {
@@ -2114,7 +2020,7 @@ body {
   position: absolute;
   transform: translateY(20px);
   opacity: 0;
-  color: var(--clr);
+  color: var(--lightText);
   font-weight: 400;
   font-size: 0.75em;
   letter-spacing: 0.05em;
@@ -2133,7 +2039,7 @@ body {
   height: 70px;
   background: #002fff;
   border-radius: 100%;
-  border: 6px solid var(--clr);
+  border: 6px solid $white;
   cursor: pointer;
   transition: 0.5s;
   ;
@@ -2147,7 +2053,7 @@ body {
   width: 20px;
   height: 20px;
   border-top-right-radius: $borderRadius;
-  box-shadow: 1px -10px 0 0 var(--clr);
+  box-shadow: 1px -10px 0 0 $white;
 }
 
 .indicator::after {
@@ -2158,7 +2064,7 @@ body {
   width: 20px;
   height: 20px;
   border-top-left-radius: $borderRadius;
-  box-shadow: -1px -10px 0 0 var(--clr);
+  box-shadow: -1px -10px 0 0 $white;
 }
 
 .navigation ul li:nth-child(2).active~.indicator {
@@ -2188,14 +2094,14 @@ body {
 .c-messages_panel {
   display: flex;
   flex: 1;
-  background-color: $sidepanel;
+  background-color: var(--primaryBackground);
 }
 
 .c-call_log_panel {
   display: none;
   flex: 1;
-  background-color: #ebf0f6;
-  color: $body;
+  background-color: var(--primaryBackground);
+  color: var(--lightText);
 
   .callSearchSection {
     // width: 350px;
@@ -2235,8 +2141,8 @@ body {
           display: flex;
           justify-content: center;
           align-items: center;
-          color: white;
-          background-color: #003061;
+          color: var(--lightText);
+          background-color: $sidepanel;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
           transition: all 0.4s;
           flex-shrink: 0;
@@ -2265,7 +2171,7 @@ body {
         }
 
         button {
-          color: $body;
+          color: var(--lightText);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -2273,7 +2179,7 @@ body {
           transition: all 0.4s;
           //margin: 0 0.5rem;
           border-radius: $borderRadius;
-          background-color: $sidepanel;
+          background-color: var(--primaryBackground);
           border: none;
           outline: none;
           cursor: pointer;
@@ -2287,7 +2193,7 @@ body {
           }
 
           &:hover {
-            background-color: darken($sidepanel, 5%)
+            background-color: $darkenSidepanel;
           }
         }
       }
@@ -2305,7 +2211,7 @@ body {
     border-radius: $borderRadius;
 
     .header {
-      border-bottom: 1px solid #f1f4f6;
+      border-bottom: 1px solid var(--primaryBackground);
       padding: 1rem 1rem;
       display: -webkit-box;
       display: -ms-flexbox;
@@ -2391,7 +2297,7 @@ body {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                color: white;
+                color: var(--lightText);
 
                 img,
                 div {
@@ -2469,7 +2375,7 @@ body {
             }
 
             &:hover {
-              background-color: $sidepanel-bg;
+              background-color: var(--focusAreaBackgroundColor);
             }
           }
 
@@ -2479,7 +2385,7 @@ body {
 
           .ongoing {
             background-color: $notification;
-            color: white;
+            color: var(--lightText);
 
             &:hover {
               background-color: darken($notification, 5%)
@@ -2505,10 +2411,10 @@ body {
               align-items: center;
               justify-content: center;
               cursor: pointer;
-              color: grey;
+              color: var(--lightText);
               border: none;
               outline: none;
-              background-color: $sidepanel;
+              background-color: var(--primaryBackground);
 
               i {
                 font-size: 18px;
@@ -2516,7 +2422,7 @@ body {
               }
 
               &:hover {
-                color: dark($sidepanel);
+                color: var(--lightText);
                 transition: all 0.4s;
               }
             }
@@ -2593,7 +2499,7 @@ body {
           justify-content: center;
           align-items: center;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-          color: white;
+          color: var(--lightText);
 
           i {
             font-size: 30px;
@@ -2651,17 +2557,17 @@ body {
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: $body;
+            color: var(--lightText);
             border: none;
             outline: none;
-            background-color: $sidepanel;
+            background-color: var(--primaryBackground);
 
             i {
               font-size: 18px;
             }
 
             &:hover {
-              color: $notification;
+              color: var(--lightText);
             }
           }
         }
@@ -2686,7 +2592,7 @@ body {
           .callpartifipants-header-text {}
 
           .partifipantPicture {
-            color: white;
+            color: var(--lightText);
             background-color: $notification;
             width: 40px;
             height: 40px;
@@ -2699,7 +2605,7 @@ body {
 
             img,
             div {
-              color: white;
+              color: var(--lightText);
               width: 38px;
               height: 38px;
               border-radius: $borderRadius;
@@ -2745,7 +2651,7 @@ body {
   display: none;
   width: 100%;
   height: 100%;
-  background-color: $sidepanel;
+  background-color: var(--primaryBackground);
 
   .leftPart {
     width: 350px;
@@ -2784,11 +2690,11 @@ body {
         cursor: pointer;
 
         &:hover {
-          background-color: $sidepanel-bg;
+          background-color: var(--focusAreaBackgroundColor);
         }
 
         &.headerItemSelected {
-          background-color: $sidepanel;
+          background-color: var(--primaryBackground);
         }
       }
     }
@@ -2824,7 +2730,7 @@ body {
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
+            color: var(--lightText);
             background-color: #003061;
             box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
             transition: all 0.4s;
@@ -2856,14 +2762,14 @@ body {
           }
 
           button {
-            color: $body;
+            color: var(--lightText);
             display: flex;
             align-items: center;
             padding: 1rem;
             transition: all 0.4s;
             //margin: 0 0.5rem;
             border-radius: $borderRadius;
-            background-color: $sidepanel;
+            background-color: var(--primaryBackground);
             border: none;
             outline: none;
             cursor: pointer;
@@ -2878,7 +2784,7 @@ body {
             }
 
             &:hover {
-              background-color: darken($sidepanel, 5%)
+              background-color: $darkenSidepanel;
             }
           }
         }
@@ -2911,7 +2817,7 @@ body {
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
+            color: var(--lightText);
             background-color: #003061;
             box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
             transition: all 0.4s;
@@ -2941,7 +2847,7 @@ body {
           }
 
           button {
-            color: $body;
+            color: var(--lightText);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2949,7 +2855,7 @@ body {
             transition: all 0.4s;
             //margin: 0 0.5rem;
             border-radius: $borderRadius;
-            background-color: $sidepanel;
+            background-color: var(--primaryBackground);
             border: none;
             outline: none;
             cursor: pointer;
@@ -2964,7 +2870,7 @@ body {
             }
 
             &:hover {
-              background-color: darken($sidepanel, 5%)
+              background-color: $darkenSidepanel;
             }
           }
         }
@@ -3033,20 +2939,20 @@ body {
           text-align: center;
           border-radius: $borderRadius;
           cursor: pointer;
-          background-color: $sidepanel;
+          background-color: var(--primaryBackground);
           outline: none;
           border: none;
-          color: $body;
+          color: var(--lightText);
           position: relative;
           display: flex;
           align-items: center;
 
           p {
-            color: $body;
+            color: var(--lightText);
           }
 
           &:hover {
-            background-color: darken($sidepanel, 5%)
+            background-color: $darkenSidepanel;
           }
         }
 
@@ -3097,13 +3003,13 @@ body {
               background: white;
               border: none;
               flex: 1;
-              color: $body;
-              background: lighten($sidepanel, 3%);
+              color: var(--lightText);
+              background: $lightenSidepanel;
               padding: .5rem 1rem;
             }
 
             button {
-              background: $sidepanel;
+              background: var(--primaryBackground);
               border-radius: $borderRadius;
               outline: none;
               border: none;
@@ -3117,12 +3023,12 @@ body {
               }
 
               &:hover {
-                background: darken($sidepanel, 5%)
+                background: $darkenSidepanel;
               }
             }
 
             // .searchField{
-            //   background-color: $sidepanel;
+            //   background-color: var(--primaryBackground);
             //   border-radius: $borderRadius;
             // }
           }
@@ -3151,7 +3057,7 @@ body {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                color: white;
+                color: var(--lightText);
                 background-color: #003061;
                 box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
                 transition: all 0.4s;
@@ -3183,14 +3089,14 @@ body {
               }
 
               button {
-                color: $body;
+                color: var(--lightText);
                 display: flex;
                 align-items: center;
                 padding: 1rem;
                 transition: all 0.4s;
                 //margin: 0 0.5rem;
                 border-radius: $borderRadius;
-                background-color: $sidepanel;
+                background-color: var(--primaryBackground);
                 border: none;
                 outline: none;
                 cursor: pointer;
@@ -3205,7 +3111,7 @@ body {
                 }
 
                 &:hover {
-                  background-color: darken($sidepanel, 5%)
+                  background-color: $darkenSidepanel;
                 }
               }
             }
@@ -3222,7 +3128,7 @@ body {
       flex: 1;
 
       .callTopBar {
-        color: white;
+        color: var(--lightText);
         position: absolute;
         top: 0;
         left: 0;
@@ -3252,7 +3158,7 @@ body {
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
+            color: var(--lightText);
             background-color: #003061;
             box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
             transition: all 0.4s;
@@ -3283,7 +3189,7 @@ body {
             border: none;
             outline: none;
             background: rgba(0, 0, 0, 0.5);
-            color: white;
+            color: var(--lightText);
             cursor: pointer;
             width: 40px;
             height: 40px;
@@ -3318,8 +3224,8 @@ body {
         height: 100%;
         object-fit: cover;
         border-radius: $borderRadius;
-        //border: solid 1px $body;
-        background-color: $sidepanel-bg;
+        //border: solid 1px var(--lightText);
+        background-color: var(--focusAreaBackgroundColor);
 
         &.fitVideoToWindow {
           width: 100%;
@@ -3339,7 +3245,7 @@ body {
         height: 100%;
         justify-content: center;
         align-items: center;
-        background-color: darken($sidepanel, 10%);
+        background-color: $darkenSidepanel;
 
         .profilePicture {
           border: 1px solid $notification;
@@ -3352,7 +3258,7 @@ body {
           justify-content: center;
           -ms-flex-align: center;
           align-items: center;
-          color: white;
+          color: var(--lightText);
           background-color: #003061;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
         }
@@ -3381,7 +3287,7 @@ body {
             border: none;
             outline: none;
             background: rgba(0, 0, 0, 0.1);
-            color: white;
+            color: var(--lightText);
             cursor: pointer;
 
             &:hover {
@@ -3407,7 +3313,7 @@ body {
             border: none;
             outline: none;
             background: rgba(0, 0, 0, 0.5);
-            color: white;
+            color: var(--lightText);
             cursor: pointer;
             //backdrop-filter: blur(5px);
 
@@ -3464,7 +3370,7 @@ body {
         height: 4rem;
         width: 4rem;
         //border: 1px solid $notification;
-        background-color: $sidepanel;
+        background-color: var(--primaryBackground);
         display: flex;
         cursor: pointer;
         justify-content: center;
@@ -3478,7 +3384,7 @@ body {
         }
 
         &:hover {
-          background-color: darken($sidepanel, 5%)
+          background-color: $darkenSidepanel;
         }
 
         &.screen {
@@ -3515,11 +3421,11 @@ body {
         cursor: pointer;
 
         &:hover {
-          background-color: $sidepanel-bg;
+          background-color: var(--focusAreaBackgroundColor);
         }
 
         &.headerItemSelected {
-          background-color: $sidepanel;
+          background-color: var(--primaryBackground);
         }
       }
     }
@@ -3580,7 +3486,7 @@ body {
               border: none;
               outline: none;
               background: rgba(0, 0, 0, 0.5);
-              color: white;
+              color: var(--lightText);
               cursor: pointer;
               //backdrop-filter: blur(5px);
 
@@ -3608,7 +3514,7 @@ body {
 
             .miniVideowner {
               flex: 1;
-              color: white;
+              color: var(--lightText);
               padding: 1rem;
             }
           }
@@ -3624,7 +3530,7 @@ body {
             height: 100%;
             justify-content: center;
             align-items: center;
-            background-color: darken($sidepanel, 10%);
+            background-color: $darkenSidepanel;
 
             .profilePicture {
               border: 1px solid $notification;
@@ -3637,7 +3543,7 @@ body {
               justify-content: center;
               -ms-flex-align: center;
               align-items: center;
-              color: white;
+              color: var(--lightText);
               background-color: #003061;
               box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
             }
@@ -3655,7 +3561,7 @@ body {
             .muteIndicatorContent {
               padding: 0.5rem;
               display: flex;
-              color: white;
+              color: var(--lightText);
               background: black;
               border-radius: 15px;
             }
@@ -3712,14 +3618,14 @@ body {
   }
 
   button {
-    color: $body;
+    color: var(--lightText);
     display: flex;
     align-items: center;
     padding: 1rem;
     transition: all 0.4s;
     //margin: 0 0.5rem;
     border-radius: $borderRadius;
-    background-color: $sidepanel;
+    background-color: var(--primaryBackground);
     border: none;
     outline: none;
     cursor: pointer;
@@ -3733,20 +3639,20 @@ body {
     }
 
     &:hover {
-      background-color: darken($sidepanel, 5%)
+      background-color: $darkenSidepanel;
     }
   }
 }
 
 .mobileButton {
   display: none !important;
-  color: $body;
+  color: var(--lightText);
   align-items: center;
   justify-content: center;
   padding: 1rem;
   transition: all 0.4s;
   border-radius: $borderRadius;
-  background-color: $sidepanel;
+  background-color: var(--primaryBackground);
   border: none;
   outline: none;
   cursor: pointer;
@@ -3762,12 +3668,12 @@ body {
   }
 
   &:hover {
-    background-color: darken($sidepanel, 5%)
+    background-color: $darkenSidepanel;
   }
 }
 
 .importantButton {
-  color: white;
+  color: var(--lightText);
   border-radius: $borderRadius;
   background-color: $notification;
   padding: 1rem !important;
@@ -3796,7 +3702,7 @@ body {
 .white-bg {
   background-color: #ffffff !important;
   background: #ffffff !important;
-  color: $body !important;
+  color: var(--lightText) !important;
 }
 
 .red {
@@ -3840,8 +3746,8 @@ body {
     align-items: center;
     flex-direction: row-reverse;
     height: 3rem;
-    background: $sidepanel;
-    color: $body;
+    background: var(--primaryBackground);
+    color: var(--lightText);
     padding: 0 0.75rem 0 1.5rem;
     margin-left: 0.5rem;
     border-radius: $borderRadius;
@@ -3861,7 +3767,7 @@ body {
     }
 
     &:hover {
-      background-color: darken($sidepanel, 5%);
+      background-color: $darkenSidepanel;
 
       .pill-label {
         color: $notification;
@@ -4008,10 +3914,10 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: $body;
+    color: var(--lightText);
     border: none;
     outline: none;
-    background-color: $sidepanel;
+    background-color: var(--primaryBackground);
 
     flex-shrink: 0;
 
@@ -4128,7 +4034,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  background-color: $sidepanel;
+  background-color: var(--primaryBackground);
   height: 100%;
   width: 100%;
 
@@ -4153,7 +4059,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: var(--lightText);
     background-color: #003061;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
     transition: all 0.4s;
@@ -4168,7 +4074,7 @@ body {
     max-width: 100%;
     gap: 0.5em;
     padding: 1rem;
-    background-color: $sidepanel-bg;
+    background-color: var(--focusAreaBackgroundColor);
     border-radius: $borderRadius;
 
     .listMember {
@@ -4190,7 +4096,7 @@ body {
         display: flex;
         justify-content: center;
         align-items: center;
-        color: white;
+        color: var(--lightText);
         background-color: #003061;
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
         transition: all 0.4s;
@@ -4222,14 +4128,14 @@ body {
       }
 
       button {
-        color: $body;
+        color: var(--lightText);
         display: flex;
         align-items: center;
         padding: 1rem;
         transition: all 0.4s;
         //margin: 0 0.5rem;
         border-radius: $borderRadius;
-        background-color: $sidepanel;
+        background-color: var(--primaryBackground);
         border: none;
         outline: none;
         cursor: pointer;
@@ -4244,7 +4150,7 @@ body {
         }
 
         &:hover {
-          background-color: darken($sidepanel, 5%)
+          background-color: $darkenSidepanel;
         }
       }
     }
@@ -4263,7 +4169,7 @@ body {
       border: none;
       outline: none;
       background: rgba(0, 0, 0, 0.5);
-      color: white;
+      color: var(--lightText);
       cursor: pointer;
       //backdrop-filter: blur(5px);
 
@@ -4322,7 +4228,7 @@ body {
   .notification {
     display: flex;
     flex-direction: column;
-    background: $sidepanel-bg;
+    background: var(--focusAreaBackgroundColor);
     border-radius: $borderRadius;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
     //padding: 1rem 1rem 0rem 1rem;
@@ -4353,7 +4259,7 @@ body {
         display: flex;
         justify-content: center;
         align-items: center;
-        color: white;
+        color: var(--lightText);
         background-color: #003061;
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
         transition: all 0.4s;
@@ -4379,13 +4285,13 @@ body {
       }
 
       .normal {
-        background-color: $sidepanel;
-        color: $body;
+        background-color: var(--primaryBackground);
+        color: var(--lightText);
       }
 
       .confirm {
         background-color: $notification;
-        color: white;
+        color: var(--lightText);
       }
 
 
@@ -4402,7 +4308,7 @@ body {
 .schedule-container {
   display: flex;
   flex: 1;
-  background-color: $sidepanel;
+  background-color: var(--primaryBackground);
   max-width: 100%;
 
   .selectionPanel {
@@ -4434,7 +4340,7 @@ body {
         align-items: center;
         padding: 1rem;
         padding-bottom: 15px;
-        border-bottom: var(--border-width) solid var(--box-shadow);
+        border-bottom: 1px solid var(--primaryBackground);
 
         display: flex;
         align-items: center;
@@ -4449,7 +4355,7 @@ body {
           border: none;
           border-radius: $borderRadius;
           padding: 11px 13px;
-          color: $body;
+          color: var(--lightText);
           font-weight: 600;
           font-size: 0.9rem;
           margin-right: 1px;
@@ -4566,7 +4472,7 @@ body {
       //   border: none;
       //   border-radius: $borderRadius;
       //   padding: 11px 13px;
-      //   color: $body;
+      //   color: var(--lightText);
       //   font-weight: 600;
       //   font-size: 0.9rem;
       //   margin-right: 1px;
@@ -4586,7 +4492,7 @@ body {
           border: none;
           border-radius: $borderRadius;
           padding: 11px 13px;
-          color: $body;
+          color: var(--lightText);
           font-weight: 600;
           font-size: 0.9rem;
           margin-right: 1px;
@@ -4606,9 +4512,9 @@ body {
       .pannedItems-Header {
         font-size: 20px;
         font-weight: bold;
-        color: $body;
+        color: var(--lightText);
         padding: 1rem;
-        border-bottom: 1px solid #f1f4f6;
+        border-bottom: 1px solid var(--primaryBackground);
       }
     }
   }
@@ -4618,7 +4524,7 @@ body {
     align-items: center;
     flex-direction: column;
     flex: 1;
-    background-color: white;
+    background-color: var(--secondaryBackground);
     margin: 1rem;
     border-radius: $borderRadius;
     overflow: hidden;
@@ -4681,7 +4587,7 @@ body {
             }
 
             .sheduleContentDiv {
-              background-color: $sidepanel;
+              background-color: var(--primaryBackground);
               display: flex;
               flex-direction: column;
               gap: 0.5rem;
@@ -4776,7 +4682,7 @@ body {
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
         border-radius: $borderRadius;
         padding: 1rem;
-        background-color: $sidepanel;
+        background-color: var(--primaryBackground);
 
         .listMember {
           border-radius: $borderRadius;
@@ -4797,7 +4703,7 @@ body {
     border: none;
     border-radius: $borderRadius;
     padding: 11px 13px;
-    color: $body;
+    color: var(--lightText);
     font-weight: 600;
     font-size: 0.9rem;
     margin-right: 1px;
@@ -4825,11 +4731,11 @@ body {
     border: none;
     outline: none;
     padding: 1rem;
-    background-color: $sidepanel;
+    background-color: var(--primaryBackground);
     border-radius: $borderRadius;
     flex: 1;
     overflow-y: auto;
-    color: $body;
+    color: var(--lightText);
     transition: all 0.4s;
   }
 
@@ -4871,7 +4777,7 @@ body {
 .work_shifts_Panel {
   display: none;
   flex: 1;
-  color: $body;
+  color: var(--lightText);
   flex-direction: column;
   padding: 1rem;
   height: calc(100vh);
@@ -4879,7 +4785,7 @@ body {
   .workShiftTitleBar {
     h1 {
       font-size: 18px;
-      color: $body;
+      color: var(--lightText);
     }
 
 
@@ -4922,7 +4828,7 @@ body {
           }
 
           &:hover {
-            background: $sidepanel;
+            background: var(--primaryBackground);
           }
         }
       }
@@ -4936,7 +4842,7 @@ body {
         .commandButton {
           transition: .3s;
           background: $notification;
-          color: white;
+          color: var(--lightText);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.466);
           border-radius: $borderRadius;
           border: none;
@@ -4970,7 +4876,7 @@ body {
           }
 
           &:hover {
-            background: $sidepanel;
+            background: var(--primaryBackground);
           }
         }
       }
@@ -5020,7 +4926,7 @@ body {
 
       .dayparts-cell-test {
         transition: .3s;
-        background-color: #EBF0F6;
+        background-color: var(--primaryBackground);
         width: 30px;
         min-width: 30px;
         height: 30px;
@@ -5167,7 +5073,7 @@ body {
       background-color: $notification;
 
       font-size: 6rem;
-      color: white;
+      color: var(--lightText);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -5209,7 +5115,7 @@ body {
         border-radius: 50%;
         object-fit: cover;
         font-size: 4rem;
-        color: white;
+        color: var(--lightText);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -5291,10 +5197,10 @@ body {
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      color: rgb(77, 77, 77);
+      color: var(--lightText);
       border: none;
       outline: none;
-      background-color: $sidepanel;
+      background-color: var(--primaryBackground);
 
       i {
         font-size: 18px;
@@ -5354,10 +5260,10 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: rgb(77, 77, 77);
+  color: var(--lightText);
   border: none;
   outline: none;
-  background-color: $sidepanel;
+  background-color: var(--primaryBackground);
   box-shadow: 0px 0px 17px -7px rgb(0, 0, 0);
 
   i {
@@ -5397,7 +5303,7 @@ body {
     font-weight: bold;
     width: 100%;
     text-align: center;
-    color: white;
+    color: var(--lightText);
     mix-blend-mode: difference;
   }
 
@@ -5452,7 +5358,7 @@ body {
 
   .value-container {
     position: relative;
-    color: white;
+    color: var(--lightText);
     mix-blend-mode: difference;
   }
 
@@ -5468,7 +5374,7 @@ body {
   display: none;
   width: 100%;
   height: 100%;
-  background-color: $sidepanel;
+  background-color: var(--primaryBackground);
 
   .left-responsibilities {
     width: 350px;
@@ -5499,7 +5405,7 @@ body {
 
       .responsibilityOptionButton {
         padding: 1rem;
-        background-color: $sidepanel;
+        background-color: var(--primaryBackground);
         border-radius: $borderRadius;
 
         border: none;
@@ -5508,7 +5414,7 @@ body {
       }
 
       .responsibilityOptionDropDown {
-        background-color: $sidepanel;
+        background-color: var(--primaryBackground);
         border-radius: $borderRadius;
 
         border: none;
@@ -5566,7 +5472,7 @@ body {
           display: flex;
           justify-content: center;
           align-items: center;
-          color: white;
+          color: var(--lightText);
           background-color: #003061;
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
         }
@@ -5631,6 +5537,7 @@ body {
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: $borderRadius;
 
             i {
               font-size: 4rem;
@@ -5641,7 +5548,7 @@ body {
           &:hover>.manageButton {
             visibility: visible;
             opacity: 1;
-            background: $sidepanel;
+            background: var(--primaryBackground);
           }
         }
 
@@ -5676,7 +5583,7 @@ body {
               padding: .5rem;
               border-radius: $borderRadius;
               background-color: $notification;
-              color: white;
+              color: var(--lightText);
             }
 
             p {}
@@ -5690,7 +5597,7 @@ body {
             input {
               padding: 1rem;
               border-radius: $borderRadius;
-              background-color: $sidepanel;
+              background-color: var(--primaryBackground);
               border: none;
               outline: none;
             }
@@ -5701,7 +5608,7 @@ body {
           flex: 1;
           padding: 1rem;
           // border-radius: $borderRadius;
-          background-color: $sidepanel;
+          background-color: var(--primaryBackground);
 
           display: flex;
           gap: 1rem;
@@ -5736,7 +5643,7 @@ body {
                 padding: 1rem;
                 background-color: $notification;
                 border-radius: $borderRadius;
-                color: white;
+                color: var(--lightText);
               }
 
               .listMember {
@@ -5795,7 +5702,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
@@ -5821,6 +5728,26 @@ body {
         height: 100%;
         z-index: 2;
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
+
+        &.expanded {
+          position: absolute !important;
+          flex-direction: row;
+          min-width: 100% !important;
+          width: 100%;
+          height: unset !important;
+          z-index: 1;
+          padding: 1rem;
+
+          .c-sidepanel__nav {
+            display: none;
+          }
+
+          .c-sidepanel__app-header {
+            margin: 0;
+            padding: 0;
+            border: none;
+          }
+        }
       }
 
       .c-messages_panel {
@@ -5843,25 +5770,7 @@ body {
     }
   }
 
-  .expanded {
-    position: absolute;
-    flex-direction: row;
-    min-width: 100% !important;
-    width: 100%;
-    height: unset !important;
-    z-index: 1;
-    padding: 1rem;
 
-    .c-sidepanel__nav {
-      display: none;
-    }
-
-    .c-sidepanel__app-header {
-      margin: 0;
-      padding: 0;
-      border: none;
-    }
-  }
 
   .c-openchat__box__info {
     margin-bottom: 61.2px;
@@ -6076,19 +5985,18 @@ body {
         left: 0;
         top: 0;
         padding: 1rem;
-        min-width: 370px;
+        min-width: 350px;
         z-index: 2;
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.836);
 
         &.expanded {
           position: static;
           width: 82px;
-          min-width: 82px;
           max-width: 82px;
 
           flex-basis: 5%;
           height: 100%;
-          background-color: $sidepanel-bg;
+          background-color: var(--focusAreaBackgroundColor);
           padding: 1.5rem;
           min-width: 82px;
           display: flex;
