@@ -1,18 +1,3 @@
-:root {
-  --color-accent: #003061;
-  --background-color: #f8f7fa;
-  --foreground-color: #ffffff;
-  --text-color: #19181a;
-  --highlight-text-color: var(--text-color);
-  --active-text-color: #f8f7fa;
-  --inactive-text-color: #a5a5a5;
-  --btn-bg: #f8f7fa;
-  --box-shadow: #efefef;
-  --border-width: 1px;
-  --border-radius: 15px;
-  --spacing: 18px;
-}
-
 .goodselect {
   color: rgb(128, 132, 136);
   display: inline-block;

@@ -586,7 +586,7 @@ let functionalityOptionsArray = [
     mySavedID = userInfo.userID;
     myName = userInfo.name;
     Mysurname = userInfo.surname;
-    editProfileButton.addEventListener('click', function () { createProfilePopup(userInfo, true) })
+    editProfileButton.addEventListener('click', function () { createProfilePopup(userInfo) })
 
     if (superAdmin.isSuperAdmin == true || admin.isAdmin == true) {
       let adminPanel = createElement({ elementType: 'section', class: 'c-time-admin_panel' })
@@ -2020,6 +2020,10 @@ function makeProfilePicture(userInfo) {
   let memberProfilePicture;
   if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
   else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture })
+  
+  memberProfilePicture.addEventListener('click', ()=> {
+    createProfilePopup(userInfo);
+  })
   return memberProfilePicture;
 }
 
@@ -4284,11 +4288,15 @@ async function createInScreenPopup(constraints) {
   let bottomButtons = actions.map(action => { action.element.addEventListener('click', action.functionCall); return action.element; })
   let popupBottom = createElement({ elementType: 'div', class: 'popupBottom', childrenArray: bottomButtons })
   let inScreenPanel = createElement({ elementType: 'div', class: 'inScreenPanel', childrenArray: [popupHeader, popupBody, popupBottom] })
-  body.append(inScreenPanel)
+
+  let inscreenPanelContainer = document.getElementById('inscreenPanelContainer')
+  inscreenPanelContainer.append(inScreenPanel)
   await new Promise(resolve => setTimeout(resolve, 20)) // wait 20 millisecons / helps the animation
   inScreenPanel.classList.add('visible') // add the visibility class so that the item transitions into screen
+  inscreenPanelContainer.classList.add('popupActive') // to activate the background blurr and prevent interaction with the app
   async function removePopup() {
     inScreenPanel.classList.remove('visible')
+    inscreenPanelContainer.classList.remove('popupActive')
     await new Promise(resolve => setTimeout(resolve, 3000))
     inScreenPanel.remove()
   }
@@ -4298,7 +4306,7 @@ async function createInScreenPopup(constraints) {
   return inScreenPanel
 }
 
-async function createProfilePopup(userInfo, editProfile = false) {
+async function createProfilePopup(userInfo) {
   // delete the existing Div
   if (openProfileDiv) openProfileDiv.remove()
   //coverPhotoDiv
@@ -4347,7 +4355,7 @@ async function createProfilePopup(userInfo, editProfile = false) {
   //combine cover with user profile
   let mainCentralProfileDiv = createElement({ elementType: 'div', class: 'mainCentralProfileDiv', childrenArray: [coverPhotoDiv, userDataDiv] })
 
-  if (editProfile == true) {
+  if (userInfo.userID == mySavedID) {
     // cover edit - buttons
     let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
     let coverDeleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
@@ -4468,11 +4476,15 @@ async function createProfilePopup(userInfo, editProfile = false) {
     })
     userSecondaryInfo.prepend(universalCallButtons)
   }
-  body.append(mainCentralProfileDiv)
+  let inscreenPanelContainer = document.getElementById('inscreenPanelContainer')
+
+  inscreenPanelContainer.append(mainCentralProfileDiv)
   await new Promise(resolve => setTimeout(resolve, 20))
+  inscreenPanelContainer.classList.add('popupActive')
   mainCentralProfileDiv.classList.add('visible')
   closeButton.addEventListener('click', async () => {
     mainCentralProfileDiv.classList.remove('visible')
+    inscreenPanelContainer.classList.remove('popupActive')
     await new Promise(resolve => setTimeout(resolve, 3000))
     mainCentralProfileDiv.remove()
   })

@@ -135,6 +135,7 @@ CREATE TABLE `eventparticipants` (
   `attending` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`participantId`) REFERENCES user(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`eventId`) REFERENCES events(`eventId`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `room` (

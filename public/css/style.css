@@ -251,20 +251,39 @@ body {
   transform: rotate(180deg);
 }
 
+.inscreenPanelContainer {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  visibility: hidden;
+  opacity: 0;
+  height: 100%;
+  width: 100%;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  justify-content: center;
+  align-items: center;
+  transition: all 0.4s;
+}
+.inscreenPanelContainer.popupActive {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
 .inScreenPanel {
   visibility: hidden;
   opacity: 0;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  color: var(--lightText);
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background-color: var(--secondaryBackground);
   border-radius: 15px;
-  box-shadow: 0px 0px 100000px 7000000px rgba(0, 0, 0, 0.753);
+  box-shadow: 0px 0px 17px 0px rgba(0, 0, 0, 0.753);
   transition: all 0.4s;
-  min-width: 200px;
+  min-width: 300px;
   min-height: 300px;
   max-height: calc(100% - 2rem);
   max-width: calc(100% - 2rem);
@@ -275,7 +294,7 @@ body {
   opacity: 1;
 }
 .inScreenPanel .popupTitle {
-  border-bottom: 1px solid #f1f4f6;
+  border-bottom: 1px solid var(--primaryBackground);
   padding: 1rem;
   display: flex;
   align-items: center;
@@ -317,6 +336,7 @@ body {
   outline: none;
   border-radius: 15px;
   border: none;
+  color: var(--lightText);
 }
 .inScreenPanel .popupBody .editBlock button {
   flex: 1;
@@ -324,6 +344,11 @@ body {
   outline: none;
   border-radius: 15px;
   border: none;
+  transition: all 0.4s;
+}
+.inScreenPanel .popupBody .editBlock button:hover {
+  color: var(--notification);
+  transition: all 0.4s;
 }
 .inScreenPanel .popupBody .editBlock .editBlockButtons {
   padding: 1rem;
@@ -351,20 +376,27 @@ body {
   flex-direction: column;
 }
 .inScreenPanel .popupBottom {
-  border-top: 1px solid #f1f4f6;
+  border-top: 1px solid var(--primaryBackground);
   padding: 1rem;
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
+  transition: all 0.4s;
 }
 .inScreenPanel .popupBottom button {
   padding: 1rem;
   outline: none;
   border: none;
   border-radius: 15px;
-  background-color: white;
+  background-color: var(--primaryBackground);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
   cursor: pointer;
+  color: var(--lightText);
+  transition: all 0.4s;
+}
+.inScreenPanel .popupBottom button:hover {
+  color: var(--notification);
+  transition: all 0.4s;
 }
 
 .expanded {
@@ -3491,6 +3523,7 @@ body {
   gap: 1rem;
   margin: 1rem;
   z-index: 10;
+  color: var(--lightText);
 }
 .notifications .notification {
   display: flex;
@@ -3512,7 +3545,7 @@ body {
   padding: 1rem;
 }
 .notifications .notification .notificationBody .profilePicture {
-  border: 1px solid rgb(0, 48, 97);
+  border: 1px solid var(--notification);
   width: 40px;
   height: 40px;
   -o-object-fit: cover;
@@ -3523,7 +3556,7 @@ body {
   justify-content: center;
   align-items: center;
   color: var(--lightText);
-  background-color: #003061;
+  background-color: var(--notification);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
 }
@@ -3548,12 +3581,12 @@ body {
   color: var(--lightText);
 }
 .notifications .notification .notificationActions .confirm {
-  background-color: rgb(0, 48, 97);
+  background-color: var(--notification);
   color: var(--lightText);
 }
 .notifications .notification .notificationProgressBar {
   height: 3px;
-  background-color: rgba(0, 0, 0, 0.76);
+  background-color: var(--lightText);
 }
 
 .schedule-container {
@@ -3947,9 +3980,10 @@ body {
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background-color: var(--secondaryBackground);
+  color: var(--lightText);
   border-radius: 15px;
-  box-shadow: 0px 0px 100000px 7000000px rgba(0, 0, 0, 0.753);
+  box-shadow: 0px 0px 17px 0px rgba(0, 0, 0, 0.753);
   transition: all 0.4s;
   min-width: 200px;
   min-height: 300px;
@@ -3968,6 +4002,7 @@ body {
   overflow: hidden;
   height: 15rem;
   border-radius: 15px 15px 0 0;
+  color: var(--lightText);
 }
 .mainCentralProfileDiv .coverPhotoDiv .coverPhoto {
   position: absolute;
@@ -3998,6 +4033,7 @@ body {
   gap: 1rem;
   flex-wrap: wrap;
   padding: 1rem;
+  color: var(--lightText);
 }
 .mainCentralProfileDiv .userDataDiv .userProfileDiv {
   top: -7rem;
@@ -4006,7 +4042,7 @@ body {
   width: 130px;
   height: 130px;
   border-radius: 50%;
-  border: 5px solid white;
+  border: 5px solid var(--tertiaryBackground);
   display: flex;
   background-color: rgb(0, 48, 97);
 }
@@ -4031,7 +4067,7 @@ body {
   aspect-ratio: 1;
   background-color: green;
   border-radius: 15px;
-  border: 3px solid white;
+  border: 3px solid var(--tertiaryBackground);
 }
 .mainCentralProfileDiv .userDataDiv .userProfileDiv .photoActions {
   position: absolute;
@@ -4099,7 +4135,7 @@ body {
   position: absolute;
   top: calc(100% + 5px);
   right: 0;
-  background-color: white;
+  background-color: var(--secondaryBackground);
   border-radius: 15px;
   display: flex;
   gap: 0.5rem;
@@ -4114,7 +4150,7 @@ body {
   width: 10px;
   height: 10px;
   transform: rotate(45deg);
-  background-color: white;
+  background-color: var(--secondaryBackground);
 }
 .photoActions .photoAction .editControls.visible {
   visibility: visible;
@@ -4156,7 +4192,7 @@ body {
 .progress {
   visibility: hidden;
   opacity: 0;
-  background: white;
+  background: var(--secondaryBackground);
   justify-content: flex-start;
   border-radius: 100px;
   align-items: center;
@@ -4179,9 +4215,9 @@ body {
   mix-blend-mode: difference;
 }
 .progress .progress-value {
-  box-shadow: 0 10px 40px -10px #fff;
+  box-shadow: 0 10px 40px -10px var(--secondaryBackground);
   border-radius: 100px;
-  background: #003061;
+  background: var(--notification);
   height: 14px;
   width: 0;
 }
@@ -4268,6 +4304,7 @@ body {
   padding: 1rem;
   background-color: var(--primaryBackground);
   border-radius: 15px;
+  color: var(--lightText);
   border: none;
   outline: none;
   cursor: pointer;
@@ -4609,6 +4646,7 @@ body {
     height: 100%;
     margin: 0;
     max-width: 100%;
+    min-width: 100%;
     width: 100%;
   }
   .c-call_log_panel .callHistoryPage .header {
@@ -4621,6 +4659,7 @@ body {
     height: 100%;
     margin: 0;
     max-width: 100%;
+    min-width: 100%;
     width: 100%;
   }
   .c-ongoing_call_panel {
@@ -4765,4 +4804,49 @@ body {
     justify-content: space-between;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0);
   }
+}
+.goodselect {
+  color: var(--lightText);
+  display: inline-block;
+  position: relative;
+  border-radius: 15px;
+  transition: 0.5s;
+  width: 100%;
+}
+.goodselect .selected-value {
+  width: 100px;
+  cursor: pointer;
+  padding: 1rem;
+  border-radius: 15px;
+  background-color: var(--primaryBackground);
+}
+.goodselect .selected-value:after {
+  content: "";
+  border: 8px solid transparent;
+  border-top-color: var(--lightText);
+  position: absolute;
+  right: 17px;
+  top: 17px;
+}
+.goodselect .list {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  transition: 0.5s;
+  display: none;
+  border-radius: 15px;
+  position: absolute;
+  z-index: 1;
+  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+}
+.goodselect .is-visible {
+  display: block;
+}
+.goodselect .list-option {
+  cursor: pointer;
+  padding: 0.8rem 0.5rem;
+  background-color: var(--primaryBackground);
+}
+.goodselect .list-option:hover {
+  background-color: var(--focusAreaBackgroundColor);
 }/*# sourceMappingURL=style.css.map */
