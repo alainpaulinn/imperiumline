@@ -1230,7 +1230,7 @@ let functionalityOptionsArray = [
             numbersArray.map(number => {
               let manageButton = createElement({ elementType: 'div', class: 'manageButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-cog' })] })
               let valueDiv = createElement({ elementType: 'div', class: 'valueDiv ', textContent: number.value + '' })
-              let titleDiv = createElement({ elementType: 'div', class: 'titleDiv', textContent: number.value + '' })
+              let titleDiv = createElement({ elementType: 'div', class: 'titleDiv', textContent: number.title + '' })
               let childrenArray = [valueDiv, titleDiv]
               if (number.title == 'Users') {
                 childrenArray.push(manageButton)
