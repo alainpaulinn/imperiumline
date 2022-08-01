@@ -98,10 +98,18 @@ let functionalityOptionsArray = [
 
   // dark theme switch
   let darkModeCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle1' })
+  let c_app = document.getElementById('c-app')
   darkModeCheckBox.addEventListener('change', (event) => {
     let darkClass = 'dark';
-    if (darkModeCheckBox.checked) { body.classList.add(darkClass); alert('darkClass activated'); }
-    else { body.classList.remove(darkClass); alert('darkClass deactivated'); }
+    let lightClass = 'light';
+    if (darkModeCheckBox.checked) { 
+      c_app.classList.remove(darkClass);
+      c_app.classList.add(lightClass); 
+    }
+    else { 
+      c_app.classList.add(darkClass);
+      c_app.classList.remove(lightClass);
+    }
   })
   let darkmodeActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [darkModeCheckBox, createElement({ elementType: 'label', for: 'toggle1' })] })
 
@@ -228,7 +236,7 @@ let functionalityOptionsArray = [
       icon: "bx bx-slider-alt",
       subMenu: [
         {
-          text: "Dark mode",
+          text: "Light mode",
           icon: "bx bxs-moon",
           actions: [
             { element: darkmodeActionSwitch }

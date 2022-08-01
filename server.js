@@ -662,7 +662,12 @@ io.on('connection', (socket) => {
 
     socket.on('deleteEvent', async (eventId) => {
       let foundEvent = await getEventDetails(eventId)
-      if (foundEvent?.owner.userID == id) {
+      if(foundEvent == undefined) {
+        socket.emit('feedback', [{ type: 'negative', message: 'An error occurred while deleting the event' }])
+        console.log('event not found')
+        return;
+      }
+      if (foundEvent.owner.userID == id) {
         db.query("DELETE FROM `events` where eventId = ?", [eventId], async (err, result) => { })
         socket.emit('feedback', [{ type: 'positive', message: 'the event was deleted successfully' }])
         console.log('event found')

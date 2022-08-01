@@ -15,21 +15,30 @@ $white: rgb(255, 255, 255);
 
 
 .dark {
-  --focusAreaBackgroundColor: rgb(24, 27, 31);
-  --primaryBackground: rgb(12, 18, 26); //OG
-  --darkenSidepanel: rgb(150, 162, 177);
-  --lightenSidepanel: rgb(239, 242, 245);
   // text color:
   --lightText: rgb(205, 210, 214);
-  --lightText-grey: rgb(205, 210, 214);
-  --darkText: rgb(0, 0, 0);
   // background-color:
+  --focusAreaBackgroundColor: rgb(24, 27, 31);
   --primaryBackground: rgb(12, 18, 26);
   --secondaryBackground: rgb(6, 9, 14);
   --tertiaryBackground: rgb(0, 0, 0);
 
   --notification: rgb(0, 48, 97);
-  --c-chats: rgb(255, 255, 255);
+  --warning-bg: rgb(255, 212, 212);
+  --borderRadius: 15px;
+  --white: rgb(255, 255, 255);
+}
+
+.light{
+  // text color:
+  --lightText: rgb(58, 60, 61);
+  // background-color:
+  --focusAreaBackgroundColor: rgb(245,249,253);
+  --primaryBackground: rgb(235,240,246);
+  --secondaryBackground: rgb(255, 255, 255);
+  --tertiaryBackground: rgb(235, 235, 235);
+
+  --notification: #003061;
   --warning-bg: rgb(255, 212, 212);
   --borderRadius: 15px;
   --white: rgb(255, 255, 255);
@@ -199,7 +208,7 @@ body {
 
       .left-spacer {
         padding-left: 1rem;
-        border-top: 1px solid $darkenSidepanel;
+        border-top: 1px solid var(--secondaryBackground);
       }
 
       &:last-of-type {
@@ -271,12 +280,12 @@ body {
 
 
       &:hover {
-        color: $notification;
+        color: var(--notification);
         font-weight: bold;
 
         svg,
         i {
-          color: $notification;
+          color: var(--notification);
         }
 
         button {
@@ -297,7 +306,7 @@ body {
       button {
         padding: .5rem;
         border-radius: $borderRadius;
-        background-color: $notification;
+        background-color: var(--notification);
         border: none;
         color: var(--lightText);
         display: inline-block;
@@ -392,7 +401,7 @@ body {
         font-size: 18px;
         padding: 0.5rem;
         border-radius: $borderRadius;
-        background-color: $notification;
+        background-color: var(--notification);
         color: var(--lightText);
       }
     }
@@ -620,7 +629,7 @@ body {
     margin-right: 10px;
     border-radius: $borderRadius;
     display: inline-block;
-    border: 1px solid $notification;
+    border: 1px solid var(--notification);
   }
 }
 
@@ -691,7 +700,7 @@ body {
 
         img {
           object-fit: cover;
-          border: 1px solid $notification;
+          border: 1px solid var(--notification);
           width: 40px;
           height: 40px;
           margin-right: 10px;
@@ -703,13 +712,13 @@ body {
           justify-content: center;
           align-items: center;
           color: var(--lightText);
-          background-color: $notification;
+          background-color: var(--notification);
 
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
         }
 
         div {
-          border: 1px solid $notification;
+          border: 1px solid var(--notification);
           width: 40px;
           height: 40px;
           margin-right: 10px;
@@ -719,7 +728,7 @@ body {
           justify-content: center;
           align-items: center;
           color: var(--lightText);
-          background-color: $notification;
+          background-color: var(--notification);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
         }
       }
@@ -832,7 +841,7 @@ body {
     }
 
     .newChat {
-      background-color: $notification;
+      background-color: var(--notification);
       width: 40px;
       height: 40px;
       border-radius: $borderRadius;
@@ -921,7 +930,7 @@ body {
 
     &:hover {
       &:before {
-        background: $notification;
+        background: var(--notification);
         left: -5px;
         opacity: 1;
       }
@@ -933,7 +942,7 @@ body {
 
       img {
         object-fit: cover;
-        border: 1px solid $notification;
+        border: 1px solid var(--notification);
         width: 40px;
         height: 40px;
         margin-right: 10px;
@@ -945,13 +954,13 @@ body {
         justify-content: center;
         align-items: center;
         color: var(--lightText);
-        background-color: $notification;
+        background-color: var(--notification);
 
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
       }
 
       div {
-        border: 1px solid $notification;
+        border: 1px solid var(--notification);
         width: 40px;
         height: 40px;
         margin-right: 10px;
@@ -961,7 +970,7 @@ body {
         justify-content: center;
         align-items: center;
         color: var(--lightText);
-        background-color: $notification;
+        background-color: var(--notification);
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
       }
     }
@@ -1042,7 +1051,7 @@ body {
 
       i {
         font-size: 24px;
-        color: $notification;
+        color: var(--notification);
       }
     }
   }
@@ -1086,7 +1095,7 @@ body {
     align-items: center;
 
     &--active {
-      color: $notification;
+      color: var(--notification);
     }
   }
 }
@@ -1094,7 +1103,7 @@ body {
 .c-notification {
   font-size: 10px;
   color: var(--lightText);
-  background-color: $notification;
+  background-color: var(--notification);
   padding: 3px 5px;
 
   border-radius: $borderRadius;
@@ -1183,14 +1192,14 @@ body {
     width: 40px;
     height: 40px;
     border-radius: $borderRadius;
-    border: 1px solid $notification;
+    border: 1px solid var(--notification);
     object-fit: cover;
     text-transform: uppercase;
     display: flex;
     justify-content: center;
     align-items: center;
     color: var(--lightText);
-    background-color: $notification;
+    background-color: var(--notification);
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
   }
 
@@ -1277,7 +1286,7 @@ body {
   // height: 25px;
   width: 25px;
   object-fit: cover;
-  background: $notification;
+  background: var(--notification);
   color: var(--lightText);
   text-transform: uppercase;
   display: flex;
@@ -1317,7 +1326,7 @@ body {
     margin-left: 0.5rem;
 
     .messageReactions {
-      color: $notification;
+      color: var(--notification);
       display: flex;
 
       .reactionBox {
@@ -1452,7 +1461,7 @@ body {
     padding: 10px;
     min-height: 20px;
     // background: var(--primaryBackground);
-    background: $notification;
+    background: var(--notification);
     border-radius: $borderRadius;
 
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
@@ -1508,7 +1517,7 @@ body {
     margin-right: 0.5rem;
 
     .messageReactions {
-      color: $notification;
+      color: var(--notification);
       display: flex;
 
       .reactionBox {
@@ -1621,7 +1630,7 @@ body {
 
 .message-sent-text {
   //background: rgb(31, 141, 251);
-  background: $notification;
+  background: var(--notification);
   border-radius: $borderRadius 4px 4px $borderRadius;
   min-height: 20px;
   padding: 10px;
@@ -1708,7 +1717,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: $notification;
+    background-color: var(--notification);
     height: 40px;
     width: 40px;
     border-radius: $borderRadius;
@@ -1722,8 +1731,7 @@ body {
     }
 
     &:hover {
-      background-color: lighten($notification, 5%);
-
+      background-color: var(--notification)
       svg,
       i {}
     }
@@ -1790,7 +1798,7 @@ body {
         cursor: pointer;
         outline: none;
         border: none;
-        background-color: $notification;
+        background-color: var(--notification);
         color: var(--lightText);
 
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
@@ -2156,7 +2164,7 @@ body {
 
 
         .memberProfilePicture {
-          border: 1px solid $notification;
+          border: 1px solid var(--notification);
           width: 40px;
           height: 40px;
           border-radius: $borderRadius;
@@ -2167,7 +2175,7 @@ body {
           justify-content: center;
           align-items: center;
           color: var(--lightText);
-          background-color: $notification;
+          background-color: var(--notification);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
           transition: all 0.4s;
           flex-shrink: 0;
@@ -2318,7 +2326,7 @@ body {
               align-items: center;
 
               .picture {
-                background-color: $notification;
+                background-color: var(--notification);
                 height: 40px;
                 width: 40px;
                 border-radius: $borderRadius;
@@ -2398,7 +2406,7 @@ body {
                   display: flex;
                   justify-content: center;
                   align-items: center;
-                  background-color: $notification;
+                  background-color: var(--notification);
                 }
               }
             }
@@ -2413,11 +2421,11 @@ body {
           }
 
           .ongoing {
-            background-color: $notification;
+            background-color: var(--notification);
             color: var(--lightText);
 
             &:hover {
-              background-color: darken($notification, 5%)
+              background-color: var(--notification);
             }
           }
 
@@ -2452,13 +2460,13 @@ body {
 
               &:hover {
                 transition: all 0.4s;
-                color: $notification;
+                color: var(--notification);
               }
             }
           }
 
           .picture {
-            background-color: light($notification);
+            background-color: light(var(--notification));
             height: 40px;
             width: 40px;
             border-radius: $borderRadius;
@@ -2478,7 +2486,7 @@ body {
               display: flex;
               justify-content: center;
               align-items: center;
-              background-color: $notification; // status
+              background-color: var(--notification); // status
             }
           }
         }
@@ -2523,7 +2531,7 @@ body {
           width: 100px;
           height: 100px;
           border-radius: $borderRadius;
-          background: $notification;
+          background: var(--notification);
           display: flex;
           justify-content: center;
           align-items: center;
@@ -2622,7 +2630,7 @@ body {
 
           .partifipantPicture {
             color: var(--lightText);
-            background-color: $notification;
+            background-color: var(--notification);
             width: 40px;
             height: 40px;
             border-radius: $borderRadius;
@@ -2751,7 +2759,7 @@ body {
           color: var(--lightText);
 
           .memberProfilePicture {
-            border: 1px solid $notification;
+            border: 1px solid var(--notification);
             width: 40px;
             height: 40px;
             margin-right: 10px;
@@ -2761,7 +2769,7 @@ body {
             justify-content: center;
             align-items: center;
             color: var(--lightText);
-            background-color: #003061;
+            background-color: var(--notification);
             box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
             transition: all 0.4s;
             flex-shrink: 0;
@@ -2815,7 +2823,7 @@ body {
 
             &:hover {
               // background-color: $darkenSidepanel;
-              color: $notification;
+              color: var(--notification);
             }
           }
         }
@@ -2838,7 +2846,7 @@ body {
 
 
           .memberProfilePicture {
-            border: 1px solid $notification;
+            border: 1px solid var(--notification);
             width: 40px;
             height: 40px;
             margin-right: 10px;
@@ -2850,7 +2858,7 @@ body {
             justify-content: center;
             align-items: center;
             color: var(--lightText);
-            background-color: #003061;
+            background-color: var(--notification);
             box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
             transition: all 0.4s;
             flex-shrink: 0;
@@ -2903,7 +2911,7 @@ body {
 
             &:hover {
               // background-color: $darkenSidepanel;
-              color: $notification;
+              color: var(--notification);
             }
           }
         }
@@ -2980,13 +2988,13 @@ body {
           position: relative;
           display: flex;
           align-items: center;
-
+          transition: all 0.4s;
           p {
             color: var(--lightText);
           }
 
           &:hover {
-            background-color: $darkenSidepanel;
+            color: var(--notification);
           }
         }
 
@@ -3053,13 +3061,14 @@ body {
               cursor: pointer;
               display: flex;
               align-items: center;
+              transition: all 0.4s;
 
               i {
                 font-size: 1.5rem;
               }
 
               &:hover {
-                background: $darkenSidepanel;
+                color: var(--notification);
               }
             }
 
@@ -3084,7 +3093,7 @@ body {
               margin-bottom: .5rem;
 
               .memberProfilePicture {
-                border: 1px solid $notification;
+                border: 1px solid var(--notification);
                 width: 40px;
                 height: 40px;
                 margin-right: 10px;
@@ -3094,7 +3103,7 @@ body {
                 justify-content: center;
                 align-items: center;
                 color: var(--lightText);
-                background-color: #003061;
+                background-color: var(--notification);
                 box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
                 transition: all 0.4s;
                 flex-shrink: 0;
@@ -3147,8 +3156,7 @@ body {
                 }
 
                 &:hover {
-                  // background-color: $darkenSidepanel;
-                  color: $notification;
+                  color: var(--notification);
                 }
               }
             }
@@ -3186,7 +3194,7 @@ body {
           flex-direction: row;
 
           .mainVideoOwnerProfilePicture {
-            border: 1px solid $notification;
+            border: 1px solid var(--notification);
             width: 40px;
             height: 40px;
             margin-right: 10px;
@@ -3196,7 +3204,7 @@ body {
             justify-content: center;
             align-items: center;
             color: var(--lightText);
-            background-color: #003061;
+            background-color: var(--notification);
             box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
             transition: all 0.4s;
             object-fit: cover;
@@ -3243,12 +3251,12 @@ body {
             }
 
             &.active {
-              background-color: $notification;
+              background-color: var(--notification);
               box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .8);
             }
 
             &.isSpeaking {
-              background-color: $notification;
+              background-color: var(--notification);
               box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .8);
 
             }
@@ -3282,10 +3290,10 @@ body {
         height: 100%;
         justify-content: center;
         align-items: center;
-        background-color: $darkenSidepanel;
+        background-color: var(--audioCallCover);
 
         .profilePicture {
-          border: 1px solid $notification;
+          border: 1px solid var(--notification);
           width: 50px;
           height: 50px;
           margin-right: 10px;
@@ -3296,7 +3304,7 @@ body {
           -ms-flex-align: center;
           align-items: center;
           color: var(--lightText);
-          background-color: #003061;
+          background-color: var(--notification);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
         }
 
@@ -3332,7 +3340,7 @@ body {
             }
 
             &.active {
-              background-color: $notification;
+              background-color: var(--notification);
               box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
             }
           }
@@ -3363,7 +3371,7 @@ body {
             }
 
             &.active {
-              background-color: $notification;
+              background-color: var(--notification);
               box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
             }
           }
@@ -3406,7 +3414,7 @@ body {
         border-radius: 100%;
         height: 4rem;
         width: 4rem;
-        //border: 1px solid $notification;
+        //border: 1px solid var(--notification);
         background-color: var(--primaryBackground);
         display: flex;
         cursor: pointer;
@@ -3421,7 +3429,7 @@ body {
         }
 
         &:hover {
-          background-color: $darkenSidepanel;
+          background-color: var(--notification)
         }
 
         &.screen {
@@ -3539,12 +3547,12 @@ body {
               }
 
               &.active {
-                background-color: $notification;
+                background-color: var(--notification);
                 box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
               }
 
               &.isSpeaking {
-                background-color: $notification;
+                background-color: var(--notification);
                 box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
 
               }
@@ -3569,10 +3577,10 @@ body {
             height: 100%;
             justify-content: center;
             align-items: center;
-            background-color: $darkenSidepanel;
+            background-color: var(--audioCallCover);
 
             .profilePicture {
-              border: 1px solid $notification;
+              border: 1px solid var(--notification);
               width: 50px;
               height: 50px;
               margin-right: 10px;
@@ -3583,7 +3591,7 @@ body {
               -ms-flex-align: center;
               align-items: center;
               color: var(--lightText);
-              background-color: #003061;
+              background-color: var(--notification);
               box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
             }
 
@@ -3678,8 +3686,7 @@ body {
     }
 
     &:hover {
-      // background-color: $darkenSidepanel;
-      color: $notification;
+      color: var(--notification);
     }
   }
 }
@@ -3708,14 +3715,14 @@ body {
   }
 
   &:hover {
-    background-color: $darkenSidepanel;
+    color: car(--lightText);
   }
 }
 
 .importantButton {
   color: var(--lightText);
   border-radius: $borderRadius;
-  background-color: $notification;
+  background-color: var(--notification);
   padding: 1rem !important;
 }
 
@@ -3807,14 +3814,10 @@ body {
     }
 
     &:hover {
-      background-color: $darkenSidepanel;
-
+      background-color: var(--focusAreaBackgroundColor);
       .pill-label {
-        color: $notification;
-
+        color: var(--notification);
       }
-
-
     }
 
     .pill-label {
@@ -3834,7 +3837,7 @@ body {
       &:after {
         content: "";
         position: absolute;
-        z-index: 9;
+        z-index: 1;
         top: 50%;
         left: 50%;
         width: 0.875rem;
@@ -3856,7 +3859,7 @@ body {
         position: absolute;
         width: 100%;
         height: 100%;
-        background-color: $notification;
+        background-color: var(--notification);
         border-radius: $borderRadius;
         transition: all 0.4s cubic-bezier(1.000, 0.000, 0.000, 1.000);
       }
@@ -3903,7 +3906,7 @@ body {
 }
 
 .switch input[type=checkbox]:checked+label {
-  background: $notification;
+  background: var(--notification);
 }
 
 .switch input[type=checkbox]:checked+label::after {
@@ -3966,7 +3969,7 @@ body {
     }
 
     &:hover {
-      color: $notification;
+      color: var(--notification);
     }
   }
 }
@@ -4090,7 +4093,7 @@ body {
   padding: 1rem;
 
   .caleeProfilePicture {
-    border: 1px solid $notification;
+    border: 1px solid var(--notification);
     width: 80px;
     height: 80px;
     object-fit: cover;
@@ -4100,7 +4103,7 @@ body {
     justify-content: center;
     align-items: center;
     color: var(--lightText);
-    background-color: #003061;
+    background-color: var(--notification);
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
     transition: all 0.4s;
     flex-shrink: 0;
@@ -4128,7 +4131,7 @@ body {
       // margin-bottom: .5rem;
 
       .memberProfilePicture {
-        border: 1px solid $notification;
+        border: 1px solid var(--notification);
         width: 40px;
         height: 40px;
         margin-right: 10px;
@@ -4138,7 +4141,7 @@ body {
         justify-content: center;
         align-items: center;
         color: var(--lightText);
-        background-color: #003061;
+        background-color: var(--notification);
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
         transition: all 0.4s;
         flex-shrink: 0;
@@ -4191,8 +4194,7 @@ body {
         }
 
         &:hover {
-          // background-color: $darkenSidepanel;
-          color: $notification;
+          color: var(--notification);
         }
       }
     }
@@ -4224,7 +4226,7 @@ body {
       }
 
       &.active {
-        background-color: $notification;
+        background-color: var(--notification);
         box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
       }
 
@@ -4434,7 +4436,7 @@ body {
           width: 5px;
           height: 5px;
           border-radius: $borderRadius;
-          background-color: $notification;
+          background-color: var(--notification);
           transform: translateX(-50%);
           left: 50%;
         }
@@ -4596,7 +4598,7 @@ body {
 
         .dayTitle {
           padding: 0.5rem;
-          // background-color: $notification;
+          // background-color: var(--notification);
           // color: white;
           text-align: center;
         }
@@ -4857,7 +4859,7 @@ body {
       height: 100%;
       width: 100%;
       object-fit: cover;
-      background-color: $notification;
+      background-color: var(--notification);
 
       font-size: 6rem;
       color: var(--lightText);
@@ -4894,7 +4896,7 @@ body {
       border-radius: 50%;
       border: 5px solid var(--tertiaryBackground);
       display: flex;
-      background-color: $notification;
+      background-color: var(--notification);
 
       .profilePicture {
         width: 100%;
@@ -4942,7 +4944,7 @@ body {
 
       .email {
         cursor: pointer;
-        color: $notification;
+        color: var(--notification);
         text-decoration: none;
         font-size: 1.2rem;
       }
@@ -5131,7 +5133,7 @@ body {
     border-radius: 50%;
     display: grid;
     place-items: center;
-    // background: conic-gradient(#003061 360deg, #cadcff 360deg);
+    // background: conic-gradient(var-(-notification) 360deg, #cadcff 360deg);
   }
 
   .circular-progress:before {
@@ -5263,14 +5265,14 @@ body {
           width: 40px;
           height: 40px;
           border-radius: $borderRadius;
-          border: 1px solid #003061;
+          border: 1px solid var(--notification);
           object-fit: cover;
           text-transform: uppercase;
           display: flex;
           justify-content: center;
           align-items: center;
           color: var(--lightText);
-          background-color: #003061;
+          background-color: var(--notification);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
         }
 
@@ -5314,7 +5316,7 @@ body {
             font-weight: bold;
 
             &.editable {
-              color: $notification;
+              color: var(--notification);
             }
           }
 
@@ -5339,7 +5341,7 @@ body {
 
             i {
               font-size: 4rem;
-              color: $notification;
+              color: var(--notification);
             }
           }
 
@@ -5383,7 +5385,7 @@ body {
               font-size: 18px;
               padding: .5rem;
               border-radius: $borderRadius;
-              background-color: $notification;
+              background-color: var(--notification);
               color: var(--lightText);
             }
 
@@ -5450,7 +5452,7 @@ body {
                 align-items: center;
                 margin: 1rem;
                 padding: 1rem;
-                background-color: $notification;
+                background-color: var(--notification);
                 border-radius: $borderRadius;
                 color: var(--lightText);
               }
@@ -5502,7 +5504,7 @@ body {
 }
 
 .memberProfilePicture {
-  border: 1px solid $notification;
+  border: 1px solid var(--notification);
   width: 40px;
   min-width: 40px;
   height: 40px;
@@ -5512,7 +5514,7 @@ body {
   justify-content: center;
   align-items: center;
   color: var(--lightText);
-  background-color: #003061;
+  background-color: var(--notification);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
   flex-shrink: 0;
