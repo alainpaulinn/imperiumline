@@ -1797,7 +1797,7 @@ function automaticSingleRowQuerry(queryObject) {
   let { queryString, queryTerms, resultVariable } = queryObject
   return new Promise(function (resolve, reject) {
     db.query(queryString, queryTerms, async (err, obtainedVariables) => {
-      if (err) reject(err)
+      if (err) console.log(err)
       // if (obtainedVariables.length == 0) { reject("querry returned 0 results") }
       resolve(obtainedVariables[0][resultVariable])
     })
