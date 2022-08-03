@@ -102,11 +102,11 @@ let functionalityOptionsArray = [
   darkModeCheckBox.addEventListener('change', (event) => {
     let darkClass = 'dark';
     let lightClass = 'light';
-    if (darkModeCheckBox.checked) { 
+    if (darkModeCheckBox.checked) {
       c_app.classList.remove(darkClass);
-      c_app.classList.add(lightClass); 
+      c_app.classList.add(lightClass);
     }
-    else { 
+    else {
       c_app.classList.add(darkClass);
       c_app.classList.remove(lightClass);
     }
@@ -129,6 +129,8 @@ let functionalityOptionsArray = [
   let speakerLabel = createElement({ elementType: 'p', textContent: "Speaker: " })
   let audioOutputSelection = createElement({ elementType: 'div' })
   let importantInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions is required" })
+
+  let doneButton = createElement({ elementType: 'button', textContent: 'Done' })
 
   let availableDevices = { videoInput: [], audioInput: [], audioOutput: [] }
   let chosenDevices = { videoInput: null, audioInput: null, audioOutput: null }
@@ -217,12 +219,13 @@ let functionalityOptionsArray = [
   });
   let audioVideoInOutBtn = createElement({
     elementType: 'button', class: 'importantButton', textContent: 'Choose', onclick: () => {
-      let devicePopForm = createInScreenPopup({
+      createInScreenPopup({
         icon: 'bx bx-devices',
         title: "Choose Media Devices",
         contentElementsArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, importantInfo],
-        actions: [{ element: createElement({ elementType: 'button', textContent: 'Done' }), functionCall: () => { console.log("Done") } }]
+        actions: [{ element: doneButton, functionCall: () => { console.log("Done") } }]
       })
+        .then(devicePopForm => {doneButton.addEventListener("click", devicePopForm.closePopup) })
     }
   })
   // logout form
@@ -632,7 +635,7 @@ let functionalityOptionsArray = [
           elementType: 'div', class: 'central-Options mobileHiddenElement', childrenArray: [
             createElement({
               elementType: 'div', class: 'adminWelcomeDiv', childrenArray: [
-                createElement({ elementType: 'div', class: 'adminWelcomeImage', childrenArray: [createElement({ elementType:'i', class:'bx bx-key'})]}),
+                createElement({ elementType: 'div', class: 'adminWelcomeImage', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-key' })] }),
                 createElement({ elementType: 'p', textContent: 'Click on the menu to choose Groups to manage. Please remember that this Admin panel should only be opened in a safe place with full privacy' })
               ]
             })
@@ -2028,8 +2031,8 @@ function makeProfilePicture(userInfo) {
   let memberProfilePicture;
   if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
   else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture })
-  
-  memberProfilePicture.addEventListener('click', ()=> {
+
+  memberProfilePicture.addEventListener('click', () => {
     createProfilePopup(userInfo);
   })
   return memberProfilePicture;
@@ -4957,7 +4960,7 @@ function createCalendarEventSection() {
   }
 
   function addDayOnScheduleList(key, dayEventsArray, deleteOldEvents) {
-    if(deleteOldEvents == true) eventsContainer.textContent = '';
+    if (deleteOldEvents == true) eventsContainer.textContent = '';
     let dayDiv = makeDay(key, dayEventsArray)
     eventsContainer.appendChild(dayDiv)
     mainScheduleListTitle.textContent = 'Scheduled Events'

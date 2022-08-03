@@ -8,7 +8,9 @@
   --notification: rgb(0, 48, 97);
   --warning-bg: rgb(255, 212, 212);
   --borderRadius: 15px;
-  --white: rgb(255, 255, 255);
+  --receivedMessageBg: var(--primaryBackground);
+  --sentMessageBg: var(--notification);
+  --hoverColor: var(--notification) ;
 }
 
 .light {
@@ -17,10 +19,12 @@
   --primaryBackground: rgb(235,240,246);
   --secondaryBackground: rgb(255, 255, 255);
   --tertiaryBackground: rgb(235, 235, 235);
-  --notification: #003061;
+  --notification: #ffffff;
   --warning-bg: rgb(255, 212, 212);
   --borderRadius: 15px;
-  --white: rgb(255, 255, 255);
+  --receivedMessageBg: rgb(211, 219, 230);
+  --sentMessageBg: rgb(247, 247, 247);
+  --hoverColor: rgb(0, 48, 97);
 }
 
 /* width */
@@ -218,12 +222,12 @@ body {
   font-size: 18px;
 }
 .c-sidepanel__nav__link:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
   font-weight: bold;
 }
 .c-sidepanel__nav__link:hover svg,
 .c-sidepanel__nav__link:hover i {
-  color: var(--notification);
+  color: var(--lightText);
 }
 .c-sidepanel__nav__link:hover button i {
   color: var(--lightText);
@@ -353,7 +357,7 @@ body {
   transition: all 0.4s;
 }
 .inScreenPanel .popupBody .editBlock button:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
   transition: all 0.4s;
 }
 .inScreenPanel .popupBody .editBlock .editBlockButtons {
@@ -401,7 +405,7 @@ body {
   transition: all 0.4s;
 }
 .inScreenPanel .popupBottom button:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
   transition: all 0.4s;
 }
 
@@ -469,7 +473,7 @@ body {
   cursor: normal;
 }
 .c-friends ul :hover {
-  background-color: #e7e7e7;
+  color: var(--hoverColor);
 }
 .c-friends__active {
   font-weight: 300;
@@ -613,7 +617,7 @@ body {
   font-size: 12px;
 }
 .searchResults .resultItem:hover {
-  background-color: #f7f7f7;
+  color: var(--hoverColor);
 }
 
 .searchIntoView {
@@ -661,6 +665,7 @@ body {
   transition: all 0.4s;
   color: var(--lightText);
   background-color: var(--primaryBackground);
+  border-radius: 15px;
 }
 .c-chats__header .chatSearch input,
 .c-chats__header .newChatTitle input {
@@ -746,7 +751,7 @@ body {
   opacity: 0;
 }
 .c-chats__link:hover:before {
-  background: var(--notification);
+  background: var(--hoverColor);
   left: -5px;
   opacity: 1;
 }
@@ -845,7 +850,7 @@ body {
 }
 .c-openchat__selectConversation h3 i {
   font-size: 24px;
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .c-openchat ul {
   display: flex;
@@ -1173,7 +1178,7 @@ body {
 .message-received-text {
   padding: 10px;
   min-height: 20px;
-  background: var(--primaryBackground);
+  background: var(--receivedMessageBg);
   border-radius: 4px 15px 15px 4px;
   max-width: 60%;
   display: flex;
@@ -1317,7 +1322,7 @@ body {
 }
 
 .message-sent-text {
-  background: var(--notification);
+  background: var(--sentMessageBg);
   border-radius: 15px 4px 4px 15px;
   min-height: 20px;
   padding: 10px;
@@ -1406,9 +1411,8 @@ body {
   font-size: 18px;
 }
 .typingBox .chat-options:hover {
-  background-color: var(--notification) svg, i;
+  color: var(--hoverColor);
 }
-
 /** This is the css of the input **/
 .w-input-container {
   flex: 1;
@@ -1579,7 +1583,7 @@ body {
   border-top: 1px solid rgba(0, 0, 0, 0.02);
 }
 .profile-logout ul li :hover {
-  background-color: white;
+  color: var(--hoverColor);
 }
 .profile-logout ul li .button-option {
   text-decoration: none;
@@ -1847,7 +1851,7 @@ body {
   margin-left: 0.5rem;
 }
 .c-call_log_panel .callSearchSection .searchResultsDiv .listMember button:hover {
-  background-color: rgb(150, 162, 177);
+  color: var(--hoverColor);
 }
 .c-call_log_panel .callHistoryPage {
   height: calc(100vh - 2rem);
@@ -2028,7 +2032,7 @@ body {
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .universalCallButtons button:hover {
   transition: all 0.4s;
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .picture {
   background-color: light(var(--notification));
@@ -2147,7 +2151,7 @@ body {
   font-size: 18px;
 }
 .c-call_log_panel .callDetails-section .details-section-content .allPartifipantDiv .header button:hover {
-  color: var(--lightText);
+  color: var(--hoverColor);
 }
 .c-call_log_panel .callDetails-section .details-section-content .callParticipants {
   width: 100%;
@@ -2245,6 +2249,7 @@ body {
 }
 .c-ongoing_call_panel .leftPart .attendanceTitleSection .leftHeaderItem:hover {
   background-color: var(--focusAreaBackgroundColor);
+  color: var(--hoverColor);
 }
 .c-ongoing_call_panel .leftPart .attendanceTitleSection .leftHeaderItem.headerItemSelected {
   background-color: var(--primaryBackground);
@@ -2327,7 +2332,7 @@ body {
   margin-left: 0.5rem;
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember button:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv {
   display: flex;
@@ -2400,7 +2405,7 @@ body {
   margin-left: 0.5rem;
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember button:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .hiddenDiv {
   display: none;
@@ -2471,7 +2476,7 @@ body {
   color: var(--lightText);
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .inviteSomeone:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown {
   color: var(--lightText);
@@ -2538,7 +2543,7 @@ body {
   font-size: 1.5rem;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .searchField button:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv {
   overflow-y: auto;
@@ -2611,7 +2616,7 @@ body {
   margin-left: 0.5rem;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember button:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv {
   border-radius: 15px;
@@ -2832,6 +2837,7 @@ body {
 }
 .c-ongoing_call_panel .call-container .availableScreens .screenItem:hover {
   background-color: var(--notification);
+  color: var(--hoverColor);
 }
 .c-ongoing_call_panel .call-container .availableScreens .screenItem.screen {
   border-radius: 5px;
@@ -2866,6 +2872,7 @@ body {
 }
 .c-ongoing_call_panel .rightPart .rightPartheaderVideoMessaging .rightHeaderItem:hover {
   background-color: var(--focusAreaBackgroundColor);
+  color: var(--hoverColor);
 }
 .c-ongoing_call_panel .rightPart .rightPartheaderVideoMessaging .rightHeaderItem.headerItemSelected {
   background-color: var(--primaryBackground);
@@ -3040,7 +3047,7 @@ body {
   margin-left: 0.5rem;
 }
 .listMember button:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 
 .mobileButton {
@@ -3065,7 +3072,7 @@ body {
   margin-left: 0.5rem;
 }
 .mobileButton:hover {
-  color: car(--lightText);
+  color: var(--hoverColor);
 }
 
 .importantButton {
@@ -3145,6 +3152,7 @@ body {
   padding: 0 0.75rem 0 1.5rem;
   margin-left: 0.5rem;
   border-radius: 15px;
+  border: 1px solid var(--tertiaryBackground);
   overflow: hidden;
   cursor: pointer;
   transition: background-color 0.24s ease;
@@ -3159,6 +3167,7 @@ body {
 }
 .pillsContainer .pill:hover {
   background-color: var(--focusAreaBackgroundColor);
+  color: var(--hoverColor);
 }
 .pillsContainer .pill:hover .pill-label {
   color: var(--notification);
@@ -3181,7 +3190,7 @@ body {
   left: 50%;
   width: 0.875rem;
   height: 0.125rem;
-  background: white;
+  background: var(--lightText);
   border-radius: 15px;
   margin-left: -6px;
   margin-top: -1px;
@@ -3201,7 +3210,7 @@ body {
 }
 
 .selectedPill .pill-label {
-  color: white !important;
+  color: var(--lightText) !important;
 }
 .selectedPill .pill-icon .circle {
   transform: scale(15);
@@ -3237,7 +3246,7 @@ body {
   cursor: pointer;
   width: 48px;
   height: 24px;
-  background: grey;
+  background: var(--notification);
   display: block;
   border-radius: 15px;
   position: relative;
@@ -3250,7 +3259,7 @@ body {
   left: 4px;
   width: 16px;
   height: 16px;
-  background: white;
+  background: var(--lightText);
   border-radius: 15px;
   transition: 0.3s;
 }
@@ -3283,7 +3292,7 @@ body {
   font-size: 18px;
 }
 .universalCallButtons button:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 
 .displayNoneToggle {
@@ -3651,7 +3660,7 @@ body {
   cursor: pointer;
 }
 .schedule-container .selectionPanel .card .calendar-toolbar button:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .schedule-container .selectionPanel .card .weekdays,
 .schedule-container .selectionPanel .card .calendar-days {
@@ -3674,7 +3683,7 @@ body {
   width: 5px;
   height: 5px;
   border-radius: 15px;
-  background-color: var(--notification);
+  background-color: var(--hoverColor);
   transform: translateX(-50%);
   left: 50%;
 }
@@ -3698,8 +3707,8 @@ body {
   font-size: 1rem;
 }
 .schedule-container .selectionPanel .card .current-day {
-  background-color: var(--notification);
-  color: var(--lightText);
+  background-color: var(--hoverColor);
+  color: white;
   border-radius: 15px;
   font-weight: 700;
   transition: 0.5s;
@@ -3721,7 +3730,7 @@ body {
 .schedule-container .selectionPanel .card .btn:hover {
   border-radius: 15px;
   background-color: var(--primaryBackground);
-  color: var(--notification);
+  color: var(--hoverColor);
   border-radius: 15px;
   transition: 0.1s;
   cursor: pointer;
@@ -3759,7 +3768,7 @@ body {
   cursor: pointer;
 }
 .schedule-container .selectionPanel .card .goto-option button:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .schedule-container .selectionPanel .pannedItems {
   display: flex;
@@ -3930,7 +3939,7 @@ body {
   transition: all 0.4s;
 }
 .schedule-container button:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .schedule-container .dummyTemplateElement {
   display: flex;
@@ -4416,7 +4425,7 @@ body {
   font-weight: bold;
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .numbersDiv .numberOption .valueDiv.editable {
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .numbersDiv .numberOption .manageButton {
   cursor: pointer;
@@ -4435,12 +4444,13 @@ body {
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .numbersDiv .numberOption .manageButton i {
   font-size: 4rem;
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .numbersDiv .numberOption:hover > .manageButton {
   visibility: visible;
   opacity: 1;
   background: var(--primaryBackground);
+  color: var(--hoverColor);
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv {
   border-radius: 15px;
