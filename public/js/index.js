@@ -225,7 +225,7 @@ let functionalityOptionsArray = [
         contentElementsArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, importantInfo],
         actions: [{ element: doneButton, functionCall: () => { console.log("Done") } }]
       })
-        .then(devicePopForm => {doneButton.addEventListener("click", devicePopForm.closePopup) })
+        .then(devicePopForm => { doneButton.addEventListener("click", devicePopForm.closePopup) })
     }
   })
   // logout form
@@ -413,173 +413,173 @@ let functionalityOptionsArray = [
   }
 
   // call-log-section ------ createCallLogContactSearch
-  (() => {
+  // (() => {
 
-    call_log_contact_search_panel.textContent = '';
-    let input = createElement({ elementType: 'input', type: 'text', placeHolder: 'Search contacts' })
-    let mobileButton = createElement({
-      elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
+  call_log_contact_search_panel.textContent = '';
+  let input = createElement({ elementType: 'input', type: 'text', placeHolder: 'Search contacts' })
+  let mobileButton = createElement({
+    elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
+  })
+  let header = createElement({
+    elementType: 'div', class: 'c-chats__header', childrenArray: [
+      createElement({
+        elementType: 'div', class: 'chatSearch displayed', childrenArray: [
+          createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), input]
+      }),
+      mobileButton
+    ]
+  })
+  input.addEventListener('input', () => { if (input.value != '') { socket.emit('callLogContactSearch', input.value); } })
+  let searchResultsDiv = createElement({ elementType: 'div', class: 'searchResultsDiv', textContent: 'Type in the search box above to find any contacts to call' })
+  call_log_contact_search_panel.append(header, searchResultsDiv)
+  socket.on('callLogContactSearch', searchPeople => {
+    console.log(searchPeople)
+    if (searchPeople.length == 0) { return searchResultsDiv.textContent = 'No user found.' }
+    searchResultsDiv.textContent = ''
+    searchPeople.forEach((searchPerson) => {
+      let searchPersonElement;
+      let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let actions = [
+        { element: audioButton, functionCall: () => { call(searchPerson.userID, true, false, false, false, null); showCallListSection(); } },
+        { element: videoButton, functionCall: () => { call(searchPerson.userID, true, true, false, false, null); showCallListSection(); } },
+      ];
+      searchPersonElement = userForAttendanceList(searchPerson, actions)
+      searchResultsDiv.append(searchPersonElement)
     })
-    let header = createElement({
-      elementType: 'div', class: 'c-chats__header', childrenArray: [
-        createElement({
-          elementType: 'div', class: 'chatSearch displayed', childrenArray: [
-            createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), input]
-        }),
-        mobileButton
-      ]
-    })
-    input.addEventListener('input', () => { if (input.value != '') { socket.emit('callLogContactSearch', input.value); } })
-    let searchResultsDiv = createElement({ elementType: 'div', class: 'searchResultsDiv', textContent: 'Type in the search box above to find any contacts to call' })
-    call_log_contact_search_panel.append(header, searchResultsDiv)
-    socket.on('callLogContactSearch', searchPeople => {
-      console.log(searchPeople)
-      if (searchPeople.length == 0) { return searchResultsDiv.textContent = 'No user found.' }
-      searchResultsDiv.textContent = ''
-      searchPeople.forEach((searchPerson) => {
-        let searchPersonElement;
-        let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-        let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
-        let actions = [
-          { element: audioButton, functionCall: () => { call(searchPerson.userID, true, false, false, false, null); showCallListSection(); } },
-          { element: videoButton, functionCall: () => { call(searchPerson.userID, true, true, false, false, null); showCallListSection(); } },
-        ];
-        searchPersonElement = userForAttendanceList(searchPerson, actions)
-        searchResultsDiv.append(searchPersonElement)
+  });
+  // })();
+
+  // (() => {
+  //------------------------ Call Details - 
+
+  callDetailsPanel.textContent = ''
+
+  //-----------------------
+
+  callHistoryPage.textContent = ''
+  let callHistoryArray = []
+
+  let searchButton = createElement({
+    elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-contact' })], onclick: showCallContactSearchSection
+  })
+  let incominPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'In' })] })] });
+  let outgoingPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Out' })] })] });
+  let missedPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Missed' })] })] });
+  let callHistoryPageHeader = createElement({ elementType: 'div', class: 'header', childrenArray: [createElement({ elementType: 'div', class: 'pillsContainer', childrenArray: [searchButton, incominPill, outgoingPill, missedPill] })] })
+
+  let section_header = createElement({ elementType: 'div', class: 'section-header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Calls' })] })
+  let list_call_section_content = createElement({ elementType: 'div', class: 'list-call-section-content' })
+  let callHistoryPageBody = createElement({ elementType: 'div', class: 'callHistoryPageBody', childrenArray: [createElement({ elementType: 'div', class: 'list-call-section', childrenArray: [section_header, list_call_section_content] })] })
+
+  callHistoryPage.append(callHistoryPageHeader, callHistoryPageBody)
+  socket.on('updateCallLog', (calls) => {
+    console.log('updateCallLog', calls)
+    list_call_section_content.textContent = ''
+    calls.forEach(logUpdate => {
+      let callogClass = "";
+      let callDirection;
+      if (logUpdate.participantsOnCall.length > 0) callogClass = "ongoing";
+      let profilePicture;
+      if (logUpdate.initiator.profilePicture == null) profilePicture = createElement({ elementType: 'div', textContent: logUpdate.initiator.name.charAt(0) + logUpdate.initiator.surname.charAt(0) })
+      else profilePicture = createElement({ elementType: 'img', src: logUpdate.initiator.profilePicture })
+
+      if (logUpdate.missed == 1) {
+        callDirection = createElement({ elementType: 'div', class: 'callType red', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Missed' })] })
+      }
+      else if (logUpdate.participantId == logUpdate.initiatorId) {
+        callDirection = createElement({ elementType: 'div', class: 'callType green', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-outgoing' }), createElement({ elementType: 'p', textContent: 'Out' })] })
+      }
+      else {
+        callDirection = createElement({ elementType: 'div', class: 'callType blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'In' })] })
+      }
+
+      let audioAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(logUpdate.callUniqueId, true, false, true, false, logUpdate.callUniqueId) } })
+      let videoAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(logUpdate.callUniqueId, true, true, true, false, logUpdate.callUniqueId) } })
+
+      let moreButton = createElement({
+        elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
+          callDetailsPanel.textContent = ''
+          let callDirectionIcon;
+          if (logUpdate.missed == 1) { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-off' }) }
+          else if (logUpdate.participantId == logUpdate.initiatorId) { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-outgoing' }) }
+          else { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }) }
+
+          let mobileButton = createElement({
+            elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
+          })
+          let detailsPanel_header = createElement({
+            elementType: 'div', class: 'section-header', childrenArray: [
+              mobileButton,
+              createElement({ elementType: 'h1', textContent: 'Call details' })
+            ]
+          })
+          let topDetailsCard = createElement({ elementType: 'div', class: 'topDetailsCard', childrenArray: [createElement({ elementType: 'div', class: 'circle', childrenArray: [callDirectionIcon] })] })
+          let callTitleContent = createElement({
+            elementType: 'div', class: 'callTitleContent', childrenArray: [
+              createElement({ elementType: 'h1', textContent: logUpdate.callTitle })]
+          })
+          let drop_button = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })] })
+          let allPartifipantDiv = createElement({
+            elementType: 'div', class: 'allPartifipantDiv', childrenArray: [
+              createElement({ elementType: 'div', class: 'header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Participants' }), drop_button] })
+            ]
+          })
+          let callParticipantsDiv = createElement({ elementType: 'div', class: 'callParticipants' })
+          let details_section_content = createElement({ elementType: 'div', class: 'details-section-content', childrenArray: [topDetailsCard, callTitleContent, allPartifipantDiv, callParticipantsDiv] })
+          callDetailsPanel.append(detailsPanel_header, details_section_content)
+          logUpdate.participantsOnCall.forEach(participant => {
+            let participantElement;
+            let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+            let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+            let actions = [
+              { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null); showCallListSection(); } },
+              { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null); showCallListSection(); } },
+            ];
+
+            if (participant.userID == mySavedID) actions = []
+            participantElement = userForAttendanceList(participant, actions)
+            callParticipantsDiv.append(participantElement)
+          })
+          logUpdate.participantsOffCall.forEach(participant => {
+            let participantElement;
+            let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+            let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+            let actions = [
+              { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null); showCallListSection(); } },
+              { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null); showCallListSection(); } },
+            ];
+
+            if (participant.userID == mySavedID) actions = []
+            participantElement = userForAttendanceList(participant, actions)
+            callParticipantsDiv.append(participantElement)
+          })
+          showCallDetailsSection();
+        }
       })
-    })
-  })();
 
-  (() => {
-    //------------------------ Call Details - 
-
-    callDetailsPanel.textContent = ''
-
-    //-----------------------
-
-    callHistoryPage.textContent = ''
-    let callHistoryArray = []
-
-    let searchButton = createElement({
-      elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-contact' })], onclick: showCallContactSearchSection
-    })
-    let incominPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'In' })] })] });
-    let outgoingPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Out' })] })] });
-    let missedPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Missed' })] })] });
-    let header = createElement({ elementType: 'div', class: 'header', childrenArray: [createElement({ elementType: 'div', class: 'pillsContainer', childrenArray: [searchButton, incominPill, outgoingPill, missedPill] })] })
-
-    let section_header = createElement({ elementType: 'div', class: 'section-header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Calls' })] })
-    let list_call_section_content = createElement({ elementType: 'div', class: 'list-call-section-content' })
-    let callHistoryPageBody = createElement({ elementType: 'div', class: 'callHistoryPageBody', childrenArray: [createElement({ elementType: 'div', class: 'list-call-section', childrenArray: [section_header, list_call_section_content] })] })
-
-    callHistoryPage.append(header, callHistoryPageBody)
-    socket.on('updateCallLog', (calls) => {
-      console.log('updateCallLog', calls)
-      list_call_section_content.textContent = ''
-      calls.forEach(logUpdate => {
-        let callogClass = "";
-        let callDirection;
-        if (logUpdate.participantsOnCall.length > 0) callogClass = "ongoing";
-        let profilePicture;
-        if (logUpdate.initiator.profilePicture == null) profilePicture = createElement({ elementType: 'div', textContent: logUpdate.initiator.name.charAt(0) + logUpdate.initiator.surname.charAt(0) })
-        else profilePicture = createElement({ elementType: 'img', src: logUpdate.initiator.profilePicture })
-
-        if (logUpdate.missed == 1) {
-          callDirection = createElement({ elementType: 'div', class: 'callType red', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Missed' })] })
-        }
-        else if (logUpdate.participantId == logUpdate.initiatorId) {
-          callDirection = createElement({ elementType: 'div', class: 'callType green', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-outgoing' }), createElement({ elementType: 'p', textContent: 'Out' })] })
-        }
-        else {
-          callDirection = createElement({ elementType: 'div', class: 'callType blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'In' })] })
-        }
-
-        let audioAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(logUpdate.callUniqueId, true, false, true, false, logUpdate.callUniqueId) } })
-        let videoAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(logUpdate.callUniqueId, true, true, true, false, logUpdate.callUniqueId) } })
-
-        let moreButton = createElement({
-          elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
-            callDetailsPanel.textContent = ''
-            let callDirectionIcon;
-            if (logUpdate.missed == 1) { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-off' }) }
-            else if (logUpdate.participantId == logUpdate.initiatorId) { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-outgoing' }) }
-            else { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }) }
-
-            let mobileButton = createElement({
-              elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
-            })
-            let detailsPanel_header = createElement({
-              elementType: 'div', class: 'section-header', childrenArray: [
-                mobileButton,
-                createElement({ elementType: 'h1', textContent: 'Call details' })
-              ]
-            })
-            let topDetailsCard = createElement({ elementType: 'div', class: 'topDetailsCard', childrenArray: [createElement({ elementType: 'div', class: 'circle', childrenArray: [callDirectionIcon] })] })
-            let callTitleContent = createElement({
-              elementType: 'div', class: 'callTitleContent', childrenArray: [
-                createElement({ elementType: 'h1', textContent: logUpdate.callTitle })]
-            })
-            let drop_button = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })] })
-            let allPartifipantDiv = createElement({
-              elementType: 'div', class: 'allPartifipantDiv', childrenArray: [
-                createElement({ elementType: 'div', class: 'header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Participants' }), drop_button] })
-              ]
-            })
-            let callParticipantsDiv = createElement({ elementType: 'div', class: 'callParticipants' })
-            let details_section_content = createElement({ elementType: 'div', class: 'details-section-content', childrenArray: [topDetailsCard, callTitleContent, allPartifipantDiv, callParticipantsDiv] })
-            callDetailsPanel.append(detailsPanel_header, details_section_content)
-            logUpdate.participantsOnCall.forEach(participant => {
-              let participantElement;
-              let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-              let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
-              let actions = [
-                { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null); showCallListSection(); } },
-                { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null); showCallListSection(); } },
-              ];
-
-              if (participant.userID == mySavedID) actions = []
-              participantElement = userForAttendanceList(participant, actions)
-              callParticipantsDiv.append(participantElement)
-            })
-            logUpdate.participantsOffCall.forEach(participant => {
-              let participantElement;
-              let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-              let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
-              let actions = [
-                { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null); showCallListSection(); } },
-                { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null); showCallListSection(); } },
-              ];
-
-              if (participant.userID == mySavedID) actions = []
-              participantElement = userForAttendanceList(participant, actions)
-              callParticipantsDiv.append(participantElement)
-            })
-            showCallDetailsSection();
-          }
-        })
-
-        let call_log = createElement({
-          elementType: 'div', class: 'call-log ' + callogClass, childrenArray: [
-            createElement({
-              elementType: 'div', class: 'line1', childrenArray: [
-                createElement({ elementType: 'div', class: 'picture', childrenArray: [profilePicture] }),
-                createElement({
-                  elementType: 'div', class: 'nameAndType', childrenArray: [
-                    createElement({ elementType: 'div', class: 'callMembers', textContent: logUpdate.initiator.name + ' ' + logUpdate.initiator.surname }),
-                    callDirection
-                  ]
-                }),
-                createElement({ elementType: 'div', class: 'dateTime', textContent: new Date(logUpdate.startDate).toString('YYYY-MM-dd').substring(0, 24) }),
-                createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [audioAgainButton, videoAgainButton, moreButton] })
-              ]
-            })
-          ]
-        })
-        list_call_section_content.append(call_log)
+      let call_log = createElement({
+        elementType: 'div', class: 'call-log ' + callogClass, childrenArray: [
+          createElement({
+            elementType: 'div', class: 'line1', childrenArray: [
+              createElement({ elementType: 'div', class: 'picture', childrenArray: [profilePicture] }),
+              createElement({
+                elementType: 'div', class: 'nameAndType', childrenArray: [
+                  createElement({ elementType: 'div', class: 'callMembers', textContent: logUpdate.initiator.name + ' ' + logUpdate.initiator.surname }),
+                  callDirection
+                ]
+              }),
+              createElement({ elementType: 'div', class: 'dateTime', textContent: new Date(logUpdate.startDate).toString('YYYY-MM-dd').substring(0, 24) }),
+              createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [audioAgainButton, videoAgainButton, moreButton] })
+            ]
+          })
+        ]
       })
+      list_call_section_content.append(call_log)
     })
-    $(".pill").click(function () { $(this).toggleClass("selectedPill"); });
-  })()
+  })
+  $(".pill").click(function () { $(this).toggleClass("selectedPill"); });
+  // })()
   // initial important events to listen to
   socket.on('redirect', function (destination) {
     window.location.href = destination;
@@ -1776,184 +1776,165 @@ let functionalityOptionsArray = [
       }
     }
   });
-})(functionalityOptionsArray);
-function showMessagesPanel() {
-  messages_panel.style.display = "flex";
-  call_log_panel.style.display = "none";
-  ongoing_call_panel.style.display = "none";
-  time_scheduling_panel.style.display = "none";
+  // })(functionalityOptionsArray);
+  function showMessagesPanel() {
+    displayAppSection(0);
+    // messages_panel.style.display = "flex";
+    // call_log_panel.style.display = "none";
+    // ongoing_call_panel.style.display = "none";
+    // time_scheduling_panel.style.display = "none";
 
-  document_title.innerText = "Messages";
-}
-function showCallHistoryPanel() {
-  messages_panel.style.display = "none";
-  call_log_panel.style.display = "flex";
-  ongoing_call_panel.style.display = "none";
-  time_scheduling_panel.style.display = "none";
-
-  document_title.innerText = "Calls";
-}
-function showOngoingCallSection() {
-  messages_panel.style.display = "none";
-  call_log_panel.style.display = "none";
-  ongoing_call_panel.style.display = "flex";
-  time_scheduling_panel.style.display = "none";
-
-  document_title.innerText = "ongoing call";
-}
-function showTimeSchedulingSection() {
-  messages_panel.style.display = "none";
-  call_log_panel.style.display = "none";
-  ongoing_call_panel.style.display = "none";
-  time_scheduling_panel.style.display = "flex";
-
-  document_title.innerText = "Calendar";
-}
-// mobule responsiveness functions
-let chats_panel = document.getElementById('chats_panel')
-let chatContent_panel = document.getElementById('chatContent_panel')
-function showChatList() {
-  chats_panel.classList.remove('mobileHiddenElement')
-  chatContent_panel.classList.add('mobileHiddenElement')
-}
-function showChatContent() {
-  chats_panel.classList.add('mobileHiddenElement')
-  chatContent_panel.classList.remove('mobileHiddenElement')
-}
-
-////////////////////////////
-function createMessagesPanelElements() {
-  messages_panel.textContent = '';
-  let chatSearch = createElement({
-    elementType: 'div', class: 'chatSearch displayed', childrenArray: [
-      createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), // label
-      createElement({ elementType: 'input', type: 'text', placeHolder: 'Search conversations' }), // input
-    ]
-  })
-  let newChatButton = createElement({ elementType: 'button', class: 'newChat rotate45', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })] })
-  let newChatTitle = createElement({
-    elementType: 'div', class: 'newChatTitle unDisplayed', childrenArray: [
-      createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), // label
-      createElement({ elementType: 'input', type: 'text', placeHolder: 'Search people' }), // input
-    ]
-  })
-  let chats__header = createElement({ elementType: 'div', class: 'c-chats__header', childrenArray: [chatSearch, newChatButton, newChatTitle] })
-  let place_for_chats = createElement({ elementType: 'ul', class: 'place_for_chats' })
-  let searchResults = createElement({ elementType: 'ul', class: 'searchResults' })
-  let chat_search_content = createElement({ elementType: 'div', class: 'chat-search-content', childrenArray: [place_for_chats, searchResults] })
-  let c_chats = createElement({ elementType: 'div', class: 'c-chats', childrenArray: [chats__header, chat_search_content] })
-  // wide area
-  let c_openchat = createElement({
-    elementType: 'div', class: 'c-openchat', childrenArray: [
-      createElement({
-        elementType: 'div', class: 'c-openchat__selectConversation', childrenArray: [
-          createElement({ elementType: 'img', src: '/images/yourMessagesWillAppearHere.png' }),
-          createElement({ elementType: 'h3', textContent: 'Select any chat or create a new chat to get started with chat' })
-        ]
-      })
-    ]
-  })
-  messages_panel.appendChild(c_chats)
-  messages_panel.appendChild(c_openchat)
-}
-socket.on('displayChat', function (chat) {
-  let conversationButton = showOnChatList(chat)
-  chatContainer.append(conversationButton)
-  availableChats.push({ roomID: chat.roomID, conversationButton })
-});
-socket.on('displayNewCreatedChat', function (chat) {
-  let conversationButton = showOnChatList(chat)
-  chatContainer.prepend(conversationButton)
-  availableChats.unshift({ roomID: chat.roomID, conversationButton })
-});
-socket.on('clickOnChat', function (chatToClick) {
-  let existingChat = availableChats.find(chat => chat.roomID == chatToClick)
-  if (!existingChat) { }
-  else existingChat.conversationButton.click()
-});
-socket.on('chatContent', function (chatContent) {
-  openChatInfo = chatContent;
-  console.log("from server: ", chatContent)
-  displayChatOnChatArea(openChatInfo)
-});
-socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
-  let chatContainerDiv = showOnChatList(chatInfo);
-  let existingChat = availableChats.find(chat => chat.roomID == chatInfo.roomID)
-  if (!existingChat) {
-    chatContainer.prepend(chatContainerDiv);
-    availableChats.unshift({ roomID: chatInfo.roomID, conversationButton })
+    // document_title.innerText = "Messages";
   }
-  else {
-    chatContainer.prepend(chatContainerDiv);
-    existingChat.conversationButton.remove()
-    existingChat.conversationButton = chatContainerDiv
+  function showCallHistoryPanel() {
+    displayAppSection(1);
+    // messages_panel.style.display = "none";
+    // call_log_panel.style.display = "flex";
+    // ongoing_call_panel.style.display = "none";
+    // time_scheduling_panel.style.display = "none";
+
+    // document_title.innerText = "Calls";
   }
-  if (selectedChatId == chatInfo.roomID) { // if this chat is currently opened
-    addMessageToChat(insertedMessage, mySavedID)
+  function showOngoingCallSection() {
+    displayAppSection(2);
+    // messages_panel.style.display = "none";
+    // call_log_panel.style.display = "none";
+    // ongoing_call_panel.style.display = "flex";
+    // time_scheduling_panel.style.display = "none";
+
+    // document_title.innerText = "ongoing call";
   }
-  else { // if this is not the displayed chat, give  notification
-    let shortOrImagType, shortOrImagContent;
-    if (chatInfo.type == 0) {
-      if (expectedUser.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = expectedUser.name.charAt(0) + expectedUser.surname.charAt(0); }
-      else { shortOrImagType = 'image'; shortOrImagContent = expectedUser.profilePicture; }
+  function showTimeSchedulingSection() {
+    displayAppSection(3);
+    // messages_panel.style.display = "none";
+    // call_log_panel.style.display = "none";
+    // ongoing_call_panel.style.display = "none";
+    // time_scheduling_panel.style.display = "flex";
+
+    // document_title.innerText = "Calendar";
+  }
+
+  function displayAppSection(sectionIndex) {
+    console.log('displayAppSection', sidepanelElements, sectionIndex)
+    for (let i = 0; i < sidepanelElements.length; i++) {
+      if (sidepanelElements[i].index != sectionIndex) {
+        sidepanelElements[i].panel.style.display = "none";
+        sidepanelElements[i].subMenuDiv.classList.add('undropped-down')
+        sidepanelElements[i].dropIcon.classList.remove('rotate180');
+      }
+      else {
+        if (sidepanelElements[i].redirect) window.location.replace(sidepanelElements[i].redirect);
+
+        sidepanelElements[i].panel.style.display = "flex";
+        sidepanelElements[i].subMenuDiv.classList.remove('undropped-down')
+        sidepanelElements[i].dropIcon.classList.add('rotate180');
+        document_title.innerText = sidepanelElements[i].title;
+        console.log(sidepanelElements[i])
+      }
     }
-    if (chatInfo.type == 1) {
-      if (chatInfo.profilePicture == null) { shortOrImagType = 'image'; shortOrImagContent = '/private/profiles/group.jpeg' }
-      else { shortOrImagType = 'image'; shortOrImagContent = chatInfo.profilePicture; }
-    }
-    let notification = displayNotification({
-      title: { iconClass: 'bx bxs-chat', titleText: 'Incoming Message' },
-      body: {
-        shortOrImage: { shortOrImagType: shortOrImagType, shortOrImagContent: shortOrImagContent },
-        bodyContent: 'Message from ' + expectedUser.name + ' ' + expectedUser.surname + ' : ' + insertedMessage.message
-      },
-      actions: [
-        // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
-        { type: 'confirm', displayText: 'Open chat', actionFunction: () => { requestChatContent(chatInfo.roomID) } }
-      ],
-      obligatoryActions: {
-        onDisplay: () => { console.log('Notification Displayed') },
-        onHide: () => { console.log('Notification Hidden') },
-        onEnd: () => { console.log('Notification Ended') },
-      },
-      delay: 7000,
-      tone: 'notification'
+    if (openProfileDiv) openProfileDiv.closePopup();
+  }
+  // mobule responsiveness functions
+  let chats_panel = document.getElementById('chats_panel')
+  let chatContent_panel = document.getElementById('chatContent_panel')
+  function showChatList() {
+    chats_panel.classList.remove('mobileHiddenElement')
+    chatContent_panel.classList.add('mobileHiddenElement')
+  }
+  function showChatContent() {
+    chats_panel.classList.add('mobileHiddenElement')
+    chatContent_panel.classList.remove('mobileHiddenElement')
+  }
+
+  //////////////////////////// to be used later if needed /////////////////////////////////
+  function createMessagesPanelElements() {
+    messages_panel.textContent = '';
+    let chatSearch = createElement({
+      elementType: 'div', class: 'chatSearch displayed', childrenArray: [
+        createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), // label
+        createElement({ elementType: 'input', type: 'text', placeHolder: 'Search conversations' }), // input
+      ]
     })
-
+    let newChatButton = createElement({ elementType: 'button', class: 'newChat rotate45', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })] })
+    let newChatTitle = createElement({
+      elementType: 'div', class: 'newChatTitle unDisplayed', childrenArray: [
+        createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), // label
+        createElement({ elementType: 'input', type: 'text', placeHolder: 'Search people' }), // input
+      ]
+    })
+    let chats__header = createElement({ elementType: 'div', class: 'c-chats__header', childrenArray: [chatSearch, newChatButton, newChatTitle] })
+    let place_for_chats = createElement({ elementType: 'ul', class: 'place_for_chats' })
+    let searchResults = createElement({ elementType: 'ul', class: 'searchResults' })
+    let chat_search_content = createElement({ elementType: 'div', class: 'chat-search-content', childrenArray: [place_for_chats, searchResults] })
+    let c_chats = createElement({ elementType: 'div', class: 'c-chats', childrenArray: [chats__header, chat_search_content] })
+    // wide area
+    let c_openchat = createElement({
+      elementType: 'div', class: 'c-openchat', childrenArray: [
+        createElement({
+          elementType: 'div', class: 'c-openchat__selectConversation', childrenArray: [
+            createElement({ elementType: 'img', src: '/images/yourMessagesWillAppearHere.png' }),
+            createElement({ elementType: 'h3', textContent: 'Select any chat or create a new chat to get started with chat' })
+          ]
+        })
+      ]
+    })
+    messages_panel.appendChild(c_chats)
+    messages_panel.appendChild(c_openchat)
   }
-
-});
-
-function requestChatContent(chatId) {
-  socket.emit('requestChatContent', chatId);
-  showChatContent()
-}
-socket.on('updateReaction', function (receivedReactionsInfo) {
-  console.log('updateReaction', receivedReactionsInfo, mySavedID, selectedChatId)
-  if (selectedChatId == receivedReactionsInfo.chat) { // update reaction in case it is on the open chat
-    //  = buildReaction(receivedReactionsInfo.details)
-    let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
-    let existingMessageObject = displayedMessages.find(displayedMessage => displayedMessage.object.id == receivedReactionsInfo.message)
-    if (existingMessageObject) {
-      existingMessageObject.reactionsDiv.after(msgReactions)
-      existingMessageObject.reactionsDiv.remove()
-      existingMessageObject.reactionsDiv = msgReactions
+  socket.on('displayChat', function (chat) {
+    let conversationButton = showOnChatList(chat)
+    chatContainer.append(conversationButton)
+    availableChats.push({ roomID: chat.roomID, conversationButton })
+  });
+  socket.on('displayNewCreatedChat', function (chat) {
+    let conversationButton = showOnChatList(chat)
+    chatContainer.prepend(conversationButton)
+    availableChats.unshift({ roomID: chat.roomID, conversationButton })
+  });
+  socket.on('clickOnChat', function (chatToClick) {
+    let existingChat = availableChats.find(chat => chat.roomID == chatToClick)
+    if (!existingChat) { }
+    else existingChat.conversationButton.click()
+  });
+  socket.on('chatContent', function (chatContent) {
+    openChatInfo = chatContent;
+    console.log("from server: ", chatContent)
+    displayChatOnChatArea(openChatInfo)
+  });
+  socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
+    let chatContainerDiv = showOnChatList(chatInfo);
+    let existingChat = availableChats.find(chat => chat.roomID == chatInfo.roomID)
+    if (!existingChat) {
+      chatContainer.prepend(chatContainerDiv);
+      availableChats.unshift({ roomID: chatInfo.roomID, conversationButton })
     }
-  }
-  else {
-    if (mySavedID == receivedReactionsInfo.messageOwner.userID) { // show reaction if it is done on my message in chat
+    else {
+      chatContainer.prepend(chatContainerDiv);
+      existingChat.conversationButton.remove()
+      existingChat.conversationButton = chatContainerDiv
+    }
+    if (selectedChatId == chatInfo.roomID) { // if this chat is currently opened
+      addMessageToChat(insertedMessage, mySavedID)
+    }
+    else { // if this is not the displayed chat, give  notification
       let shortOrImagType, shortOrImagContent;
-      if (receivedReactionsInfo.performer.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = receivedReactionsInfo.performer.name.charAt(0) + receivedReactionsInfo.performer.surname.charAt(0); }
-      else { shortOrImagType = 'image'; shortOrImagContent = receivedReactionsInfo.performer.profilePicture; }
-
+      if (chatInfo.type == 0) {
+        if (expectedUser.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = expectedUser.name.charAt(0) + expectedUser.surname.charAt(0); }
+        else { shortOrImagType = 'image'; shortOrImagContent = expectedUser.profilePicture; }
+      }
+      if (chatInfo.type == 1) {
+        if (chatInfo.profilePicture == null) { shortOrImagType = 'image'; shortOrImagContent = '/private/profiles/group.jpeg' }
+        else { shortOrImagType = 'image'; shortOrImagContent = chatInfo.profilePicture; }
+      }
       let notification = displayNotification({
-        title: { iconClass: 'bx bxs-wink-smile', titleText: 'Message reaction' },
+        title: { iconClass: 'bx bxs-chat', titleText: 'Incoming Message' },
         body: {
           shortOrImage: { shortOrImagType: shortOrImagType, shortOrImagContent: shortOrImagContent },
-          bodyContent: receivedReactionsInfo.performer.name + ' ' + receivedReactionsInfo.performer.surname + ' reacted to your message'
+          bodyContent: 'Message from ' + expectedUser.name + ' ' + expectedUser.surname + ' : ' + insertedMessage.message
         },
-        actions: [ // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
-          { type: 'confirm', displayText: 'Open chat', actionFunction: () => { requestChatContent(receivedReactionsInfo.chat) } }
+        actions: [
+          // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
+          { type: 'confirm', displayText: 'Open chat', actionFunction: () => { requestChatContent(chatInfo.roomID) } }
         ],
         obligatoryActions: {
           onDisplay: () => { console.log('Notification Displayed') },
@@ -1963,3212 +1944,3218 @@ socket.on('updateReaction', function (receivedReactionsInfo) {
         delay: 7000,
         tone: 'notification'
       })
+
     }
-  }
-})
-function buildReaction(details, myID) {
-  let reactions = details.map(reaction => {
-    let reactorsTitle = createElement({ elementType: 'div', class: 'title', textContent: 'Reactions' });
-    let reactorsArray = reaction.users.map(user => { return createElement({ elementType: 'li', textContent: myID == user.userID ? 'Me' : user.name + " " + user.surname }) })
-    return createElement({
-      elementType: 'div', class: 'reactionBox', childrenArray: [
-        createElement({ elementType: 'div', class: 'reactionIcon', textContent: reaction.icon }),
-        createElement({ elementType: 'ul', class: 'reactorList', childrenArray: [reactorsTitle].concat(reactorsArray) }),
-      ]
-    })
-  })
-  return reactions;
-}
 
-function showOnChatList(chat) {
-  console.log('chat', chat)
-  let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = chat;
-
-  console.log("chat to display on list", chat)
-  let writenBy = '';
-  let imageContainer;
-  let chatTitleText = ''
-  switch (type) {
-    case 0:
-      writenBy = "";
-      let userToDisplay = users.filter(user => user.userID != mySavedID)
-      if (userToDisplay.length < 1) { // in case we have only one user (viewer)
-        chatTitleText = 'Deleted User'
-        imageContainer = makeProfilePicture(deletedUser)
-      } else {
-        chatTitleText = userToDisplay[0].name + ' ' + userToDisplay[0].surname;
-        imageContainer = makeProfilePicture(userToDisplay[0]);
-      }
-      break;
-    case 1:
-      if (mySavedID == lastmessage.from.userID) { writenBy = "Me: "; }
-      else { writenBy = lastmessage.from.name + ": "; }
-      if (profilePicture == null) { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
-      else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
-      if (roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
-      else chatTitleText = roomName;
-      break;
-    default:
-      break;
-  }
-  let chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: chatTitleText })
-  let chatDate = createElement({ elementType: 'span', textContent: new Date(lastmessage.timeStamp).toString('YYYY-MM-dd').substring(0, 24) })
-  let chatMessage = createElement({ elementType: 'p', class: 'c-chats__excerpt', textContent: writenBy + lastmessage.message })
-  let chatInformation = createElement({ elementType: 'div', class: 'c-chats__info', childrenArray: [chatTitle, chatDate, chatMessage] })
-  let chatListButton = createElement({ elementType: 'button', class: 'c-chats__link', childrenArray: [imageContainer, chatInformation] })
-  let chatListItem = createElement({ elementType: 'li', class: 'c-chats__list', childrenArray: [chatListButton] })
-  chatListItem.addEventListener('click', () => {
-    open_chat_box.textContent = ''
-    open_chat_box.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // append spinner for waiting server response
-    requestChatContent(roomID)
-    availableChats.forEach(chat => { chat.conversationButton.classList.remove("openedChat") })
-    chatListItem.classList.add("openedChat");
-  })
-  return chatListItem;
-}
-function makeProfilePicture(userInfo) {
-  let { userID, name, surname, role, profilePicture, status } = userInfo
-  let memberProfilePicture;
-  if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-  else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture })
-
-  memberProfilePicture.addEventListener('click', () => {
-    createProfilePopup(userInfo);
-  })
-  return memberProfilePicture;
-}
-
-document.getElementById("newChat").addEventListener("click", () => {
-  chatSearchToogle()
-  var searchField = document.getElementById('searchField')
-  searchField.focus();
-})
-
-//focu on the typing element
-function setFocus() {
-  document.getElementById('w-input-text').focus();
-}
-
-function displayChatOnChatArea(openChatInfo) {
-  let { roomInfo, messagesArray } = openChatInfo
-  let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = roomInfo
-  // let { roomID, roomName, type, profilePicture, myID, messagesArray, usersArray } = roomInfo;
-  selectedChatId = roomID
-  taggedMessages = [];
-  let imageContainer;
-  let chatTitleText = ''
-  let openchat__box__header;
-  let chatActions = []
-  let mobileButton = createElement({
-    elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showChatList
-  })
-  let backToChatsButton;
-  switch (type) {
-    case 0:
-      let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-      let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
-      let moreButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })] })
-      let userToDisplay = users.filter(user => user.userID != myID)
-      chatActions = [
-        { element: callButton, functionCall: () => { call(userToDisplay[0].userID, true, false, false, true, null) } },
-        { element: videoButton, functionCall: () => { call(userToDisplay[0].userID, true, true, false, true, null) } },
-        { element: moreButton, functionCall: () => { console.log('moreButton', userToDisplay[0].userID) } }
-      ]
-      if (userToDisplay.length < 1) { // in case we have only one user (viewer)
-        chatTitleText = 'Deleted User'
-        openchat__box__header = userForAttendanceList(deletedUser, [], [mobileButton])
-      } else {
-        chatTitleText = userToDisplay[0].name + ' ' + userToDisplay[0].surname
-        imageContainer = makeProfilePicture(userToDisplay[0])
-        openchat__box__header = userForAttendanceList(userToDisplay[0], chatActions, [mobileButton])
-      }
-      break;
-    case 1:
-      if (profilePicture == null) { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
-      else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
-      if (roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
-      else chatTitleText = roomName;
-      let groupCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(roomID, true, false, false, true, null) } })
-      let groupVideoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(roomID, true, false, false, true, null) } })
-      let groupMoreButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => { console.log('groupMoreButton clicked') } })
-      openchat__box__header = createElement({
-        elementType: 'div', class: 'c-openchat__box__header', childrenArray: [
-          mobileButton,
-          createElement({
-            elementType: 'div', class: 'c-chat-title', childrenArray: [
-              imageContainer,
-              createElement({ elementType: 'p', class: 'c-openchat__box__name', textContent: chatTitleText })
-            ]
-          }),
-          createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [groupCallButton, groupVideoButton, groupMoreButton] })
-        ]
-      })
-      break;
-    default:
-      break;
-  }
-  openchat__box__info = createElement({ elementType: 'div', class: 'c-openchat__box__info' })
-  openchat__box__info.style.scrollBehavior = "auto" // so that it does not show scrolling while inserting
-  let emojiButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-smile' })] })
-  let attachButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })] })
-  let inputText = createElement({ elementType: 'div', class: 'w-input-text', contentEditable: true })
-  let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeHolder', textContent: 'Type a message' })
-  let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
-  inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
-  let sendMessageButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
-  let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [/* emojiButton, attachButton, */ inputContainer, sendMessageButton] })
-  let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox] })
-  open_chat_box.textContent = '';
-  open_chat_box.append(chatBox)
-  openchat__box__info.textContent = '' // ensure that no element is inside the message container
-  messagesArray.forEach((message, index) => { addMessageToChat(message, myID) })
-  scrollToBottom(openchat__box__info) // scrool to the last message
-  openchat__box__info.style.scrollBehavior = "smooth" // enable smooth scrolling
-
-  if (messagesArray.length < 1) {
-    openchat__box__info.textContent = ''
-    openchat__box__info.append(
-      createElement({
-        elementType: 'div', class: 'c-openchat__selectConversation', childrenArray: [
-          createElement({ elementType: 'img', src: '/images/createChat.png' }),
-          createElement({
-            elementType: 'h3', childrenArray: [
-              'Start typing',
-              createElement({ elementType: 'i', class: 'bx bxs-keyboard' }),
-              createElement({ elementType: 'br' })]
-          }),
-          'Your messages will appear here ...'
-        ]
-      })
-    )
-  }
-  else { openchat__box__info.prepend(createElement({ elementType: 'div', class: 'push-down' })) }
-
-  //grab text message input and process it
-  inputText.addEventListener('keydown', function (e) {
-    if (e.key == 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
 
-  sendMessageButton.addEventListener('click', function (e) {
-    if (inputText.innerText.trim() != '') { sendMessage(); e.preventDefault(); }
-  });
-
-  function sendMessage() {
-    let fDate = formatDate(new Date())
-    let message = { toRoom: selectedChatId, message: inputText.innerText.trim(), timeStamp: fDate, taggedMessages: taggedMessages };
-    inputText.innerText = '';
-    socket.emit('message', message)
-    if (taggedMessages.length > 0) messageTagsField.remove()
-    taggedMessages = [];
+  function requestChatContent(chatId) {
+    socket.emit('requestChatContent', chatId);
+    showChatContent()
   }
-}
-
-function addMessageToChat(message, myID) {
-  let messageElement
-  if (displayedMessages.length < 1) { // for the first message on chat
-
-    let separator = createSeparator(new Date(message.timeStamp), 'date')
-    let groupMessages;
-    if (message.userID == myID) {
-      messageElement = createSentMessage(message, myID, 'bx bxs-check-circle')
-      groupMessages = createSentGroup(messageElement)
+  socket.on('updateReaction', function (receivedReactionsInfo) {
+    console.log('updateReaction', receivedReactionsInfo, mySavedID, selectedChatId)
+    if (selectedChatId == receivedReactionsInfo.chat) { // update reaction in case it is on the open chat
+      //  = buildReaction(receivedReactionsInfo.details)
+      let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
+      let existingMessageObject = displayedMessages.find(displayedMessage => displayedMessage.object.id == receivedReactionsInfo.message)
+      if (existingMessageObject) {
+        existingMessageObject.reactionsDiv.after(msgReactions)
+        existingMessageObject.reactionsDiv.remove()
+        existingMessageObject.reactionsDiv = msgReactions
+      }
     }
     else {
-      let profilePic = makeProfilePicture(message.userInfo)
-      messageElement = createReceivedMessage(message, myID, true)
-      groupMessages = createReceivedGroup(profilePic, messageElement)
-    }
-    openchat__box__info.appendChild(separator)
-    openchat__box__info.appendChild(groupMessages)
-  }
-  else {
-    let lastMessage = displayedMessages[displayedMessages.length - 1]
-    console.log('message, myID', message, myID)
-    let prevDate = new Date(lastMessage.object.timeStamp)
-    let thisDate = new Date(message.timeStamp)
-    if (!sameDay(prevDate, thisDate)) { // first I check if it is from the same date in order to establish a separator
-      let separator = createSeparator(new Date(message.timeStamp), 'date')
-      openchat__box__info.appendChild(separator)
-    }
-    if (message.userID == myID) { // if it is my Message
-      messageElement = createSentMessage(message, myID, 'bx bxs-check-circle')
-      if ((thisDate - prevDate) > 60000 || !sameDay(prevDate, thisDate) || message.userID != lastMessage.object.userID) {
-        /* 
-        we create a new group, if:
-        - the message is older than 1 min
-        - if the message is not from the same day
-        - the message is coming from a different user, 
-        */
-        groupMessages = createSentGroup(messageElement)
-        openchat__box__info.append(groupMessages)
-      }
-      else {
-        lastMessage.messageElement.after(messageElement)
-      }
-    }
-    else { // if it is a received message
-      if ((thisDate - prevDate) > 60000 || !sameDay(prevDate, thisDate) || message.userID != lastMessage.object.userID) {
-        messageElement = createReceivedMessage(message, myID, true)
-        let profilePic = makeProfilePicture(message.userInfo)
-        groupMessages = createReceivedGroup(profilePic, messageElement)
-        openchat__box__info.append(groupMessages)
-      }
-      else {
-        messageElement = createReceivedMessage(message, myID, false)
-        lastMessage.messageElement.after(messageElement)
-      }
-    }
-  }
-  displayedMessages.push({ object: message, messageElement: messageElement, reactionsDiv: messageElement.reactionOptions.reactionOptionsDiv });
-  console.log('displayedMessages', displayedMessages)
-  scrollToBottom(openchat__box__info) // scroll to bottom
-}
-
-function createReceivedMessage(message, myID, showSenderName) {
-  console.log('message', message)
-  // senserName: true / false allows the message to have the senders name attached
-  let tagTemplate = message.tagContent.map(tag => {
-    return createElement({
-      elementType: 'div', class: 'message-tag-text', textContent: tag.message, onclick: () => {
-        let taggedMessage = displayedMessages.find(displayedMessage => displayedMessage.object.id == tag.id)
-        taggedMessage.messageElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    })
-  })
-  let messageReceivedText = createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
-  let sendersName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
-  let reactionOptions = buildOptions(message, myID, messageReceivedText)
-  // reactionOptions.reactionOptionsDiv is the element
-  let messageElements = [messageReceivedText, reactionOptions]
-  if (showSenderName == true) messageElements.push(sendersName)
-  let receivedMessage = createElement({ elementType: 'div', class: 'message-received', childrenArray: messageElements })
-  receivedMessage.reactionOptions = reactionOptions
-  return receivedMessage
-}
-
-function createSentMessage(message, myID, statusIcon) {
-  let tagTemplate = message.tagContent.map(tag => {
-    return createElement({
-      elementType: 'div', class: 'message-tag-text', textContent: tag.message, onclick: () => {
-        let taggedMessage = displayedMessages.find(displayedMessage => displayedMessage.object.id == tag.id)
-        taggedMessage.messageElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    })
-  })
-  let messageSentText = createElement({ elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
-  let messageStatus = createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [createElement({ elementType: 'i', class: statusIcon })] })
-  let reactionOptions = buildOptions(message, myID, messageSentText)
-  let messageElements = [reactionOptions, messageSentText, messageStatus]
-  let sentMessage = createElement({ elementType: 'div', class: 'message-sent', childrenArray: messageElements })
-  sentMessage.reactionOptions = reactionOptions
-  return sentMessage
-}
-
-function createReceivedGroup(profilePic, firstMessage) {
-  return receivedGroup = createElement({
-    elementType: 'div', class: 'message-group-received', childrenArray: [createElement({ elementType: 'div', childrenArray: [profilePic] }), createElement({ elementType: 'div', childrenArray: [firstMessage] })]
-  })
-}
-
-function createSentGroup(firstMessage) {
-  return createElement({ elementType: 'div', class: 'message-group-sent', childrenArray: [firstMessage] })
-}
-
-function createSeparator(factor, type) {
-  let separator;
-  if (type == 'date') separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: factor.toString('YYYY-MM-dd').substring(0, 15) })] })
-  if (type == 'unread') separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: 'Unread messages' })] })
-  return separator;
-}
-
-function formatDate(unfDate) {
-  let fDate = [
-    (unfDate.getFullYear() + ''),
-    ((unfDate.getMonth() + 1) + '').padStart(2, "0"),
-    (unfDate.getDate() + '').padStart(2, "0")].join('-')
-    + ' ' +
-    [(unfDate.getHours() + '').padStart(2, "0"),
-    (unfDate.getMinutes() + '').padStart(2, "0"),
-    (unfDate.getSeconds() + '').padStart(2, "0")].join(':');
-  return fDate;
-}
-
-function scrollToBottom(div) { div.scrollTop = div.scrollHeight; }
-
-function reactionTo(messageId, reaction) { socket.emit('messageReaction', { messageId, selectedChatId, reaction }) }
-
-function sameDay(d1, d2) { return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate(); }
-
-let searchField = document.getElementById('searchField')
-searchField.addEventListener('input', function () {
-  var text = this.value;
-  socket.emit('searchPeople', text);
-})
-let searchResults = document.getElementById('searchResults')
-
-socket.on('searchPerson', (searchPeople) => {
-  searchResults.textContent = '';
-  searchPeople.forEach(userInfo => {
-    let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-    let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-    let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
-    let actions = [
-      { element: chatButton, functionCall: () => { initiateChat(userInfo.userID) } },
-      { element: audioButton, functionCall: () => { call(userInfo.userID, true, false, false, false, null) } },
-      { element: videoButton, functionCall: () => { call(userInfo.userID, true, true, false, false, null) } },
-    ]
-    let resultElement = userForAttendanceList(userInfo, actions)
-    searchResults.appendChild(resultElement)
-  })
-})
-
-function initiateChat(userID) { socket.emit('makeChat', userID) }
-
-function chatSearchToogle() {
-  var newSearchBox = document.getElementById("newChatTitle");
-  var oldSearchBox = document.getElementById("chatSearch");
-  var chatContainingDiv = document.getElementById("place_for_chats");
-  var ButtonSearchBox = document.getElementById("newChat")
-  var searchResultsContainer = document.getElementById("searchResults")
-  newSearchBox.classList.toggle('displayed')
-  newSearchBox.classList.toggle('unDisplayed')
-  oldSearchBox.classList.toggle('unDisplayed')
-  oldSearchBox.classList.toggle('displayed')
-  ButtonSearchBox.classList.toggle("rotate45")
-  searchResultsContainer.classList.toggle("searchIntoView")
-  chatContainingDiv.classList.toggle("hideLeft")
-}
-
-function buildOptions(message, myID, messageTextDiv) {
-  let referenceBtn = createElement({
-    elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })], onclick: () => {
-      messageReference(message.id, messageTextDiv, inputContainer)
-    }
-  })
-  let deleteBtn = createElement({
-    elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })], onclick: () => {
-      let icon, title, contentElementsArray, actions;
-      icon = 'bx bxs-trash-alt'
-      title = 'Delete Message'
-      contentElementsArray = [createElement({ elementType: 'div', textContent: 'Do you really want to delete this message? Note that all of the reactions reated are going to be deleted and the receivers will no longer be able to see the content f the message' })]
-
-      cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel' })
-      confirmButton = createElement({ elementType: 'button', textContent: 'Yes, Delete' })
-      actions = [
-        {
-          element: confirmButton,
-          functionCall: () => {
-            socket.emit('deleteMessage', message.id);
-            messageTextDiv.textContent = '__deleted message__'
-          }
-        },
-        {
-          element: cancelButton,
-          functionCall: () => { }
-        }
-      ]
-      let constraints = { icon, title, contentElementsArray, actions }
-      // actions is an array of a button and a function of what it does
-      createInScreenPopup(constraints).then(editPopup => {
-        cancelButton.addEventListener('click', editPopup.closePopup);
-        confirmButton.addEventListener('click', editPopup.closePopup);
-      })
-    }
-  })
-  let availableReactions = message.reactions.available.map(reaction => {
-    let reactionIcon = createElement({ elementType: 'div', class: 'reactionIconChoose', textContent: reaction.icon, onclick: () => { reactionTo(message.id, reaction.name) } })
-    let reactionElement = createElement({ elementType: 'div', class: 'reactionChoice', childrenArray: [reactionIcon, createElement({ elementType: 'div', class: 'reactionName', textContent: reaction.name })] })
-    return reactionElement
-  })
-  let messageTime = createElement({ elementType: 'div', class: 'ReactionTime', textContent: new Date(message.timeStamp).toString('YYYY-MM-dd').substring(16, 24) })
-  let time_reactionChoice = message.userID == myID ? [messageTime].concat(availableReactions) : availableReactions.concat([messageTime])
-
-  let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(message.reactions.details, myID) })
-  let time_reactions_options = [
-    createElement({ elementType: 'div', class: 'messageOptions', childrenArray: [referenceBtn, deleteBtn] }),
-    createElement({ elementType: 'div', class: 'time_reactionChoice', childrenArray: time_reactionChoice }),
-    msgReactions,
-  ]
-  if (message.userID == myID) time_reactions_options.reverse()
-  else deleteBtn.remove()
-  if (messageTextDiv.textContent == '__deleted message__') {
-    deleteBtn.remove();
-  }
-  let timeReactionOptions = createElement({ elementType: 'div', class: 'time_reactions_options', childrenArray: time_reactions_options })
-  timeReactionOptions.reactionOptionsDiv = msgReactions;
-  return timeReactionOptions
-}
-
-function messageReference(msgID, _messageElement, messagesTagsinputArea) {
-  if (taggedMessages.includes(msgID)) return;
-  let messageElement, closeBtn, messageToShow
-  if (taggedMessages.length < 1) {
-    taggedMessages.push(msgID)
-    messageTagsField = createElement({ elementType: 'div', class: 'taggedMessageInTying' })
-    messagesTagsinputArea.prepend(messageTagsField)
-
-    messageElement = _messageElement.cloneNode(true);
-    closeBtn = createElement({ elementType: 'button', class: 'btn-remove-tag', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x-circle' })] })
-    messageToShow = createElement({ elementType: 'div', childrenArray: [messageElement, closeBtn] })
-    messageTagsField.appendChild(messageToShow)
-  }
-  else {
-    taggedMessages.push(msgID)
-    messageElement = _messageElement.cloneNode(true);
-    closeBtn = createElement({ elementType: 'button', class: 'btn-remove-tag', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x-circle' })] })
-    messageToShow = createElement({ elementType: 'div', childrenArray: [messageElement, closeBtn] })
-    messageTagsField.appendChild(messageToShow)
-  }
-  closeBtn.addEventListener('click', function () {
-    taggedMessages = taggedMessages.filter((id) => id !== msgID)
-    messageToShow.remove()
-    if (taggedMessages.length == 0) {
-      messageTagsField.remove();
-    }
-  })
-}
-
-socket.on('userDisconnected', disconnectionInfo => {
-  console.log('user disconnected', disconnectionInfo)
-})
-
-function setUserOffline(id, room) {
-  console.log('setUserOffline', id, room);
-}
-
-/////////////////////Call filtering////////////////////////
-
-/////////////////////////////Call LOG/////////////////////
-
-/////////////////////////////////in call controls//////////////////
-
-let participantsSelectorBtn = document.getElementById("participantsSelectorBtn")
-let messagesSelectorbtn = document.getElementById("messagesSelectorbtn")
-
-let rightCallParticipantsDiv = document.getElementById("rightCallParticipantsDiv")
-let rightCallMessagesDiv = document.getElementById("rightCallMessagesDiv")
-
-
-/////////////////////////////////CALL LOG END//////////////////////
-
-let secondaryVideosDiv = document.getElementById('secondaryVideosDiv')
-const myPeer = new Peer(undefined, {
-  host: 'peer.imperiumline.com',
-  secure: true,
-  config: {
-    iceServers: [
-      {
-        urls: "stun:stun.l.google.com:19302"
-      },
-      {
-        urls: "turn:0.peerjs.com:3478",
-        username: "peerjs",
-        credential: "peerjsp"
-      },
-      {
-        url: 'turn:numb.viagenie.ca',
-        credential: 'muazkh',
-        username: 'webrtc@live.com'
-      },
-      {
-        "url": "turn:stun.imperiumline.com:5349",
-        credential: 'guest',
-        username: 'somepassword'
-      }
-
-    ],
-    sdpSemantics: "unified-plan"
-  }
-})
-
-navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-//ringtone preparation
-const ringtone = new Audio('/audio/imperiumLine.mp3')
-ringtone.addEventListener('ended', function () {
-  this.currentTime = 0;
-  this.play();
-}, false);
-
-const waitingTone = new Audio('/audio/callWaiting.mp3')
-waitingTone.addEventListener('ended', function () {
-  this.currentTime = 0;
-  this.play();
-}, false);
-
-///////Video Sizing//////////////////////
-function toggleFullscreen(element) {
-  if (!document.fullscreenElement) { element.requestFullscreen().catch(err => { alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`); }); }
-  else { document.exitFullscreen(); }
-}
-
-// responsive functions
-let ongoingCallLeftPart = document.getElementById('ongoingCallLeftPart')
-let callMainScreen = document.getElementById('callMainScreen')
-let ongoingCallRightPart = document.getElementById('ongoingCallRightPart')
-function showCallLeftPart() {
-  ongoingCallLeftPart.classList.remove('mobileHiddenElement')
-  ongoingCallLeftPart.classList.remove('tabletHiddenElement')
-  callMainScreen.classList.add('mobileHiddenElement')
-  ongoingCallRightPart.classList.add('mobileHiddenElement')
-}
-function showCallMainScreen() {
-  ongoingCallLeftPart.classList.add('mobileHiddenElement')
-  ongoingCallLeftPart.classList.add('tabletHiddenElement')
-  callMainScreen.classList.remove('mobileHiddenElement')
-  ongoingCallRightPart.classList.add('mobileHiddenElement')
-}
-function showCallRightPart() {
-  ongoingCallLeftPart.classList.add('mobileHiddenElement')
-  ongoingCallLeftPart.classList.add('tabletHiddenElement')
-  callMainScreen.classList.add('mobileHiddenElement')
-  ongoingCallRightPart.classList.remove('mobileHiddenElement')
-}
-
-// when my peer is ready with an ID ---> this means that we cannot receive a call before a peer Id is opened
-myPeer.on('open', myPeerId => {
-  console.log('my peer is now connected with id: ' + myPeerId)
-  let myStream;
-  let myScreenStream;
-  let _callUniqueId;
-  let _callTitle;
-  let allUsersArray = []
-  let globalCallType = "audio"; // by default
-  let globalAudioState = 'enabled';
-  let screenSharing = false;
-  let globalMainVideoDiv;
-  let mySideVideoDiv;
-  let myScreenSideVideo;
-  let myScreenViewers = [];
-  let caller_me;
-  let videoCoverDiv;
-  let awaitedUserDivs = [];
-  let optionalResolutions = [{ minWidth: 320 }, { minWidth: 640 }, { minWidth: 1024 }, { minWidth: 1280 }, { minWidth: 1920 }, { minWidth: 2560 }];
-  let participants = [];
-  let rightPanel;
-  let leftPanel;
-  let topBar;
-  let bottomPanel;
-  let callNotifications = []
-
-
-
-  socket.on('prepareCallingOthers', initiatedCallInfo => {
-    navigator.getUserMedia({ video: { optional: optionalResolutions }, audio: true }, stream => {
-      let { callUniqueId, callType, caller, groupMembersToCall_fullInfo, allUsers, callTitle } = initiatedCallInfo
-      let { userID, name, surname, profilePicture, role } = caller
-
-      //save these important variables
-      _callTitle = callTitle
-      allUsersArray = allUsers
-      myInfo = caller
-      caller_me = caller
-      _callUniqueId = callUniqueId
-      saveLocalMediaStream(callType, stream)
-      rightPanel = createRightPartPanel()
-      leftPanel = createLeftPanel()
-      // create topBar
-      topBar = createTopBar({ callUniqueId: callUniqueId, callType: globalCallType, callTitle: callTitle, isTeam: 'isTeam' }, caller)
-      bottomPanel = createBottomPart()
-      mySideVideoDiv = createSideVideo(globalCallType, myStream, caller, 'userMedia', globalAudioState)
-      rightPanel.participantsBox.prepend(mySideVideoDiv)
-      // create awaited users divs
-      awaitedUserDivs = allUsers.map(user => {
-        //let { userID, name, surname, role, profilePicture, status } = user
-        let targetedUser = groupMembersToCall_fullInfo.find(member => member.userProfileIdentifier.userID == user.userID);
-        if (targetedUser == undefined) {
-          let ringTextForMe = user.userID === caller.userID ? 'Waiting ...' : 'Offline';
-          let ringIconForMe = user.userID === caller.userID ? 'bx bxs-hourglass' : 'bx bxs-phone-off';
-
-          let offlineIcon = createElement({ elementType: 'i', class: ringIconForMe })
-          let offlineText = createElement({ elementType: 'p', textContent: ringTextForMe })
-          let offlineButton = createElement({ elementType: 'button', childrenArray: [offlineIcon, offlineText] })
-          let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
-          let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
-
-          let actions
-          if (user.userID === caller.userID) actions = [{ element: offlineButton, functionCall: () => { } }]
-          else actions = [{ element: offlineButton, functionCall: () => { } }, { element: chatButton, functionCall: () => { console.log('chat with user', userID) } }]
-
-          return { userID: user.userID, div: userForAttendanceList(user, actions) }
-        }
-        else {
-
-          let ringIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
-          let ringText = createElement({ elementType: 'p', textContent: 'Ringing...' })
-          let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
-
-          let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
-          let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
-
-          let actions = [
-            { element: ringButton, functionCall: () => { console.log('ringing', userID) } },
-            { element: chatButton, functionCall: () => { console.log('chat with user', userID) } }
-          ]
-          return { userID: user.userID, div: userForAttendanceList(user, actions) }
-        }
-      })
-      //create Cover waiting
-      videoCoverDiv = videoConnectingScreen(prepareVideoCoverDiv(allUsers, caller, 'Dialling...', awaitedUserDivs))
-      mainVideoDiv.prepend(videoCoverDiv.videoCoverDiv)
-
-      let { closeVideoBtn, HangUpBtn, muteMicrophoneBtn } = videoCoverDiv.controls
-      HangUpBtn.addEventListener('click', () => {
-        socket.emit('cancelCall', callUniqueId)
-        mySideVideoDiv.remove();
-        stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
-        videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
-        topBar.callScreenHeader.textContent = ''
-        stream.getTracks().forEach((track) => { console.log('track', track); track.stop(); stream.removeTrack(track); })
-        myStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); myStream.removeTrack(track); })
-      })
-
-      muteMicrophoneBtn.addEventListener('click', () => {
-        toggleDisableAudio(myStream)
-        console.log("audio disable happened")
-        determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
-        mySideVideoDiv.remove()
-        mySideVideoDiv = createSideVideo(globalCallType, myStream, caller, 'userMedia', globalAudioState)
-        rightPanel.participantsBox.textContent = ''
-        rightPanel.participantsBox.prepend(mySideVideoDiv)
-      })
-
-      closeVideoBtn.addEventListener('click', () => {
-        toggleDisableVideo(myStream)
-        console.log("video disable happened")
-        determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
-        mySideVideoDiv.remove()
-        mySideVideoDiv = createSideVideo(globalCallType, myStream, caller, 'userMedia', globalAudioState)
-        rightPanel.participantsBox.textContent = ''
-        rightPanel.participantsBox.prepend(mySideVideoDiv)
-      })
-      determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
-
-
-    }, (err) => { alert('Failed to get local media stream', err); });
-  })
-  // -------------------------------------
-  socket.on('callRejected', timeoutDetails => { //Handle RejectedCall
-    console.log('remote call Rejected')
-    let { callUniqueId, userInfo } = timeoutDetails
-    for (let i = 0; i < awaitedUserDivs.length; i++) {
-      const awaitedDiv = awaitedUserDivs[i];
-      if (awaitedDiv.userID == userInfo.userID) {
-
-        let memberProfilePicture;
-        if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-        else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
-
-        let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
-        let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
-        let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
-
-        let ringIcon = createElement({ elementType: 'i', class: 'bx bx-x' })
-        let ringText = createElement({ elementType: 'p', textContent: 'Rejected' })
-        let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
-
-
-        let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
-        let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
-        chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
-
-        let ringAgainIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
-        let ringAgainText = createElement({ elementType: 'p', textContent: 'Ring Again' })
-        let ringAgainButton = createElement({ elementType: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
-        ringAgainButton.addEventListener('click', () => console.log('ring again USER', userInfo.userID))
-
-        awaitedDiv.div.textContent = '';
-        awaitedDiv.div.append(memberProfilePicture, memberNameRole, ringButton, chatButton, ringAgainButton)
-      }
-    }
-    leftPanel.updateUserStatus(userInfo, 'rejected')
-  })
-
-  //Handle TimedOutCall
-  socket.on('callNotAnswered', timeoutDetails => {
-    console.log('remote call not answered')
-    let { callUniqueId, userInfo } = timeoutDetails
-    for (let i = 0; i < awaitedUserDivs.length; i++) {
-      const awaitedDiv = awaitedUserDivs[i];
-      if (awaitedDiv.userID == userInfo.userID) {
-
-        let memberProfilePicture;
-        if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-        else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
-
-        let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
-        let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
-        let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
-
-        let ringIcon = createElement({ elementType: 'i', class: 'bx bx-x' })
-        let ringText = createElement({ elementType: 'p', textContent: 'Not answered' })
-        let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
-
-
-        let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
-        let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
-        chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
-
-        let ringAgainIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
-        let ringAgainText = createElement({ elementType: 'p', textContent: 'Ring Again' })
-        let ringAgainButton = createElement({ elementType: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
-        ringAgainButton.addEventListener('click', () => console.log('ring again USER', userInfo.userID))
-
-        awaitedDiv.div.textContent = '';
-        console.log('timeoutDetails', timeoutDetails)
-        awaitedDiv.div.append(memberProfilePicture, memberNameRole, ringButton, chatButton, ringAgainButton)
-      }
-    }
-    leftPanel.updateUserStatus(userInfo, 'notAnswered')
-  })
-
-  // Handle added users to call
-  socket.on('userAddedToCall', (additionDetails) => {
-    let { callUniqueId, userInfo } = additionDetails
-    console.log('additionDetails', additionDetails)
-    let memberProfilePicture;
-    if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
-
-    let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
-    let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
-    let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
-
-    let status = userInfo.status == "offline" ? "Offline" : "Ringing ...";
-
-    let statIcon = userInfo.status == "offline" ? 'bx bxs-phone-off' : 'bx bxs-bell-ring'
-    let ringIcon = createElement({ elementType: 'i', class: statIcon })
-
-    let ringText = createElement({ elementType: 'p', textContent: status })
-    let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
-
-    let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
-    let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
-    chatButton.addEventListener('click', () => console.log('chat with USER', userInfo.userID))
-
-    let addeduserDiv = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole, ringButton, chatButton] })
-    if (videoCoverDiv) if (videoCoverDiv.calleesDiv) videoCoverDiv.calleesDiv.prepend(addeduserDiv)
-    if (awaitedUserDivs) awaitedUserDivs.push({ userID: userInfo.userID, div: addeduserDiv })
-
-    //add this new users to the attendance list
-    allUsersArray.push(userInfo)
-    leftPanel.addUser(userInfo)
-  })
-  // -------------------------------------
-  socket.on('incomingCall', incomingCallInfo => {
-    let { callUniqueId, callType, caller, myInfo, allUsers, callTitle } = incomingCallInfo
-    let { name, profilePicture, surname, userID } = caller
-
-    let responded = false;
-    let notification = displayNotification({
-      title: { iconClass: 'bx bxs-phone-call', titleText: 'Incoming call' },
-      body: {
-        shortOrImage: {
-          shortOrImagType: profilePicture == null ? 'short' : 'image',
-          shortOrImagContent: profilePicture == null ? name.charAt(0) + surname.charAt(0) : profilePicture
-        },
-        bodyContent: 'Incoming ' + callType + ' call from' + name + ' ' + surname //+ (allUsers.length <= 2 ? '.' : ' with ' + (groupMembersToCall_fullInfo.length - 1) + ' other' + ((groupMembersToCall_fullInfo.length - 1) > 1 ? 's.' : '.'))
-      },
-      actions: [
-        { type: 'normal', displayText: 'Reject', actionFunction: () => { socket.emit("callRejected", callUniqueId); responded = true } },
-        { type: 'confirm', displayText: 'Audio', actionFunction: () => { caller_me = myInfo; _callUniqueId = callUniqueId; callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers, callTitle); responded = true } },
-        { type: 'confirm', displayText: 'Video', actionFunction: () => { caller_me = myInfo; _callUniqueId = callUniqueId; callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers, callTitle); responded = true } },
-      ],
-      obligatoryActions: {
-        onDisplay: () => { responded = false; },
-        onHide: () => { responded = false; console.log('call notification Hidden') },
-        onEnd: () => {
-          if (responded == false) {
-            socket.emit("callNotAnswered", callUniqueId)
-            console.log('call notification Ended')
-          }
-        },
-      },
-      delay: 60000,
-      tone: 'call'
-    })
-    notification.callUniqueId = callUniqueId
-    callNotifications.push(notification)
-  })
-  socket.on('callCancelled', (callInfo) => {
-    console.log('call cancelled', callInfo)
-    let callUniqueId = callInfo.callUniqueId
-    for (let i = 0; i < callNotifications.length; i++) {
-      if (callNotifications[i].callUniqueId == callUniqueId) {
-        callNotifications[i].notificationStop()
-        callNotifications.splice(i, 1)
-      }
-    }
-  })
-
-  function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers, callTitle) {
-    navigator.getUserMedia({ video: true, audio: true }, stream => {
-      responded = true
-      _callTitle = callTitle
-      allUsersArray = allUsers
-      myStream = stream // store our stream globally so that to access it whenever needed
-      // store the call type fpr incoming videos and sending our stream
-      saveLocalMediaStream(answertype, stream)
-      // let properStream = getStreamToUseLocally(answertype, myStream)
-      callInfo = { callUniqueId, callType: globalCallType, callTitle: callTitle ? callTitle : 'Untitled Call', isTeam: false }
-      socket.emit("answerCall", { myPeerId, callUniqueId, callType: answertype })
-      topBar = createTopBar(callInfo, myInfo) // create top bar
-      rightPanel = createRightPartPanel()
-      bottomPanel = createBottomPart()
-      // ut create and append my sidevideo
-      mySideVideoDiv = createSideVideo(answertype, myStream, myInfo, 'userMedia', globalAudioState)
-      rightPanel.participantsBox.textContent = ''
-      rightPanel.participantsBox.append(mySideVideoDiv)
-      leftPanel = createLeftPanel()
-      showOngoingCallSection()
-    }, (err) => { alert('Failed to get local media stream', err); });
-  }
-  socket.on('updateAllParticipantsList', allUsers => {
-    allUsersArray = allUsers
-    leftPanel.updateComponentsArray()
-  })
-
-  socket.on('connectUser', userToConnect => {
-    let { peerId, userInfo, callType } = userToConnect
-    let { userID, name, surname, profilePicture, role } = userInfo
-    let callMediaType = 'userMedia' // set Dafault calltype
-    let options = { metadata: { userInfo: caller_me, callType: globalCallType, callMediaType: callMediaType, audioState: globalAudioState } }
-    const call = myPeer.call(peerId, myStream, options)
-    let sideVideoDiv
-    let bubble
-
-    let participant = {
-      userInfo: userInfo,
-      peerId: peerId,
-      userMedia: {
-        stream: null,
-        callType: callType,
-        sideVideoDiv: sideVideoDiv,
-        callObject: null,
-        peerInitiatedByMe: true,
-        isOnMainVideo: false,
-        bubble: bubble,
-        audioState: 'enabled'
-      },
-      screenMedia: {
-        stream: null,
-        callType: null,
-        sideVideoDiv: null,
-        callObject: null,
-        peerInitiatedByMe: true,
-        isOnMainVideo: false,
-        bubble: false
-      }
-    }
-    participant.userMedia.callObject = call // save the call Object
-    call.once('stream', userVideoStream => {
-      for (let i = 0; i < userVideoStream.getTracks().length; i++) { const track = userVideoStream.getTracks()[i]; track.muted = false; }//i decided to unmute these tracks becaise for some reason i was receiveing muted tracks
-      participant.userMedia.stream = userVideoStream
-      participant.userMedia.sideVideoDiv = createSideVideo(callType, userVideoStream, userInfo, 'userMedia', 'enabled') // create and save the side video element // audio is enbaed by default because the acceptant does not have time to disable audio
-      rightPanel.participantsBox.append(participant.userMedia.sideVideoDiv) // display this user's video
-      participant.userMedia.bubble = bottomPanel.createBubble(callType, userVideoStream, userInfo, 'userMedia', 'enabled') // create and save the side video element
-      bottomPanel.availableScreensDiv.append(participant.userMedia.bubble) // display bubble
-      stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
-      leftPanel.updateUserStatus(userInfo, 'present')
-      if (videoCoverDiv) if (videoCoverDiv.videoCoverDiv) videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
-      let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element for potential future use
-      console.log('participants', participants.length)
-      if (participants.length <= 1) { // if this is the first user who is connecting to Us - Create a mainVideoDiv and store It
-        maindiv.textContent = '';
-        let mainVideoDivContent = createMainVideoDiv(callType, userVideoStream, userInfo, 'userMedia', 'enabled')
-        mainVideoDivContent.forEach(div => { maindiv.append(div) })
-        globalMainVideoDiv = maindiv
-        participant.userMedia.isOnMainVideo = true;
-      }
-      // if i call a peer, while having shared my screen, i will need to include him in my screen viewers
-      if (screenSharing == true) {
-        let screenShare_options = { metadata: { userInfo: caller_me, callType: 'video', callMediaType: 'screenMedia' } }
-        const call = myPeer.call(peerId, myScreenStream, screenShare_options)
-        let myScreenViewer = {
-          userInfo: userInfo,
-          peerId: peerId,
-          callObject: call,
-          peerInitiatedByMe: true
-        }
-        myScreenViewers.push(myScreenViewer)
-      }
-      // --------------------------------------
-    })
-    call.once('close', () => {
-      removePeer(userInfo.userID)
-      leftPanel.updateUserStatus(userInfo, 'absent')
-    })
-    participants.push(participant) // push the participant to the Array
-    rightPanel.setParticipantsCount(participants.length)
-    rightPanel.messagesBox.addMessage({ userInfo: participant.userInfo, content: '', time: new Date() }, 'join')
-  })
-
-  //for incoming Peer Calls
-  myPeer.on('call', call => {
-    let incomingPeerInfo = call.metadata.userInfo
-    let callType = call.metadata.callType
-    let callMediaType = call.metadata.callMediaType
-    let audioState = call.metadata.audioState
-    let callMediaTypeText = '';
-    if (callMediaType == 'userMedia') { call.answer(myStream); callMediaTypeText = callMediaType } // check if it is a screen share or a user video/audio share
-    if (callMediaType == 'screenMedia') { call.answer(); callMediaTypeText = callMediaType }
-
-    leftPanel.updateUserStatus(incomingPeerInfo, 'present');
-    call.once('stream', function (remoteStream) {
-      for (let i = 0; i < remoteStream.getTracks().length; i++) { const track = remoteStream.getTracks()[i]; track.muted = false; } //i decided to unmute these tracks becaise for some reason i was receiveing muted tracks
-      if (callMediaType == 'userMedia') { // if the presented media is userMedia
-
-
-
-        let maindiv = document.getElementById('mainVideoDiv')
-        if (participants.length == 0) { // if it is the first user connection display on the main videoDiv
-          maindiv.textContent = '';
-          let mainVideoDivContent = createMainVideoDiv(callType, remoteStream, incomingPeerInfo, callMediaType)
-          mainVideoDivContent.forEach(div => { maindiv.append(div) }) // display the maindiv content
-          globalMainVideoDiv = maindiv // store the mainDiv
-        }
-
-        let participant = {
-          userInfo: incomingPeerInfo,
-          peerId: call.peer,
-          userMedia: {
-            stream: remoteStream,
-            callType: callType,
-            sideVideoDiv: createSideVideo(callType, remoteStream, incomingPeerInfo, callMediaTypeText, audioState),
-            callObject: call,
-            peerInitiatedByMe: false,
-            isOnMainVideo: participants.length == 0 ? true : false,
-            bubble: bottomPanel.createBubble(callType, remoteStream, incomingPeerInfo, callMediaTypeText, audioState),
-            audioState: audioState
+      if (mySavedID == receivedReactionsInfo.messageOwner.userID) { // show reaction if it is done on my message in chat
+        let shortOrImagType, shortOrImagContent;
+        if (receivedReactionsInfo.performer.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = receivedReactionsInfo.performer.name.charAt(0) + receivedReactionsInfo.performer.surname.charAt(0); }
+        else { shortOrImagType = 'image'; shortOrImagContent = receivedReactionsInfo.performer.profilePicture; }
+
+        let notification = displayNotification({
+          title: { iconClass: 'bx bxs-wink-smile', titleText: 'Message reaction' },
+          body: {
+            shortOrImage: { shortOrImagType: shortOrImagType, shortOrImagContent: shortOrImagContent },
+            bodyContent: receivedReactionsInfo.performer.name + ' ' + receivedReactionsInfo.performer.surname + ' reacted to your message'
           },
-          screenMedia: {
-            stream: null,
-            callType: null,
-            sideVideoDiv: null,
-            callObject: null,
-            peerInitiatedByMe: false,
-            isOnMainVideo: false,
-            bubble: null,
-            audioState: null
-          }
-        }
-        rightPanel.participantsBox.append(participant.userMedia.sideVideoDiv) //display this user's screen
-        bottomPanel.availableScreensDiv.append(participant.userMedia.bubble) //display this user's bubble
-        participants.push(participant)
-        rightPanel.setParticipantsCount(participants.length)
-        rightPanel.messagesBox.addMessage({ userInfo: incomingPeerInfo, content: '', time: new Date() }, 'join')
+          actions: [ // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
+            { type: 'confirm', displayText: 'Open chat', actionFunction: () => { requestChatContent(receivedReactionsInfo.chat) } }
+          ],
+          obligatoryActions: {
+            onDisplay: () => { console.log('Notification Displayed') },
+            onHide: () => { console.log('Notification Hidden') },
+            onEnd: () => { console.log('Notification Ended') },
+          },
+          delay: 7000,
+          tone: 'notification'
+        })
       }
-      if (callMediaType == 'screenMedia') {
-        //display this user's video
-        for (let i = 0; i < participants.length; i++) {
-          if (participants[i].userInfo.userID == incomingPeerInfo.userID) {
-            participants[i].screenMedia.stream = remoteStream
-            participants[i].screenMedia.callType = callType
-            participants[i].screenMedia.sideVideoDiv = createSideVideo(callType, remoteStream, incomingPeerInfo, callMediaTypeText, audioState)
-            participants[i].screenMedia.callObject = call
-            participants[i].screenMedia.bubble = bottomPanel.createBubble(callType, remoteStream, incomingPeerInfo, callMediaTypeText, audioState)
-            participants[i].screenMedia.audioState = 'enabled'
-
-            participants[i].userMedia.sideVideoDiv.after(participants[i].screenMedia.sideVideoDiv)
-            participants[i].userMedia.bubble.after(participants[i].screenMedia.bubble)
-          }
-        }
-      }
-      console.log('after call entrance participants', participants)
-    })
-  })
-
-  function updateAttendanceNumbers() {
-    presenceSelectorBtn.textContent = 'Present (' + presentMembersDiv.childElementCount + ')'
-    absenceSelectorBtn.textContent = 'Absent (' + absentMembersDiv.childElementCount + ')'
-  }
-
-  function setAllUsers(allUsers) {
-    absentMembersDiv.textContent = '' // reset presence
-    presentMembersDiv.textContent = '' // reset absence
-    let allInvitedUsersArray = allUsers.map(user => {
-      let { userID, name, surname, profilePicture, role } = user;
-      //element, functionCall
-      let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
-      let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
-
-      let ringIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
-      let ringText = createElement({ elementType: 'p', textContent: 'Ring' })
-      let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
-
-      let actions = [
-        { element: chatButton, functionCall: () => { console.log('chat with user', userID) } },
-        { element: ringButton, functionCall: () => { console.log('Ring user', userID); } }]
-
-      let presenceDiv = userForAttendanceList(user, actions)
-      absentMembersDiv.append(presenceDiv)
-      updateAttendanceNumbers()
-      return { userID: userID, div: presenceDiv, chatButton: chatButton, ringButton: ringButton }
-    })
-    return allInvitedUsersArray;
-  }
-
-  function prepareVideoCoverDiv(allUsers, caller, reason, awaitedUserDivs) {
-    let isGroup, displayName, displayInitials, profilePicture, screenMessage, spinner, callees, firstCallee, calleesDiv;
-    // let { name, profilePicture, surname, userID } = caller
-    // let { name, profilePicture, surname, userID } = allUsers array
-    // let { name, profilePicture, surname, userID, role } = specialStatuseUsers array
-
-    isGroup = allUsers.length > 2 ? true : false
-    callees = allUsers.filter(user => { return user.userID != caller.userID })
-    console.log(allUsers)
-    firstCallee = callees[0]
-    displayInitials = isGroup == true ? 'Grp' : firstCallee.name.charAt(0) + firstCallee.surname.charAt(0)
-    profilePicture = isGroup == true ? '/private/profiles/group.jpeg' : firstCallee.profilePicture
-
-    return {
-      isGroup: isGroup,
-      awaitedUserDivs: awaitedUserDivs,
-      displayInitials: displayInitials,
-      profilePicture: profilePicture,
-      screenMessage: reason,
-      spinner: true,
-      videoConnectingControls: true
     }
+  })
+  function buildReaction(details, myID) {
+    let reactions = details.map(reaction => {
+      let reactorsTitle = createElement({ elementType: 'div', class: 'title', textContent: 'Reactions' });
+      let reactorsArray = reaction.users.map(user => { return createElement({ elementType: 'li', textContent: myID == user.userID ? 'Me' : user.name + " " + user.surname }) })
+      return createElement({
+        elementType: 'div', class: 'reactionBox', childrenArray: [
+          createElement({ elementType: 'div', class: 'reactionIcon', textContent: reaction.icon }),
+          createElement({ elementType: 'ul', class: 'reactorList', childrenArray: [reactorsTitle].concat(reactorsArray) }),
+        ]
+      })
+    })
+    return reactions;
   }
-  function saveLocalMediaStream(type, stream) {
-    let modifiedStream
+
+  function showOnChatList(chat) {
+    console.log('chat', chat)
+    let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = chat;
+
+    console.log("chat to display on list", chat)
+    let writenBy = '';
+    let imageContainer;
+    let chatTitleText = ''
     switch (type) {
-      case "audio":
-        modifiedStream = convertToAudioOnlyStream(stream)
+      case 0:
+        writenBy = "";
+        let userToDisplay = users.filter(user => user.userID != mySavedID)
+        if (userToDisplay.length < 1) { // in case we have only one user (viewer)
+          chatTitleText = 'Deleted User'
+          imageContainer = makeProfilePicture(deletedUser)
+        } else {
+          chatTitleText = userToDisplay[0].name + ' ' + userToDisplay[0].surname;
+          imageContainer = makeProfilePicture(userToDisplay[0]);
+        }
         break;
-      case "video":
-        modifiedStream = stream; // restore the video component
+      case 1:
+        if (mySavedID == lastmessage.from.userID) { writenBy = "Me: "; }
+        else { writenBy = lastmessage.from.name + ": "; }
+        if (profilePicture == null) { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
+        else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
+        if (roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
+        else chatTitleText = roomName;
         break;
       default:
-        modifiedStream = convertToAudioOnlyStream(stream)
         break;
     }
-    globalCallType = type
-    myStream = modifiedStream
+    let chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: chatTitleText })
+    let chatDate = createElement({ elementType: 'span', textContent: new Date(lastmessage.timeStamp).toString('YYYY-MM-dd').substring(0, 24) })
+    let chatMessage = createElement({ elementType: 'p', class: 'c-chats__excerpt', textContent: writenBy + lastmessage.message })
+    let chatInformation = createElement({ elementType: 'div', class: 'c-chats__info', childrenArray: [chatTitle, chatDate, chatMessage] })
+    let chatListButton = createElement({ elementType: 'button', class: 'c-chats__link', childrenArray: [imageContainer, chatInformation] })
+    let chatListItem = createElement({ elementType: 'li', class: 'c-chats__list', childrenArray: [chatListButton] })
+    chatListItem.addEventListener('click', () => {
+      open_chat_box.textContent = ''
+      open_chat_box.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // append spinner for waiting server response
+      requestChatContent(roomID)
+      availableChats.forEach(chat => { chat.conversationButton.classList.remove("openedChat") })
+      chatListItem.classList.add("openedChat");
+    })
+    return chatListItem;
   }
-  function toggleDisableAudio(stream) {
-    if (!stream) return console.warn('No Stream provided to the function');
-    for (let index in stream.getAudioTracks()) {
-      let audioTrack = stream.getAudioTracks()[index]
-      if (audioTrack.enabled) { audioTrack.enabled = false; globalAudioState = 'disabled'; socket.emit('audioStateChange', { callUniqueId: _callUniqueId, state: 'disabled' }) }
-      else { audioTrack.enabled = true; globalAudioState = 'enabled'; socket.emit('audioStateChange', { callUniqueId: _callUniqueId, state: 'enabled' }) }
-    }
-    updateMySideVideoDiv()
+  function makeProfilePicture(userInfo) {
+    let { userID, name, surname, role, profilePicture, status } = userInfo
+    let memberProfilePicture;
+    if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture })
+
+    memberProfilePicture.addEventListener('click', () => {
+      createProfilePopup(userInfo);
+    })
+    return memberProfilePicture;
   }
-  socket.on('audioStateChange', changeData => {
-    let { userID, state } = changeData
-    for (let i = 0; i < participants.length; i++) {
-      if (participants[i].userInfo.userID == userID) {
-        convertParticipantsSideVideo(participants[i], 'audio', state)
-      }
-    }
+
+  document.getElementById("newChat").addEventListener("click", () => {
+    chatSearchToogle()
+    var searchField = document.getElementById('searchField')
+    searchField.focus();
   })
-  function toggleDisableVideo(stream) {
-    if (!stream) return console.warn('No Stream provided to the function');
-    for (let index in stream.getVideoTracks()) {
-      let videoTrack = stream.getVideoTracks()[index]
-      if (videoTrack.enabled) {
-        videoTrack.enabled = false;
-        globalCallType = "audio";
-        socket.emit('videoStateChange', { callUniqueId: _callUniqueId, state: 'disabled' })
+
+  //focu on the typing element
+  function setFocus() {
+    document.getElementById('w-input-text').focus();
+  }
+
+  function displayChatOnChatArea(openChatInfo) {
+    let { roomInfo, messagesArray } = openChatInfo
+    let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = roomInfo
+    // let { roomID, roomName, type, profilePicture, myID, messagesArray, usersArray } = roomInfo;
+    selectedChatId = roomID
+    taggedMessages = [];
+    let imageContainer;
+    let chatTitleText = ''
+    let openchat__box__header;
+    let chatActions = []
+    let mobileButton = createElement({
+      elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showChatList
+    })
+    let backToChatsButton;
+    switch (type) {
+      case 0:
+        let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+        let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+        let moreButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })] })
+        let userToDisplay = users.filter(user => user.userID != myID)
+        chatActions = [
+          { element: callButton, functionCall: () => { call(userToDisplay[0].userID, true, false, false, true, null) } },
+          { element: videoButton, functionCall: () => { call(userToDisplay[0].userID, true, true, false, true, null) } },
+          { element: moreButton, functionCall: () => { console.log('moreButton', userToDisplay[0].userID) } }
+        ]
+        if (userToDisplay.length < 1) { // in case we have only one user (viewer)
+          chatTitleText = 'Deleted User'
+          openchat__box__header = userForAttendanceList(deletedUser, [], [mobileButton])
+        } else {
+          chatTitleText = userToDisplay[0].name + ' ' + userToDisplay[0].surname
+          imageContainer = makeProfilePicture(userToDisplay[0])
+          openchat__box__header = userForAttendanceList(userToDisplay[0], chatActions, [mobileButton])
+        }
+        break;
+      case 1:
+        if (profilePicture == null) { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
+        else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
+        if (roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
+        else chatTitleText = roomName;
+        let groupCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(roomID, true, false, false, true, null) } })
+        let groupVideoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(roomID, true, false, false, true, null) } })
+        let groupMoreButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => { console.log('groupMoreButton clicked') } })
+        openchat__box__header = createElement({
+          elementType: 'div', class: 'c-openchat__box__header', childrenArray: [
+            mobileButton,
+            createElement({
+              elementType: 'div', class: 'c-chat-title', childrenArray: [
+                imageContainer,
+                createElement({ elementType: 'p', class: 'c-openchat__box__name', textContent: chatTitleText })
+              ]
+            }),
+            createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [groupCallButton, groupVideoButton, groupMoreButton] })
+          ]
+        })
+        break;
+      default:
+        break;
+    }
+    openchat__box__info = createElement({ elementType: 'div', class: 'c-openchat__box__info' })
+    openchat__box__info.style.scrollBehavior = "auto" // so that it does not show scrolling while inserting
+    let emojiButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-smile' })] })
+    let attachButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })] })
+    let inputText = createElement({ elementType: 'div', class: 'w-input-text', contentEditable: true })
+    let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeHolder', textContent: 'Type a message' })
+    let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
+    inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
+    let sendMessageButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
+    let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [/* emojiButton, attachButton, */ inputContainer, sendMessageButton] })
+    let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox] })
+    open_chat_box.textContent = '';
+    open_chat_box.append(chatBox)
+    openchat__box__info.textContent = '' // ensure that no element is inside the message container
+    messagesArray.forEach((message, index) => { addMessageToChat(message, myID) })
+    scrollToBottom(openchat__box__info) // scrool to the last message
+    openchat__box__info.style.scrollBehavior = "smooth" // enable smooth scrolling
+
+    if (messagesArray.length < 1) {
+      openchat__box__info.textContent = ''
+      openchat__box__info.append(
+        createElement({
+          elementType: 'div', class: 'c-openchat__selectConversation', childrenArray: [
+            createElement({ elementType: 'img', src: '/images/createChat.png' }),
+            createElement({
+              elementType: 'h3', childrenArray: [
+                'Start typing',
+                createElement({ elementType: 'i', class: 'bx bxs-keyboard' }),
+                createElement({ elementType: 'br' })]
+            }),
+            'Your messages will appear here ...'
+          ]
+        })
+      )
+    }
+    else { openchat__box__info.prepend(createElement({ elementType: 'div', class: 'push-down' })) }
+
+    //grab text message input and process it
+    inputText.addEventListener('keydown', function (e) {
+      if (e.key == 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+
+    sendMessageButton.addEventListener('click', function (e) {
+      if (inputText.innerText.trim() != '') { sendMessage(); e.preventDefault(); }
+    });
+
+    function sendMessage() {
+      let fDate = formatDate(new Date())
+      let message = { toRoom: selectedChatId, message: inputText.innerText.trim(), timeStamp: fDate, taggedMessages: taggedMessages };
+      inputText.innerText = '';
+      socket.emit('message', message)
+      if (taggedMessages.length > 0) messageTagsField.remove()
+      taggedMessages = [];
+    }
+  }
+
+  function addMessageToChat(message, myID) {
+    let messageElement
+    if (displayedMessages.length < 1) { // for the first message on chat
+
+      let separator = createSeparator(new Date(message.timeStamp), 'date')
+      let groupMessages;
+      if (message.userID == myID) {
+        messageElement = createSentMessage(message, myID, 'bx bxs-check-circle')
+        groupMessages = createSentGroup(messageElement)
       }
       else {
-        videoTrack.enabled = true;
-        globalCallType = "video";
-        socket.emit('videoStateChange', { callUniqueId: _callUniqueId, state: 'enabled' })
+        let profilePic = makeProfilePicture(message.userInfo)
+        messageElement = createReceivedMessage(message, myID, true)
+        groupMessages = createReceivedGroup(profilePic, messageElement)
+      }
+      openchat__box__info.appendChild(separator)
+      openchat__box__info.appendChild(groupMessages)
+    }
+    else {
+      let lastMessage = displayedMessages[displayedMessages.length - 1]
+      console.log('message, myID', message, myID)
+      let prevDate = new Date(lastMessage.object.timeStamp)
+      let thisDate = new Date(message.timeStamp)
+      if (!sameDay(prevDate, thisDate)) { // first I check if it is from the same date in order to establish a separator
+        let separator = createSeparator(new Date(message.timeStamp), 'date')
+        openchat__box__info.appendChild(separator)
+      }
+      if (message.userID == myID) { // if it is my Message
+        messageElement = createSentMessage(message, myID, 'bx bxs-check-circle')
+        if ((thisDate - prevDate) > 60000 || !sameDay(prevDate, thisDate) || message.userID != lastMessage.object.userID) {
+          /* 
+          we create a new group, if:
+          - the message is older than 1 min
+          - if the message is not from the same day
+          - the message is coming from a different user, 
+          */
+          groupMessages = createSentGroup(messageElement)
+          openchat__box__info.append(groupMessages)
+        }
+        else {
+          lastMessage.messageElement.after(messageElement)
+        }
+      }
+      else { // if it is a received message
+        if ((thisDate - prevDate) > 60000 || !sameDay(prevDate, thisDate) || message.userID != lastMessage.object.userID) {
+          messageElement = createReceivedMessage(message, myID, true)
+          let profilePic = makeProfilePicture(message.userInfo)
+          groupMessages = createReceivedGroup(profilePic, messageElement)
+          openchat__box__info.append(groupMessages)
+        }
+        else {
+          messageElement = createReceivedMessage(message, myID, false)
+          lastMessage.messageElement.after(messageElement)
+        }
       }
     }
-    updateMySideVideoDiv()
+    displayedMessages.push({ object: message, messageElement: messageElement, reactionsDiv: messageElement.reactionOptions.reactionOptionsDiv });
+    console.log('displayedMessages', displayedMessages)
+    scrollToBottom(openchat__box__info) // scroll to bottom
   }
-  socket.on('videoStateChange', changeData => {
-    let { userID, state } = changeData
-    for (let i = 0; i < participants.length; i++) {
-      if (participants[i].userInfo.userID == userID) {
-        convertParticipantsSideVideo(participants[i], 'video', state)
+
+  function createReceivedMessage(message, myID, showSenderName) {
+    console.log('message', message)
+    // senserName: true / false allows the message to have the senders name attached
+    let tagTemplate = message.tagContent.map(tag => {
+      return createElement({
+        elementType: 'div', class: 'message-tag-text', textContent: tag.message, onclick: () => {
+          let taggedMessage = displayedMessages.find(displayedMessage => displayedMessage.object.id == tag.id)
+          taggedMessage.messageElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      })
+    })
+    let messageReceivedText = createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
+    let sendersName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
+    let reactionOptions = buildOptions(message, myID, messageReceivedText)
+    // reactionOptions.reactionOptionsDiv is the element
+    let messageElements = [messageReceivedText, reactionOptions]
+    if (showSenderName == true) messageElements.push(sendersName)
+    let receivedMessage = createElement({ elementType: 'div', class: 'message-received', childrenArray: messageElements })
+    receivedMessage.reactionOptions = reactionOptions
+    return receivedMessage
+  }
+
+  function createSentMessage(message, myID, statusIcon) {
+    let tagTemplate = message.tagContent.map(tag => {
+      return createElement({
+        elementType: 'div', class: 'message-tag-text', textContent: tag.message, onclick: () => {
+          let taggedMessage = displayedMessages.find(displayedMessage => displayedMessage.object.id == tag.id)
+          taggedMessage.messageElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      })
+    })
+    let messageSentText = createElement({ elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
+    let messageStatus = createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [createElement({ elementType: 'i', class: statusIcon })] })
+    let reactionOptions = buildOptions(message, myID, messageSentText)
+    let messageElements = [reactionOptions, messageSentText, messageStatus]
+    let sentMessage = createElement({ elementType: 'div', class: 'message-sent', childrenArray: messageElements })
+    sentMessage.reactionOptions = reactionOptions
+    return sentMessage
+  }
+
+  function createReceivedGroup(profilePic, firstMessage) {
+    return receivedGroup = createElement({
+      elementType: 'div', class: 'message-group-received', childrenArray: [createElement({ elementType: 'div', childrenArray: [profilePic] }), createElement({ elementType: 'div', childrenArray: [firstMessage] })]
+    })
+  }
+
+  function createSentGroup(firstMessage) {
+    return createElement({ elementType: 'div', class: 'message-group-sent', childrenArray: [firstMessage] })
+  }
+
+  function createSeparator(factor, type) {
+    let separator;
+    if (type == 'date') separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: factor.toString('YYYY-MM-dd').substring(0, 15) })] })
+    if (type == 'unread') separator = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: 'Unread messages' })] })
+    return separator;
+  }
+
+  function formatDate(unfDate) {
+    let fDate = [
+      (unfDate.getFullYear() + ''),
+      ((unfDate.getMonth() + 1) + '').padStart(2, "0"),
+      (unfDate.getDate() + '').padStart(2, "0")].join('-')
+      + ' ' +
+      [(unfDate.getHours() + '').padStart(2, "0"),
+      (unfDate.getMinutes() + '').padStart(2, "0"),
+      (unfDate.getSeconds() + '').padStart(2, "0")].join(':');
+    return fDate;
+  }
+
+  function scrollToBottom(div) { div.scrollTop = div.scrollHeight; }
+
+  function reactionTo(messageId, reaction) { socket.emit('messageReaction', { messageId, selectedChatId, reaction }) }
+
+  function sameDay(d1, d2) { return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate(); }
+
+  let searchField = document.getElementById('searchField')
+  searchField.addEventListener('input', function () {
+    var text = this.value;
+    socket.emit('searchPeople', text);
+  })
+  let searchResults = document.getElementById('searchResults')
+
+  socket.on('searchPerson', (searchPeople) => {
+    searchResults.textContent = '';
+    searchPeople.forEach(userInfo => {
+      let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+      let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let actions = [
+        { element: chatButton, functionCall: () => { initiateChat(userInfo.userID) } },
+        { element: audioButton, functionCall: () => { call(userInfo.userID, true, false, false, false, null) } },
+        { element: videoButton, functionCall: () => { call(userInfo.userID, true, true, false, false, null) } },
+      ]
+      let resultElement = userForAttendanceList(userInfo, actions)
+      searchResults.appendChild(resultElement)
+    })
+  })
+
+  function chatSearchToogle() {
+    var newSearchBox = document.getElementById("newChatTitle");
+    var oldSearchBox = document.getElementById("chatSearch");
+    var chatContainingDiv = document.getElementById("place_for_chats");
+    var ButtonSearchBox = document.getElementById("newChat")
+    var searchResultsContainer = document.getElementById("searchResults")
+    newSearchBox.classList.toggle('displayed')
+    newSearchBox.classList.toggle('unDisplayed')
+    oldSearchBox.classList.toggle('unDisplayed')
+    oldSearchBox.classList.toggle('displayed')
+    ButtonSearchBox.classList.toggle("rotate45")
+    searchResultsContainer.classList.toggle("searchIntoView")
+    chatContainingDiv.classList.toggle("hideLeft")
+  }
+
+  function buildOptions(message, myID, messageTextDiv) {
+    let referenceBtn = createElement({
+      elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })], onclick: () => {
+        messageReference(message.id, messageTextDiv, inputContainer)
       }
+    })
+    let deleteBtn = createElement({
+      elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })], onclick: () => {
+        let icon, title, contentElementsArray, actions;
+        icon = 'bx bxs-trash-alt'
+        title = 'Delete Message'
+        contentElementsArray = [createElement({ elementType: 'div', textContent: 'Do you really want to delete this message? Note that all of the reactions reated are going to be deleted and the receivers will no longer be able to see the content f the message' })]
+
+        cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel' })
+        confirmButton = createElement({ elementType: 'button', textContent: 'Yes, Delete' })
+        actions = [
+          {
+            element: confirmButton,
+            functionCall: () => {
+              socket.emit('deleteMessage', message.id);
+              messageTextDiv.textContent = '__deleted message__'
+            }
+          },
+          {
+            element: cancelButton,
+            functionCall: () => { }
+          }
+        ]
+        let constraints = { icon, title, contentElementsArray, actions }
+        // actions is an array of a button and a function of what it does
+        createInScreenPopup(constraints).then(editPopup => {
+          cancelButton.addEventListener('click', editPopup.closePopup);
+          confirmButton.addEventListener('click', editPopup.closePopup);
+        })
+      }
+    })
+    let availableReactions = message.reactions.available.map(reaction => {
+      let reactionIcon = createElement({ elementType: 'div', class: 'reactionIconChoose', textContent: reaction.icon, onclick: () => { reactionTo(message.id, reaction.name) } })
+      let reactionElement = createElement({ elementType: 'div', class: 'reactionChoice', childrenArray: [reactionIcon, createElement({ elementType: 'div', class: 'reactionName', textContent: reaction.name })] })
+      return reactionElement
+    })
+    let messageTime = createElement({ elementType: 'div', class: 'ReactionTime', textContent: new Date(message.timeStamp).toString('YYYY-MM-dd').substring(16, 24) })
+    let time_reactionChoice = message.userID == myID ? [messageTime].concat(availableReactions) : availableReactions.concat([messageTime])
+
+    let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(message.reactions.details, myID) })
+    let time_reactions_options = [
+      createElement({ elementType: 'div', class: 'messageOptions', childrenArray: [referenceBtn, deleteBtn] }),
+      createElement({ elementType: 'div', class: 'time_reactionChoice', childrenArray: time_reactionChoice }),
+      msgReactions,
+    ]
+    if (message.userID == myID) time_reactions_options.reverse()
+    else deleteBtn.remove()
+    if (messageTextDiv.textContent == '__deleted message__') {
+      deleteBtn.remove();
+    }
+    let timeReactionOptions = createElement({ elementType: 'div', class: 'time_reactions_options', childrenArray: time_reactions_options })
+    timeReactionOptions.reactionOptionsDiv = msgReactions;
+    return timeReactionOptions
+  }
+
+  function messageReference(msgID, _messageElement, messagesTagsinputArea) {
+    if (taggedMessages.includes(msgID)) return;
+    let messageElement, closeBtn, messageToShow
+    if (taggedMessages.length < 1) {
+      taggedMessages.push(msgID)
+      messageTagsField = createElement({ elementType: 'div', class: 'taggedMessageInTying' })
+      messagesTagsinputArea.prepend(messageTagsField)
+
+      messageElement = _messageElement.cloneNode(true);
+      closeBtn = createElement({ elementType: 'button', class: 'btn-remove-tag', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x-circle' })] })
+      messageToShow = createElement({ elementType: 'div', childrenArray: [messageElement, closeBtn] })
+      messageTagsField.appendChild(messageToShow)
+    }
+    else {
+      taggedMessages.push(msgID)
+      messageElement = _messageElement.cloneNode(true);
+      closeBtn = createElement({ elementType: 'button', class: 'btn-remove-tag', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x-circle' })] })
+      messageToShow = createElement({ elementType: 'div', childrenArray: [messageElement, closeBtn] })
+      messageTagsField.appendChild(messageToShow)
+    }
+    closeBtn.addEventListener('click', function () {
+      taggedMessages = taggedMessages.filter((id) => id !== msgID)
+      messageToShow.remove()
+      if (taggedMessages.length == 0) {
+        messageTagsField.remove();
+      }
+    })
+  }
+
+  socket.on('userDisconnected', disconnectionInfo => {
+    console.log('user disconnected', disconnectionInfo)
+  })
+
+  function setUserOffline(id, room) {
+    console.log('setUserOffline', id, room);
+  }
+
+  /////////////////////Call filtering////////////////////////
+
+  /////////////////////////////Call LOG/////////////////////
+
+  /////////////////////////////////in call controls//////////////////
+
+  let participantsSelectorBtn = document.getElementById("participantsSelectorBtn")
+  let messagesSelectorbtn = document.getElementById("messagesSelectorbtn")
+
+  let rightCallParticipantsDiv = document.getElementById("rightCallParticipantsDiv")
+  let rightCallMessagesDiv = document.getElementById("rightCallMessagesDiv")
+
+
+  /////////////////////////////////CALL LOG END//////////////////////
+
+  let secondaryVideosDiv = document.getElementById('secondaryVideosDiv')
+  const myPeer = new Peer(undefined, {
+    host: 'peer.imperiumline.com',
+    secure: true,
+    config: {
+      iceServers: [
+        {
+          urls: "stun:stun.l.google.com:19302"
+        },
+        {
+          urls: "turn:0.peerjs.com:3478",
+          username: "peerjs",
+          credential: "peerjsp"
+        },
+        {
+          url: 'turn:numb.viagenie.ca',
+          credential: 'muazkh',
+          username: 'webrtc@live.com'
+        },
+        {
+          "url": "turn:stun.imperiumline.com:5349",
+          credential: 'guest',
+          username: 'somepassword'
+        }
+
+      ],
+      sdpSemantics: "unified-plan"
     }
   })
-  function convertParticipantsSideVideo(participant, subject, state) {
-    // possible subjects: audio / video 
-    // possible states: audio / video video
-    // participant is the target element from the participants array
-    /**
-     let participant = {
-          userInfo: incomingPeerInfo,
-          peerId: call.peer,
-          userMedia: {
-            stream: remoteStream,
-            callType: callType,
-            sideVideoDiv: createSideVideo(callType, remoteStream, incomingPeerInfo, callMediaTypeText),
-            callObject: call,
-            peerInitiatedByMe: false,
-            isOnMainVideo: participants.length == 0 ? true : false,
-            bubble: bottomPanel.createBubble(callType, remoteStream, incomingPeerInfo, callMediaTypeText, audioState)
+
+  navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+  //ringtone preparation
+  const ringtone = new Audio('/audio/imperiumLine.mp3')
+  ringtone.addEventListener('ended', function () {
+    this.currentTime = 0;
+    this.play();
+  }, false);
+
+  const waitingTone = new Audio('/audio/callWaiting.mp3')
+  waitingTone.addEventListener('ended', function () {
+    this.currentTime = 0;
+    this.play();
+  }, false);
+
+  ///////Video Sizing//////////////////////
+  function toggleFullscreen(element) {
+    if (!document.fullscreenElement) { element.requestFullscreen().catch(err => { alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`); }); }
+    else { document.exitFullscreen(); }
+  }
+
+  // responsive functions
+  let ongoingCallLeftPart = document.getElementById('ongoingCallLeftPart')
+  let callMainScreen = document.getElementById('callMainScreen')
+  let ongoingCallRightPart = document.getElementById('ongoingCallRightPart')
+  function showCallLeftPart() {
+    ongoingCallLeftPart.classList.remove('mobileHiddenElement')
+    ongoingCallLeftPart.classList.remove('tabletHiddenElement')
+    callMainScreen.classList.add('mobileHiddenElement')
+    ongoingCallRightPart.classList.add('mobileHiddenElement')
+  }
+  function showCallMainScreen() {
+    ongoingCallLeftPart.classList.add('mobileHiddenElement')
+    ongoingCallLeftPart.classList.add('tabletHiddenElement')
+    callMainScreen.classList.remove('mobileHiddenElement')
+    ongoingCallRightPart.classList.add('mobileHiddenElement')
+  }
+  function showCallRightPart() {
+    ongoingCallLeftPart.classList.add('mobileHiddenElement')
+    ongoingCallLeftPart.classList.add('tabletHiddenElement')
+    callMainScreen.classList.add('mobileHiddenElement')
+    ongoingCallRightPart.classList.remove('mobileHiddenElement')
+  }
+
+  // when my peer is ready with an ID ---> this means that we cannot receive a call before a peer Id is opened
+  myPeer.on('open', myPeerId => {
+    console.log('my peer is now connected with id: ' + myPeerId)
+    let myStream;
+    let myScreenStream;
+    let _callUniqueId;
+    let _callTitle;
+    let allUsersArray = []
+    let globalCallType = "audio"; // by default
+    let globalAudioState = 'enabled';
+    let screenSharing = false;
+    let globalMainVideoDiv;
+    let mySideVideoDiv;
+    let myScreenSideVideo;
+    let myScreenViewers = [];
+    let caller_me;
+    let videoCoverDiv;
+    let awaitedUserDivs = [];
+    let optionalResolutions = [{ minWidth: 320 }, { minWidth: 640 }, { minWidth: 1024 }, { minWidth: 1280 }, { minWidth: 1920 }, { minWidth: 2560 }];
+    let participants = [];
+    let rightPanel;
+    let leftPanel;
+    let topBar;
+    let bottomPanel;
+    let callNotifications = []
+
+
+
+    socket.on('prepareCallingOthers', initiatedCallInfo => {
+      navigator.getUserMedia({ video: { optional: optionalResolutions }, audio: true }, stream => {
+        let { callUniqueId, callType, caller, groupMembersToCall_fullInfo, allUsers, callTitle } = initiatedCallInfo
+        let { userID, name, surname, profilePicture, role } = caller
+
+        //save these important variables
+        _callTitle = callTitle
+        allUsersArray = allUsers
+        myInfo = caller
+        caller_me = caller
+        _callUniqueId = callUniqueId
+        saveLocalMediaStream(callType, stream)
+        rightPanel = createRightPartPanel()
+        leftPanel = createLeftPanel()
+        // create topBar
+        topBar = createTopBar({ callUniqueId: callUniqueId, callType: globalCallType, callTitle: callTitle, isTeam: 'isTeam' }, caller)
+        bottomPanel = createBottomPart()
+        mySideVideoDiv = createSideVideo(globalCallType, myStream, caller, 'userMedia', globalAudioState)
+        rightPanel.participantsBox.prepend(mySideVideoDiv)
+        // create awaited users divs
+        awaitedUserDivs = allUsers.map(user => {
+          //let { userID, name, surname, role, profilePicture, status } = user
+          let targetedUser = groupMembersToCall_fullInfo.find(member => member.userProfileIdentifier.userID == user.userID);
+          if (targetedUser == undefined) {
+            let ringTextForMe = user.userID === caller.userID ? 'Waiting ...' : 'Offline';
+            let ringIconForMe = user.userID === caller.userID ? 'bx bxs-hourglass' : 'bx bxs-phone-off';
+
+            let offlineIcon = createElement({ elementType: 'i', class: ringIconForMe })
+            let offlineText = createElement({ elementType: 'p', textContent: ringTextForMe })
+            let offlineButton = createElement({ elementType: 'button', childrenArray: [offlineIcon, offlineText] })
+            let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
+            let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
+
+            let actions
+            if (user.userID === caller.userID) actions = [{ element: offlineButton, functionCall: () => { } }]
+            else actions = [{ element: offlineButton, functionCall: () => { } }, { element: chatButton, functionCall: () => { initiateChat(user.userID); } }]
+
+            return { userID: user.userID, div: userForAttendanceList(user, actions) }
+          }
+          else {
+
+            let ringIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
+            let ringText = createElement({ elementType: 'p', textContent: 'Ringing...' })
+            let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
+
+            let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
+            let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
+
+            let actions = [
+              { element: ringButton, functionCall: () => { console.log('ringing', userID) } },
+              { element: chatButton, functionCall: () => { initiateChat(userID); } }
+            ]
+            return { userID: user.userID, div: userForAttendanceList(user, actions) }
+          }
+        })
+        //create Cover waiting
+        videoCoverDiv = videoConnectingScreen(prepareVideoCoverDiv(allUsers, caller, 'Dialling...', awaitedUserDivs))
+        mainVideoDiv.prepend(videoCoverDiv.videoCoverDiv)
+
+        let { closeVideoBtn, HangUpBtn, muteMicrophoneBtn } = videoCoverDiv.controls
+        HangUpBtn.addEventListener('click', () => {
+          socket.emit('cancelCall', callUniqueId)
+          mySideVideoDiv.remove();
+          stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
+          videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
+          topBar.callScreenHeader.textContent = ''
+          stream.getTracks().forEach((track) => { console.log('track', track); track.stop(); stream.removeTrack(track); })
+          myStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); myStream.removeTrack(track); })
+        })
+
+        muteMicrophoneBtn.addEventListener('click', () => {
+          toggleDisableAudio(myStream)
+          console.log("audio disable happened")
+          determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
+          mySideVideoDiv.remove()
+          mySideVideoDiv = createSideVideo(globalCallType, myStream, caller, 'userMedia', globalAudioState)
+          rightPanel.participantsBox.textContent = ''
+          rightPanel.participantsBox.prepend(mySideVideoDiv)
+        })
+
+        closeVideoBtn.addEventListener('click', () => {
+          toggleDisableVideo(myStream)
+          console.log("video disable happened")
+          determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
+          mySideVideoDiv.remove()
+          mySideVideoDiv = createSideVideo(globalCallType, myStream, caller, 'userMedia', globalAudioState)
+          rightPanel.participantsBox.textContent = ''
+          rightPanel.participantsBox.prepend(mySideVideoDiv)
+        })
+        determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
+
+
+      }, (err) => { alert('Failed to get local media stream', err); });
+    })
+    // -------------------------------------
+    socket.on('callRejected', timeoutDetails => { //Handle RejectedCall
+      console.log('remote call Rejected')
+      let { callUniqueId, userInfo } = timeoutDetails
+      for (let i = 0; i < awaitedUserDivs.length; i++) {
+        const awaitedDiv = awaitedUserDivs[i];
+        if (awaitedDiv.userID == userInfo.userID) {
+
+          let memberProfilePicture;
+          if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+          else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+
+          let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
+          let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
+          let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+
+          let ringIcon = createElement({ elementType: 'i', class: 'bx bx-x' })
+          let ringText = createElement({ elementType: 'p', textContent: 'Rejected' })
+          let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
+
+
+          let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
+          let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
+          chatButton.addEventListener('click', () => initiateChat(userInfo.userID))
+
+          let ringAgainIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
+          let ringAgainText = createElement({ elementType: 'p', textContent: 'Ring Again' })
+          let ringAgainButton = createElement({ elementType: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
+          ringAgainButton.addEventListener('click', () => console.log('ring again USER', userInfo.userID))
+
+          awaitedDiv.div.textContent = '';
+          awaitedDiv.div.append(memberProfilePicture, memberNameRole, ringButton, chatButton, ringAgainButton)
+        }
+      }
+      leftPanel.updateUserStatus(userInfo, 'rejected')
+    })
+
+    //Handle TimedOutCall
+    socket.on('callNotAnswered', timeoutDetails => {
+      console.log('remote call not answered')
+      let { callUniqueId, userInfo } = timeoutDetails
+      for (let i = 0; i < awaitedUserDivs.length; i++) {
+        const awaitedDiv = awaitedUserDivs[i];
+        if (awaitedDiv.userID == userInfo.userID) {
+
+          let memberProfilePicture;
+          if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+          else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+
+          let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
+          let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
+          let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+
+          let ringIcon = createElement({ elementType: 'i', class: 'bx bx-x' })
+          let ringText = createElement({ elementType: 'p', textContent: 'Not answered' })
+          let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
+
+
+          let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
+          let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
+          chatButton.addEventListener('click', () => initiateChat(userInfo.userID))
+
+          let ringAgainIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
+          let ringAgainText = createElement({ elementType: 'p', textContent: 'Ring Again' })
+          let ringAgainButton = createElement({ elementType: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
+          ringAgainButton.addEventListener('click', () => console.log('ring again USER', userInfo.userID))
+
+          awaitedDiv.div.textContent = '';
+          console.log('timeoutDetails', timeoutDetails)
+          awaitedDiv.div.append(memberProfilePicture, memberNameRole, ringButton, chatButton, ringAgainButton)
+        }
+      }
+      leftPanel.updateUserStatus(userInfo, 'notAnswered')
+    })
+
+    // Handle added users to call
+    socket.on('userAddedToCall', (additionDetails) => {
+      let { callUniqueId, userInfo } = additionDetails
+      console.log('additionDetails', additionDetails)
+      let memberProfilePicture;
+      if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+      else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+
+      let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
+      let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
+      let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+
+      let status = userInfo.status == "offline" ? "Offline" : "Ringing ...";
+
+      let statIcon = userInfo.status == "offline" ? 'bx bxs-phone-off' : 'bx bxs-bell-ring'
+      let ringIcon = createElement({ elementType: 'i', class: statIcon })
+
+      let ringText = createElement({ elementType: 'p', textContent: status })
+      let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
+
+      let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
+      let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
+      chatButton.addEventListener('click', () => initiateChat(userInfo.userID))
+
+      let addeduserDiv = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole, ringButton, chatButton] })
+      if (videoCoverDiv) if (videoCoverDiv.calleesDiv) videoCoverDiv.calleesDiv.prepend(addeduserDiv)
+      if (awaitedUserDivs) awaitedUserDivs.push({ userID: userInfo.userID, div: addeduserDiv })
+
+      //add this new users to the attendance list
+      allUsersArray.push(userInfo)
+      leftPanel.addUser(userInfo)
+    })
+    // -------------------------------------
+    socket.on('incomingCall', incomingCallInfo => {
+      let { callUniqueId, callType, caller, myInfo, allUsers, callTitle } = incomingCallInfo
+      let { name, profilePicture, surname, userID } = caller
+
+      let responded = false;
+      let notification = displayNotification({
+        title: { iconClass: 'bx bxs-phone-call', titleText: 'Incoming call' },
+        body: {
+          shortOrImage: {
+            shortOrImagType: profilePicture == null ? 'short' : 'image',
+            shortOrImagContent: profilePicture == null ? name.charAt(0) + surname.charAt(0) : profilePicture
           },
-          screenMedia: {
-            stream: null,
-            callType: null,
-            sideVideoDiv: null,
-            callObject: null,
-            peerInitiatedByMe: false,
-            isOnMainVideo: false,
-            bubble: null
+          bodyContent: 'Incoming ' + callType + ' call from' + name + ' ' + surname //+ (allUsers.length <= 2 ? '.' : ' with ' + (groupMembersToCall_fullInfo.length - 1) + ' other' + ((groupMembersToCall_fullInfo.length - 1) > 1 ? 's.' : '.'))
+        },
+        actions: [
+          { type: 'normal', displayText: 'Reject', actionFunction: () => { socket.emit("callRejected", callUniqueId); responded = true } },
+          { type: 'confirm', displayText: 'Audio', actionFunction: () => { caller_me = myInfo; _callUniqueId = callUniqueId; callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers, callTitle); responded = true } },
+          { type: 'confirm', displayText: 'Video', actionFunction: () => { caller_me = myInfo; _callUniqueId = callUniqueId; callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers, callTitle); responded = true } },
+        ],
+        obligatoryActions: {
+          onDisplay: () => { responded = false; },
+          onHide: () => { responded = false; console.log('call notification Hidden') },
+          onEnd: () => {
+            if (responded == false) {
+              socket.emit("callNotAnswered", callUniqueId)
+              console.log('call notification Ended')
+            }
+          },
+        },
+        delay: 60000,
+        tone: 'call'
+      })
+      notification.callUniqueId = callUniqueId
+      callNotifications.push(notification)
+    })
+    socket.on('callCancelled', (callInfo) => {
+      console.log('call cancelled', callInfo)
+      let callUniqueId = callInfo.callUniqueId
+      for (let i = 0; i < callNotifications.length; i++) {
+        if (callNotifications[i].callUniqueId == callUniqueId) {
+          callNotifications[i].notificationStop()
+          callNotifications.splice(i, 1)
+        }
+      }
+    })
+
+    function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers, callTitle) {
+      navigator.getUserMedia({ video: true, audio: true }, stream => {
+        responded = true
+        _callTitle = callTitle
+        allUsersArray = allUsers
+        myStream = stream // store our stream globally so that to access it whenever needed
+        // store the call type fpr incoming videos and sending our stream
+        saveLocalMediaStream(answertype, stream)
+        // let properStream = getStreamToUseLocally(answertype, myStream)
+        callInfo = { callUniqueId, callType: globalCallType, callTitle: callTitle ? callTitle : 'Untitled Call', isTeam: false }
+        socket.emit("answerCall", { myPeerId, callUniqueId, callType: answertype })
+        topBar = createTopBar(callInfo, myInfo) // create top bar
+        rightPanel = createRightPartPanel()
+        bottomPanel = createBottomPart()
+        // ut create and append my sidevideo
+        mySideVideoDiv = createSideVideo(answertype, myStream, myInfo, 'userMedia', globalAudioState)
+        rightPanel.participantsBox.textContent = ''
+        rightPanel.participantsBox.append(mySideVideoDiv)
+        leftPanel = createLeftPanel()
+        showOngoingCallSection()
+      }, (err) => { alert('Failed to get local media stream', err); });
+    }
+    socket.on('updateAllParticipantsList', allUsers => {
+      allUsersArray = allUsers
+      leftPanel.updateComponentsArray()
+    })
+
+    socket.on('connectUser', userToConnect => {
+      let { peerId, userInfo, callType } = userToConnect
+      let { userID, name, surname, profilePicture, role } = userInfo
+      let callMediaType = 'userMedia' // set Dafault calltype
+      let options = { metadata: { userInfo: caller_me, callType: globalCallType, callMediaType: callMediaType, audioState: globalAudioState } }
+      const call = myPeer.call(peerId, myStream, options)
+      let sideVideoDiv
+      let bubble
+
+      let participant = {
+        userInfo: userInfo,
+        peerId: peerId,
+        userMedia: {
+          stream: null,
+          callType: callType,
+          sideVideoDiv: sideVideoDiv,
+          callObject: null,
+          peerInitiatedByMe: true,
+          isOnMainVideo: false,
+          bubble: bubble,
+          audioState: 'enabled'
+        },
+        screenMedia: {
+          stream: null,
+          callType: null,
+          sideVideoDiv: null,
+          callObject: null,
+          peerInitiatedByMe: true,
+          isOnMainVideo: false,
+          bubble: false
+        }
+      }
+      participant.userMedia.callObject = call // save the call Object
+      call.once('stream', userVideoStream => {
+        for (let i = 0; i < userVideoStream.getTracks().length; i++) { const track = userVideoStream.getTracks()[i]; track.muted = false; }//i decided to unmute these tracks becaise for some reason i was receiveing muted tracks
+        participant.userMedia.stream = userVideoStream
+        participant.userMedia.sideVideoDiv = createSideVideo(callType, userVideoStream, userInfo, 'userMedia', 'enabled') // create and save the side video element // audio is enbaed by default because the acceptant does not have time to disable audio
+        rightPanel.participantsBox.append(participant.userMedia.sideVideoDiv) // display this user's video
+        participant.userMedia.bubble = bottomPanel.createBubble(callType, userVideoStream, userInfo, 'userMedia', 'enabled') // create and save the side video element
+        bottomPanel.availableScreensDiv.append(participant.userMedia.bubble) // display bubble
+        stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
+        leftPanel.updateUserStatus(userInfo, 'present')
+        if (videoCoverDiv) if (videoCoverDiv.videoCoverDiv) videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
+        let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element for potential future use
+        console.log('participants', participants.length)
+        if (participants.length <= 1) { // if this is the first user who is connecting to Us - Create a mainVideoDiv and store It
+          maindiv.textContent = '';
+          let mainVideoDivContent = createMainVideoDiv(callType, userVideoStream, userInfo, 'userMedia', 'enabled')
+          mainVideoDivContent.forEach(div => { maindiv.append(div) })
+          globalMainVideoDiv = maindiv
+          participant.userMedia.isOnMainVideo = true;
+        }
+        // if i call a peer, while having shared my screen, i will need to include him in my screen viewers
+        if (screenSharing == true) {
+          let screenShare_options = { metadata: { userInfo: caller_me, callType: 'video', callMediaType: 'screenMedia' } }
+          const call = myPeer.call(peerId, myScreenStream, screenShare_options)
+          let myScreenViewer = {
+            userInfo: userInfo,
+            peerId: peerId,
+            callObject: call,
+            peerInitiatedByMe: true
+          }
+          myScreenViewers.push(myScreenViewer)
+        }
+        // --------------------------------------
+      })
+      call.once('close', () => {
+        removePeer(userInfo.userID)
+        leftPanel.updateUserStatus(userInfo, 'absent')
+      })
+      participants.push(participant) // push the participant to the Array
+      rightPanel.setParticipantsCount(participants.length)
+      rightPanel.messagesBox.addMessage({ userInfo: participant.userInfo, content: '', time: new Date() }, 'join')
+    })
+
+    //for incoming Peer Calls
+    myPeer.on('call', call => {
+      let incomingPeerInfo = call.metadata.userInfo
+      let callType = call.metadata.callType
+      let callMediaType = call.metadata.callMediaType
+      let audioState = call.metadata.audioState
+      let callMediaTypeText = '';
+      if (callMediaType == 'userMedia') { call.answer(myStream); callMediaTypeText = callMediaType } // check if it is a screen share or a user video/audio share
+      if (callMediaType == 'screenMedia') { call.answer(); callMediaTypeText = callMediaType }
+
+      leftPanel.updateUserStatus(incomingPeerInfo, 'present');
+      call.once('stream', function (remoteStream) {
+        for (let i = 0; i < remoteStream.getTracks().length; i++) { const track = remoteStream.getTracks()[i]; track.muted = false; } //i decided to unmute these tracks becaise for some reason i was receiveing muted tracks
+        if (callMediaType == 'userMedia') { // if the presented media is userMedia
+
+
+
+          let maindiv = document.getElementById('mainVideoDiv')
+          if (participants.length == 0) { // if it is the first user connection display on the main videoDiv
+            maindiv.textContent = '';
+            let mainVideoDivContent = createMainVideoDiv(callType, remoteStream, incomingPeerInfo, callMediaType)
+            mainVideoDivContent.forEach(div => { maindiv.append(div) }) // display the maindiv content
+            globalMainVideoDiv = maindiv // store the mainDiv
+          }
+
+          let participant = {
+            userInfo: incomingPeerInfo,
+            peerId: call.peer,
+            userMedia: {
+              stream: remoteStream,
+              callType: callType,
+              sideVideoDiv: createSideVideo(callType, remoteStream, incomingPeerInfo, callMediaTypeText, audioState),
+              callObject: call,
+              peerInitiatedByMe: false,
+              isOnMainVideo: participants.length == 0 ? true : false,
+              bubble: bottomPanel.createBubble(callType, remoteStream, incomingPeerInfo, callMediaTypeText, audioState),
+              audioState: audioState
+            },
+            screenMedia: {
+              stream: null,
+              callType: null,
+              sideVideoDiv: null,
+              callObject: null,
+              peerInitiatedByMe: false,
+              isOnMainVideo: false,
+              bubble: null,
+              audioState: null
+            }
+          }
+          rightPanel.participantsBox.append(participant.userMedia.sideVideoDiv) //display this user's screen
+          bottomPanel.availableScreensDiv.append(participant.userMedia.bubble) //display this user's bubble
+          participants.push(participant)
+          rightPanel.setParticipantsCount(participants.length)
+          rightPanel.messagesBox.addMessage({ userInfo: incomingPeerInfo, content: '', time: new Date() }, 'join')
+        }
+        if (callMediaType == 'screenMedia') {
+          //display this user's video
+          for (let i = 0; i < participants.length; i++) {
+            if (participants[i].userInfo.userID == incomingPeerInfo.userID) {
+              participants[i].screenMedia.stream = remoteStream
+              participants[i].screenMedia.callType = callType
+              participants[i].screenMedia.sideVideoDiv = createSideVideo(callType, remoteStream, incomingPeerInfo, callMediaTypeText, audioState)
+              participants[i].screenMedia.callObject = call
+              participants[i].screenMedia.bubble = bottomPanel.createBubble(callType, remoteStream, incomingPeerInfo, callMediaTypeText, audioState)
+              participants[i].screenMedia.audioState = 'enabled'
+
+              participants[i].userMedia.sideVideoDiv.after(participants[i].screenMedia.sideVideoDiv)
+              participants[i].userMedia.bubble.after(participants[i].screenMedia.bubble)
+            }
           }
         }
-     */
+        console.log('after call entrance participants', participants)
+      })
+    })
 
-    console.log('state change', participant, subject, state)
-    if (subject == 'video') {
-      let callType;
-      if (state == 'enabled') callType = 'video'
-      if (state == 'disabled') callType = 'audio'
+    function updateAttendanceNumbers() {
+      presenceSelectorBtn.textContent = 'Present (' + presentMembersDiv.childElementCount + ')'
+      absenceSelectorBtn.textContent = 'Absent (' + absentMembersDiv.childElementCount + ')'
+    }
 
-      let newSideVideoDiv = createSideVideo(callType, participant.userMedia.stream, participant.userInfo, 'userMedia', participant.userMedia.audioState)
-      participant.userMedia.callType = callType
-      participant.userMedia.sideVideoDiv.after(newSideVideoDiv)
-      participant.userMedia.sideVideoDiv.remove()
-      participant.userMedia.sideVideoDiv = newSideVideoDiv
-      if (participant.userMedia.isOnMainVideo == true) {
-        let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element
-        maindiv.textContent = ''
-        let mainVideoDivContent = createMainVideoDiv(callType, participant.userMedia.stream, participant.userInfo, 'userMedia', participant.userMedia.audioState)
-        mainVideoDivContent.forEach(div => { maindiv.append(div) })
-        globalMainVideoDiv = maindiv // store what is on main Div
+    function setAllUsers(allUsers) {
+      absentMembersDiv.textContent = '' // reset presence
+      presentMembersDiv.textContent = '' // reset absence
+      let allInvitedUsersArray = allUsers.map(user => {
+        let { userID, name, surname, profilePicture, role } = user;
+        //element, functionCall
+        let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
+        let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
+
+        let ringIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
+        let ringText = createElement({ elementType: 'p', textContent: 'Ring' })
+        let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
+
+        let actions = [
+          { element: chatButton, functionCall: () => { initiateChat(userID) } },
+          { element: ringButton, functionCall: () => { console.log('Ring user', userID); } }]
+
+        let presenceDiv = userForAttendanceList(user, actions)
+        absentMembersDiv.append(presenceDiv)
+        updateAttendanceNumbers()
+        return { userID: userID, div: presenceDiv, chatButton: chatButton, ringButton: ringButton }
+      })
+      return allInvitedUsersArray;
+    }
+
+    function prepareVideoCoverDiv(allUsers, caller, reason, awaitedUserDivs) {
+      let isGroup, displayName, displayInitials, profilePicture, screenMessage, spinner, callees, firstCallee, calleesDiv;
+      // let { name, profilePicture, surname, userID } = caller
+      // let { name, profilePicture, surname, userID } = allUsers array
+      // let { name, profilePicture, surname, userID, role } = specialStatuseUsers array
+
+      isGroup = allUsers.length > 2 ? true : false
+      callees = allUsers.filter(user => { return user.userID != caller.userID })
+      console.log(allUsers)
+      firstCallee = callees[0]
+      displayInitials = isGroup == true ? 'Grp' : firstCallee.name.charAt(0) + firstCallee.surname.charAt(0)
+      profilePicture = isGroup == true ? '/private/profiles/group.jpeg' : firstCallee.profilePicture
+
+      return {
+        isGroup: isGroup,
+        awaitedUserDivs: awaitedUserDivs,
+        displayInitials: displayInitials,
+        profilePicture: profilePicture,
+        screenMessage: reason,
+        spinner: true,
+        videoConnectingControls: true
+      }
+    }
+    function saveLocalMediaStream(type, stream) {
+      let modifiedStream
+      switch (type) {
+        case "audio":
+          modifiedStream = convertToAudioOnlyStream(stream)
+          break;
+        case "video":
+          modifiedStream = stream; // restore the video component
+          break;
+        default:
+          modifiedStream = convertToAudioOnlyStream(stream)
+          break;
+      }
+      globalCallType = type
+      myStream = modifiedStream
+    }
+    function toggleDisableAudio(stream) {
+      if (!stream) return console.warn('No Stream provided to the function');
+      for (let index in stream.getAudioTracks()) {
+        let audioTrack = stream.getAudioTracks()[index]
+        if (audioTrack.enabled) { audioTrack.enabled = false; globalAudioState = 'disabled'; socket.emit('audioStateChange', { callUniqueId: _callUniqueId, state: 'disabled' }) }
+        else { audioTrack.enabled = true; globalAudioState = 'enabled'; socket.emit('audioStateChange', { callUniqueId: _callUniqueId, state: 'enabled' }) }
+      }
+      updateMySideVideoDiv()
+    }
+    socket.on('audioStateChange', changeData => {
+      let { userID, state } = changeData
+      for (let i = 0; i < participants.length; i++) {
+        if (participants[i].userInfo.userID == userID) {
+          convertParticipantsSideVideo(participants[i], 'audio', state)
+        }
+      }
+    })
+    function toggleDisableVideo(stream) {
+      if (!stream) return console.warn('No Stream provided to the function');
+      for (let index in stream.getVideoTracks()) {
+        let videoTrack = stream.getVideoTracks()[index]
+        if (videoTrack.enabled) {
+          videoTrack.enabled = false;
+          globalCallType = "audio";
+          socket.emit('videoStateChange', { callUniqueId: _callUniqueId, state: 'disabled' })
+        }
+        else {
+          videoTrack.enabled = true;
+          globalCallType = "video";
+          socket.emit('videoStateChange', { callUniqueId: _callUniqueId, state: 'enabled' })
+        }
+      }
+      updateMySideVideoDiv()
+    }
+    socket.on('videoStateChange', changeData => {
+      let { userID, state } = changeData
+      for (let i = 0; i < participants.length; i++) {
+        if (participants[i].userInfo.userID == userID) {
+          convertParticipantsSideVideo(participants[i], 'video', state)
+        }
+      }
+    })
+    function convertParticipantsSideVideo(participant, subject, state) {
+      // possible subjects: audio / video 
+      // possible states: audio / video video
+      // participant is the target element from the participants array
+      /**
+       let participant = {
+            userInfo: incomingPeerInfo,
+            peerId: call.peer,
+            userMedia: {
+              stream: remoteStream,
+              callType: callType,
+              sideVideoDiv: createSideVideo(callType, remoteStream, incomingPeerInfo, callMediaTypeText),
+              callObject: call,
+              peerInitiatedByMe: false,
+              isOnMainVideo: participants.length == 0 ? true : false,
+              bubble: bottomPanel.createBubble(callType, remoteStream, incomingPeerInfo, callMediaTypeText, audioState)
+            },
+            screenMedia: {
+              stream: null,
+              callType: null,
+              sideVideoDiv: null,
+              callObject: null,
+              peerInitiatedByMe: false,
+              isOnMainVideo: false,
+              bubble: null
+            }
+          }
+       */
+
+      console.log('state change', participant, subject, state)
+      if (subject == 'video') {
+        let callType;
+        if (state == 'enabled') callType = 'video'
+        if (state == 'disabled') callType = 'audio'
+
+        let newSideVideoDiv = createSideVideo(callType, participant.userMedia.stream, participant.userInfo, 'userMedia', participant.userMedia.audioState)
+        participant.userMedia.callType = callType
+        participant.userMedia.sideVideoDiv.after(newSideVideoDiv)
+        participant.userMedia.sideVideoDiv.remove()
+        participant.userMedia.sideVideoDiv = newSideVideoDiv
+        if (participant.userMedia.isOnMainVideo == true) {
+          let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element
+          maindiv.textContent = ''
+          let mainVideoDivContent = createMainVideoDiv(callType, participant.userMedia.stream, participant.userInfo, 'userMedia', participant.userMedia.audioState)
+          mainVideoDivContent.forEach(div => { maindiv.append(div) })
+          globalMainVideoDiv = maindiv // store what is on main Div
+        }
+
+        let newBubble = bottomPanel.createBubble(callType, participant.userMedia.stream, participant.userInfo, 'userMedia', participant.userMedia.audioState)
+        participant.userMedia.bubble.after(newBubble)
+        participant.userMedia.bubble.remove()
+        participant.userMedia.bubble = newBubble
+      }
+      if (subject == 'audio') {
+        let newSideVideoDiv = createSideVideo(participant.userMedia.callType, participant.userMedia.stream, participant.userInfo, 'userMedia', state)
+        participant.userMedia.audioState = state
+        participant.userMedia.sideVideoDiv.after(newSideVideoDiv)
+        participant.userMedia.sideVideoDiv.remove()
+        participant.userMedia.sideVideoDiv = newSideVideoDiv
+        if (participant.userMedia.isOnMainVideo == true) {
+          let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element
+          maindiv.textContent = ''
+          let mainVideoDivContent = createMainVideoDiv(participant.userMedia.callType, participant.userMedia.stream, participant.userInfo, 'userMedia', state)
+          mainVideoDivContent.forEach(div => { maindiv.append(div) })
+          globalMainVideoDiv = maindiv // store what is on main Div
+        }
+        let newBubble = bottomPanel.createBubble(participant.userMedia.callType, participant.userMedia.stream, participant.userInfo, 'userMedia', state)
+        participant.userMedia.bubble.after(newBubble)
+        participant.userMedia.bubble.remove()
+        participant.userMedia.bubble = newBubble
+      }
+    }
+    function determineAudioVideoState(stream, audioButton, videoButton) {
+      if (!stream) return console.warn('No Stream provided to the function');
+      for (let index in stream.getVideoTracks()) {
+        let videoTrack = stream.getVideoTracks()[index]
+        if (videoTrack.enabled) { videoButton.classList.remove("active") }
+        else { videoButton.classList.add("active") }
+      }
+      for (let index in stream.getAudioTracks()) {
+        let audioTrack = stream.getAudioTracks()[index]
+        if (audioTrack.enabled) { audioButton.classList.remove("active") }
+        else { audioButton.classList.add("active") }
+      }
+    }
+
+    function updateMySideVideoDiv() {
+      let myNewSideVideo = createSideVideo(globalCallType, myStream, caller_me, 'userMedia', globalAudioState)
+      mySideVideoDiv.after(myNewSideVideo)
+      mySideVideoDiv.remove()
+      mySideVideoDiv = myNewSideVideo
+    }
+
+    function createMainVideoDiv(callType, stream, userInfo, callMediaType) {
+      let { userID, name, surname, profilePicture, role } = userInfo;
+      //main video element
+      let mainVideoElement = createElement({ elementType: 'video', class: 'mainVideoElement', srcObject: stream, autoplay: true });
+      let statement = "";
+      if (callMediaType == 'userMedia') statement = ""
+      if (callMediaType == 'screenMedia') statement = "'s screen"
+      //topBar
+      let mainVideoOwnerProfilePicture;
+      if (profilePicture == null) mainVideoOwnerProfilePicture = createElement({ elementType: 'div', class: 'mainVideoOwnerProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+      else mainVideoOwnerProfilePicture = createElement({ elementType: 'img', class: 'mainVideoOwnerProfilePicture', src: profilePicture })
+      let videoOwnerName = createElement({ elementType: 'div', class: 'videoOwnerName', textContent: name + ' ' + surname + statement })
+      let videoOwnerPosition = createElement({ elementType: 'div', class: 'videoOwnerPosition', textContent: role })
+      let mainVideoOwnerProfileNamePosition = createElement({ elementType: 'div', class: 'mainVideoOwnerProfileNamePosition', childrenArray: [videoOwnerName, videoOwnerPosition] })
+      let leftUserIdentifiers = createElement({ elementType: 'div', class: 'leftUserIdentifiers', childrenArray: [mainVideoOwnerProfilePicture, mainVideoOwnerProfileNamePosition] })
+
+      let muteBtn = createElement({
+        elementType: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })], onclick: () => {
+          for (let index in stream.getAudioTracks()) {
+            let audioTrack = stream.getAudioTracks()[index]
+            audioTrack.enabled = !audioTrack.enabled
+          }
+          determinAudioState()
+        }
+      })
+      determinAudioState()
+      function determinAudioState() {
+        for (let index in stream.getAudioTracks()) {
+          let audioTrack = stream.getAudioTracks()[index]
+          if (audioTrack.enabled) {
+            muteBtn.classList.remove("active")
+          } else {
+            muteBtn.classList.add("active")
+          }
+        }
+      }
+      let speakerBtn = createElement({ elementType: 'button', title: 'User is speaking', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-voice' })] })
+      streamVolumeOnTreshold(stream, 20, speakerBtn)
+      let mainVideoFullscreenBtn = createElement({
+        elementType: 'button', class: 'mainVideoFullscreenBtn', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-fullscreen' })],
+        onclick: () => {
+          toggleFullscreen(mainVideoDiv)
+          tooggleFullScreenClass()
+        }
+      })
+      let rightVideoControls = createElement({ elementType: 'div', class: 'rightVideoControls', childrenArray: [muteBtn, speakerBtn, mainVideoFullscreenBtn] })
+      let callTopBar = createElement({ elementType: 'div', class: 'callTopBar', childrenArray: [leftUserIdentifiers, rightVideoControls] })
+
+      function tooggleFullScreenClass() {
+        mainVideoFullscreenBtn.classList.toggle('active')
+      }
+      //call controls
+      //let alwaysVisibleControls = createElement({ elementType: 'button', class: 'alwaysVisibleControls' })
+      let fitToFrame = createElement({
+        elementType: 'button', class: 'callControl', title: "Fit video to frame", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-collapse' })],
+        onClick: () => {
+          mainVideoElement.classList.toggle('fitVideoToWindow');
+        }
+      })
+      let closeVideoBtn = createElement({
+        elementType: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })],
+        onclick: () => {
+          toggleDisableVideo(myStream)
+          determineStates()
+        }
+      })
+      let HangUpBtn = createElement({
+        elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })],
+        onclick: () => {
+          leaveCall()
+        }
+      })
+      let muteMicrophone = createElement({
+        elementType: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-microphone' })],
+        onclick: () => {
+          toggleDisableAudio(myStream)
+          determineStates()
+        }
+      })
+      let shareScreenBtn = createElement({
+        elementType: 'button', class: 'callControl', title: "Share my screen", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-window-open' })],
+        onclick: helpToggleScreenShare
+      })
+      function helpToggleScreenShare() {
+        toggleScreenShare(shareScreenBtn)
+        console.log('screen share')
+      }
+      determineStates()
+
+      function determineStates() {
+        determineAudioVideoState(myStream, muteMicrophone, closeVideoBtn)
       }
 
-      let newBubble = bottomPanel.createBubble(callType, participant.userMedia.stream, participant.userInfo, 'userMedia', participant.userMedia.audioState)
-      participant.userMedia.bubble.after(newBubble)
-      participant.userMedia.bubble.remove()
-      participant.userMedia.bubble = newBubble
-    }
-    if (subject == 'audio') {
-      let newSideVideoDiv = createSideVideo(participant.userMedia.callType, participant.userMedia.stream, participant.userInfo, 'userMedia', state)
-      participant.userMedia.audioState = state
-      participant.userMedia.sideVideoDiv.after(newSideVideoDiv)
-      participant.userMedia.sideVideoDiv.remove()
-      participant.userMedia.sideVideoDiv = newSideVideoDiv
-      if (participant.userMedia.isOnMainVideo == true) {
-        let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element
-        maindiv.textContent = ''
-        let mainVideoDivContent = createMainVideoDiv(participant.userMedia.callType, participant.userMedia.stream, participant.userInfo, 'userMedia', state)
-        mainVideoDivContent.forEach(div => { maindiv.append(div) })
-        globalMainVideoDiv = maindiv // store what is on main Div
-      }
-      let newBubble = bottomPanel.createBubble(participant.userMedia.callType, participant.userMedia.stream, participant.userInfo, 'userMedia', state)
-      participant.userMedia.bubble.after(newBubble)
-      participant.userMedia.bubble.remove()
-      participant.userMedia.bubble = newBubble
-    }
-  }
-  function determineAudioVideoState(stream, audioButton, videoButton) {
-    if (!stream) return console.warn('No Stream provided to the function');
-    for (let index in stream.getVideoTracks()) {
-      let videoTrack = stream.getVideoTracks()[index]
-      if (videoTrack.enabled) { videoButton.classList.remove("active") }
-      else { videoButton.classList.add("active") }
-    }
-    for (let index in stream.getAudioTracks()) {
-      let audioTrack = stream.getAudioTracks()[index]
-      if (audioTrack.enabled) { audioButton.classList.remove("active") }
-      else { audioButton.classList.add("active") }
-    }
-  }
+      let hiddableControls = createElement({ elementType: 'div', class: 'hiddableControls', childrenArray: [fitToFrame, closeVideoBtn, HangUpBtn, muteMicrophone, shareScreenBtn] })
+      let callControls = createElement({ elementType: 'div', class: 'callControls', childrenArray: [hiddableControls] })
 
-  function updateMySideVideoDiv() {
-    let myNewSideVideo = createSideVideo(globalCallType, myStream, caller_me, 'userMedia', globalAudioState)
-    mySideVideoDiv.after(myNewSideVideo)
-    mySideVideoDiv.remove()
-    mySideVideoDiv = myNewSideVideo
-  }
+      // AudioCall Cover Div
+      let audioCallprofilePicture
+      if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+      else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
+      let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
+      let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
 
-  function createMainVideoDiv(callType, stream, userInfo, callMediaType) {
-    let { userID, name, surname, profilePicture, role } = userInfo;
-    //main video element
-    let mainVideoElement = createElement({ elementType: 'video', class: 'mainVideoElement', srcObject: stream, autoplay: true });
-    let statement = "";
-    if (callMediaType == 'userMedia') statement = ""
-    if (callMediaType == 'screenMedia') statement = "'s screen"
-    //topBar
-    let mainVideoOwnerProfilePicture;
-    if (profilePicture == null) mainVideoOwnerProfilePicture = createElement({ elementType: 'div', class: 'mainVideoOwnerProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-    else mainVideoOwnerProfilePicture = createElement({ elementType: 'img', class: 'mainVideoOwnerProfilePicture', src: profilePicture })
-    let videoOwnerName = createElement({ elementType: 'div', class: 'videoOwnerName', textContent: name + ' ' + surname + statement })
-    let videoOwnerPosition = createElement({ elementType: 'div', class: 'videoOwnerPosition', textContent: role })
-    let mainVideoOwnerProfileNamePosition = createElement({ elementType: 'div', class: 'mainVideoOwnerProfileNamePosition', childrenArray: [videoOwnerName, videoOwnerPosition] })
-    let leftUserIdentifiers = createElement({ elementType: 'div', class: 'leftUserIdentifiers', childrenArray: [mainVideoOwnerProfilePicture, mainVideoOwnerProfileNamePosition] })
+      let callParticipantDiv
+      if (callType == "audio") { audioCallCover.style.display = 'flex' }
+      else audioCallCover.style.display = 'none'
 
-    let muteBtn = createElement({
-      elementType: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })], onclick: () => {
+      return [mainVideoElement, audioCallCover, callTopBar, callControls]
+    }
+
+    function createSideVideo(type, stream, userInfo, callMediaType, audioState) {
+      let { userID, name, surname, profilePicture, role } = userInfo
+      let statement = "";
+      if (callMediaType == 'userMedia') statement = ""
+      if (callMediaType == 'screenMedia') statement = "'s screen"
+      let videoElement = createElement({ elementType: 'video', srcObject: stream, class: 'callParticipant', autoPlay: "true" }); videoElement.play()
+
+      let miniVideowner = createElement({ elementType: 'div', class: 'miniVideowner', textContent: name + " " + surname + statement })
+      let muteBtn = createElement({ elementType: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })] })
+      let speakerBtn = createElement({ elementType: 'button', title: 'User is speaking', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-voice' })] })
+      let sideVideoControls = createElement({ elementType: 'div', class: 'sideVideoControls', childrenArray: [miniVideowner, muteBtn, speakerBtn] })
+
+      let micText = userID == mySavedID ? 'You have muted your Mic.' : name + ' muted their Mic.'
+      let isMuted = createElement({
+        elementType: 'div', class: 'muteIndicator', childrenArray: [
+          createElement({
+            elementType: 'div', class: 'muteIndicatorContent', childrenArray: [
+              createElement({ elementType: 'i', class: 'bx bxs-microphone-off' }),
+              createElement({ elementType: 'p', textContent: micText })
+            ]
+          })
+        ]
+      })
+
+      determinAudioState() // activate / deactivate mute button
+      // AudioCall Cover Div
+      let audioCallprofilePicture
+      if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+      else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
+      let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
+      let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
+
+      muteBtn.addEventListener('click', () => {
         for (let index in stream.getAudioTracks()) {
           let audioTrack = stream.getAudioTracks()[index]
           audioTrack.enabled = !audioTrack.enabled
         }
         determinAudioState()
-      }
-    })
-    determinAudioState()
-    function determinAudioState() {
-      for (let index in stream.getAudioTracks()) {
-        let audioTrack = stream.getAudioTracks()[index]
-        if (audioTrack.enabled) {
-          muteBtn.classList.remove("active")
-        } else {
-          muteBtn.classList.add("active")
-        }
-      }
-    }
-    let speakerBtn = createElement({ elementType: 'button', title: 'User is speaking', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-voice' })] })
-    streamVolumeOnTreshold(stream, 20, speakerBtn)
-    let mainVideoFullscreenBtn = createElement({
-      elementType: 'button', class: 'mainVideoFullscreenBtn', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-fullscreen' })],
-      onclick: () => {
-        toggleFullscreen(mainVideoDiv)
-        tooggleFullScreenClass()
-      }
-    })
-    let rightVideoControls = createElement({ elementType: 'div', class: 'rightVideoControls', childrenArray: [muteBtn, speakerBtn, mainVideoFullscreenBtn] })
-    let callTopBar = createElement({ elementType: 'div', class: 'callTopBar', childrenArray: [leftUserIdentifiers, rightVideoControls] })
+      })
 
-    function tooggleFullScreenClass() {
-      mainVideoFullscreenBtn.classList.toggle('active')
-    }
-    //call controls
-    //let alwaysVisibleControls = createElement({ elementType: 'button', class: 'alwaysVisibleControls' })
-    let fitToFrame = createElement({
-      elementType: 'button', class: 'callControl', title: "Fit video to frame", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-collapse' })],
-      onClick: () => {
-        mainVideoElement.classList.toggle('fitVideoToWindow');
-      }
-    })
-    let closeVideoBtn = createElement({
-      elementType: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })],
-      onclick: () => {
-        toggleDisableVideo(myStream)
-        determineStates()
-      }
-    })
-    let HangUpBtn = createElement({
-      elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })],
-      onclick: () => {
-        leaveCall()
-      }
-    })
-    let muteMicrophone = createElement({
-      elementType: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-microphone' })],
-      onclick: () => {
-        toggleDisableAudio(myStream)
-        determineStates()
-      }
-    })
-    let shareScreenBtn = createElement({
-      elementType: 'button', class: 'callControl', title: "Share my screen", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-window-open' })],
-      onclick: helpToggleScreenShare
-    })
-    function helpToggleScreenShare() {
-      toggleScreenShare(shareScreenBtn)
-      console.log('screen share')
-    }
-    determineStates()
-
-    function determineStates() {
-      determineAudioVideoState(myStream, muteMicrophone, closeVideoBtn)
-    }
-
-    let hiddableControls = createElement({ elementType: 'div', class: 'hiddableControls', childrenArray: [fitToFrame, closeVideoBtn, HangUpBtn, muteMicrophone, shareScreenBtn] })
-    let callControls = createElement({ elementType: 'div', class: 'callControls', childrenArray: [hiddableControls] })
-
-    // AudioCall Cover Div
-    let audioCallprofilePicture
-    if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-    else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
-    let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
-    let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
-
-    let callParticipantDiv
-    if (callType == "audio") { audioCallCover.style.display = 'flex' }
-    else audioCallCover.style.display = 'none'
-
-    return [mainVideoElement, audioCallCover, callTopBar, callControls]
-  }
-
-  function createSideVideo(type, stream, userInfo, callMediaType, audioState) {
-    let { userID, name, surname, profilePicture, role } = userInfo
-    let statement = "";
-    if (callMediaType == 'userMedia') statement = ""
-    if (callMediaType == 'screenMedia') statement = "'s screen"
-    let videoElement = createElement({ elementType: 'video', srcObject: stream, class: 'callParticipant', autoPlay: "true" }); videoElement.play()
-
-    let miniVideowner = createElement({ elementType: 'div', class: 'miniVideowner', textContent: name + " " + surname + statement })
-    let muteBtn = createElement({ elementType: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })] })
-    let speakerBtn = createElement({ elementType: 'button', title: 'User is speaking', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-voice' })] })
-    let sideVideoControls = createElement({ elementType: 'div', class: 'sideVideoControls', childrenArray: [miniVideowner, muteBtn, speakerBtn] })
-
-    let micText = userID == mySavedID ? 'You have muted your Mic.' : name + ' muted their Mic.'
-    let isMuted = createElement({
-      elementType: 'div', class: 'muteIndicator', childrenArray: [
-        createElement({
-          elementType: 'div', class: 'muteIndicatorContent', childrenArray: [
-            createElement({ elementType: 'i', class: 'bx bxs-microphone-off' }),
-            createElement({ elementType: 'p', textContent: micText })
-          ]
-        })
-      ]
-    })
-
-    determinAudioState() // activate / deactivate mute button
-    // AudioCall Cover Div
-    let audioCallprofilePicture
-    if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-    else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
-    let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
-    let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
-
-    muteBtn.addEventListener('click', () => {
-      for (let index in stream.getAudioTracks()) {
-        let audioTrack = stream.getAudioTracks()[index]
-        audioTrack.enabled = !audioTrack.enabled
-      }
-      determinAudioState()
-    })
-
-    function determinAudioState() {
-      for (let index in stream.getAudioTracks()) {
-        let audioTrack = stream.getAudioTracks()[index]
-        if (audioTrack.enabled) {
-          muteBtn.classList.remove("active")
-        } else {
-          muteBtn.classList.add("active")
-        }
-      }
-    }
-    streamVolumeOnTreshold(stream, 20, speakerBtn)
-    // overall callParticipant Div
-    let callParticipantDiv
-    if (type == "audio") { audioCallCover.style.display = 'flex' }
-    else audioCallCover.style.display = 'none';
-
-    if (audioState == 'disabled') callParticipantDiv = createElement({ elementType: 'div', class: 'callParticipantDiv', childrenArray: [videoElement, audioCallCover, sideVideoControls, isMuted] })
-    else callParticipantDiv = createElement({ elementType: 'div', class: 'callParticipantDiv', childrenArray: [videoElement, audioCallCover, sideVideoControls] })
-
-    if (userID == mySavedID) { videoElement.muted = true; muteBtn.remove(); } // if this is my video no not put an event listener, and mute it, and remove unmute button
-    else {
-      callParticipantDiv.addEventListener("click", () => {
-        let maindiv = document.getElementById('mainVideoDiv')
-        maindiv.textContent = '' //empty the mainDiv
-        let mainVideoDivContent = createMainVideoDiv(type, stream, userInfo, callMediaType) // create main div contents
-        mainVideoDivContent.forEach(div => { maindiv.append(div) }) // apend main div contents to the mainDiv
-        globalMainVideoDiv = maindiv // register the mainDiv
-
-        console.log('participants', participants)
-        for (let i = 0; i < participants.length; i++) { // loop into all participants and assign them being on main video or not
-          if (participants[i].userInfo.userID == userInfo.userID) {
-            console.log('participants[i].userMedia', participants[i].userMedia)
-            console.log('participants[i].screenMedia', participants[i].screenMedia)
-            console.log('participants', participants[0].screenMedia)
-            if (callMediaType == 'userMedia') participants[i].userMedia.isOnMainVideo = true
-            if (callMediaType == 'screenMedia') participants[i].screenMedia.isOnMainVideo = true
+      function determinAudioState() {
+        for (let index in stream.getAudioTracks()) {
+          let audioTrack = stream.getAudioTracks()[index]
+          if (audioTrack.enabled) {
+            muteBtn.classList.remove("active")
           } else {
-            participants[i].userMedia.isOnMainVideo = false;
-            participants[i].screenMedia.isOnMainVideo = false;
+            muteBtn.classList.add("active")
           }
         }
-      })
+      }
+      streamVolumeOnTreshold(stream, 20, speakerBtn)
+      // overall callParticipant Div
+      let callParticipantDiv
+      if (type == "audio") { audioCallCover.style.display = 'flex' }
+      else audioCallCover.style.display = 'none';
+
+      if (audioState == 'disabled') callParticipantDiv = createElement({ elementType: 'div', class: 'callParticipantDiv', childrenArray: [videoElement, audioCallCover, sideVideoControls, isMuted] })
+      else callParticipantDiv = createElement({ elementType: 'div', class: 'callParticipantDiv', childrenArray: [videoElement, audioCallCover, sideVideoControls] })
+
+      if (userID == mySavedID) { videoElement.muted = true; muteBtn.remove(); } // if this is my video no not put an event listener, and mute it, and remove unmute button
+      else {
+        callParticipantDiv.addEventListener("click", () => {
+          let maindiv = document.getElementById('mainVideoDiv')
+          maindiv.textContent = '' //empty the mainDiv
+          let mainVideoDivContent = createMainVideoDiv(type, stream, userInfo, callMediaType) // create main div contents
+          mainVideoDivContent.forEach(div => { maindiv.append(div) }) // apend main div contents to the mainDiv
+          globalMainVideoDiv = maindiv // register the mainDiv
+
+          console.log('participants', participants)
+          for (let i = 0; i < participants.length; i++) { // loop into all participants and assign them being on main video or not
+            if (participants[i].userInfo.userID == userInfo.userID) {
+              console.log('participants[i].userMedia', participants[i].userMedia)
+              console.log('participants[i].screenMedia', participants[i].screenMedia)
+              console.log('participants', participants[0].screenMedia)
+              if (callMediaType == 'userMedia') participants[i].userMedia.isOnMainVideo = true
+              if (callMediaType == 'screenMedia') participants[i].screenMedia.isOnMainVideo = true
+            } else {
+              participants[i].userMedia.isOnMainVideo = false;
+              participants[i].screenMedia.isOnMainVideo = false;
+            }
+          }
+        })
+      }
+      return callParticipantDiv;
     }
-    return callParticipantDiv;
-  }
 
-  socket.on('new-incall-message', message => {
-    console.log(message)
-    rightPanel.messagesBox.addMessage(message, 'message')
-    rightPanel.incrementUnread()
-  })
+    socket.on('new-incall-message', message => {
+      console.log(message)
+      rightPanel.messagesBox.addMessage(message, 'message')
+      rightPanel.incrementUnread()
+    })
 
-  socket.on('userDisconnectedFromCall', disconnectionInfo => {
-    console.log('participants', participants)
-    let { userInfo, room } = disconnectionInfo;
-    console.log('userDisconnected', userInfo.userID, room)
+    socket.on('userDisconnectedFromCall', disconnectionInfo => {
+      console.log('participants', participants)
+      let { userInfo, room } = disconnectionInfo;
+      console.log('userDisconnected', userInfo.userID, room)
 
-    if (isNumeric(room)) setUserOffline(userInfo.userID, room)
-    if (!isNumeric(room) && room.includes('-allAnswered-sockets')) {
-      removePeer(userInfo.userID);
-      leftPanel.updateUserStatus(userInfo, 'offline')
-    }
-  })
+      if (isNumeric(room)) setUserOffline(userInfo.userID, room)
+      if (!isNumeric(room) && room.includes('-allAnswered-sockets')) {
+        removePeer(userInfo.userID);
+        leftPanel.updateUserStatus(userInfo, 'offline')
+      }
+    })
 
-  socket.on('userLeftCall', userInfo => {
-    removePeer(userInfo.userID)
-    console.log('userLeftCall', userInfo.userID)
-    leftPanel.updateUserStatus(userInfo, 'absent')
-  })
+    socket.on('userLeftCall', userInfo => {
+      removePeer(userInfo.userID)
+      console.log('userLeftCall', userInfo.userID)
+      leftPanel.updateUserStatus(userInfo, 'absent')
+    })
 
-  socket.on('stoppedScreenSharing', disconnectionInfo => {
-    let { userID, callUniqueId } = disconnectionInfo;
-    // close all of the the videos of the person qho quit
-    console.log('participants who quit', participants, userID)
-    for (let j = 0; j < participants.length; j++) {
-      if (participants[j].userInfo.userID == userID) {
-        if (participants[j].screenMedia.sideVideoDiv) participants[j].screenMedia.sideVideoDiv.remove(); // remove all the sidevideo of the disconnected user
-        if (participants[j].screenMedia.bubble) participants[j].screenMedia.bubble.remove(); // remove all the sidevideo of the disconnected user
-        if (participants[j].screenMedia.isOnMainVideo == true) { // if the removed video was also on main video remove it or replace it with a preceeding one
+    socket.on('stoppedScreenSharing', disconnectionInfo => {
+      let { userID, callUniqueId } = disconnectionInfo;
+      // close all of the the videos of the person qho quit
+      console.log('participants who quit', participants, userID)
+      for (let j = 0; j < participants.length; j++) {
+        if (participants[j].userInfo.userID == userID) {
+          if (participants[j].screenMedia.sideVideoDiv) participants[j].screenMedia.sideVideoDiv.remove(); // remove all the sidevideo of the disconnected user
+          if (participants[j].screenMedia.bubble) participants[j].screenMedia.bubble.remove(); // remove all the sidevideo of the disconnected user
+          if (participants[j].screenMedia.isOnMainVideo == true) { // if the removed video was also on main video remove it or replace it with a preceeding one
+            let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element
+            maindiv.textContent = ''
+            let mainVideoDivContent = createMainVideoDiv(participants[j].userMedia.callType, participants[j].userMedia.stream, participants[j].userInfo, 'userMedia')
+            mainVideoDivContent.forEach(div => { maindiv.append(div) })
+            globalMainVideoDiv = maindiv // store what is on main Div
+          }
+          if (typeof participants[j].screenMedia.callObject.destroy == 'function') participants[j].screenMedia.callObject.destroy(); // displose the call object
+        }
+      }
+    })
+
+    function removePeer(userId) {
+      // close all of the the videos of the person qho quit
+      let indexOfRemovedUser
+      let removedUser
+      for (let j = 0; j < participants.length; j++) {
+        if (participants[j].userInfo.userID == userId) {
+          indexOfRemovedUser = j
+          removedUser = participants[j]
+          if (participants[j].userMedia.sideVideoDiv) participants[j].userMedia.sideVideoDiv.remove(); // remove all the sidevideo of the disconnected user
+          if (participants[j].userMedia.bubble) participants[j].userMedia.bubble.remove(); // remove all the bubble of the disconnected user
+          if (participants[j].screenMedia.sideVideoDiv) { participants[j].screenMedia.sideVideoDiv.remove(); } // remove all the sidevideo of the disconnected user
+          rightPanel.messagesBox.addMessage({ userInfo: participants[j].userInfo, content: '', time: new Date() }, 'leave')
+          participants.splice(j, 1); // remove the disconnected user
+          rightPanel.setParticipantsCount(participants.length)
+        }
+      }
+      if (participants.length >= 1) { // if we still have users on the call
+        if (removedUser.userMedia.isOnMainVideo == true || removedUser.screenMedia.isOnMainVideo == true) { //if the removed user
+          let nextOrPrevUser = participants[indexOfRemovedUser] || participants[indexOfRemovedUser - 1] || participants[indexOfRemovedUser + 1] // decide which user to put on main video
           let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element
           maindiv.textContent = ''
-          let mainVideoDivContent = createMainVideoDiv(participants[j].userMedia.callType, participants[j].userMedia.stream, participants[j].userInfo, 'userMedia')
+          let mainVideoDivContent = createMainVideoDiv(nextOrPrevUser.userMedia.callType, nextOrPrevUser.userMedia.stream, nextOrPrevUser.userInfo, 'userMedia')
           mainVideoDivContent.forEach(div => { maindiv.append(div) })
           globalMainVideoDiv = maindiv // store what is on main Div
         }
-        if (typeof participants[j].screenMedia.callObject.destroy == 'function') participants[j].screenMedia.callObject.destroy(); // displose the call object
+      }
+      else { leaveCall() } // no longer have any user connected - remove the mail Video and end the call
+    }
+
+    function toggleScreenShare(triggerButton) {
+      if (screenSharing == false) {
+        startScreenSharing(triggerButton)
+      } else {
+        stopScreenSharing(triggerButton)
       }
     }
-  })
-
-  function removePeer(userId) {
-    // close all of the the videos of the person qho quit
-    let indexOfRemovedUser
-    let removedUser
-    for (let j = 0; j < participants.length; j++) {
-      if (participants[j].userInfo.userID == userId) {
-        indexOfRemovedUser = j
-        removedUser = participants[j]
-        if (participants[j].userMedia.sideVideoDiv) participants[j].userMedia.sideVideoDiv.remove(); // remove all the sidevideo of the disconnected user
-        if (participants[j].userMedia.bubble) participants[j].userMedia.bubble.remove(); // remove all the bubble of the disconnected user
-        if (participants[j].screenMedia.sideVideoDiv) { participants[j].screenMedia.sideVideoDiv.remove(); } // remove all the sidevideo of the disconnected user
-        rightPanel.messagesBox.addMessage({ userInfo: participants[j].userInfo, content: '', time: new Date() }, 'leave')
-        participants.splice(j, 1); // remove the disconnected user
-        rightPanel.setParticipantsCount(participants.length)
-      }
-    }
-    if (participants.length >= 1) { // if we still have users on the call
-      if (removedUser.userMedia.isOnMainVideo == true || removedUser.screenMedia.isOnMainVideo == true) { //if the removed user
-        let nextOrPrevUser = participants[indexOfRemovedUser] || participants[indexOfRemovedUser - 1] || participants[indexOfRemovedUser + 1] // decide which user to put on main video
-        let maindiv = document.getElementById('mainVideoDiv') // get mainVideoDiv element
-        maindiv.textContent = ''
-        let mainVideoDivContent = createMainVideoDiv(nextOrPrevUser.userMedia.callType, nextOrPrevUser.userMedia.stream, nextOrPrevUser.userInfo, 'userMedia')
-        mainVideoDivContent.forEach(div => { maindiv.append(div) })
-        globalMainVideoDiv = maindiv // store what is on main Div
-      }
-    }
-    else { leaveCall() } // no longer have any user connected - remove the mail Video and end the call
-  }
-
-  function toggleScreenShare(triggerButton) {
-    if (screenSharing == false) {
-      startScreenSharing(triggerButton)
-    } else {
-      stopScreenSharing(triggerButton)
-    }
-  }
-  function startScreenSharing(triggerButton) {
-    navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }).then((screenVideoStream) => {
-      myScreenStream = screenVideoStream // store my screen stream
-      myScreenStream.getTracks().forEach(track => track.onended = () => stopScreenSharing(triggerButton)) // end screen sharing if the system ends the streaming or if the device is unplugged
-      let callMediaType = 'screenMedia'
-      let options = { metadata: { userInfo: caller_me, callType: 'video', callMediaType: callMediaType } }
-      myScreenSideVideo = createSideVideo('video', myScreenStream, caller_me, callMediaType, 'enabled')
-      mySideVideoDiv.after(myScreenSideVideo)
-      for (let i = 0; i < participants.length; i++) {
-        console.log('checking all participants', 1)
-        const call = myPeer.call(participants[i].userMedia.callObject.peer, myScreenStream, options)
-        let myScreenViewer = {
-          userInfo: participants[i].userMedia.userInfo,
-          peerId: participants[i].userMedia.callObject.peer,
-          callObject: call,
-          peerInitiatedByMe: true,
-          audioState: 'enabled'
-        }
-        myScreenViewers.push(myScreenViewer)
-      }
-      triggerButton.classList.add('active')
-      screenSharing = true
-    })
-  }
-  function stopScreenSharing(triggerButton) {
-    socket.emit('stopScreenSharing', _callUniqueId)
-    screenSharing = false
-    myScreenStream.getTracks().forEach(track => track.stop())
-    if (triggerButton) triggerButton.classList.remove('active')
-    for (let i = 0; i < myScreenViewers.length; i++) {
-      myScreenSideVideo.remove();
-      myScreenViewers.splice(i, 1);
-    }
-  }
-
-  function leaveCall() {
-    socket.emit('leaveCall', { callUniqueId: _callUniqueId })
-    if (screenSharing == true) stopScreenSharing()
-    if (myStream) myStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
-    if (myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
-    console.log('participants before leaving the call', participants)
-    for (let i = 0; i < participants.length; i++) { removePeer(participants[i].userInfo.userID) }
-    mySideVideoDiv.remove();
-    rightPanel.participantsBox.textContent = '';
-    if (globalMainVideoDiv) globalMainVideoDiv.textContent = '';
-    awaitedUserDivs = [];
-    topBar.callScreenHeader.textContent = '';
-    bottomPanel.textContent = '';
-    allUsersArray = []
-    leftPanel.clearAttendanceList()
-  }
-  function createRightPartPanel() {
-    let participantsCount = 0;
-    let unreadmessagesCount = 0;
-    // Header
-    let backToMainscreenBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-call bx-flashing' })], onclick: showCallMainScreen })
-
-    let participantsSelectorBtn = createElement({ elementType: 'div', class: 'rightHeaderItem participants headerItemSelected', textContent: 'Correspondants ' + participantsCount })
-    let messagesSelectorbtn = createElement({ elementType: 'div', class: 'rightHeaderItem callChat', textContent: 'Messages ' + unreadmessagesCount })
-    let rightPartheaderVideoMessaging = createElement({ elementType: 'div', class: 'rightPartheaderVideoMessaging', childrenArray: [backToMainscreenBtn, participantsSelectorBtn, messagesSelectorbtn] })
-    let callParticipantsDiv = createElement({ elementType: 'div', class: 'callParticipantsDiv' })
-    let c_openchat__box__info = createElement({
-      elementType: 'div', class: 'c-openchat__box__info', childrenArray: [
-        createElement({ elementType: 'div', class: 'push-down' }),
-        createElement({
-          elementType: 'div', class: 'message-separator', childrenArray: [
-            createElement({ elementType: 'span', textContent: 'You joined' })
-          ]
-        })
-      ]
-    })
-    c_openchat__box__info.style.scrollBehavior = "smooth";
-    let iconButton = createElement({ elementType: 'button', class: 'chat-options', title: 'Send a Sticker', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-smile' })] })
-    let inputText = createElement({ elementType: 'div', class: 'w-input-text', contentEditable: true })
-    let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeHolder', textContent: 'Type a message' })
-    let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
-    let inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
-    let Message = createElement({ elementType: 'button', class: 'chat-options', title: 'Send Message', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
-    let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [iconButton, inputContainer, Message] })
-
-    let callMessagingDiv = createElement({ elementType: 'div', class: 'callMessagingDiv hideDivAside', childrenArray: [c_openchat__box__info, typingBox] })
-
-    // selectore Event listeners
-    participantsSelectorBtn.addEventListener('click', () => {
-      participantsSelectorBtn.classList.add('headerItemSelected');
-      messagesSelectorbtn.classList.remove('headerItemSelected');
-      callMessagingDiv.classList.add('hideDivAside')
-      callParticipantsDiv.classList.remove('hideDivAside')
-    })
-    messagesSelectorbtn.addEventListener('click', () => {
-      participantsSelectorBtn.classList.remove('headerItemSelected');
-      messagesSelectorbtn.classList.add('headerItemSelected');
-      callMessagingDiv.classList.remove('hideDivAside')
-      callParticipantsDiv.classList.add('hideDivAside')
-      unreadmessagesCount = 0
-      messagesSelectorbtn.textContent = ('Messages ' + unreadmessagesCount)
-    })
-    Message.addEventListener('click', sendMessage)
-    inputText.addEventListener('keydown', function (e) { if (e.key == 'Enter' && !e.shiftKey) { sendMessage(); e.preventDefault(); } })
-    function sendMessage() {
-      if (inputText.textContent == '') return;
-      console.log(inputText.textContent)
-      socket.emit('new-incall-message', { callUniqueId: _callUniqueId, message: inputText.textContent })
-      inputText.textContent = '';
-    }
-    function incrementUnreadCount() { unreadmessagesCount = unreadmessagesCount + 1; messagesSelectorbtn.textContent = ('Messages ' + unreadmessagesCount) }
-    function setParticipantsCount(count) { participantsSelectorBtn.textContent = ('Correspondants ' + count) }
-
-    let rightPartContentDiv = createElement({ elementType: 'div', class: 'rightPartContentDiv', childrenArray: [callParticipantsDiv, callMessagingDiv] })
-
-    let ongoingCallRightPart = document.getElementById('ongoingCallRightPart')
-    ongoingCallRightPart.textContent = '';
-    ongoingCallRightPart.append(rightPartheaderVideoMessaging, rightPartContentDiv)
-
-    let prevMsg
-    let receivedGroup;
-    let sentGroup;
-
-    c_openchat__box__info.addMessage = (message, event) => {
-      let { userInfo, content, time } = message
-      if (event == 'join') {
-        let notificationElement = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: userInfo.userID == caller_me.userID ? 'You joined' : userInfo.name + ' ' + userInfo.surname + ' joined' })] })
-        c_openchat__box__info.append(notificationElement)
-      }
-      if (event == 'leave') {
-        let notificationElement = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: userInfo.userID == caller_me.userID ? 'You left' : userInfo.name + ' ' + userInfo.surname + ' left' })] })
-        c_openchat__box__info.append(notificationElement)
-      }
-
-      if (event == 'message') {
-        // ------------------------------------------------------------------------------
-        if (!prevMsg) {
-          if (message.userInfo.userID == caller_me.userID) {
-            let msg = createSentMessage(message)
-            sentGroup = createNewSentGroup(msg)
-            c_openchat__box__info.append(sentGroup)
+    function startScreenSharing(triggerButton) {
+      navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }).then((screenVideoStream) => {
+        myScreenStream = screenVideoStream // store my screen stream
+        myScreenStream.getTracks().forEach(track => track.onended = () => stopScreenSharing(triggerButton)) // end screen sharing if the system ends the streaming or if the device is unplugged
+        let callMediaType = 'screenMedia'
+        let options = { metadata: { userInfo: caller_me, callType: 'video', callMediaType: callMediaType } }
+        myScreenSideVideo = createSideVideo('video', myScreenStream, caller_me, callMediaType, 'enabled')
+        mySideVideoDiv.after(myScreenSideVideo)
+        for (let i = 0; i < participants.length; i++) {
+          console.log('checking all participants', 1)
+          const call = myPeer.call(participants[i].userMedia.callObject.peer, myScreenStream, options)
+          let myScreenViewer = {
+            userInfo: participants[i].userMedia.userInfo,
+            peerId: participants[i].userMedia.callObject.peer,
+            callObject: call,
+            peerInitiatedByMe: true,
+            audioState: 'enabled'
           }
-          else {
-            let msg = createReceivedMessage(message)
-            receivedGroup = createNewReceivedGroup(msg)
-            c_openchat__box__info.append(receivedGroup)
-          }
+          myScreenViewers.push(myScreenViewer)
         }
-        else {
-          if (prevMsg.userInfo.userID == caller_me.userID) {
+        triggerButton.classList.add('active')
+        screenSharing = true
+      })
+    }
+    function stopScreenSharing(triggerButton) {
+      socket.emit('stopScreenSharing', _callUniqueId)
+      screenSharing = false
+      myScreenStream.getTracks().forEach(track => track.stop())
+      if (triggerButton) triggerButton.classList.remove('active')
+      for (let i = 0; i < myScreenViewers.length; i++) {
+        myScreenSideVideo.remove();
+        myScreenViewers.splice(i, 1);
+      }
+    }
+
+    function leaveCall() {
+      socket.emit('leaveCall', { callUniqueId: _callUniqueId })
+      if (screenSharing == true) stopScreenSharing()
+      if (myStream) myStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
+      if (myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
+      console.log('participants before leaving the call', participants)
+      for (let i = 0; i < participants.length; i++) { removePeer(participants[i].userInfo.userID) }
+      mySideVideoDiv.remove();
+      rightPanel.participantsBox.textContent = '';
+      if (globalMainVideoDiv) globalMainVideoDiv.textContent = '';
+      awaitedUserDivs = [];
+      topBar.callScreenHeader.textContent = '';
+      bottomPanel.textContent = '';
+      allUsersArray = []
+      leftPanel.clearAttendanceList()
+    }
+    function createRightPartPanel() {
+      let participantsCount = 0;
+      let unreadmessagesCount = 0;
+      // Header
+      let backToMainscreenBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-call bx-flashing' })], onclick: showCallMainScreen })
+
+      let participantsSelectorBtn = createElement({ elementType: 'div', class: 'rightHeaderItem participants headerItemSelected', textContent: 'Correspondants ' + participantsCount })
+      let messagesSelectorbtn = createElement({ elementType: 'div', class: 'rightHeaderItem callChat', textContent: 'Messages ' + unreadmessagesCount })
+      let rightPartheaderVideoMessaging = createElement({ elementType: 'div', class: 'rightPartheaderVideoMessaging', childrenArray: [backToMainscreenBtn, participantsSelectorBtn, messagesSelectorbtn] })
+      let callParticipantsDiv = createElement({ elementType: 'div', class: 'callParticipantsDiv' })
+      let c_openchat__box__info = createElement({
+        elementType: 'div', class: 'c-openchat__box__info', childrenArray: [
+          createElement({ elementType: 'div', class: 'push-down' }),
+          createElement({
+            elementType: 'div', class: 'message-separator', childrenArray: [
+              createElement({ elementType: 'span', textContent: 'You joined' })
+            ]
+          })
+        ]
+      })
+      c_openchat__box__info.style.scrollBehavior = "smooth";
+      let iconButton = createElement({ elementType: 'button', class: 'chat-options', title: 'Send a Sticker', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-smile' })] })
+      let inputText = createElement({ elementType: 'div', class: 'w-input-text', contentEditable: true })
+      let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeHolder', textContent: 'Type a message' })
+      let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
+      let inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
+      let Message = createElement({ elementType: 'button', class: 'chat-options', title: 'Send Message', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
+      let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [iconButton, inputContainer, Message] })
+
+      let callMessagingDiv = createElement({ elementType: 'div', class: 'callMessagingDiv hideDivAside', childrenArray: [c_openchat__box__info, typingBox] })
+
+      // selectore Event listeners
+      participantsSelectorBtn.addEventListener('click', () => {
+        participantsSelectorBtn.classList.add('headerItemSelected');
+        messagesSelectorbtn.classList.remove('headerItemSelected');
+        callMessagingDiv.classList.add('hideDivAside')
+        callParticipantsDiv.classList.remove('hideDivAside')
+      })
+      messagesSelectorbtn.addEventListener('click', () => {
+        participantsSelectorBtn.classList.remove('headerItemSelected');
+        messagesSelectorbtn.classList.add('headerItemSelected');
+        callMessagingDiv.classList.remove('hideDivAside')
+        callParticipantsDiv.classList.add('hideDivAside')
+        unreadmessagesCount = 0
+        messagesSelectorbtn.textContent = ('Messages ' + unreadmessagesCount)
+      })
+      Message.addEventListener('click', sendMessage)
+      inputText.addEventListener('keydown', function (e) { if (e.key == 'Enter' && !e.shiftKey) { sendMessage(); e.preventDefault(); } })
+      function sendMessage() {
+        if (inputText.textContent == '') return;
+        console.log(inputText.textContent)
+        socket.emit('new-incall-message', { callUniqueId: _callUniqueId, message: inputText.textContent })
+        inputText.textContent = '';
+      }
+      function incrementUnreadCount() { unreadmessagesCount = unreadmessagesCount + 1; messagesSelectorbtn.textContent = ('Messages ' + unreadmessagesCount) }
+      function setParticipantsCount(count) { participantsSelectorBtn.textContent = ('Correspondants ' + count) }
+
+      let rightPartContentDiv = createElement({ elementType: 'div', class: 'rightPartContentDiv', childrenArray: [callParticipantsDiv, callMessagingDiv] })
+
+      let ongoingCallRightPart = document.getElementById('ongoingCallRightPart')
+      ongoingCallRightPart.textContent = '';
+      ongoingCallRightPart.append(rightPartheaderVideoMessaging, rightPartContentDiv)
+
+      let prevMsg
+      let receivedGroup;
+      let sentGroup;
+
+      c_openchat__box__info.addMessage = (message, event) => {
+        let { userInfo, content, time } = message
+        if (event == 'join') {
+          let notificationElement = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: userInfo.userID == caller_me.userID ? 'You joined' : userInfo.name + ' ' + userInfo.surname + ' joined' })] })
+          c_openchat__box__info.append(notificationElement)
+        }
+        if (event == 'leave') {
+          let notificationElement = createElement({ elementType: 'div', class: 'message-separator', childrenArray: [createElement({ elementType: 'span', textContent: userInfo.userID == caller_me.userID ? 'You left' : userInfo.name + ' ' + userInfo.surname + ' left' })] })
+          c_openchat__box__info.append(notificationElement)
+        }
+
+        if (event == 'message') {
+          // ------------------------------------------------------------------------------
+          if (!prevMsg) {
             if (message.userInfo.userID == caller_me.userID) {
               let msg = createSentMessage(message)
-              sentGroup.append(msg)
-            }
-            else {
-              if (prevMsg.userInfo.userID == message.userInfo.userID) {
-                let msg = createReceivedMessage(message)
-                receivedGroup.append(msg)
-              }
-              else {
-                let msg = createReceivedMessage(message)
-                let newReceivedGrp = createNewReceivedGroup(msg)
-                receivedGroup = newReceivedGrp
-                c_openchat__box__info.append(receivedGroup)
-              }
-            }
-          }
-          else {
-            if (message.userInfo.userID == caller_me.userID) {
-              let msg = createSentMessage(message)
-              let newSentGroup = createNewSentGroup(msg)
-              sentGroup = newSentGroup
+              sentGroup = createNewSentGroup(msg)
               c_openchat__box__info.append(sentGroup)
             }
             else {
-              if (prevMsg.userInfo.userID == message.userInfo.userID) {
-                let msg = createReceivedMessage(message)
-                receivedGroup.append(msg)
+              let msg = createReceivedMessage(message)
+              receivedGroup = createNewReceivedGroup(msg)
+              c_openchat__box__info.append(receivedGroup)
+            }
+          }
+          else {
+            if (prevMsg.userInfo.userID == caller_me.userID) {
+              if (message.userInfo.userID == caller_me.userID) {
+                let msg = createSentMessage(message)
+                sentGroup.append(msg)
               }
               else {
-                let msg = createReceivedMessage(message)
-                let newReceivedGrp = createNewReceivedGroup(msg)
-                receivedGroup = newReceivedGrp
-                c_openchat__box__info.append(receivedGroup)
+                if (prevMsg.userInfo.userID == message.userInfo.userID) {
+                  let msg = createReceivedMessage(message)
+                  receivedGroup.append(msg)
+                }
+                else {
+                  let msg = createReceivedMessage(message)
+                  let newReceivedGrp = createNewReceivedGroup(msg)
+                  receivedGroup = newReceivedGrp
+                  c_openchat__box__info.append(receivedGroup)
+                }
+              }
+            }
+            else {
+              if (message.userInfo.userID == caller_me.userID) {
+                let msg = createSentMessage(message)
+                let newSentGroup = createNewSentGroup(msg)
+                sentGroup = newSentGroup
+                c_openchat__box__info.append(sentGroup)
+              }
+              else {
+                if (prevMsg.userInfo.userID == message.userInfo.userID) {
+                  let msg = createReceivedMessage(message)
+                  receivedGroup.append(msg)
+                }
+                else {
+                  let msg = createReceivedMessage(message)
+                  let newReceivedGrp = createNewReceivedGroup(msg)
+                  receivedGroup = newReceivedGrp
+                  c_openchat__box__info.append(receivedGroup)
+                }
               }
             }
           }
+          // -------------------------------------------------------------------------------
+          scrollToBottom(c_openchat__box__info)
+          prevMsg = message
         }
-        // -------------------------------------------------------------------------------
-        scrollToBottom(c_openchat__box__info)
-        prevMsg = message
+        function createNewSentGroup(firstMessage) {
+          let anotherGroup = createElement({ elementType: 'div', class: 'message-group-sent' }); anotherGroup.append(firstMessage);
+          return anotherGroup
+        }
+        function createNewReceivedGroup(firstMessage) {
+          let receivedMessageProfile;
+          if (message.userInfo.profilePicture == null) receivedMessageProfile = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
+          else receivedMessageProfile = createElement({ elementType: 'img', class: 'memberProfilePicture', src: message.userInfo.profilePicture })
+          let receivedMessageProfileContainter = createElement({ elementType: 'div', childrenArray: [receivedMessageProfile] })
+          let senderOriginName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
+          let receivedMessagesHolder = createElement({ elementType: 'div', childrenArray: [firstMessage, senderOriginName] })
+          let anotherGroup = createElement({ elementType: 'div', class: 'message-group-received', childrenArray: [receivedMessageProfileContainter, receivedMessagesHolder] })
+          anotherGroup.append = (childElement) => { receivedMessagesHolder.append(childElement) }
+          return anotherGroup
+        }
+        function createSentMessage(message) {
+          let profileP;
+          if (message.userInfo.profilePicture == null) profileP = createElement({ elementType: 'div', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
+          else profileP = createElement({ elementType: 'img', src: message.userInfo.profilePicture })
+          let message_sent = createElement({
+            elementType: 'div', class: 'message-sent', childrenArray: [
+              createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24) }),
+              createElement({ elementType: 'div', class: 'message-sent-text', textContent: content }),
+              createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [profileP] }),
+            ]
+          })
+          return message_sent
+        }
+        function createReceivedMessage(message) {
+          let message_received = createElement({
+            elementType: 'div', class: 'message-received', childrenArray: [
+              createElement({ elementType: 'div', class: 'message-received-text', textContent: content }),
+              createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24) })
+            ]
+          })
+          return message_received
+        }
       }
-      function createNewSentGroup(firstMessage) {
-        let anotherGroup = createElement({ elementType: 'div', class: 'message-group-sent' }); anotherGroup.append(firstMessage);
-        return anotherGroup
-      }
-      function createNewReceivedGroup(firstMessage) {
-        let receivedMessageProfile;
-        if (message.userInfo.profilePicture == null) receivedMessageProfile = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
-        else receivedMessageProfile = createElement({ elementType: 'img', class: 'memberProfilePicture', src: message.userInfo.profilePicture })
-        let receivedMessageProfileContainter = createElement({ elementType: 'div', childrenArray: [receivedMessageProfile] })
-        let senderOriginName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
-        let receivedMessagesHolder = createElement({ elementType: 'div', childrenArray: [firstMessage, senderOriginName] })
-        let anotherGroup = createElement({ elementType: 'div', class: 'message-group-received', childrenArray: [receivedMessageProfileContainter, receivedMessagesHolder] })
-        anotherGroup.append = (childElement) => { receivedMessagesHolder.append(childElement) }
-        return anotherGroup
-      }
-      function createSentMessage(message) {
-        let profileP;
-        if (message.userInfo.profilePicture == null) profileP = createElement({ elementType: 'div', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
-        else profileP = createElement({ elementType: 'img', src: message.userInfo.profilePicture })
-        let message_sent = createElement({
-          elementType: 'div', class: 'message-sent', childrenArray: [
-            createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24) }),
-            createElement({ elementType: 'div', class: 'message-sent-text', textContent: content }),
-            createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [profileP] }),
-          ]
-        })
-        return message_sent
-      }
-      function createReceivedMessage(message) {
-        let message_received = createElement({
-          elementType: 'div', class: 'message-received', childrenArray: [
-            createElement({ elementType: 'div', class: 'message-received-text', textContent: content }),
-            createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24) })
-          ]
-        })
-        return message_received
+      return {
+        messagesBox: c_openchat__box__info, // contains an addMessage(message) function to add messages to the conversation
+        incrementUnread: () => { if (callMessagingDiv.classList.contains('hideDivAside')) { incrementUnreadCount() } },
+        participantsBox: callParticipantsDiv,
+        setParticipantsCount: setParticipantsCount // a function that accepts an integer
       }
     }
-    return {
-      messagesBox: c_openchat__box__info, // contains an addMessage(message) function to add messages to the conversation
-      incrementUnread: () => { if (callMessagingDiv.classList.contains('hideDivAside')) { incrementUnreadCount() } },
-      participantsBox: callParticipantsDiv,
-      setParticipantsCount: setParticipantsCount // a function that accepts an integer
-    }
-  }
-  function createLeftPanel() {
-    let ongoingCallLeftPart = document.getElementById('ongoingCallLeftPart')
-    ongoingCallLeftPart.textContent = '';
-    let backToMainscreenBtn = createElement({ elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-call bx-flashing' })], onclick: showCallMainScreen })
-    let presenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem headerItemSelected', textContent: 'Present ' + 1 })
-    let absenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem', textContent: 'Absent ' + 2 })
-    let attendanceTitleSection = createElement({ elementType: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn, backToMainscreenBtn] })
+    function createLeftPanel() {
+      let ongoingCallLeftPart = document.getElementById('ongoingCallLeftPart')
+      ongoingCallLeftPart.textContent = '';
+      let backToMainscreenBtn = createElement({ elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-call bx-flashing' })], onclick: showCallMainScreen })
+      let presenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem headerItemSelected', textContent: 'Present ' + 1 })
+      let absenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem', textContent: 'Absent ' + 2 })
+      let attendanceTitleSection = createElement({ elementType: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn, backToMainscreenBtn] })
 
-    let presentMembersDiv = createElement({ elementType: 'div', class: 'presentMembersDiv' })
-    let absentMembersDiv = createElement({ elementType: 'div', class: 'absentMembersDiv hiddenDiv' })
-    let attendanceContentDiv = createElement({ elementType: 'div', class: 'attendanceContentDiv', childrenArray: [presentMembersDiv, absentMembersDiv] })
+      let presentMembersDiv = createElement({ elementType: 'div', class: 'presentMembersDiv' })
+      let absentMembersDiv = createElement({ elementType: 'div', class: 'absentMembersDiv hiddenDiv' })
+      let attendanceContentDiv = createElement({ elementType: 'div', class: 'attendanceContentDiv', childrenArray: [presentMembersDiv, absentMembersDiv] })
 
-    presenceSelectorBtn.addEventListener('click', () => {
-      presenceSelectorBtn.classList.add('headerItemSelected');
-      absenceSelectorBtn.classList.remove('headerItemSelected');
-      presentMembersDiv.classList.remove('hiddenDiv')
-      absentMembersDiv.classList.add('hiddenDiv')
-    })
-    absenceSelectorBtn.addEventListener('click', () => {
-      presenceSelectorBtn.classList.remove('headerItemSelected');
-      absenceSelectorBtn.classList.add('headerItemSelected');
-      presentMembersDiv.classList.add('hiddenDiv')
-      absentMembersDiv.classList.remove('hiddenDiv')
-    })
-    ongoingCallLeftPart.append(attendanceTitleSection, attendanceContentDiv)
+      presenceSelectorBtn.addEventListener('click', () => {
+        presenceSelectorBtn.classList.add('headerItemSelected');
+        absenceSelectorBtn.classList.remove('headerItemSelected');
+        presentMembersDiv.classList.remove('hiddenDiv')
+        absentMembersDiv.classList.add('hiddenDiv')
+      })
+      absenceSelectorBtn.addEventListener('click', () => {
+        presenceSelectorBtn.classList.remove('headerItemSelected');
+        absenceSelectorBtn.classList.add('headerItemSelected');
+        presentMembersDiv.classList.add('hiddenDiv')
+        absentMembersDiv.classList.remove('hiddenDiv')
+      })
+      ongoingCallLeftPart.append(attendanceTitleSection, attendanceContentDiv)
 
-    function updateNumbers() {
-      presenceSelectorBtn.textContent = 'Present ' + presentMembersDiv.childElementCount
-      absenceSelectorBtn.textContent = 'Absent ' + absentMembersDiv.childElementCount
-    }
-
-    let componentsArray = allUsersArray.map(user => {
-      if (user.userID == mySavedID) { //do not put any button on my presence div
-        let presenceDiv = userForAttendanceList(user, [])
-        return { userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'present' }
+      function updateNumbers() {
+        presenceSelectorBtn.textContent = 'Present ' + presentMembersDiv.childElementCount
+        absenceSelectorBtn.textContent = 'Absent ' + absentMembersDiv.childElementCount
       }
-      else {
-        if (user.status == 'offline') {
-          let offlineButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
-          let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-          let actions = [
-            { element: offlineButton, functionCall: () => { } },
-            { element: chatButton, functionCall: () => { console.log('chat with user', user.userID) } }
-          ]
-          let presenceDiv = userForAttendanceList(user, actions)
-          return { userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'offline' }
+
+      let componentsArray = allUsersArray.map(user => {
+        if (user.userID == mySavedID) { //do not put any button on my presence div
+          let presenceDiv = userForAttendanceList(user, [])
+          return { userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'present' }
         }
         else {
-          let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-          let ringButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
-          let actions = [
-            { element: ringButton, functionCall: () => { console.log('Ring user', user.userID); } },
-            { element: chatButton, functionCall: () => { console.log('chat with user', user.userID) } }
-          ]
-          let presenceDiv = userForAttendanceList(user, actions)
-          return { userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'ringing' }
-        }
-      }
-    })
-    refreshAttendaceList()
-    updateNumbers()
-
-    function updateComponentsArray() {
-      let currentUsers = componentsArray.map(component => { return component.userInfo.userID })
-      for (let i = 0; i < allUsersArray.length; i++) {
-        if (!currentUsers.includes(allUsersArray[i].userID)) {
-          if (allUsersArray[i].status == 'offline') {
+          if (user.status == 'offline') {
             let offlineButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
             let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
             let actions = [
               { element: offlineButton, functionCall: () => { } },
-              { element: chatButton, functionCall: () => { console.log('chat with user', allUsersArray[i].userID) } }
+              { element: chatButton, functionCall: () => { initiateChat(user.userID) } }
             ]
-            let presenceDiv = userForAttendanceList(allUsersArray[i], actions)
-            componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
+            let presenceDiv = userForAttendanceList(user, actions)
+            return { userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'offline' }
           }
           else {
             let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
             let ringButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
             let actions = [
-              { element: ringButton, functionCall: () => { console.log('Ring user', allUsersArray[i].userID); } },
-              { element: chatButton, functionCall: () => { console.log('chat with user', allUsersArray[i].userID) } }
+              { element: ringButton, functionCall: () => { console.log('Ring user', user.userID); } },
+              { element: chatButton, functionCall: () => { initiateChat(user.userID) } }
             ]
-            let presenceDiv = userForAttendanceList(allUsersArray[i], actions)
-            componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'ringing' })
+            let presenceDiv = userForAttendanceList(user, actions)
+            return { userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'ringing' }
           }
         }
-      }
+      })
       refreshAttendaceList()
       updateNumbers()
-    }
-    function refreshAttendaceList() {
-      absentMembersDiv.textContent = ''
-      presentMembersDiv.textContent = ''
-      for (let i = 0; i < componentsArray.length; i++) {
-        switch (componentsArray[i].onCallStatus) {
-          case 'present':
-            presentMembersDiv.append(componentsArray[i].presenceDiv)
-            break;
-          case 'ringing':
-            absentMembersDiv.append(componentsArray[i].presenceDiv)
-            break;
-          case 'offline':
-            absentMembersDiv.append(componentsArray[i].presenceDiv)
-            break;
-          case 'rejected':
-            absentMembersDiv.append(componentsArray[i].presenceDiv)
-            break;
-          case 'notAnswered':
-            absentMembersDiv.append(componentsArray[i].presenceDiv)
-            break;
-          case 'absent':
-            absentMembersDiv.append(componentsArray[i].presenceDiv)
-            break;
-          default:
-            break;
+
+      function updateComponentsArray() {
+        let currentUsers = componentsArray.map(component => { return component.userInfo.userID })
+        for (let i = 0; i < allUsersArray.length; i++) {
+          if (!currentUsers.includes(allUsersArray[i].userID)) {
+            if (allUsersArray[i].status == 'offline') {
+              let offlineButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
+              let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+              let actions = [
+                { element: offlineButton, functionCall: () => { } },
+                { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
+              ]
+              let presenceDiv = userForAttendanceList(allUsersArray[i], actions)
+              componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
+            }
+            else {
+              let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+              let ringButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
+              let actions = [
+                { element: ringButton, functionCall: () => { console.log('Ring user', allUsersArray[i].userID); } },
+                { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
+              ]
+              let presenceDiv = userForAttendanceList(allUsersArray[i], actions)
+              componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'ringing' })
+            }
+          }
         }
+        refreshAttendaceList()
+        updateNumbers()
       }
-    }
-    function updateUserStatus(userInfo, userStatus) { // userStatus: present, ringing, offline, rejected, notAnswered, absent
-      for (let i = 0; i < componentsArray.length; i++) {
-        if (componentsArray[i].userInfo.userID == userInfo.userID) {
-          let chatButton;
-          let offlineButton;
-          let actions = [];
-          let presenceDiv;
-          let callAgainButton;
-          switch (userStatus) {
+      function refreshAttendaceList() {
+        absentMembersDiv.textContent = ''
+        presentMembersDiv.textContent = ''
+        for (let i = 0; i < componentsArray.length; i++) {
+          switch (componentsArray[i].onCallStatus) {
             case 'present':
-              chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-              actions = [{ element: chatButton, functionCall: () => { console.log('chat with user', userInfo.userInfo.userID) } }]
-              presenceDiv = userForAttendanceList(userInfo, actions)
-              componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'present' }
+              presentMembersDiv.append(componentsArray[i].presenceDiv)
               break;
             case 'ringing':
-              ringButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
-              chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-              actions = [
-                { element: ringButton, functionCall: () => { } },
-                { element: chatButton, functionCall: () => { console.log('chat with user', userInfo.userID) } }
-              ]
-              presenceDiv = userForAttendanceList(userInfo, actions)
-              componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'ringing' }
+              absentMembersDiv.append(componentsArray[i].presenceDiv)
               break;
             case 'offline':
-              offlineButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
-              chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-              actions = [
-                { element: offlineButton, functionCall: () => { } },
-                { element: chatButton, functionCall: () => { console.log('chat with user', userInfo.userID) } }
-              ]
-              presenceDiv = userForAttendanceList(userInfo, actions)
-              componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'offline' }
+              absentMembersDiv.append(componentsArray[i].presenceDiv)
               break;
             case 'rejected':
-              offlineButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' }), createElement({ elementType: 'p', textContent: 'Rejected' })] })
-              callAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ring' })] })
-              chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-              actions = [
-                { element: offlineButton, functionCall: () => { } },
-                { element: callAgainButton, functionCall: () => { console.log('ring again user', userInfo.userID) } },
-                { element: chatButton, functionCall: () => { console.log('chat with user', userInfo.userID) } }
-              ]
-              presenceDiv = userForAttendanceList(userInfo, actions)
-              componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'offline' }
-              break;
-            case 'absent':
-              callAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ring' })] })
-              chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-              actions = [
-                { element: callAgainButton, functionCall: () => { console.log('ring again user', userInfo.userID) } },
-                { element: chatButton, functionCall: () => { console.log('chat with user', userInfo.userID) } }
-              ]
-              presenceDiv = userForAttendanceList(userInfo, actions)
-              componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'absent' }
+              absentMembersDiv.append(componentsArray[i].presenceDiv)
               break;
             case 'notAnswered':
-              notAnsweredButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' }), createElement({ elementType: 'p', textContent: 'Not answered' })] })
-              callAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ring' })] })
-              chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-              actions = [
-                { element: notAnsweredButton, functionCall: () => { } },
-                { element: callAgainButton, functionCall: () => { console.log('ring again user', userInfo.userID) } },
-                { element: chatButton, functionCall: () => { console.log('chat with user', userInfo.userID) } }
-              ]
-              presenceDiv = userForAttendanceList(userInfo, actions)
-              componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'offline' }
+              absentMembersDiv.append(componentsArray[i].presenceDiv)
+              break;
+            case 'absent':
+              absentMembersDiv.append(componentsArray[i].presenceDiv)
               break;
             default:
               break;
           }
         }
       }
-      refreshAttendaceList()
-      updateNumbers()
-    }
-    function addUser(user) {
-      if (user.userID == mySavedID) { //do not put any button on my presence div
-        let presenceDiv = userForAttendanceList(user, [])
-        componentsArray.push({ userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'present' })
-      }
-      else {
-        if (user.status == 'offline') {
-          let offlineButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
-          let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-          let actions = [
-            { element: offlineButton, functionCall: () => { } },
-            { element: chatButton, functionCall: () => { console.log('chat with user', user.userID) } }
-          ]
-          let presenceDiv = userForAttendanceList(user, actions)
-          componentsArray.push({ userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'offline' })
-        }
-        else {
-          let ringButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
-          let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-          let actions = [
-            { element: ringButton, functionCall: () => { } },
-            { element: chatButton, functionCall: () => { console.log('chat with user', user.userID) } },
-          ]
-          let presenceDiv = userForAttendanceList(user, actions)
-          componentsArray.push({ userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'ringing' })
-        }
-      }
-      refreshAttendaceList()
-      updateNumbers()
-    }
-    function clearAttendanceList() {
-      allUsersArray = []
-      componentsArray = []
-      refreshAttendaceList()
-      updateNumbers()
-      presentMembersDiv.textContent = ''
-      absentMembersDiv.textContent = ''
-    }
-    return {
-      leftPanel: ongoingCallLeftPart,
-      addUser: addUser, // function that accepts (userInfo)
-      updateUserStatus: updateUserStatus, // function accepts(userInfo, userStatus) as arguments
-      updateComponentsArray: updateComponentsArray,
-      clearAttendanceList: clearAttendanceList
-    }
-  }
-  function createBottomPart() {
-    let availableScreensDiv = document.getElementById('availableScreensDiv')
-    availableScreensDiv.textContent = '';
-    function createBottomBubble(callType, stream, userInfo, callMediaType, audioState) {
-      let bubble = createElement({
-        elementType: 'div', class: 'screenItem', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0),
-        onclick: () => {
-          let maindiv = document.getElementById('mainVideoDiv')
-          maindiv.textContent = '' //empty the mainDiv
-          let mainVideoDivContent = createMainVideoDiv(callType, stream, userInfo, callMediaType, audioState) // create main div contents       
-          mainVideoDivContent.forEach(div => { maindiv.append(div) }) // apend main div contents to the mainDiv
-          globalMainVideoDiv = maindiv // register the mainDiv
-
-          for (let i = 0; i < participants.length; i++) { // loop into all participants and assign them being on main video or not
-            if (participants[i].userInfo.userID == userInfo.userID) {
-              if (callMediaType == 'userMedia') { participants[i].userMedia.isOnMainVideo = true }
-              if (callMediaType == 'screenMedia') { participants[i].screenMedia.isOnMainVideo = true }
-            } else {
-              participants[i].userMedia.isOnMainVideo = false;
-              participants[i].screenMedia.isOnMainVideo = false;
+      function updateUserStatus(userInfo, userStatus) { // userStatus: present, ringing, offline, rejected, notAnswered, absent
+        for (let i = 0; i < componentsArray.length; i++) {
+          if (componentsArray[i].userInfo.userID == userInfo.userID) {
+            let chatButton;
+            let offlineButton;
+            let actions = [];
+            let presenceDiv;
+            let callAgainButton;
+            switch (userStatus) {
+              case 'present':
+                chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+                actions = [{ element: chatButton, functionCall: () => { initiateChat(userInfo.userInfo.userID) } }]
+                presenceDiv = userForAttendanceList(userInfo, actions)
+                componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'present' }
+                break;
+              case 'ringing':
+                ringButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
+                chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+                actions = [
+                  { element: ringButton, functionCall: () => { } },
+                  { element: chatButton, functionCall: () => { initiateChat(userInfo.userID) } }
+                ]
+                presenceDiv = userForAttendanceList(userInfo, actions)
+                componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'ringing' }
+                break;
+              case 'offline':
+                offlineButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
+                chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+                actions = [
+                  { element: offlineButton, functionCall: () => { } },
+                  { element: chatButton, functionCall: () => { initiateChat(userInfo.userID) } }
+                ]
+                presenceDiv = userForAttendanceList(userInfo, actions)
+                componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'offline' }
+                break;
+              case 'rejected':
+                offlineButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' }), createElement({ elementType: 'p', textContent: 'Rejected' })] })
+                callAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ring' })] })
+                chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+                actions = [
+                  { element: offlineButton, functionCall: () => { } },
+                  { element: callAgainButton, functionCall: () => { console.log('ring again user', userInfo.userID) } },
+                  { element: chatButton, functionCall: () => { initiateChat(userInfo.userID) } }
+                ]
+                presenceDiv = userForAttendanceList(userInfo, actions)
+                componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'offline' }
+                break;
+              case 'absent':
+                callAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ring' })] })
+                chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+                actions = [
+                  { element: callAgainButton, functionCall: () => { console.log('ring again user', userInfo.userID) } },
+                  { element: chatButton, functionCall: () => { initiateChat( userInfo.userID) } }
+                ]
+                presenceDiv = userForAttendanceList(userInfo, actions)
+                componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'absent' }
+                break;
+              case 'notAnswered':
+                notAnsweredButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' }), createElement({ elementType: 'p', textContent: 'Not answered' })] })
+                callAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ring' })] })
+                chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+                actions = [
+                  { element: notAnsweredButton, functionCall: () => { } },
+                  { element: callAgainButton, functionCall: () => { console.log('ring again user', userInfo.userID) } },
+                  { element: chatButton, functionCall: () => { initiateChat(userInfo.userID) } }
+                ]
+                presenceDiv = userForAttendanceList(userInfo, actions)
+                componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'offline' }
+                break;
+              default:
+                break;
             }
           }
         }
-      })
-      streamVolumeOnTreshold(stream, 20, bubble)
-      if (callMediaType == 'screenMedia') bubble.classList.add('screen')
-      return bubble
-    }
-    return {
-      createBubble: createBottomBubble, // it accepts : callType, stream, userInfo, callMediaType, audioState
-      availableScreensDiv: availableScreensDiv
-    }
-  }
-
-  socket.on('searchPeopleToInviteToCall', (searchPeople) => {
-    console.log(searchPeople)
-    if (searchPeople.length == 0) { return topBar.invitedDiv.textContent = 'No user found.' }
-    topBar.invitedDiv.textContent = ''
-    searchPeople.forEach((searchPerson) => {
-      let searchPersonElement;
-      let element = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-plus' })] })
-      let actions = [
-        {
-          element, functionCall: () => {
-            console.log('add user; ', searchPerson.userID)
-            searchPersonElement.remove()
-            socket.emit('addUserToCall', { callUniqueId: _callUniqueId, userID: searchPerson.userID, callType: globalCallType, callTitle: _callTitle });
+        refreshAttendaceList()
+        updateNumbers()
+      }
+      function addUser(user) {
+        if (user.userID == mySavedID) { //do not put any button on my presence div
+          let presenceDiv = userForAttendanceList(user, [])
+          componentsArray.push({ userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'present' })
+        }
+        else {
+          if (user.status == 'offline') {
+            let offlineButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
+            let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+            let actions = [
+              { element: offlineButton, functionCall: () => { } },
+              { element: chatButton, functionCall: () => { initiateChat(user.userID) } }
+            ]
+            let presenceDiv = userForAttendanceList(user, actions)
+            componentsArray.push({ userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'offline' })
+          }
+          else {
+            let ringButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
+            let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+            let actions = [
+              { element: ringButton, functionCall: () => { } },
+              { element: chatButton, functionCall: () => { initiateChat(user.userID) } },
+            ]
+            let presenceDiv = userForAttendanceList(user, actions)
+            componentsArray.push({ userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'ringing' })
           }
         }
-      ];
-      searchPersonElement = userForAttendanceList(searchPerson, actions)
-      topBar.invitedDiv.append(searchPersonElement)
+        refreshAttendaceList()
+        updateNumbers()
+      }
+      function clearAttendanceList() {
+        allUsersArray = []
+        componentsArray = []
+        refreshAttendaceList()
+        updateNumbers()
+        presentMembersDiv.textContent = ''
+        absentMembersDiv.textContent = ''
+      }
+      return {
+        leftPanel: ongoingCallLeftPart,
+        addUser: addUser, // function that accepts (userInfo)
+        updateUserStatus: updateUserStatus, // function accepts(userInfo, userStatus) as arguments
+        updateComponentsArray: updateComponentsArray,
+        clearAttendanceList: clearAttendanceList
+      }
+    }
+    function createBottomPart() {
+      let availableScreensDiv = document.getElementById('availableScreensDiv')
+      availableScreensDiv.textContent = '';
+      function createBottomBubble(callType, stream, userInfo, callMediaType, audioState) {
+        let bubble = createElement({
+          elementType: 'div', class: 'screenItem', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0),
+          onclick: () => {
+            let maindiv = document.getElementById('mainVideoDiv')
+            maindiv.textContent = '' //empty the mainDiv
+            let mainVideoDivContent = createMainVideoDiv(callType, stream, userInfo, callMediaType, audioState) // create main div contents       
+            mainVideoDivContent.forEach(div => { maindiv.append(div) }) // apend main div contents to the mainDiv
+            globalMainVideoDiv = maindiv // register the mainDiv
+
+            for (let i = 0; i < participants.length; i++) { // loop into all participants and assign them being on main video or not
+              if (participants[i].userInfo.userID == userInfo.userID) {
+                if (callMediaType == 'userMedia') { participants[i].userMedia.isOnMainVideo = true }
+                if (callMediaType == 'screenMedia') { participants[i].screenMedia.isOnMainVideo = true }
+              } else {
+                participants[i].userMedia.isOnMainVideo = false;
+                participants[i].screenMedia.isOnMainVideo = false;
+              }
+            }
+          }
+        })
+        streamVolumeOnTreshold(stream, 20, bubble)
+        if (callMediaType == 'screenMedia') bubble.classList.add('screen')
+        return bubble
+      }
+      return {
+        createBubble: createBottomBubble, // it accepts : callType, stream, userInfo, callMediaType, audioState
+        availableScreensDiv: availableScreensDiv
+      }
+    }
+
+    socket.on('searchPeopleToInviteToCall', (searchPeople) => {
+      console.log(searchPeople)
+      if (searchPeople.length == 0) { return topBar.invitedDiv.textContent = 'No user found.' }
+      topBar.invitedDiv.textContent = ''
+      searchPeople.forEach((searchPerson) => {
+        let searchPersonElement;
+        let element = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-plus' })] })
+        let actions = [
+          {
+            element, functionCall: () => {
+              console.log('add user; ', searchPerson.userID)
+              searchPersonElement.remove()
+              socket.emit('addUserToCall', { callUniqueId: _callUniqueId, userID: searchPerson.userID, callType: globalCallType, callTitle: _callTitle });
+            }
+          }
+        ];
+        searchPersonElement = userForAttendanceList(searchPerson, actions)
+        topBar.invitedDiv.append(searchPersonElement)
+      })
     })
   })
-})
 
-function isNumeric(num) { return !isNaN(num) }
-function isNegative(num) { if (Math.sign(num) === -1) { return true; } return false; }
+  function isNumeric(num) { return !isNaN(num) }
+  function isNegative(num) { if (Math.sign(num) === -1) { return true; } return false; }
 
-function convertToAudioOnlyStream(stream) { stream.getVideoTracks().forEach(track => { track.enabled = false; }); return stream; } // disable all video tracks
+  function convertToAudioOnlyStream(stream) { stream.getVideoTracks().forEach(track => { track.enabled = false; }); return stream; } // disable all video tracks
 
-function createElement(configuration) {
-  if (!configuration.elementType) return console.warn('no element type provided')
-  let elementToReturn = document.createElement(configuration.elementType)
-  if (configuration.id) elementToReturn.setAttribute('id', configuration.id)
-  if (configuration.class) elementToReturn.setAttribute('class', configuration.class)
-  if (configuration.title) elementToReturn.setAttribute('title', configuration.title)
-  if (configuration.value) elementToReturn.setAttribute('value', configuration.value)
-  if (configuration.srcObject) elementToReturn.srcObject = configuration.srcObject
-  if (configuration.src) elementToReturn.src = configuration.src
-  if (configuration.textContent) elementToReturn.textContent = configuration.textContent
-  if (configuration.childrenArray) configuration.childrenArray.forEach(child => elementToReturn.append(child))
-  if (configuration.onclick) elementToReturn.addEventListener('click', configuration.onclick)
-  if (configuration.autoPlay) elementToReturn.setAttribute('autoplay', 'true')
-  if (configuration.type) elementToReturn.setAttribute('type', configuration.type)
-  if (configuration.placeHolder) elementToReturn.setAttribute('placeHolder', configuration.placeHolder)
-  if (configuration.contentEditable) elementToReturn.setAttribute('contentEditable', configuration.contentEditable)
-  if (configuration.for) elementToReturn.setAttribute('for', configuration.for)
-  if (configuration.method) elementToReturn.setAttribute('method', configuration.method)
-  if (configuration.hidden) elementToReturn.setAttribute('hidden', configuration.hidden)
-  if (configuration.name) elementToReturn.setAttribute('name', configuration.name)
-  if (configuration.action) elementToReturn.setAttribute('action', configuration.action)
-  if (configuration.tabIndex) elementToReturn.setAttribute('tabindex', configuration.tabIndex)
-  if (configuration.href) elementToReturn.setAttribute('href', configuration.href)
-  if (configuration.style) elementToReturn.setAttribute('style', configuration.style)
-  if (configuration.cy) elementToReturn.setAttribute('cy', configuration.cy)
-  if (configuration.cx) elementToReturn.setAttribute('cx', configuration.cx)
-  if (configuration.r) elementToReturn.setAttribute('r', configuration.r)
-  if (configuration.xmlns) elementToReturn.setAttribute('xmlns', configuration.xmlns)
-  if (configuration.viewBox) elementToReturn.setAttribute('viewBox', configuration.viewBox)
-  if (configuration.autoplay) elementToReturn.autoplay = configuration.autoplay
-  return elementToReturn
-}
+  function createElement(configuration) {
+    if (!configuration.elementType) return console.warn('no element type provided')
+    let elementToReturn = document.createElement(configuration.elementType)
+    if (configuration.id) elementToReturn.setAttribute('id', configuration.id)
+    if (configuration.class) elementToReturn.setAttribute('class', configuration.class)
+    if (configuration.title) elementToReturn.setAttribute('title', configuration.title)
+    if (configuration.value) elementToReturn.setAttribute('value', configuration.value)
+    if (configuration.srcObject) elementToReturn.srcObject = configuration.srcObject
+    if (configuration.src) elementToReturn.src = configuration.src
+    if (configuration.textContent) elementToReturn.textContent = configuration.textContent
+    if (configuration.childrenArray) configuration.childrenArray.forEach(child => elementToReturn.append(child))
+    if (configuration.onclick) elementToReturn.addEventListener('click', configuration.onclick)
+    if (configuration.autoPlay) elementToReturn.setAttribute('autoplay', 'true')
+    if (configuration.type) elementToReturn.setAttribute('type', configuration.type)
+    if (configuration.placeHolder) elementToReturn.setAttribute('placeHolder', configuration.placeHolder)
+    if (configuration.contentEditable) elementToReturn.setAttribute('contentEditable', configuration.contentEditable)
+    if (configuration.for) elementToReturn.setAttribute('for', configuration.for)
+    if (configuration.method) elementToReturn.setAttribute('method', configuration.method)
+    if (configuration.hidden) elementToReturn.setAttribute('hidden', configuration.hidden)
+    if (configuration.name) elementToReturn.setAttribute('name', configuration.name)
+    if (configuration.action) elementToReturn.setAttribute('action', configuration.action)
+    if (configuration.tabIndex) elementToReturn.setAttribute('tabindex', configuration.tabIndex)
+    if (configuration.href) elementToReturn.setAttribute('href', configuration.href)
+    if (configuration.style) elementToReturn.setAttribute('style', configuration.style)
+    if (configuration.cy) elementToReturn.setAttribute('cy', configuration.cy)
+    if (configuration.cx) elementToReturn.setAttribute('cx', configuration.cx)
+    if (configuration.r) elementToReturn.setAttribute('r', configuration.r)
+    if (configuration.xmlns) elementToReturn.setAttribute('xmlns', configuration.xmlns)
+    if (configuration.viewBox) elementToReturn.setAttribute('viewBox', configuration.viewBox)
+    if (configuration.autoplay) elementToReturn.autoplay = configuration.autoplay
+    return elementToReturn
+  }
 
-function userForAttendanceList(userInfo, actions, preActions) {
-  let { userID, name, surname, role, profilePicture, status } = userInfo
-  // actions is an array of buttons where on item is {element, functionCall}
-  // container is presentMembersDiv
-  let memberProfilePicture = makeProfilePicture(userInfo)
+  function userForAttendanceList(userInfo, actions, preActions) {
+    let { userID, name, surname, role, profilePicture, status } = userInfo
+    // actions is an array of buttons where on item is {element, functionCall}
+    // container is presentMembersDiv
+    let memberProfilePicture = makeProfilePicture(userInfo)
 
-  let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: name + ' ' + surname })
-  let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: role })
-  let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+    let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: name + ' ' + surname })
+    let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: role })
+    let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
 
-  let actionElements = actions.map(action => {
-    //let { element, functionCall } = action
-    let { element, functionCall } = action
-    element.addEventListener('click', functionCall)
-    return element;
-  })
-  let elementsArray = [memberProfilePicture, memberNameRole].concat(actionElements)
-  if (preActions != undefined) elementsArray = preActions.concat(elementsArray)
+    let actionElements = actions.map(action => {
+      //let { element, functionCall } = action
+      let { element, functionCall } = action
+      element.addEventListener('click', functionCall)
+      return element;
+    })
+    let elementsArray = [memberProfilePicture, memberNameRole].concat(actionElements)
+    if (preActions != undefined) elementsArray = preActions.concat(elementsArray)
 
-  let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: elementsArray })
-  return presentMember
-}
-function companyForList(companyInfo, actions, preActions) {
-  let { id, name, description, logo, cover } = companyInfo;
-  console.log('companyInfo', companyInfo)
-  // actions is an array of buttons where on item is {element, functionCall}
-  let memberProfilePicture;
-  if (logo == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.slice(0, 2) })
-  else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: logo })
+    let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: elementsArray })
+    return presentMember
+  }
+  function companyForList(companyInfo, actions, preActions) {
+    let { id, name, description, logo, cover } = companyInfo;
+    console.log('companyInfo', companyInfo)
+    // actions is an array of buttons where on item is {element, functionCall}
+    let memberProfilePicture;
+    if (logo == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.slice(0, 2) })
+    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: logo })
 
-  let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: name })
-  let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: description })
-  let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+    let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: name })
+    let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: description })
+    let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
 
-  let actionElements = actions.map(action => {
-    let { element, functionCall } = action
-    element.addEventListener('click', functionCall)
-    return element;
-  })
-  let elementsArray = [memberProfilePicture, memberNameRole].concat(actionElements)
-  if (preActions != undefined) elementsArray = preActions.concat(elementsArray)
-  let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: elementsArray })
-  return presentMember
-}
+    let actionElements = actions.map(action => {
+      let { element, functionCall } = action
+      element.addEventListener('click', functionCall)
+      return element;
+    })
+    let elementsArray = [memberProfilePicture, memberNameRole].concat(actionElements)
+    if (preActions != undefined) elementsArray = preActions.concat(elementsArray)
+    let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: elementsArray })
+    return presentMember
+  }
 
-function updateAttendaceList() {
-
+  function updateAttendaceList() {
 
 
 
-}
 
-function streamVolumeOnTreshold(stream, threshold, outletEment) {
-  if (stream.getAudioTracks().length < 1) return;
-  let audioContext = new AudioContext();
-  let analyser = audioContext.createAnalyser();
-  let microphone = audioContext.createMediaStreamSource(stream);
-  let javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
-  analyser.smoothingTimeConstant = 0.8;
-  analyser.fftSize = 1024;
-  microphone.connect(analyser);
-  analyser.connect(javascriptNode);
-  javascriptNode.connect(audioContext.destination);
-  javascriptNode.onaudioprocess = function () {
-    var array = new Uint8Array(analyser.frequencyBinCount);
-    analyser.getByteFrequencyData(array);
-    var values = 0;
-    var length = array.length;
-    for (var i = 0; i < length; i++) { values += (array[i]); }
-    var average = values / length;
-    if (Math.round(average) > 15) {
-      let comparableValue = Math.round(average) - 10;
-      if (comparableValue > threshold) { outletEment.classList.add('isSpeaking') }
-      else { outletEment.classList.remove('isSpeaking') }
+  }
+
+  function streamVolumeOnTreshold(stream, threshold, outletEment) {
+    if (stream.getAudioTracks().length < 1) return;
+    let audioContext = new AudioContext();
+    let analyser = audioContext.createAnalyser();
+    let microphone = audioContext.createMediaStreamSource(stream);
+    let javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+    analyser.smoothingTimeConstant = 0.8;
+    analyser.fftSize = 1024;
+    microphone.connect(analyser);
+    analyser.connect(javascriptNode);
+    javascriptNode.connect(audioContext.destination);
+    javascriptNode.onaudioprocess = function () {
+      var array = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteFrequencyData(array);
+      var values = 0;
+      var length = array.length;
+      for (var i = 0; i < length; i++) { values += (array[i]); }
+      var average = values / length;
+      if (Math.round(average) > 15) {
+        let comparableValue = Math.round(average) - 10;
+        if (comparableValue > threshold) { outletEment.classList.add('isSpeaking') }
+        else { outletEment.classList.remove('isSpeaking') }
+      }
     }
   }
-}
 
-function call(callTo, audio, video, group, fromChat, previousCallId) {
-  initiateCall({ callTo, audio, video, group, fromChat, previousCallId })
-}
-function chat(corespondantId) {
-  socket.emit('makeChat', corespondantId)
-}
-
-function initiateCall(initiationInfo) {
-  let { callTo, audio, video, group, fromChat, previousCallId } = initiationInfo
-  navigator.getUserMedia({ video: true, audio: true }, stream => {  //test user media accessibiity
-    socket.emit("initiateCall", { callTo, audio, video, group, fromChat, previousCallId })
-    showOngoingCallSection()
-    startWaitingTone()
-    stream.getTracks().forEach(track => { track.stop(); stream.removeTrack(track); })  //stop media tracks
-  }, (err) => { alert('Failed to get local media stream', err); });
-}
-
-function startWaitingTone() { waitingTone.play() }
-function stopWaitingTone() { waitingTone.currentTime = 0; waitingTone.pause() }
-
-function videoConnectingScreen(constraints) {
-  let { isGroup, awaitedUserDivs, displayInitials, profilePicture, screenMessage, spinner } = constraints
-  // isGroup: isGroup, awaitedUserDivs: awaitedUserDivs, displayInitials: displayInitials, profilePicture: profilePicture, screenMessage: reason, spinner: true,
-  let caleeProfilePicture;
-  if (constraints.profilePicture != null) { caleeProfilePicture = createElement({ elementType: 'img', class: 'caleeProfilePicture', src: constraints.profilePicture }) }
-  else caleeProfilePicture = createElement({ elementType: 'div', class: 'caleeProfilePicture', textContent: constraints.displayInitials })
-  let activity = createElement({ elementType: 'div', class: 'activity', textContent: constraints.screenMessage })
-  let spinnerDiv = createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })
-  let calleesDiv = createElement({ elementType: 'div', class: 'calleesDiv', childrenArray: awaitedUserDivs.map(awaitedUserDiv => awaitedUserDiv.div) })
-  let videoCoverDiv
-  if (spinner == true) videoCoverDiv = createElement({ elementType: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, spinnerDiv, calleesDiv] })
-  else videoCoverDiv = createElement({ elementType: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, calleesDiv] })
-  let controls = {};
-  if (constraints.videoConnectingControls) {
-    let closeVideoBtn = createElement({ elementType: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video-off' })] })
-    let HangUpBtn = createElement({ elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })] })
-    let muteMicrophoneBtn = createElement({ elementType: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-microphone-off' })] })
-    let hiddableControls = createElement({ elementType: 'div', class: 'waitingCallControls', childrenArray: [closeVideoBtn, HangUpBtn, muteMicrophoneBtn] })
-    videoCoverDiv.append(hiddableControls)
-    controls = { closeVideoBtn, HangUpBtn, muteMicrophoneBtn }
+  function call(callTo, audio, video, group, fromChat, previousCallId) {
+    initiateCall({ callTo, audio, video, group, fromChat, previousCallId })
   }
-  return { videoCoverDiv, controls, calleesDiv }
-}
-
-function displayNotification(notificationConfig) {
-  let { title, body, actions, obligatoryActions, delay, tone } = notificationConfig
-  let { iconClass, titleText } = title
-  let { shortOrImage, bodyContent } = body
-  let { shortOrImagType, shortOrImagContent } = shortOrImage
-  let { onDisplay, onEnd, onHide } = obligatoryActions
-  let notificationsDiv = document.getElementById('notificationsDiv')
-  //Title
-  let titleIcon = createElement({ elementType: 'i', class: iconClass })
-  let titleTextDiv = createElement({ elementType: 'div', class: 'notificationTitleText', textContent: titleText })
-  let notificationTitle = createElement({ elementType: 'div', class: 'notificationTitle', childrenArray: [titleIcon, titleTextDiv] })
-  //Body
-  let profilePicture;
-  if (shortOrImagType == 'short') { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: shortOrImagContent }) }
-  if (shortOrImagType == 'image') { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: shortOrImagContent }) }
-  let notificationContent = createElement({ elementType: 'div', class: 'notificationContent', textContent: bodyContent })
-  let notificationBody = createElement({ elementType: 'div', class: 'notificationBody', childrenArray: [profilePicture, notificationContent] })
-  let notification;
-  //Actions
-  let buttonsArray = [];
-  actions.forEach(action => {
-    let { type, displayText, actionFunction } = action
-    let actionBtn = createElement({ elementType: 'button', class: type, textContent: displayText })
-    actionBtn.addEventListener('click', () => { actionFunction(); notificationStop(); })
-    buttonsArray.push(actionBtn)
-  })
-  let dismissbutton = createElement({ elementType: 'button', class: 'normal', textContent: 'Hide' })
-  buttonsArray.push(dismissbutton)
-  let notificationActions = createElement({ elementType: 'div', class: 'notificationActions', childrenArray: buttonsArray })
-  //progressbar
-  let notificationProgressBar = createElement({ elementType: 'div', class: 'notificationProgressBar' })
-  //notification Element
-  notification = createElement({ elementType: 'div', class: 'notification', childrenArray: [notificationTitle, notificationBody, notificationActions, notificationProgressBar] })
-  notificationsDiv.append(notification)
-  // run the On display event
-  onDisplay()
-  let notificationTone;
-  if (tone == 'notification') { notificationTone = new Audio('/private/audio/imperiumLineNotification.mp3'); notificationTone.play() }
-  if (tone == 'call') {
-    notificationTone = new Audio('/private/audio/imperiumLineCall.mp3'); notificationTone.play()
-    notificationTone.addEventListener('ended', function () { this.currentTime = 0; this.play(); }, false);
+  function initiateChat(corespondantId) {
+    console.log('corespondantId', corespondantId)
+    socket.emit('makeChat', corespondantId)
+    displayAppSection(0);
   }
-  const notificationStop = () => { if (notificationTone) { notificationTone.currentTime = 0; notificationTone.pause(); notification.remove() } }
 
-  dismissbutton.addEventListener('click', () => { notificationStop(); onHide(); })
-  setTimeout(() => { notificationStop(); onEnd(); }, delay);
-  let interval = 10 //milliseconds
-  let control = delay
-  let countDown = setInterval(() => {
-    control = control - interval;
-    let width = (control / delay) * 100
-    notificationProgressBar.style.width = width + '%'
-    if (width < 1) clearInterval(countDown)
-  }, interval);
-  notification.notificationStop = notificationStop
-  return notification
-}
-
-//exemplary app entry Notification Code
-let notification = displayNotification({
-  title: { iconClass: 'bx bxs-door-open', titleText: 'Welcome' },
-  body: {
-    shortOrImage: { shortOrImagType: 'image', shortOrImagContent: '/private/profiles/group.jpeg' },
-    bodyContent: 'Welcome to ImperiumLine.com, an ezy way to connect with people and teams that/where you belong/care. Enjoy the app'
-  },
-  actions: [
-    // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
-  ],
-  obligatoryActions: {
-    onDisplay: () => { console.log('Notification Displayed') },
-    onHide: () => { console.log('Notification Hidden') },
-    onEnd: () => { console.log('Notification Ended') },
-  },
-  delay: 60000,
-  tone: 'notification'
-})
-
-
-function createOngoingCallScreen() {
-  // leftPart
-  let leftPartHeaderDivTitle = createElement({ elementType: 'div', class: 'leftPartHeaderDivTitle' })
-  let inviteSomeone = createElement({
-    type: 'button',
-    class: 'inviteSomeone',
-    childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' }), createElement({ elementType: 'p', textContent: 'invite Someone' })]
-  })
-  let presenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem headerItemSelected', textContent: 'Present (0)' })
-  let absenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem', textContent: 'Absent (0)' })
-
-  let attendanceTitleSection = createElement({ elementType: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn] })
-  let presentMembersDiv = createElement({ elementType: 'div', class: 'presentMembersDiv', id: 'presentMembersDiv' })
-  let absentMembersDiv = createElement({ elementType: 'div', class: 'absentMembersDiv', id: 'absentMembersDiv' })
-  let attendanceContentDiv = createElement({ elementType: 'div', class: 'attendanceContentDiv', childrenArray: [presentMembersDiv, absentMembersDiv] })
-
-  let leftPart = createElement({ elementType: 'div', class: 'leftPart', textContent: 'Attendance', childrenArray: [leftPartHeaderDivTitle, inviteSomeone, attendanceTitleSection, attendanceContentDiv] })
-  //call-container
-
-  return {
-    leftPartHeaderDivTitle: leftPartHeaderDivTitle,
-    inviteSomeone: inviteSomeone,
-    attendanceTitleSection: attendanceTitleSection,
+  function initiateCall(initiationInfo) {
+    let { callTo, audio, video, group, fromChat, previousCallId } = initiationInfo
+    navigator.getUserMedia({ video: true, audio: true }, stream => {  //test user media accessibiity
+      socket.emit("initiateCall", { callTo, audio, video, group, fromChat, previousCallId })
+      showOngoingCallSection()
+      startWaitingTone()
+      stream.getTracks().forEach(track => { track.stop(); stream.removeTrack(track); })  //stop media tracks
+    }, (err) => { alert('Failed to get local media stream', err); });
   }
-}
 
-function createTopBar(callInfo, myInfo) {
-  let { callUniqueId, callType, callTitle, isTeam } = callInfo
-  let callScreenHeader = document.getElementById('callScreenHeader')
-  let MeetingTitle = createElement({ elementType: 'div', class: 'MeetingTitle', textContent: callTitle })
-  let headerLeftPart = createElement({ elementType: 'div', class: 'headerLeftPart', childrenArray: [MeetingTitle] })
-  let input = createElement({ elementType: 'input', placeHolder: 'Search users' })
-  let doneBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-check' }), createElement({ elementType: 'p', textContent: 'Done' })] })
-  let searchField = createElement({ elementType: 'div', class: 'searchField', childrenArray: [input, doneBtn] })
-  let invitedDiv = createElement({ elementType: 'div', class: 'invitedDiv', textContent: 'Type to search ...' })
-  input.addEventListener('input', () => {
-    var searchText = input.value;
-    console.log('searching People', callUniqueId, searchText)
-    socket.emit('searchPeopleToInviteToCall', { callUniqueId, searchText });
-  })
-  let popDown = createElement({ elementType: 'div', class: 'popdown', childrenArray: [searchField, invitedDiv] })
-  let inviteSomeone = createElement({
-    elementType: 'button',
-    class: 'inviteSomeone',
-    childrenArray: [
-      createElement({ elementType: 'i', class: 'bx bx-plus' }),
-      createElement({ elementType: 'p', textContent: 'Add Participants' }),
-    ],
-    onclick: () => {
-      input.focus();
-      popDown.classList.toggle('popdownDisplayed');
+  function startWaitingTone() { waitingTone.play() }
+  function stopWaitingTone() { waitingTone.currentTime = 0; waitingTone.pause() }
+
+  function videoConnectingScreen(constraints) {
+    let { isGroup, awaitedUserDivs, displayInitials, profilePicture, screenMessage, spinner } = constraints
+    // isGroup: isGroup, awaitedUserDivs: awaitedUserDivs, displayInitials: displayInitials, profilePicture: profilePicture, screenMessage: reason, spinner: true,
+    let caleeProfilePicture;
+    if (constraints.profilePicture != null) { caleeProfilePicture = createElement({ elementType: 'img', class: 'caleeProfilePicture', src: constraints.profilePicture }) }
+    else caleeProfilePicture = createElement({ elementType: 'div', class: 'caleeProfilePicture', textContent: constraints.displayInitials })
+    let activity = createElement({ elementType: 'div', class: 'activity', textContent: constraints.screenMessage })
+    let spinnerDiv = createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })
+    let calleesDiv = createElement({ elementType: 'div', class: 'calleesDiv', childrenArray: awaitedUserDivs.map(awaitedUserDiv => awaitedUserDiv.div) })
+    let videoCoverDiv
+    if (spinner == true) videoCoverDiv = createElement({ elementType: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, spinnerDiv, calleesDiv] })
+    else videoCoverDiv = createElement({ elementType: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, calleesDiv] })
+    let controls = {};
+    if (constraints.videoConnectingControls) {
+      let closeVideoBtn = createElement({ elementType: 'button', class: 'callControl', title: "Close my video", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video-off' })] })
+      let HangUpBtn = createElement({ elementType: 'button', class: 'callControl hangupbtn', title: "Leave this call", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' })] })
+      let muteMicrophoneBtn = createElement({ elementType: 'button', class: 'callControl', title: "Mute my microphone", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-microphone-off' })] })
+      let hiddableControls = createElement({ elementType: 'div', class: 'waitingCallControls', childrenArray: [closeVideoBtn, HangUpBtn, muteMicrophoneBtn] })
+      videoCoverDiv.append(hiddableControls)
+      controls = { closeVideoBtn, HangUpBtn, muteMicrophoneBtn }
     }
-  })
-  doneBtn.addEventListener('click', () => { popDown.classList.toggle('popdownDisplayed') })
-  let headerRightPart = createElement({ elementType: 'div', class: 'headerRightPart', childrenArray: [inviteSomeone, popDown] })
-  callScreenHeader.textContent = '';
-  let showLeftpartBtn = createElement({ elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-list-check' })], onclick: showCallLeftPart })
-  let showRightpartBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-chat' })], onclick: showCallRightPart })
-  callScreenHeader.append(showLeftpartBtn, headerLeftPart, headerRightPart, showRightpartBtn)
-  return { callScreenHeader, invitedDiv }
-}
-
-async function createInScreenPopup(constraints) {
-  let { icon, title, contentElementsArray, actions } = constraints
-  // actions is an array of a button and a function of what it does
-  if (openPopupDiv) openPopupDiv.closePopup()
-  let defaultClosebtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
-  let headerActions = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [defaultClosebtn] })
-  let headerText = createElement({ elementType: 'div', class: 'headerText', childrenArray: [createElement({ elementType: 'i', class: icon }), createElement({ elementType: 'p', textContent: title })] })
-  let popupHeader = createElement({ elementType: 'div', class: 'popupTitle', childrenArray: [headerText, headerActions] })
-  let popupBody = createElement({ elementType: 'div', class: 'popupBody', childrenArray: contentElementsArray })
-  let bottomButtons = actions.map(action => { action.element.addEventListener('click', action.functionCall); return action.element; })
-  let popupBottom = createElement({ elementType: 'div', class: 'popupBottom', childrenArray: bottomButtons })
-  let inScreenPanel = createElement({ elementType: 'div', class: 'inScreenPanel', childrenArray: [popupHeader, popupBody, popupBottom] })
-
-  let inscreenPanelContainer = document.getElementById('inscreenPanelContainer')
-  inscreenPanelContainer.append(inScreenPanel)
-  await new Promise(resolve => setTimeout(resolve, 20)) // wait 20 millisecons / helps the animation
-  inScreenPanel.classList.add('visible') // add the visibility class so that the item transitions into screen
-  inscreenPanelContainer.classList.add('popupActive') // to activate the background blurr and prevent interaction with the app
-  async function removePopup() {
-    inScreenPanel.classList.remove('visible')
-    inscreenPanelContainer.classList.remove('popupActive')
-    await new Promise(resolve => setTimeout(resolve, 3000))
-    inScreenPanel.remove()
-  }
-  defaultClosebtn.addEventListener('click', removePopup)
-  inScreenPanel.closePopup = removePopup
-  openPopupDiv = inScreenPanel
-  return inScreenPanel
-}
-
-async function createProfilePopup(userInfo) {
-  // delete the existing Div
-  if (openProfileDiv) openProfileDiv.remove()
-  //coverPhotoDiv
-  let coverPhoto;
-  if (userInfo.cover == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' }) }
-  else { coverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: userInfo.cover }) }
-  // close div button
-  let closeButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
-  let photoActionClose = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [closeButton] })
-  let coverPhotoActions = createElement({ elementType: 'div', class: 'photoActions', childrenArray: [photoActionClose] })
-  let coverPhotoDiv = createElement({ elementType: 'div', class: 'coverPhotoDiv', childrenArray: [coverPhoto, coverPhotoActions] })
-
-  let profilePicture;
-  if (userInfo.profilePicture == null) { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) }) }
-  else { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: userInfo.profilePicture }) }
-
-  let userProfileDiv = createElement({ elementType: 'div', class: 'userProfileDiv', childrenArray: [profilePicture] })
-  // if user is online
-  if (userInfo.status != 'offline') {
-    let onlineIndicator = createElement({ elementType: 'div', class: 'onlineIndicator' })
-    userProfileDiv.append(onlineIndicator)
+    return { videoCoverDiv, controls, calleesDiv }
   }
 
-  // userPrimaryInfo
-  let name = createElement({ elementType: 'div', class: 'name', textContent: userInfo.name + ' ' + userInfo.surname })
-  let email = createElement({ elementType: 'a', class: 'email', href: "mailto:" + userInfo.email, textContent: userInfo.email })
-  let position = createElement({ elementType: 'div', class: 'position', textContent: userInfo.role })
-  let userPrimaryInfo = createElement({ elementType: 'div', class: 'userPrimaryInfo', childrenArray: [name, email, position] })
-
-  // organization
-  let memberProfilePicture
-  if (userInfo.company.logo == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.company.name.substring(0, 2) })
-  else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.company.logo })
-  let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.company.name })
-  let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.company.description })
-  let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
-  let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole] })
-  let presentMembersDiv = createElement({ elementType: 'div', class: 'presentMembersDiv', childrenArray: [presentMember] })
-
-  let userSecondaryInfo = createElement({
-    elementType: 'div', class: 'userSecondaryInfo', childrenArray: [presentMembersDiv]
-  })
-  // userDataDiv
-  let userDataDiv = createElement({ elementType: 'div', class: 'userDataDiv', childrenArray: [userProfileDiv, userPrimaryInfo, userSecondaryInfo] })
-
-  //combine cover with user profile
-  let mainCentralProfileDiv = createElement({ elementType: 'div', class: 'mainCentralProfileDiv', childrenArray: [coverPhotoDiv, userDataDiv] })
-
-  if (userInfo.userID == mySavedID) {
-    // cover edit - buttons
-    let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
-    let coverDeleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
-    let changePictureBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
-    let editControls = createElement({ elementType: 'div', class: 'editControls', tabIndex: "0", childrenArray: [coverDeleteBtn, changePictureBtn] })
-    let photoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [editButton, editControls] })
-
-    let coverPictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'coverPictureInputElement', class: 'hidden' })
-    let selectCoverBtn = createElement({ elementType: 'label', for: 'coverPictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
-    let coverPicProgressBar = createBarLoader()
-    coverPhotoDiv.append(selectCoverBtn, coverPictureInputElement, coverPicProgressBar)
-
-    coverPhotoActions.prepend(photoActionEdit)
-    editButton.addEventListener('click', () => { editControls.classList.toggle('visible'); editControls.focus() })
-    editControls.addEventListener('blur', () => { editControls.classList.remove('visible') })
-
-    changePictureBtn.addEventListener('click', () => { selectCoverBtn.classList.add('visible'); selectCoverBtn.focus(); })
-    selectCoverBtn.addEventListener('blur', () => { selectCoverBtn.classList.remove('visible'); })
-
-    // listen to coverPhotoUpload
-    var coverPictureUploader = new SocketIOFileUpload(socket);
-    coverPictureUploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
-    coverPictureUploader.listenOnInput(coverPictureInputElement);
-    // Do something on start progress:
-    coverPictureUploader.addEventListener("start", function (event) {
-      event.file.meta.fileRole = "coverPicture";
-      coverPicProgressBar.classList.add('visible');
-    });
-    // Do something on upload progress:
-    coverPictureUploader.addEventListener("progress", function (event) {
-      var percent = (event.bytesLoaded / event.file.size) * 100;
-      coverPicProgressBar.setPercentage(percent.toFixed(2))
-      console.log("File is", percent.toFixed(2), "percent loaded");
-    });
-    // Do something when a file is uploaded:
-    coverPictureUploader.addEventListener("complete", function (event) {
-      // console.log("complete", event.detail.name);
-      coverPicProgressBar.classList.remove('visible');
-      console.log("coverPhoto", event);
-      let newCoverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: 'private/cover/' + event.detail.name })
-      coverPhoto.after(newCoverPhoto);
-      coverPhoto.remove();
-      coverPhoto = newCoverPhoto;
-    });
-
-
-    //-------------------------------------------------------------------
-    // profile edit Buttons
-    let profileEditButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
-    let profileDeleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
-    let profileChangePictureBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
-    let profileEditControls = createElement({ elementType: 'div', class: 'editControls', tabIndex: "0", childrenArray: [profileDeleteBtn, profileChangePictureBtn] })
-    let profilePhotoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [profileEditButton, profileEditControls] })
-    let profilePhotoActions = createElement({ elementType: 'div', class: 'photoActions', childrenArray: [profilePhotoActionEdit] })
-
-    let profilePictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'profilePictureInputElement', class: 'hidden' })
-    let selectPictureBtn = createElement({ elementType: 'label', for: 'profilePictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
-    selectPictureBtn.addEventListener('blur', () => { selectPictureBtn.classList.remove('visible') })
-    let circleLoader = createCircleLoader()
-    userProfileDiv.append(selectPictureBtn, profilePictureInputElement, circleLoader)
-
-    userProfileDiv.prepend(profilePhotoActions)
-    profileEditButton.addEventListener('click', () => { profileEditControls.classList.toggle('visible'); profileEditControls.focus() })
-    profileEditControls.addEventListener('blur', () => { profileEditControls.classList.remove('visible') })
-    profileChangePictureBtn.addEventListener('click', () => { selectPictureBtn.classList.add('visible'); selectPictureBtn.focus(); })
-
-    // listen to coverPhotoUpload
-    var profilePictureUploader = new SocketIOFileUpload(socket);
-    profilePictureUploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
-    profilePictureUploader.listenOnInput(profilePictureInputElement);
-    // Do something on start progress:
-    profilePictureUploader.addEventListener("start", function (event) {
-      event.file.meta.fileRole = "profilePicture";
-      circleLoader.classList.add('visible');
-    });
-    // Do something on upload progress:
-    profilePictureUploader.addEventListener("progress", function (event) {
-      var percent = (event.bytesLoaded / event.file.size) * 100;
-      circleLoader.setPercentage(percent.toFixed(2))
-      console.log("File is", percent.toFixed(2), "percent loaded");
-    });
-    // Do something when a file is uploaded:
-    profilePictureUploader.addEventListener("complete", function (event) {
-      // console.log("complete", event.detail.name);
-      circleLoader.classList.remove('visible');
-      console.log("profilePhoto", event);
-      let newProfilePhoto = createElement({ elementType: 'img', class: 'profilePicture', src: 'private/profiles/' + event.detail.name })
-
-      profilePicture.after(newProfilePhoto);
-      profilePicture.remove();
-      profilePicture = newProfilePhoto;
-    });
-
-    coverDeleteBtn.addEventListener('click', () => {
-      socket.emit('deleteCoverPicture')
-      let newCoverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' })
-      coverPhoto.after(newCoverPhoto);
-      coverPhoto.remove();
-      coverPhoto = newCoverPhoto;
-
+  function displayNotification(notificationConfig) {
+    let { title, body, actions, obligatoryActions, delay, tone } = notificationConfig
+    let { iconClass, titleText } = title
+    let { shortOrImage, bodyContent } = body
+    let { shortOrImagType, shortOrImagContent } = shortOrImage
+    let { onDisplay, onEnd, onHide } = obligatoryActions
+    let notificationsDiv = document.getElementById('notificationsDiv')
+    //Title
+    let titleIcon = createElement({ elementType: 'i', class: iconClass })
+    let titleTextDiv = createElement({ elementType: 'div', class: 'notificationTitleText', textContent: titleText })
+    let notificationTitle = createElement({ elementType: 'div', class: 'notificationTitle', childrenArray: [titleIcon, titleTextDiv] })
+    //Body
+    let profilePicture;
+    if (shortOrImagType == 'short') { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: shortOrImagContent }) }
+    if (shortOrImagType == 'image') { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: shortOrImagContent }) }
+    let notificationContent = createElement({ elementType: 'div', class: 'notificationContent', textContent: bodyContent })
+    let notificationBody = createElement({ elementType: 'div', class: 'notificationBody', childrenArray: [profilePicture, notificationContent] })
+    let notification;
+    //Actions
+    let buttonsArray = [];
+    actions.forEach(action => {
+      let { type, displayText, actionFunction } = action
+      let actionBtn = createElement({ elementType: 'button', class: type, textContent: displayText })
+      actionBtn.addEventListener('click', () => { actionFunction(); notificationStop(); })
+      buttonsArray.push(actionBtn)
     })
+    let dismissbutton = createElement({ elementType: 'button', class: 'normal', textContent: 'Hide' })
+    buttonsArray.push(dismissbutton)
+    let notificationActions = createElement({ elementType: 'div', class: 'notificationActions', childrenArray: buttonsArray })
+    //progressbar
+    let notificationProgressBar = createElement({ elementType: 'div', class: 'notificationProgressBar' })
+    //notification Element
+    notification = createElement({ elementType: 'div', class: 'notification', childrenArray: [notificationTitle, notificationBody, notificationActions, notificationProgressBar] })
+    notificationsDiv.append(notification)
+    // run the On display event
+    onDisplay()
+    let notificationTone;
+    if (tone == 'notification') { notificationTone = new Audio('/private/audio/imperiumLineNotification.mp3'); notificationTone.play() }
+    if (tone == 'call') {
+      notificationTone = new Audio('/private/audio/imperiumLineCall.mp3'); notificationTone.play()
+      notificationTone.addEventListener('ended', function () { this.currentTime = 0; this.play(); }, false);
+    }
+    const notificationStop = () => { if (notificationTone) { notificationTone.currentTime = 0; notificationTone.pause(); notification.remove() } }
 
-    profileDeleteBtn.addEventListener('click', () => {
-      socket.emit('deleteProfilePicture');
-      let newProfilePhoto = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-      profilePicture.after(newProfilePhoto);
-      profilePicture.remove();
-      profilePicture = newProfilePhoto;
-    })
-
-  } else {
-    let universalCallButtons = createElement({
-      elementType: 'div', class: 'universalCallButtons', childrenArray: [
-        createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })], onclick: () => { chat(userInfo.userID) } }),
-        createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(userInfo.userID, true, false, false, false, null) } }),
-        createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userInfo.userID, true, true, false, false, null) } })
-      ]
-    })
-    userSecondaryInfo.prepend(universalCallButtons)
+    dismissbutton.addEventListener('click', () => { notificationStop(); onHide(); })
+    setTimeout(() => { notificationStop(); onEnd(); }, delay);
+    let interval = 10 //milliseconds
+    let control = delay
+    let countDown = setInterval(() => {
+      control = control - interval;
+      let width = (control / delay) * 100
+      notificationProgressBar.style.width = width + '%'
+      if (width < 1) clearInterval(countDown)
+    }, interval);
+    notification.notificationStop = notificationStop
+    return notification
   }
-  let inscreenPanelContainer = document.getElementById('inscreenPanelContainer')
 
-  inscreenPanelContainer.append(mainCentralProfileDiv)
-  await new Promise(resolve => setTimeout(resolve, 20))
-  inscreenPanelContainer.classList.add('popupActive')
-  mainCentralProfileDiv.classList.add('visible')
-  closeButton.addEventListener('click', async () => {
-    mainCentralProfileDiv.classList.remove('visible')
-    inscreenPanelContainer.classList.remove('popupActive')
-    await new Promise(resolve => setTimeout(resolve, 3000))
-    mainCentralProfileDiv.remove()
-  })
-  openProfileDiv = mainCentralProfileDiv;
-  return mainCentralProfileDiv
-}
-
-// Array manipulators
-function findNonNullNonUndefined(array) {
-  let firstBestValue = null;
-  for (let i = 0; i < array.length; i++) { if (array[i] != undefined && array[i] != null) { return array[i] } }
-  return firstBestValue;
-}
-
-function addIndexAndLabelAsName(array) {
-  for (let i = 0; i < array.length; i++) { array[i].id = i; array[i].name = array[i].label; }
-  return array;
-}
-
-function createBarLoader() {
-  let progress_value = createElement({ elementType: 'div', class: 'progress-value' })
-  let number = createElement({ elementType: 'div', class: 'number' })
-  let progress = createElement({ elementType: 'div', class: 'progress', childrenArray: [progress_value, number] })
-  progress.setPercentage = (percentage) => { number.textContent = percentage + '%'; progress_value.style.width = percentage + '%'; }
-  return progress
-}
-
-function createCircleLoader() {
-  let value_container = createElement({ elementType: 'div', class: 'value-container' })
-  let circular_progress = createElement({ elementType: 'div', class: 'circular-progress', childrenArray: [value_container] })
-  let progress = createElement({ elementType: 'div', class: 'progressBar', childrenArray: [circular_progress] })
-  progress.setPercentage = (percentage) => {
-    value_container.textContent = percentage + '%';
-    circular_progress.style.background = `conic-gradient(#4d5bf9 ${percentage * 3.6}deg, #cadcff ${percentage * 3.6}deg )`
-  }
-  return progress
-}
-// window.onbeforeunload = function () {
-//   deleteAllCookies()
-//   return 'Are you sure you want to leave?';
-// };
-// function deleteAllCookies() {
-//   var cookies = document.cookie.split(";");
-
-//   for (var i = 0; i < cookies.length; i++) {
-//     var cookie = cookies[i];
-//     var eqPos = cookie.indexOf("=");
-//     var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-//     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-//   }
-// }
-
-////////////// EVENTS SCHEDULER //////////////////////
-let calendarObject = {}
-let displayedCalendarDays = []
-let eventSectionObject = createCalendarEventSection()
-socket.on('updateCalendar', (calendarEventObj => {
-  calendarObject = calendarEventObj
-  eventSectionObject.renderCalendar()
-  // generate a notification if an update happens
+  //exemplary app entry Notification Code
   let notification = displayNotification({
     title: { iconClass: 'bx bxs-door-open', titleText: 'Welcome' },
     body: {
-      shortOrImage: { shortOrImagType: 'image', shortOrImagContent: '/images/calendar.png' },
-      bodyContent: 'Some event changes happened to your calendar click on "Open Calendar" to check changes.'
+      shortOrImage: { shortOrImagType: 'image', shortOrImagContent: '/private/profiles/group.jpeg' },
+      bodyContent: 'Welcome to ImperiumLine.com, an ezy way to connect with people and teams that/where you belong/care. Enjoy the app'
     },
     actions: [
-      { type: 'confirm', displayText: 'Open Calendar', actionFunction: showTimeSchedulingSection }
+      // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
     ],
     obligatoryActions: {
       onDisplay: () => { console.log('Notification Displayed') },
       onHide: () => { console.log('Notification Hidden') },
       onEnd: () => { console.log('Notification Ended') },
     },
-    delay: 5000,
+    delay: 60000,
     tone: 'notification'
   })
-}))
-socket.on('initialFillCalendar', (calendarEventObj => {
-  calendarObject = calendarEventObj
-  let deleteOldEvents = true;
-  for (const key in calendarEventObj) {
-    if (Object.hasOwnProperty.call(calendarEventObj, key)) {
-      const dayEventsArray = calendarEventObj[key];
-      if (dayEventsArray.length > 0) {
-        eventSectionObject.addDayOnScheduleList(key, dayEventsArray, deleteOldEvents)
-        deleteOldEvents = false; // done in order to clear the container before filling
+
+
+  function createOngoingCallScreen() {
+    // leftPart
+    let leftPartHeaderDivTitle = createElement({ elementType: 'div', class: 'leftPartHeaderDivTitle' })
+    let inviteSomeone = createElement({
+      type: 'button',
+      class: 'inviteSomeone',
+      childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' }), createElement({ elementType: 'p', textContent: 'invite Someone' })]
+    })
+    let presenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem headerItemSelected', textContent: 'Present (0)' })
+    let absenceSelectorBtn = createElement({ elementType: 'div', class: 'leftHeaderItem', textContent: 'Absent (0)' })
+
+    let attendanceTitleSection = createElement({ elementType: 'div', class: 'attendanceTitleSection', childrenArray: [presenceSelectorBtn, absenceSelectorBtn] })
+    let presentMembersDiv = createElement({ elementType: 'div', class: 'presentMembersDiv', id: 'presentMembersDiv' })
+    let absentMembersDiv = createElement({ elementType: 'div', class: 'absentMembersDiv', id: 'absentMembersDiv' })
+    let attendanceContentDiv = createElement({ elementType: 'div', class: 'attendanceContentDiv', childrenArray: [presentMembersDiv, absentMembersDiv] })
+
+    let leftPart = createElement({ elementType: 'div', class: 'leftPart', textContent: 'Attendance', childrenArray: [leftPartHeaderDivTitle, inviteSomeone, attendanceTitleSection, attendanceContentDiv] })
+    //call-container
+
+    return {
+      leftPartHeaderDivTitle: leftPartHeaderDivTitle,
+      inviteSomeone: inviteSomeone,
+      attendanceTitleSection: attendanceTitleSection,
+    }
+  }
+
+  function createTopBar(callInfo, myInfo) {
+    let { callUniqueId, callType, callTitle, isTeam } = callInfo
+    let callScreenHeader = document.getElementById('callScreenHeader')
+    let MeetingTitle = createElement({ elementType: 'div', class: 'MeetingTitle', textContent: callTitle })
+    let headerLeftPart = createElement({ elementType: 'div', class: 'headerLeftPart', childrenArray: [MeetingTitle] })
+    let input = createElement({ elementType: 'input', placeHolder: 'Search users' })
+    let doneBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-check' }), createElement({ elementType: 'p', textContent: 'Done' })] })
+    let searchField = createElement({ elementType: 'div', class: 'searchField', childrenArray: [input, doneBtn] })
+    let invitedDiv = createElement({ elementType: 'div', class: 'invitedDiv', textContent: 'Type to search ...' })
+    input.addEventListener('input', () => {
+      var searchText = input.value;
+      console.log('searching People', callUniqueId, searchText)
+      socket.emit('searchPeopleToInviteToCall', { callUniqueId, searchText });
+    })
+    let popDown = createElement({ elementType: 'div', class: 'popdown', childrenArray: [searchField, invitedDiv] })
+    let inviteSomeone = createElement({
+      elementType: 'button',
+      class: 'inviteSomeone',
+      childrenArray: [
+        createElement({ elementType: 'i', class: 'bx bx-plus' }),
+        createElement({ elementType: 'p', textContent: 'Add Participants' }),
+      ],
+      onclick: () => {
+        input.focus();
+        popDown.classList.toggle('popdownDisplayed');
       }
-    }
+    })
+    doneBtn.addEventListener('click', () => { popDown.classList.toggle('popdownDisplayed') })
+    let headerRightPart = createElement({ elementType: 'div', class: 'headerRightPart', childrenArray: [inviteSomeone, popDown] })
+    callScreenHeader.textContent = '';
+    let showLeftpartBtn = createElement({ elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-list-check' })], onclick: showCallLeftPart })
+    let showRightpartBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-chat' })], onclick: showCallRightPart })
+    callScreenHeader.append(showLeftpartBtn, headerLeftPart, headerRightPart, showRightpartBtn)
+    return { callScreenHeader, invitedDiv }
   }
-  eventSectionObject.renderCalendar()
-}))
-socket.on('dayEvents', (eventObj => {
-  for (const key in eventObj) {
-    if (Object.hasOwnProperty.call(eventObj, key)) {
-      const dayEventsArray = eventObj[key];
-      eventSectionObject.displayDayOnlyOnSchedule(key, dayEventsArray)
+
+  async function createInScreenPopup(constraints) {
+    let { icon, title, contentElementsArray, actions } = constraints
+    // actions is an array of a button and a function of what it does
+    if (openPopupDiv) openPopupDiv.closePopup()
+    let defaultClosebtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
+    let headerActions = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [defaultClosebtn] })
+    let headerText = createElement({ elementType: 'div', class: 'headerText', childrenArray: [createElement({ elementType: 'i', class: icon }), createElement({ elementType: 'p', textContent: title })] })
+    let popupHeader = createElement({ elementType: 'div', class: 'popupTitle', childrenArray: [headerText, headerActions] })
+    let popupBody = createElement({ elementType: 'div', class: 'popupBody', childrenArray: contentElementsArray })
+    let bottomButtons = actions.map(action => { action.element.addEventListener('click', action.functionCall); return action.element; })
+    let popupBottom = createElement({ elementType: 'div', class: 'popupBottom', childrenArray: bottomButtons })
+    let inScreenPanel = createElement({ elementType: 'div', class: 'inScreenPanel', childrenArray: [popupHeader, popupBody, popupBottom] })
+
+    let inscreenPanelContainer = document.getElementById('inscreenPanelContainer')
+    inscreenPanelContainer.append(inScreenPanel)
+    await new Promise(resolve => setTimeout(resolve, 20)) // wait 20 millisecons / helps the animation
+    inScreenPanel.classList.add('visible') // add the visibility class so that the item transitions into screen
+    inscreenPanelContainer.classList.add('popupActive') // to activate the background blurr and prevent interaction with the app
+    async function removePopup() {
+      inScreenPanel.classList.remove('visible')
+      inscreenPanelContainer.classList.remove('popupActive')
+      await new Promise(resolve => setTimeout(resolve, 3000))
+      inScreenPanel.remove()
     }
+    defaultClosebtn.addEventListener('click', removePopup)
+    inScreenPanel.closePopup = removePopup
+    openPopupDiv = inScreenPanel
+    return inScreenPanel
   }
-}))
-function createCalendarEventSection() {
-  time_scheduling_panel.textContent = ''
-  let today = new Date();
-  let date = new Date();
-  today.setHours(0, 0, 0, 0);
 
-  let weekDays = createElement({
-    elementType: 'div', class: 'weekdays', childrenArray: [
-      createElement({ elementType: 'div', class: 'weekday-name', title: 'Sunday', textContent: 'Su' }),
-      createElement({ elementType: 'div', class: 'weekday-name', title: 'Monday', textContent: 'Mo' }),
-      createElement({ elementType: 'div', class: 'weekday-name', title: 'Tuesday', textContent: 'Tu' }),
-      createElement({ elementType: 'div', class: 'weekday-name', title: 'Wednesday', textContent: 'We' }),
-      createElement({ elementType: 'div', class: 'weekday-name', title: 'Thursday', textContent: 'Th' }),
-      createElement({ elementType: 'div', class: 'weekday-name', title: 'Friday', textContent: 'Fr' }),
-      createElement({ elementType: 'div', class: 'weekday-name', title: 'Saturday', textContent: 'Sa' }),
-    ]
-  })
-  let calendarDays = createElement({ elementType: 'div', class: 'calendar-days' })
-  // card components
-  let calendarTitle = createElement({ elementType: 'p', textContent: date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' }) })
-  let todayButton = createElement({
-    elementType: 'button', textContent: 'Today', onclick: () => {
-      date = new Date();
-      updateCalendarDisplay();
+  async function createProfilePopup(userInfo) {
+    // delete the existing Div
+    if (openProfileDiv) openProfileDiv.closePopup()
+    //coverPhotoDiv
+    let coverPhoto;
+    if (userInfo.cover == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' }) }
+    else { coverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: userInfo.cover }) }
+    // close div button
+    let closeButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
+    let photoActionClose = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [closeButton] })
+    let coverPhotoActions = createElement({ elementType: 'div', class: 'photoActions', childrenArray: [photoActionClose] })
+    let coverPhotoDiv = createElement({ elementType: 'div', class: 'coverPhotoDiv', childrenArray: [coverPhoto, coverPhotoActions] })
+
+    let profilePicture;
+    if (userInfo.profilePicture == null) { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) }) }
+    else { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: userInfo.profilePicture }) }
+
+    let userProfileDiv = createElement({ elementType: 'div', class: 'userProfileDiv', childrenArray: [profilePicture] })
+    // if user is online
+    if (userInfo.status != 'offline') {
+      let onlineIndicator = createElement({ elementType: 'div', class: 'onlineIndicator' })
+      userProfileDiv.append(onlineIndicator)
     }
-  })
-  let mobileButton = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-arrow-back' })], onclick: showMainScheduleList })
-  let calendarToolBar = createElement({ elementType: 'div', class: 'calendar-toolbar', childrenArray: [todayButton, calendarTitle, mobileButton] })
-  let calendar = createElement({ elementType: 'div', class: 'calendar', childrenArray: [weekDays, calendarDays] })
-  let yearMinus = createElement({
-    elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-minus' })], onclick: () => {
-      date = new Date(date.setFullYear(date.getFullYear() - 1))
-      updateCalendarDisplay();
-    }
-  })
-  let yearPlus = createElement({
-    elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })], onclick: () => {
-      date = new Date(date.setFullYear(date.getFullYear() + 1))
-      updateCalendarDisplay();
-    }
-  })
-  let yearAdjust = createElement({ elementType: 'div', class: 'goto-option', childrenArray: [yearMinus, createElement({ elementType: 'p', textContent: 'Year' }), yearPlus] })
-  let monthMinus = createElement({
-    elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-minus' })], onclick: () => {
-      date.setDate(1);
-      date.setMonth(date.getMonth() - 1);
-      updateCalendarDisplay();
-    }
-  })
-  let monthPlus = createElement({
-    elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })], onclick: () => {
-      date.setDate(1)
-      date.setMonth(date.getMonth() + 1);
-      updateCalendarDisplay();
-    }
-  })
-  let monthAdjust = createElement({ elementType: 'div', class: 'goto-option', childrenArray: [monthMinus, createElement({ elementType: 'p', textContent: 'Month' }), monthPlus] })
-  let jumpButtons = createElement({ elementType: 'div', class: 'goto-buttons', childrenArray: [yearAdjust, monthAdjust] })
-  let calendarCard = createElement({ elementType: 'div', class: 'card', childrenArray: [calendarToolBar, calendar, jumpButtons] })
-  // main
-  let selectionPanel = createElement({ elementType: 'div', class: 'selectionPanel mobileHiddenElement', childrenArray: [calendarCard] })
 
-  // main schedule List
-  let gotoCalendatButton = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-calendar' })], onclick: showSelectionPanel })
-  let mainScheduleListTitle = createElement({ elementType: 'div', class: 'mainScheduleListTitle', textContent: 'Scheduled Events' })
-  let allEventsBtn = createElement({ elementType: 'button', class: 'allEventsBtn', textContent: 'Show All', onclick: () => { socket.emit('initialFillCalendar', {}) } })
-  let newEventBtn = createElement({
-    elementType: 'button', class: 'allEventsBtn', textContent: 'New + ', onclick: () => {
-      // show a popup to create a new event
+    // userPrimaryInfo
+    let name = createElement({ elementType: 'div', class: 'name', textContent: userInfo.name + ' ' + userInfo.surname })
+    let email = createElement({ elementType: 'a', class: 'email', href: "mailto:" + userInfo.email, textContent: userInfo.email })
+    let position = createElement({ elementType: 'div', class: 'position', textContent: userInfo.role })
+    let userPrimaryInfo = createElement({ elementType: 'div', class: 'userPrimaryInfo', childrenArray: [name, email, position] })
 
-      let submitButton = createElement({ elementType: 'button', textContent: 'Create Event' })
+    // organization
+    let memberProfilePicture
+    if (userInfo.company.logo == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.company.name.substring(0, 2) })
+    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.company.logo })
+    let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.company.name })
+    let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.company.description })
+    let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
+    let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole] })
+    let presentMembersDiv = createElement({ elementType: 'div', class: 'presentMembersDiv', childrenArray: [presentMember] })
 
-      // <div class="scheduleBody">
-      //       <div class="detailSection remTop alignItems">
-      //           <i class='bx bx-sync'></i>
-      //           <div id="recurrenceInput"></div>
-      //       </div>
-      //       <div class="detailSection alignItems">
-      //           <i class='bx bxs-map-pin'></i>
-      //           <input type="text" name="location" id="eventLocation" placeHolder="Location" class="textField">
-      //       </div>
-      //       <div class="detailSection alignItems">
-      //           <i class='bx bxs-tag-alt'></i>
-      //           <input type="text" name="context" id="contextField" placeHolder="Context" class="textField">
-      //       </div>
-      //       <div class="detailSection alignItems">
-      //           <i class='bx bx-link'></i>
-      //           <input type="text" name="Link" id="linkField" placeHolder="Meeting Link" class="textField">
-      //       </div>
+    let userSecondaryInfo = createElement({
+      elementType: 'div', class: 'userSecondaryInfo', childrenArray: [presentMembersDiv]
+    })
+    // userDataDiv
+    let userDataDiv = createElement({ elementType: 'div', class: 'userDataDiv', childrenArray: [userProfileDiv, userPrimaryInfo, userSecondaryInfo] })
 
-      //       <div class="detailSection alignItems">
-      //           <i class='bx bxs-user-circle'></i>
-      //           <div class="selectedUsersDiv" id="selectedUsersDiv">
-      //           </div>
-      //       </div>
+    //combine cover with user profile
+    let mainCentralProfileDiv = createElement({ elementType: 'div', class: 'mainCentralProfileDiv', childrenArray: [coverPhotoDiv, userDataDiv] })
 
-      //       <div class="detailSection alignItems">
-      //           <i class='bx bx-user-plus'></i>
-      //           <input type="text" name="Link" id="addMembersField" placeHolder="Add Members" class="textField"
-      //               autocomplete="off">
-      //           <div class="invitedMembersDiv iis-visible" id="invitedMembersDiv">
+    if (userInfo.userID == mySavedID) {
+      // cover edit - buttons
+      let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+      let coverDeleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
+      let changePictureBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
+      let editControls = createElement({ elementType: 'div', class: 'editControls', tabIndex: "0", childrenArray: [coverDeleteBtn, changePictureBtn] })
+      let photoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [editButton, editControls] })
 
-      //           </div>
-      //       </div>
+      let coverPictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'coverPictureInputElement', class: 'hidden' })
+      let selectCoverBtn = createElement({ elementType: 'label', for: 'coverPictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
+      let coverPicProgressBar = createBarLoader()
+      coverPhotoDiv.append(selectCoverBtn, coverPictureInputElement, coverPicProgressBar)
 
-      //       <div class="detailSection">
-      //           <i class='bx bx-detail'></i>
-      //           <textarea id="detailsField" name="txtname" class="textField" rows="4" cols="50" maxlength="200"
-      //               placeHolder="Description"></textarea>
-      //       </div>
+      coverPhotoActions.prepend(photoActionEdit)
+      editButton.addEventListener('click', () => { editControls.classList.toggle('visible'); editControls.focus() })
+      editControls.addEventListener('blur', () => { editControls.classList.remove('visible') })
 
-      let newEventCreation = {}
-      // default values
-      // newEventCreation.startTime
-      // newEventCreation.endTime
-      // newEventCreation.recurrenceType
-      newEventCreation.occurrence = 1
-      newEventCreation.startRecurrenceDate = formatDate(new Date()).substring(0, 10)
-      newEventCreation.endRecurrenceDate = formatDate(new Date()).substring(0, 10)
-      newEventCreation.type
-      newEventCreation.oneTimeDate = formatDate(new Date()).substring(0, 5)
-      newEventCreation.startTime = formatDate(new Date()).substring(-3, 10)
-      newEventCreation.endTime = formatDate(new Date()).substring(-3, 10)
+      changePictureBtn.addEventListener('click', () => { selectCoverBtn.classList.add('visible'); selectCoverBtn.focus(); })
+      selectCoverBtn.addEventListener('blur', () => { selectCoverBtn.classList.remove('visible'); })
 
-      // title
-      let titleInput = createElement({ elementType: 'input', class: 'textField', name: 'title', type: 'text', placeHolder: 'Title' })
-      let titleBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [titleInput] })
-
-      // event type
-      let eventType = createElement({ elementType: 'div', class: 'eventType flex-1' })
-      let eventTypeBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [eventType] })
-      goodselect(eventType, {
-        availableOptions: [{ id: 1, name: "Meeting" }, { id: 2, name: "Task" }],
-        placeHolder: "Meeting Type",
-        selectorWidth: '100%',
-        onOptionChange: (option) => { option == null ? newEventCreation.type = null : newEventCreation.type = option.id }
+      // listen to coverPhotoUpload
+      var coverPictureUploader = new SocketIOFileUpload(socket);
+      coverPictureUploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
+      coverPictureUploader.listenOnInput(coverPictureInputElement);
+      // Do something on start progress:
+      coverPictureUploader.addEventListener("start", function (event) {
+        event.file.meta.fileRole = "coverPicture";
+        coverPicProgressBar.classList.add('visible');
       });
-      // start - end time
-      let timeEventStartTimeInput = createElement({ elementType: 'input', class: 'flex-1', id: 'timeEventStartTimeInput', placeHolder: 'Start Time' })
-      let timeEventEndTimeInput = createElement({ elementType: 'input', class: 'flex-1', id: 'timeEventEndTimeInput', placeHolder: 'End Time' })
-      let timeStartEndDiv = createElement({ elementType: 'div', class: 'onTimeStartEndDiv flex flex-Wrap flex-gap-1-rem full-width', childrenArray: [timeEventStartTimeInput, timeEventEndTimeInput] })
-      let timeStartEndBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [timeStartEndDiv] })
-      let recurrenceInput = createElement({ elementType: 'div', class: 'recurrenceInput full-width' })
-      let recurrenceBlock = createElement({ elementType: 'div', class: 'editBlock flex-column', childrenArray: [recurrenceInput] })
-      let oneTimeEventDateInput = createElement({ elementType: 'input', id: 'oneTimeEventDateInput', textContent: 'One time Event Date', class: 'full-width' })
-      let recurrenceStartDateInput = createElement({ elementType: 'input', id: 'recurrenceStartDateInput', textContent: 'Recurrence Start Date', class: 'flex-1' })
-      let recurrenceEndDateInput = createElement({ elementType: 'input', id: 'recurrenceEndDateInput', textContent: 'Recurrence End Date', class: 'flex-1' })
-      let recurrenceDatesDiv = createElement({ elementType: 'div', class: 'recurrenceDatesDiv flex flex-Wrap flex-gap-1-rem full-width', childrenArray: [recurrenceStartDateInput, recurrenceEndDateInput] })
+      // Do something on upload progress:
+      coverPictureUploader.addEventListener("progress", function (event) {
+        var percent = (event.bytesLoaded / event.file.size) * 100;
+        coverPicProgressBar.setPercentage(percent.toFixed(2))
+        console.log("File is", percent.toFixed(2), "percent loaded");
+      });
+      // Do something when a file is uploaded:
+      coverPictureUploader.addEventListener("complete", function (event) {
+        // console.log("complete", event.detail.name);
+        coverPicProgressBar.classList.remove('visible');
+        console.log("coverPhoto", event);
+        let newCoverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: 'private/cover/' + event.detail.name })
+        coverPhoto.after(newCoverPhoto);
+        coverPhoto.remove();
+        coverPhoto = newCoverPhoto;
+      });
 
-      //recurrence type
-      let recurrenceTypeInput = createElement({ elementType: 'div', class: 'recurrenceTypeInput full-width' })
-      let recurrenceTypeBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [recurrenceTypeInput] })
-      goodselect(recurrenceTypeInput, {
-        availableOptions: [{ id: 1, name: "Every Day" }, { id: 2, name: "Every Week" }, { id: 3, name: "Monday - Friday" }, { id: 4, name: "Weekend" }],
-        placeHolder: "Recurrence Type",
-        selectorWidth: '100%',
-        onOptionChange: (option) => {
-          if (option == null) { newEventCreation.recurrenceType = null; return; }
-          newEventCreation.recurrenceType = option.id;
-        }
+
+      //-------------------------------------------------------------------
+      // profile edit Buttons
+      let profileEditButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+      let profileDeleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
+      let profileChangePictureBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
+      let profileEditControls = createElement({ elementType: 'div', class: 'editControls', tabIndex: "0", childrenArray: [profileDeleteBtn, profileChangePictureBtn] })
+      let profilePhotoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [profileEditButton, profileEditControls] })
+      let profilePhotoActions = createElement({ elementType: 'div', class: 'photoActions', childrenArray: [profilePhotoActionEdit] })
+
+      let profilePictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'profilePictureInputElement', class: 'hidden' })
+      let selectPictureBtn = createElement({ elementType: 'label', for: 'profilePictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
+      selectPictureBtn.addEventListener('blur', () => { selectPictureBtn.classList.remove('visible') })
+      let circleLoader = createCircleLoader()
+      userProfileDiv.append(selectPictureBtn, profilePictureInputElement, circleLoader)
+
+      userProfileDiv.prepend(profilePhotoActions)
+      profileEditButton.addEventListener('click', () => { profileEditControls.classList.toggle('visible'); profileEditControls.focus() })
+      profileEditControls.addEventListener('blur', () => { profileEditControls.classList.remove('visible') })
+      profileChangePictureBtn.addEventListener('click', () => { selectPictureBtn.classList.add('visible'); selectPictureBtn.focus(); })
+
+      // listen to coverPhotoUpload
+      var profilePictureUploader = new SocketIOFileUpload(socket);
+      profilePictureUploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
+      profilePictureUploader.listenOnInput(profilePictureInputElement);
+      // Do something on start progress:
+      profilePictureUploader.addEventListener("start", function (event) {
+        event.file.meta.fileRole = "profilePicture";
+        circleLoader.classList.add('visible');
+      });
+      // Do something on upload progress:
+      profilePictureUploader.addEventListener("progress", function (event) {
+        var percent = (event.bytesLoaded / event.file.size) * 100;
+        circleLoader.setPercentage(percent.toFixed(2))
+        console.log("File is", percent.toFixed(2), "percent loaded");
+      });
+      // Do something when a file is uploaded:
+      profilePictureUploader.addEventListener("complete", function (event) {
+        // console.log("complete", event.detail.name);
+        circleLoader.classList.remove('visible');
+        console.log("profilePhoto", event);
+        let newProfilePhoto = createElement({ elementType: 'img', class: 'profilePicture', src: 'private/profiles/' + event.detail.name })
+
+        profilePicture.after(newProfilePhoto);
+        profilePicture.remove();
+        profilePicture = newProfilePhoto;
+      });
+
+      coverDeleteBtn.addEventListener('click', () => {
+        socket.emit('deleteCoverPicture')
+        let newCoverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' })
+        coverPhoto.after(newCoverPhoto);
+        coverPhoto.remove();
+        coverPhoto = newCoverPhoto;
+
       })
 
-      goodselect(recurrenceInput, {
-        availableOptions: [{ id: 1, name: "One Time" }, { id: 2, name: "Repetitive (Regular)" }],
-        placeHolder: "Event Ocurrence",
-        selectorWidth: '100%',
-        onOptionChange: (option) => {
-          if (option == null) { newEventCreation.occurrence = option; return; }
-          newEventCreation.occurrence = option.id;
-          if (option?.id == 1) {
-            recurrenceBlock.appendChild(oneTimeEventDateInput) // append it to the recurrence block
-            recurrenceDatesDiv.remove();
-            recurrenceTypeBlock.remove();
-            // newEventCreation.recurrence = option.id;
-            flatpickr("#oneTimeEventDateInput", {
-              time_24hr: true,
-              enableTime: false,
-              noCalendar: false,
-              dateFormat: "Y-m-d",
-              //defaultDate: "13:30",
-              onChange: function (selectedDates, dateStr, instance) {
-                newEventCreation.oneTimeDate = dateStr;
-              }
-            });
-          }
-          else if (option?.id == 2) {
-            recurrenceBlock.appendChild(recurrenceDatesDiv)
-            oneTimeEventDateInput.remove();
-            recurrenceBlock.after(recurrenceTypeBlock)
-            flatpickr("#recurrenceStartDateInput", {
-              time_24hr: true,
-              enableTime: false,
-              noCalendar: false,
-              dateFormat: "Y-m-d",
-              //defaultDate: "13:30",
-              onChange: function (selectedDates, dateStr, instance) {
-                newEventCreation.startRecurrenceDate = dateStr;
-              }
-            });
-
-            flatpickr("#recurrenceEndDateInput", {
-              time_24hr: true,
-              enableTime: false,
-              noCalendar: false,
-              dateFormat: "Y-m-d",
-              //defaultDate: "13:30",
-              onChange: function (selectedDates, dateStr, instance) {
-                newEventCreation.endRecurrenceDate = dateStr;
-              }
-            });
-          }
-        }
+      profileDeleteBtn.addEventListener('click', () => {
+        socket.emit('deleteProfilePicture');
+        let newProfilePhoto = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+        profilePicture.after(newProfilePhoto);
+        profilePicture.remove();
+        profilePicture = newProfilePhoto;
       })
-      let contextInput = createElement({ elementType: 'input', class: 'textField', name: 'context', type: 'text', placeHolder: 'Context' })
-      let contextBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [contextInput] })
-      let locationInput = createElement({ elementType: 'input', class: 'textField', name: 'location', type: 'text', placeHolder: 'Location' })
-      let locationBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [locationInput] })
-      let linkInput = createElement({ elementType: 'input', class: 'textField', name: 'link', type: 'text', placeHolder: 'Link' })
-      let linkBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [linkInput] })
-      let detailsInput = createElement({ elementType: 'textarea', class: 'textField', name: 'details', type: 'text', placeHolder: 'Details' })
-      let detailsBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [detailsInput] })
-      ///////////Implementing the POPUP DIV
-      let icon = 'bx bxs-calendar'
-      let title = 'Create new event'
-      let contentElementsArray = [titleBlock, eventTypeBlock, timeStartEndBlock, recurrenceBlock, contextBlock, locationBlock, linkBlock, detailsBlock]
-      let actions = [
-        {
-          element: submitButton, functionCall: () => {
-            function returnEmptyString(stringArray) {
-              let emptyStringsArr = []
-              for (let i = 0; i < stringArray.length; i++) {
-                const string = stringArray[i];
-                console.log('string', string)
-                if (string?.trim() != '') { }
-                else emptyStringsArr.push(string)
-              }
-              return emptyStringsArr
-            }
-            let inviteList, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate
-            title = titleInput.value.trim()
-            newEventCreation.title = title
-            eventLocation = locationInput.value.trim() // not obligatory
-            newEventCreation.eventLocation = eventLocation
-            context = contextInput.value.trim()
-            newEventCreation.context = context
-            activityLink = linkInput.value.trim() // not obligatory
-            newEventCreation.activityLink = activityLink
-            details = detailsInput.value.trim() // not obligatory
-            newEventCreation.details = details
 
-            newEventCreation.inviteList = []
-            let emptyValues = returnEmptyString([title,
-              context,
-              newEventCreation.startTime,
-              newEventCreation.endTime,
-              // newEventCreation.recurrenceType,
-              // newEventCreation.occurrence,
-              newEventCreation.startRecurrenceDate,
-              newEventCreation.endRecurrenceDate,
-              // newEventCreation.type,
-              newEventCreation.oneTimeDate]
-            )
-            if (emptyValues.length > 0) console.log('not full', newEventCreation)
-            else console.log('full', newEventCreation)
-            socket.emit('newEventCreation', newEventCreation)
-          }
-        }
-      ]
-      let constraints = { icon, title, contentElementsArray, actions }
-      createInScreenPopup(constraints).then(editPopup => {
-        submitButton.addEventListener('click', editPopup.closePopup);
-        // prepare date elements
-        flatpickr("#timeEventStartTimeInput", {
-          time_24hr: true,
-          enableTime: true,
-          noCalendar: true,
-          dateFormat: "H:i",
-          onChange: function (selectedDates, dateStr, instance) {
-            newEventCreation.startTime = dateStr + ":00";
-          }
-        });
-
-        flatpickr("#timeEventEndTimeInput", {
-          time_24hr: true,
-          enableTime: true,
-          noCalendar: true,
-          dateFormat: "H:i",
-          onChange: function (selectedDates, dateStr, instance) {
-            newEventCreation.startTime = dateStr + ":00";
-          }
-        });
+    } else {
+      let universalCallButtons = createElement({
+        elementType: 'div', class: 'universalCallButtons', childrenArray: [
+          createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })], onclick: () => { initiateChat(userInfo.userID) } }),
+          createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(userInfo.userID, true, false, false, false, null) } }),
+          createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userInfo.userID, true, true, false, false, null) } })
+        ]
       })
+      userSecondaryInfo.prepend(universalCallButtons)
     }
-  })
+    let inscreenPanelContainer = document.getElementById('inscreenPanelContainer')
 
-  let ListHeader = createElement({ elementType: 'div', class: 'listHeader', childrenArray: [gotoCalendatButton, mainScheduleListTitle, allEventsBtn, newEventBtn] })
+    inscreenPanelContainer.append(mainCentralProfileDiv)
+    await new Promise(resolve => setTimeout(resolve, 20))
+    inscreenPanelContainer.classList.add('popupActive')
+    mainCentralProfileDiv.classList.add('visible')
 
-  let eventsContainer = createElement({ elementType: 'div', class: 'eventsContainer', childrenArray: [] })
-  let mainScheduleList = createElement({ elementType: 'div', class: 'mainScheduleList', childrenArray: [ListHeader, eventsContainer] })
-  let scheduleDetailsSection = createElement({ elementType: 'div', class: 'scheduleDetailsSection mobileHiddenElement tabletHiddenElement', childrenArray: [createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any event to see its more details here' })] })
-  let schedule_container = createElement({ elementType: 'div', class: 'schedule-container', childrenArray: [selectionPanel, mainScheduleList, scheduleDetailsSection] })
-  time_scheduling_panel.append(schedule_container)
-
-  function showSelectionPanel() {
-    selectionPanel.classList.remove('mobileHiddenElement')
-    mainScheduleList.classList.add('mobileHiddenElement')
-    scheduleDetailsSection.classList.add('mobileHiddenElement')
-    scheduleDetailsSection.classList.add('tabletHiddenElement')
-  }
-  function showMainScheduleList() {
-    selectionPanel.classList.add('mobileHiddenElement')
-    mainScheduleList.classList.remove('mobileHiddenElement')
-    scheduleDetailsSection.classList.add('mobileHiddenElement')
-    scheduleDetailsSection.classList.add('tabletHiddenElement')
-  }
-  function showScheduleDetailsSection() {
-    selectionPanel.classList.add('mobileHiddenElement')
-    mainScheduleList.classList.add('mobileHiddenElement')
-    scheduleDetailsSection.classList.remove('mobileHiddenElement')
-    scheduleDetailsSection.classList.remove('tabletHiddenElement')
+    async function closePopup(){
+      mainCentralProfileDiv.classList.remove('visible')
+      inscreenPanelContainer.classList.remove('popupActive')
+      await new Promise(resolve => setTimeout(resolve, 3000))
+      mainCentralProfileDiv.remove()
+    }
+    closeButton.addEventListener('click', closePopup)
+    mainCentralProfileDiv.closePopup = closePopup
+    openProfileDiv = mainCentralProfileDiv;
+    return mainCentralProfileDiv
   }
 
-  function updateCalendarDisplay() {
-    calendarTitle.textContent = date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
-    renderCalendar();
+  // Array manipulators
+  function findNonNullNonUndefined(array) {
+    let firstBestValue = null;
+    for (let i = 0; i < array.length; i++) { if (array[i] != undefined && array[i] != null) { return array[i] } }
+    return firstBestValue;
   }
 
-  function renderCalendar() {
-    const prevLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
-    const totalMonthDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-    const startWeekDay = new Date(date.getFullYear(), date.getMonth(), 0).getDay();
-    calendarDays.textContent = '';
-    let totalCalendarDay = 6 * 7;
-    for (let i = 0; i < totalCalendarDay; i++) {
-      let day = i - startWeekDay;
-      if (i <= startWeekDay) {  // adding previous month days
-        let dayDiv = createElement({ elementType: 'div', class: 'padding-day', textContent: prevLastDay + i - startWeekDay })
-        calendarDays.appendChild(dayDiv);
+  function addIndexAndLabelAsName(array) {
+    for (let i = 0; i < array.length; i++) { array[i].id = i; array[i].name = array[i].label; }
+    return array;
+  }
+
+  function createBarLoader() {
+    let progress_value = createElement({ elementType: 'div', class: 'progress-value' })
+    let number = createElement({ elementType: 'div', class: 'number' })
+    let progress = createElement({ elementType: 'div', class: 'progress', childrenArray: [progress_value, number] })
+    progress.setPercentage = (percentage) => { number.textContent = percentage + '%'; progress_value.style.width = percentage + '%'; }
+    return progress
+  }
+
+  function createCircleLoader() {
+    let value_container = createElement({ elementType: 'div', class: 'value-container' })
+    let circular_progress = createElement({ elementType: 'div', class: 'circular-progress', childrenArray: [value_container] })
+    let progress = createElement({ elementType: 'div', class: 'progressBar', childrenArray: [circular_progress] })
+    progress.setPercentage = (percentage) => {
+      value_container.textContent = percentage + '%';
+      circular_progress.style.background = `conic-gradient(#4d5bf9 ${percentage * 3.6}deg, #cadcff ${percentage * 3.6}deg )`
+    }
+    return progress
+  }
+  // window.onbeforeunload = function () {
+  //   deleteAllCookies()
+  //   return 'Are you sure you want to leave?';
+  // };
+  // function deleteAllCookies() {
+  //   var cookies = document.cookie.split(";");
+
+  //   for (var i = 0; i < cookies.length; i++) {
+  //     var cookie = cookies[i];
+  //     var eqPos = cookie.indexOf("=");
+  //     var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+  //     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  //   }
+  // }
+
+  ////////////// EVENTS SCHEDULER //////////////////////
+  let calendarObject = {}
+  let displayedCalendarDays = []
+  let eventSectionObject = createCalendarEventSection()
+  socket.on('updateCalendar', (calendarEventObj => {
+    calendarObject = calendarEventObj
+    eventSectionObject.renderCalendar()
+    // generate a notification if an update happens
+    let notification = displayNotification({
+      title: { iconClass: 'bx bxs-door-open', titleText: 'Welcome' },
+      body: {
+        shortOrImage: { shortOrImagType: 'image', shortOrImagContent: '/images/calendar.png' },
+        bodyContent: 'Some event changes happened to your calendar click on "Open Calendar" to check changes.'
+      },
+      actions: [
+        { type: 'confirm', displayText: 'Open Calendar', actionFunction: showTimeSchedulingSection }
+      ],
+      obligatoryActions: {
+        onDisplay: () => { console.log('Notification Displayed') },
+        onHide: () => { console.log('Notification Hidden') },
+        onEnd: () => { console.log('Notification Ended') },
+      },
+      delay: 5000,
+      tone: 'notification'
+    })
+  }))
+  socket.on('initialFillCalendar', (calendarEventObj => {
+    calendarObject = calendarEventObj
+    let deleteOldEvents = true;
+    for (const key in calendarEventObj) {
+      if (Object.hasOwnProperty.call(calendarEventObj, key)) {
+        const dayEventsArray = calendarEventObj[key];
+        if (dayEventsArray.length > 0) {
+          eventSectionObject.addDayOnScheduleList(key, dayEventsArray, deleteOldEvents)
+          deleteOldEvents = false; // done in order to clear the container before filling
+        }
       }
-      else if (i <= startWeekDay + totalMonthDay) { // adding this month days
-        date.setDate(day);
-        date.setHours(0, 0, 0, 0);
-        let dayClass = date.getTime() === today.getTime() ? 'current-day' : 'month-day';
-        let dateYYYYMMDD_ISO = formatDate(date).substring(0, 10)
-        console.log('dateYYYYMMDD_ISO', dateYYYYMMDD_ISO)
-        let contentClass = 'noMeaning';
-        if (calendarObject[dateYYYYMMDD_ISO]) contentClass = calendarObject[dateYYYYMMDD_ISO].length > 0 ? 'contentDay' : 'noMeaning';
-        let dayDiv = createElement({
-          elementType: 'div', class: contentClass + ' ' + dayClass, textContent: day + '', onclick: () => {
-            let ckickDateCheck = date;
-            ckickDateCheck.setDate(day);
-            socket.emit('dayEvents', dateYYYYMMDD_ISO)
-            showMainScheduleList()
+    }
+    eventSectionObject.renderCalendar()
+  }))
+  socket.on('dayEvents', (eventObj => {
+    for (const key in eventObj) {
+      if (Object.hasOwnProperty.call(eventObj, key)) {
+        const dayEventsArray = eventObj[key];
+        eventSectionObject.displayDayOnlyOnSchedule(key, dayEventsArray)
+      }
+    }
+  }))
+  function createCalendarEventSection() {
+    time_scheduling_panel.textContent = ''
+    let today = new Date();
+    let date = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let weekDays = createElement({
+      elementType: 'div', class: 'weekdays', childrenArray: [
+        createElement({ elementType: 'div', class: 'weekday-name', title: 'Sunday', textContent: 'Su' }),
+        createElement({ elementType: 'div', class: 'weekday-name', title: 'Monday', textContent: 'Mo' }),
+        createElement({ elementType: 'div', class: 'weekday-name', title: 'Tuesday', textContent: 'Tu' }),
+        createElement({ elementType: 'div', class: 'weekday-name', title: 'Wednesday', textContent: 'We' }),
+        createElement({ elementType: 'div', class: 'weekday-name', title: 'Thursday', textContent: 'Th' }),
+        createElement({ elementType: 'div', class: 'weekday-name', title: 'Friday', textContent: 'Fr' }),
+        createElement({ elementType: 'div', class: 'weekday-name', title: 'Saturday', textContent: 'Sa' }),
+      ]
+    })
+    let calendarDays = createElement({ elementType: 'div', class: 'calendar-days' })
+    // card components
+    let calendarTitle = createElement({ elementType: 'p', textContent: date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' }) })
+    let todayButton = createElement({
+      elementType: 'button', textContent: 'Today', onclick: () => {
+        date = new Date();
+        updateCalendarDisplay();
+      }
+    })
+    let mobileButton = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-arrow-back' })], onclick: showMainScheduleList })
+    let calendarToolBar = createElement({ elementType: 'div', class: 'calendar-toolbar', childrenArray: [todayButton, calendarTitle, mobileButton] })
+    let calendar = createElement({ elementType: 'div', class: 'calendar', childrenArray: [weekDays, calendarDays] })
+    let yearMinus = createElement({
+      elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-minus' })], onclick: () => {
+        date = new Date(date.setFullYear(date.getFullYear() - 1))
+        updateCalendarDisplay();
+      }
+    })
+    let yearPlus = createElement({
+      elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })], onclick: () => {
+        date = new Date(date.setFullYear(date.getFullYear() + 1))
+        updateCalendarDisplay();
+      }
+    })
+    let yearAdjust = createElement({ elementType: 'div', class: 'goto-option', childrenArray: [yearMinus, createElement({ elementType: 'p', textContent: 'Year' }), yearPlus] })
+    let monthMinus = createElement({
+      elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-minus' })], onclick: () => {
+        date.setDate(1);
+        date.setMonth(date.getMonth() - 1);
+        updateCalendarDisplay();
+      }
+    })
+    let monthPlus = createElement({
+      elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })], onclick: () => {
+        date.setDate(1)
+        date.setMonth(date.getMonth() + 1);
+        updateCalendarDisplay();
+      }
+    })
+    let monthAdjust = createElement({ elementType: 'div', class: 'goto-option', childrenArray: [monthMinus, createElement({ elementType: 'p', textContent: 'Month' }), monthPlus] })
+    let jumpButtons = createElement({ elementType: 'div', class: 'goto-buttons', childrenArray: [yearAdjust, monthAdjust] })
+    let calendarCard = createElement({ elementType: 'div', class: 'card', childrenArray: [calendarToolBar, calendar, jumpButtons] })
+    // main
+    let selectionPanel = createElement({ elementType: 'div', class: 'selectionPanel mobileHiddenElement', childrenArray: [calendarCard] })
+
+    // main schedule List
+    let gotoCalendatButton = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-calendar' })], onclick: showSelectionPanel })
+    let mainScheduleListTitle = createElement({ elementType: 'div', class: 'mainScheduleListTitle', textContent: 'Scheduled Events' })
+    let allEventsBtn = createElement({ elementType: 'button', class: 'allEventsBtn', textContent: 'Show All', onclick: () => { socket.emit('initialFillCalendar', {}) } })
+    let newEventBtn = createElement({
+      elementType: 'button', class: 'allEventsBtn', textContent: 'New + ', onclick: () => {
+        // show a popup to create a new event
+
+        let submitButton = createElement({ elementType: 'button', textContent: 'Create Event' })
+
+        let newEventCreation = {}
+        // default values
+        newEventCreation.occurrence = 1
+        newEventCreation.startRecurrenceDate = formatDate(new Date()).substring(0, 10)
+        newEventCreation.endRecurrenceDate = formatDate(new Date()).substring(0, 10)
+        newEventCreation.type
+        newEventCreation.oneTimeDate = formatDate(new Date()).substring(0, 5)
+        newEventCreation.startTime = formatDate(new Date()).substring(-3, 10)
+        newEventCreation.endTime = formatDate(new Date()).substring(-3, 10)
+
+        // title
+        let titleInput = createElement({ elementType: 'input', class: 'textField', name: 'title', type: 'text', placeHolder: 'Title' })
+        let titleBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [titleInput] })
+
+        // event type
+        let eventType = createElement({ elementType: 'div', class: 'eventType flex-1' })
+        let eventTypeBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [eventType] })
+        goodselect(eventType, {
+          availableOptions: [{ id: 1, name: "Meeting" }, { id: 2, name: "Task" }],
+          placeHolder: "Meeting Type",
+          selectorWidth: '100%',
+          onOptionChange: (option) => { option == null ? newEventCreation.type = null : newEventCreation.type = option.id }
+        });
+        // start - end time
+        let timeEventStartTimeInput = createElement({ elementType: 'input', class: 'flex-1', id: 'timeEventStartTimeInput', placeHolder: 'Start Time' })
+        let timeEventEndTimeInput = createElement({ elementType: 'input', class: 'flex-1', id: 'timeEventEndTimeInput', placeHolder: 'End Time' })
+        let timeStartEndDiv = createElement({ elementType: 'div', class: 'onTimeStartEndDiv flex flex-Wrap flex-gap-1-rem full-width', childrenArray: [timeEventStartTimeInput, timeEventEndTimeInput] })
+        let timeStartEndBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [timeStartEndDiv] })
+        let recurrenceInput = createElement({ elementType: 'div', class: 'recurrenceInput full-width' })
+        let recurrenceBlock = createElement({ elementType: 'div', class: 'editBlock flex-column', childrenArray: [recurrenceInput] })
+        let oneTimeEventDateInput = createElement({ elementType: 'input', id: 'oneTimeEventDateInput', textContent: 'One time Event Date', class: 'full-width' })
+        let recurrenceStartDateInput = createElement({ elementType: 'input', id: 'recurrenceStartDateInput', textContent: 'Recurrence Start Date', class: 'flex-1' })
+        let recurrenceEndDateInput = createElement({ elementType: 'input', id: 'recurrenceEndDateInput', textContent: 'Recurrence End Date', class: 'flex-1' })
+        let recurrenceDatesDiv = createElement({ elementType: 'div', class: 'recurrenceDatesDiv flex flex-Wrap flex-gap-1-rem full-width', childrenArray: [recurrenceStartDateInput, recurrenceEndDateInput] })
+
+        //recurrence type
+        let recurrenceTypeInput = createElement({ elementType: 'div', class: 'recurrenceTypeInput full-width' })
+        let recurrenceTypeBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [recurrenceTypeInput] })
+        goodselect(recurrenceTypeInput, {
+          availableOptions: [{ id: 1, name: "Every Day" }, { id: 2, name: "Every Week" }, { id: 3, name: "Monday - Friday" }, { id: 4, name: "Weekend" }],
+          placeHolder: "Recurrence Type",
+          selectorWidth: '100%',
+          onOptionChange: (option) => {
+            if (option == null) { newEventCreation.recurrenceType = null; return; }
+            newEventCreation.recurrenceType = option.id;
           }
         })
-        calendarDays.appendChild(dayDiv)
-      } else { // adding next month days
-        let dayDiv = createElement({ elementType: 'div', class: 'padding-day', textContent: (day - totalMonthDay) + "" })
-        calendarDays.appendChild(dayDiv)
+
+        goodselect(recurrenceInput, {
+          availableOptions: [{ id: 1, name: "One Time" }, { id: 2, name: "Repetitive (Regular)" }],
+          placeHolder: "Event Ocurrence",
+          selectorWidth: '100%',
+          onOptionChange: (option) => {
+            if (option == null) { newEventCreation.occurrence = option; return; }
+            newEventCreation.occurrence = option.id;
+            if (option?.id == 1) {
+              recurrenceBlock.appendChild(oneTimeEventDateInput) // append it to the recurrence block
+              recurrenceDatesDiv.remove();
+              recurrenceTypeBlock.remove();
+              // newEventCreation.recurrence = option.id;
+              flatpickr("#oneTimeEventDateInput", {
+                time_24hr: true,
+                enableTime: false,
+                noCalendar: false,
+                dateFormat: "Y-m-d",
+                //defaultDate: "13:30",
+                onChange: function (selectedDates, dateStr, instance) {
+                  newEventCreation.oneTimeDate = dateStr;
+                }
+              });
+            }
+            else if (option?.id == 2) {
+              recurrenceBlock.appendChild(recurrenceDatesDiv)
+              oneTimeEventDateInput.remove();
+              recurrenceBlock.after(recurrenceTypeBlock)
+              flatpickr("#recurrenceStartDateInput", {
+                time_24hr: true,
+                enableTime: false,
+                noCalendar: false,
+                dateFormat: "Y-m-d",
+                //defaultDate: "13:30",
+                onChange: function (selectedDates, dateStr, instance) {
+                  newEventCreation.startRecurrenceDate = dateStr;
+                }
+              });
+
+              flatpickr("#recurrenceEndDateInput", {
+                time_24hr: true,
+                enableTime: false,
+                noCalendar: false,
+                dateFormat: "Y-m-d",
+                //defaultDate: "13:30",
+                onChange: function (selectedDates, dateStr, instance) {
+                  newEventCreation.endRecurrenceDate = dateStr;
+                }
+              });
+            }
+          }
+        })
+        let contextInput = createElement({ elementType: 'input', class: 'textField', name: 'context', type: 'text', placeHolder: 'Context' })
+        let contextBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [contextInput] })
+        let locationInput = createElement({ elementType: 'input', class: 'textField', name: 'location', type: 'text', placeHolder: 'Location' })
+        let locationBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [locationInput] })
+        let linkInput = createElement({ elementType: 'input', class: 'textField', name: 'link', type: 'text', placeHolder: 'Link' })
+        let linkBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [linkInput] })
+        let detailsInput = createElement({ elementType: 'textarea', class: 'textField', name: 'details', type: 'text', placeHolder: 'Details' })
+        let detailsBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [detailsInput] })
+        ///////////Implementing the POPUP DIV
+        let icon = 'bx bxs-calendar'
+        let title = 'Create new event'
+        let contentElementsArray = [titleBlock, eventTypeBlock, timeStartEndBlock, recurrenceBlock, contextBlock, locationBlock, linkBlock, detailsBlock]
+        let actions = [
+          {
+            element: submitButton, functionCall: () => {
+              function returnEmptyString(stringArray) {
+                let emptyStringsArr = []
+                for (let i = 0; i < stringArray.length; i++) {
+                  const string = stringArray[i];
+                  console.log('string', string)
+                  if (string?.trim() != '') { }
+                  else emptyStringsArr.push(string)
+                }
+                return emptyStringsArr
+              }
+              let inviteList, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate
+              title = titleInput.value.trim()
+              newEventCreation.title = title
+              eventLocation = locationInput.value.trim() // not obligatory
+              newEventCreation.eventLocation = eventLocation
+              context = contextInput.value.trim()
+              newEventCreation.context = context
+              activityLink = linkInput.value.trim() // not obligatory
+              newEventCreation.activityLink = activityLink
+              details = detailsInput.value.trim() // not obligatory
+              newEventCreation.details = details
+
+              newEventCreation.inviteList = []
+              let emptyValues = returnEmptyString([title,
+                context,
+                newEventCreation.startTime,
+                newEventCreation.endTime,
+                // newEventCreation.recurrenceType,
+                // newEventCreation.occurrence,
+                newEventCreation.startRecurrenceDate,
+                newEventCreation.endRecurrenceDate,
+                // newEventCreation.type,
+                newEventCreation.oneTimeDate]
+              )
+              if (emptyValues.length > 0) console.log('not full', newEventCreation)
+              else console.log('full', newEventCreation)
+              socket.emit('newEventCreation', newEventCreation)
+            }
+          }
+        ]
+        let constraints = { icon, title, contentElementsArray, actions }
+        createInScreenPopup(constraints).then(editPopup => {
+          submitButton.addEventListener('click', editPopup.closePopup);
+          // prepare date elements
+          flatpickr("#timeEventStartTimeInput", {
+            time_24hr: true,
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            onChange: function (selectedDates, dateStr, instance) {
+              newEventCreation.startTime = dateStr + ":00";
+            }
+          });
+
+          flatpickr("#timeEventEndTimeInput", {
+            time_24hr: true,
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            onChange: function (selectedDates, dateStr, instance) {
+              newEventCreation.startTime = dateStr + ":00";
+            }
+          });
+        })
+      }
+    })
+
+    let ListHeader = createElement({ elementType: 'div', class: 'listHeader', childrenArray: [gotoCalendatButton, mainScheduleListTitle, allEventsBtn, newEventBtn] })
+
+    let eventsContainer = createElement({ elementType: 'div', class: 'eventsContainer', childrenArray: [] })
+    let mainScheduleList = createElement({ elementType: 'div', class: 'mainScheduleList', childrenArray: [ListHeader, eventsContainer] })
+    let scheduleDetailsSection = createElement({ elementType: 'div', class: 'scheduleDetailsSection mobileHiddenElement tabletHiddenElement', childrenArray: [createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any event to see its more details here' })] })
+    let schedule_container = createElement({ elementType: 'div', class: 'schedule-container', childrenArray: [selectionPanel, mainScheduleList, scheduleDetailsSection] })
+    time_scheduling_panel.append(schedule_container)
+
+    function showSelectionPanel() {
+      selectionPanel.classList.remove('mobileHiddenElement')
+      mainScheduleList.classList.add('mobileHiddenElement')
+      scheduleDetailsSection.classList.add('mobileHiddenElement')
+      scheduleDetailsSection.classList.add('tabletHiddenElement')
+    }
+    function showMainScheduleList() {
+      selectionPanel.classList.add('mobileHiddenElement')
+      mainScheduleList.classList.remove('mobileHiddenElement')
+      scheduleDetailsSection.classList.add('mobileHiddenElement')
+      scheduleDetailsSection.classList.add('tabletHiddenElement')
+    }
+    function showScheduleDetailsSection() {
+      selectionPanel.classList.add('mobileHiddenElement')
+      mainScheduleList.classList.add('mobileHiddenElement')
+      scheduleDetailsSection.classList.remove('mobileHiddenElement')
+      scheduleDetailsSection.classList.remove('tabletHiddenElement')
+    }
+
+    function updateCalendarDisplay() {
+      calendarTitle.textContent = date.toLocaleDateString("en-US", { month: 'long', year: 'numeric' });
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const prevLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
+      const totalMonthDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+      const startWeekDay = new Date(date.getFullYear(), date.getMonth(), 0).getDay();
+      calendarDays.textContent = '';
+      let totalCalendarDay = 6 * 7;
+      for (let i = 0; i < totalCalendarDay; i++) {
+        let day = i - startWeekDay;
+        if (i <= startWeekDay) {  // adding previous month days
+          let dayDiv = createElement({ elementType: 'div', class: 'padding-day', textContent: prevLastDay + i - startWeekDay })
+          calendarDays.appendChild(dayDiv);
+        }
+        else if (i <= startWeekDay + totalMonthDay) { // adding this month days
+          date.setDate(day);
+          date.setHours(0, 0, 0, 0);
+          let dayClass = date.getTime() === today.getTime() ? 'current-day' : 'month-day';
+          let dateYYYYMMDD_ISO = formatDate(date).substring(0, 10)
+          console.log('dateYYYYMMDD_ISO', dateYYYYMMDD_ISO)
+          let contentClass = 'noMeaning';
+          if (calendarObject[dateYYYYMMDD_ISO]) contentClass = calendarObject[dateYYYYMMDD_ISO].length > 0 ? 'contentDay' : 'noMeaning';
+          let dayDiv = createElement({
+            elementType: 'div', class: contentClass + ' ' + dayClass, textContent: day + '', onclick: () => {
+              let ckickDateCheck = date;
+              ckickDateCheck.setDate(day);
+              socket.emit('dayEvents', dateYYYYMMDD_ISO)
+              showMainScheduleList()
+            }
+          })
+          calendarDays.appendChild(dayDiv)
+        } else { // adding next month days
+          let dayDiv = createElement({ elementType: 'div', class: 'padding-day', textContent: (day - totalMonthDay) + "" })
+          calendarDays.appendChild(dayDiv)
+        }
       }
     }
-  }
 
-  function addDayOnScheduleList(key, dayEventsArray, deleteOldEvents) {
-    if (deleteOldEvents == true) eventsContainer.textContent = '';
-    let dayDiv = makeDay(key, dayEventsArray)
-    eventsContainer.appendChild(dayDiv)
-    mainScheduleListTitle.textContent = 'Scheduled Events'
-    displayedCalendarDays.push({ date: key, dayEventsArray: dayEventsArray, dayDiv: dayDiv }) // save all displayed days in an array
-    let diffdate = new Date(); // today
-    // let sortedByNearestDays = 
-    displayedCalendarDays.sort(function (a, b) {
-      let distancea = Math.abs(diffdate - new Date(a.date));
-      let distanceb = Math.abs(diffdate - new Date(b.date));
-      return distancea - distanceb; // sort a before b when the distance is smaller
-    });
-    displayedCalendarDays[0].dayDiv.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
+    function addDayOnScheduleList(key, dayEventsArray, deleteOldEvents) {
+      if (deleteOldEvents == true) eventsContainer.textContent = '';
+      let dayDiv = makeDay(key, dayEventsArray)
+      eventsContainer.appendChild(dayDiv)
+      mainScheduleListTitle.textContent = 'Scheduled Events'
+      displayedCalendarDays.push({ date: key, dayEventsArray: dayEventsArray, dayDiv: dayDiv }) // save all displayed days in an array
+      let diffdate = new Date(); // today
+      // let sortedByNearestDays = 
+      displayedCalendarDays.sort(function (a, b) {
+        let distancea = Math.abs(diffdate - new Date(a.date));
+        let distanceb = Math.abs(diffdate - new Date(b.date));
+        return distancea - distanceb; // sort a before b when the distance is smaller
+      });
+      displayedCalendarDays[0].dayDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
 
-  function displayDayOnlyOnSchedule(key, dayEventsArray) {
-    eventsContainer.textContent = ''
-    mainScheduleListTitle.textContent = 'Scheduled Events on ' + new Date(key).toString('YYYY-MM-dd').substring(0, 16)
-    if (dayEventsArray.length > 0) eventsContainer.appendChild(makeDay(key, dayEventsArray))
-    else eventsContainer.appendChild(
-      createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No Event scheduled on ' + new Date(key).toString('YYYY-MM-dd').substring(0, 16) })
-    )
-  }
+    function displayDayOnlyOnSchedule(key, dayEventsArray) {
+      eventsContainer.textContent = ''
+      mainScheduleListTitle.textContent = 'Scheduled Events on ' + new Date(key).toString('YYYY-MM-dd').substring(0, 16)
+      if (dayEventsArray.length > 0) eventsContainer.appendChild(makeDay(key, dayEventsArray))
+      else eventsContainer.appendChild(
+        createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No Event scheduled on ' + new Date(key).toString('YYYY-MM-dd').substring(0, 16) })
+      )
+    }
 
-  function makeDay(dayKey, dayEventsArray) {
-    let dayTitle = createElement({ elementType: 'div', class: 'dayTitle', textContent: new Date(dayKey).toString('YYYY-MM-dd').substring(0, 15) })
-    let dayContentsArray = dayEventsArray.map(dayEvent => {
-      let { eventId, owner, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate, Participants } = dayEvent;
-      let timeDiv = createElement({ elementType: 'div', class: 'hourDiv', textContent: startTime.substring(0, 5) })
+    function makeDay(dayKey, dayEventsArray) {
+      let dayTitle = createElement({ elementType: 'div', class: 'dayTitle', textContent: new Date(dayKey).toString('YYYY-MM-dd').substring(0, 15) })
+      let dayContentsArray = dayEventsArray.map(dayEvent => {
+        let { eventId, owner, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate, Participants } = dayEvent;
+        let timeDiv = createElement({ elementType: 'div', class: 'hourDiv', textContent: startTime.substring(0, 5) })
 
-      let scheduleHeader = createElement({
-        elementType: 'div', class: 'scheduleHeader', childrenArray: [
-          createElement({ elementType: 'div', class: 'scheduleTitle', textContent: title + '    ' }),
-          createElement({ elementType: 'div', class: 'scheduleContext', textContent: "♦" + context }),
-        ]
-      })
-      let scheduleBody = createElement({ elementType: 'div', class: 'scheduleBody', textContent: details })
-      let sheduleTimeInFull = createElement({ elementType: 'div', class: 'scheduleTimeInFull', textContent: startTime + ' - ' + endTime })
-      let organizer = userForAttendanceList(owner, [
-        {
-          element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }),
-          functionCall: () => { call(owner.userID, true, false, false, false, null) }
+        let scheduleHeader = createElement({
+          elementType: 'div', class: 'scheduleHeader', childrenArray: [
+            createElement({ elementType: 'div', class: 'scheduleTitle', textContent: title + '    ' }),
+            createElement({ elementType: 'div', class: 'scheduleContext', textContent: "♦" + context }),
+          ]
+        })
+        let scheduleBody = createElement({ elementType: 'div', class: 'scheduleBody', textContent: details })
+        let sheduleTimeInFull = createElement({ elementType: 'div', class: 'scheduleTimeInFull', textContent: startTime + ' - ' + endTime })
+        let organizer = userForAttendanceList(owner, [
+          {
+            element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }),
+            functionCall: () => { call(owner.userID, true, false, false, false, null) }
+          }
+        ])
+        let headerTimeDiv = createElement({ elementType: 'div', class: 'headerTimeDiv', childrenArray: [scheduleHeader, sheduleTimeInFull] })
+
+        function joinEvent() {
+          call(owner.userID, true, false, false, false, null)
         }
-      ])
-      let headerTimeDiv = createElement({ elementType: 'div', class: 'headerTimeDiv', childrenArray: [scheduleHeader, sheduleTimeInFull] })
 
-      function joinEvent() {
-        call(owner.userID, true, false, false, false, null)
-      }
+        let eventTopSection = createElement({
+          elementType: 'div', class: 'eventTopSection', childrenArray: [
+            headerTimeDiv,
+            createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: joinEvent }),
+            createElement({
+              elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-right' })], onclick: () => {
+                scheduleDetailsSection.textContent = '';
+                let eventDetailsBackButton = createElement({ elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-left' })], onclick: showMainScheduleList })
+                let eventDetailsJoinButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: joinEvent })
+                let eventDetailsTitle = createElement({ elementType: 'div', class: 'eventDetailsTitle', textContent: title })
+                let deleteEventButton = createElement({
+                  elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })], onclick: () => {
+                    // -------------------- Deleting event - on popup;
+                    let question = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Are you sure you want to delete this event?' })
 
-      let eventTopSection = createElement({
-        elementType: 'div', class: 'eventTopSection', childrenArray: [
-          headerTimeDiv,
-          createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: joinEvent }),
-          createElement({
-            elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-right' })], onclick: () => {
-              scheduleDetailsSection.textContent = '';
-              let eventDetailsBackButton = createElement({ elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-left' })], onclick: showMainScheduleList })
-              let eventDetailsJoinButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: joinEvent })
-              let eventDetailsTitle = createElement({ elementType: 'div', class: 'eventDetailsTitle', textContent: title })
-              let deleteEventButton = createElement({
-                elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })], onclick: () => {
-                  // -------------------- Deleting event - on popup;
-                  let question = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Are you sure you want to delete this event?' })
-
-                  let icon = 'bx bxs-trash-alt'
-                  let title = 'Delete a Planned event'
-                  let contentElementsArray = [question]
-                  let cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel' })
-                  let deleteButton = createElement({ elementType: 'button', textContent: 'Yes, Delete' })
-                  let actions = [
-                    { element: cancelButton, functionCall: () => { } },
-                    {
-                      element: deleteButton, functionCall: () => {
-                        socket.emit('deleteEvent', eventId)
+                    let icon = 'bx bxs-trash-alt'
+                    let title = 'Delete a Planned event'
+                    let contentElementsArray = [question]
+                    let cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel' })
+                    let deleteButton = createElement({ elementType: 'button', textContent: 'Yes, Delete' })
+                    let actions = [
+                      { element: cancelButton, functionCall: () => { } },
+                      {
+                        element: deleteButton, functionCall: () => {
+                          socket.emit('deleteEvent', eventId)
+                        }
                       }
-                    }
-                  ]
-                  let constraints = { icon, title, contentElementsArray, actions }
-                  createInScreenPopup(constraints).then(editPopup => {
-                    cancelButton.addEventListener('click', editPopup.closePopup);
-                    deleteButton.addEventListener('click', editPopup.closePopup);
+                    ]
+                    let constraints = { icon, title, contentElementsArray, actions }
+                    createInScreenPopup(constraints).then(editPopup => {
+                      cancelButton.addEventListener('click', editPopup.closePopup);
+                      deleteButton.addEventListener('click', editPopup.closePopup);
+                    })
+                  }
+                })
+                let headerElementsArray = [eventDetailsBackButton, eventDetailsTitle, eventDetailsJoinButton]
+                if (owner.userID == mySavedID) headerElementsArray.push(deleteEventButton)
+                let eventDetailsTopSection = createElement({ elementType: 'div', class: 'eventDetailsTopSection', childrenArray: headerElementsArray })
+
+                scheduleDetailsSection.appendChild(eventDetailsTopSection)
+
+                let eventDetailsContenArray = []
+                // occurence / recurrence
+                let occurrenceText;
+                if (occurrence == 1 && oneTimeDate) { let thisdate = new Date(oneTimeDate); occurrenceText = startTime + " - " + endTime + " " + thisdate.toString('YYYY-MM-dd').substring(0, 16) }
+                else if (occurrence == 2 && recurrenceType) {
+                  switch (recurrenceType) {
+                    // { id: 1, name: "Every Day" },
+                    // { id: 2, name: "Every Week" },
+                    // { id: 3, name: "Monday - Friday" },
+                    // { id: 4, name: "Weekend" }
+                    case 1:
+                      occurrenceText = 'Occurs every day at ' + startTime + " - " + endTime + " Since " + new Date(startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) + " Until " + new Date(endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                      break;
+                    case 2:
+                      let dayName = new Date(startRecurrenceDate).toLocaleDateString('en-US', { weekday: 'long' })
+                      occurrenceText = 'Occurs every ' + dayName + ' at ' + startTime + " until " + endTime + " Since " + new Date(startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) + " Until " + new Date(endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                      break;
+                    case 3:
+                      occurrenceText = 'Occurs in business days (Monday - Friday) at ' + startTime + " - " + endTime + " Since " + new Date(startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) + " Until " + new Date(endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                      break;
+                    case 4:
+                      occurrenceText = 'Occurs in weekends (Saturday - Sunday) days at ' + startTime + " - " + endTime + " Since " + new Date(startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) + " Until " + new Date(endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
+                      break;
+                    default:
+                      break;
+                  }
+                }
+                else { }
+                eventDetailsContenArray.push(
+                  createElement({
+                    elementType: 'div', class: 'detailBlock', childrenArray: [
+                      createElement({ elementType: 'div', textContent: 'Occurence:' }),
+                      createElement({ elementType: 'div', textContent: occurrenceText }),
+                    ]
                   })
-                }
-              })
-              let headerElementsArray = [eventDetailsBackButton, eventDetailsTitle, eventDetailsJoinButton]
-              if (owner.userID == mySavedID) headerElementsArray.push(deleteEventButton)
-              let eventDetailsTopSection = createElement({ elementType: 'div', class: 'eventDetailsTopSection', childrenArray: headerElementsArray })
-
-              scheduleDetailsSection.appendChild(eventDetailsTopSection)
-
-              let eventDetailsContenArray = []
-              // occurence / recurrence
-              let occurrenceText;
-              if (occurrence == 1 && oneTimeDate) { let thisdate = new Date(oneTimeDate); occurrenceText = startTime + " - " + endTime + " " + thisdate.toString('YYYY-MM-dd').substring(0, 16) }
-              else if (occurrence == 2 && recurrenceType) {
-                switch (recurrenceType) {
-                  // { id: 1, name: "Every Day" },
-                  // { id: 2, name: "Every Week" },
-                  // { id: 3, name: "Monday - Friday" },
-                  // { id: 4, name: "Weekend" }
-                  case 1:
-                    occurrenceText = 'Occurs every day at ' + startTime + " - " + endTime + " Since " + new Date(startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) + " Until " + new Date(endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
-                    break;
-                  case 2:
-                    let dayName = new Date(startRecurrenceDate).toLocaleDateString('en-US', { weekday: 'long' })
-                    occurrenceText = 'Occurs every ' + dayName + ' at ' + startTime + " until " + endTime + " Since " + new Date(startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) + " Until " + new Date(endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
-                    break;
-                  case 3:
-                    occurrenceText = 'Occurs in business days (Monday - Friday) at ' + startTime + " - " + endTime + " Since " + new Date(startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) + " Until " + new Date(endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
-                    break;
-                  case 4:
-                    occurrenceText = 'Occurs in weekends (Saturday - Sunday) days at ' + startTime + " - " + endTime + " Since " + new Date(startRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16) + " Until " + new Date(endRecurrenceDate).toString('YYYY-MM-dd').substring(0, 16)
-                    break;
-                  default:
-                    break;
-                }
+                )
+                // context
+                if (context.trim() != '') eventDetailsContenArray.push(
+                  createElement({
+                    elementType: 'div', class: 'detailBlock', childrenArray: [
+                      createElement({ elementType: 'div', textContent: 'Context:' }),
+                      createElement({ elementType: 'div', textContent: context }),
+                    ]
+                  })
+                )
+                // link
+                if (activityLink.trim() != '') eventDetailsContenArray.push(
+                  createElement({
+                    elementType: 'div', class: 'detailBlock', childrenArray: [
+                      createElement({ elementType: 'div', textContent: 'Link:' }),
+                      createElement({ elementType: 'div', textContent: activityLink }),
+                    ]
+                  })
+                )
+                // location
+                if (eventLocation.trim() != '') eventDetailsContenArray.push(
+                  createElement({
+                    elementType: 'div', class: 'detailBlock', childrenArray: [
+                      createElement({ elementType: 'div', textContent: 'Location:' }),
+                      createElement({ elementType: 'div', textContent: eventLocation }),
+                    ]
+                  })
+                )
+                // organizer
+                let eventDetailsOrganizerTitle = createElement({ elementType: 'div', textContent: 'Event Organizer: ' })
+                let eventDetailsOrganizer = userForAttendanceList(owner, [{ element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }), functionCall: () => { call(owner.userID, true, false, false, false, null) } }])
+                let eventDetailsOrganizerContainer = createElement({ elementType: 'div', class: 'detailBlock', childrenArray: [eventDetailsOrganizerTitle, eventDetailsOrganizer] })
+                eventDetailsContenArray.push(eventDetailsOrganizerContainer)
+                // participant
+                let eventDetailsInvitedTitle = createElement({ elementType: 'div', textContent: 'Invited Users: ' })
+                let eventDetailsInvitedUsers = Participants.map(participant => {
+                  /**
+                   * 0: not attending
+                   * 1: maybe
+                   * 2: attending: default
+                   */
+                  let attendanceClass = 'bx bxs-user-check';
+                  let attendanceTitle = 'Attending'
+                  if (participant.attending == 0) { attendanceClass = 'bx bxs-user-x'; attendanceTitle = 'Not attending' }
+                  if (participant.attending == 1) { attendanceClass = 'bx bxs-user-minus'; attendanceTitle = 'Attendance not sure' }
+                  if (participant.attending == 2) { attendanceClass = 'bx bxs-user-check'; attendanceTitle = 'Attending' }
+                  return userForAttendanceList(participant.userInfo, [
+                    { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: attendanceClass })], title: attendanceTitle }), functionCall: () => { } },
+                    { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }), functionCall: () => { call(participant.userInfo.userID, true, false, false, false, null) } }
+                  ])
+                })
+                let participantsWrapper = createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: eventDetailsInvitedUsers })
+                let eventDetailsInvitedContainer = createElement({ elementType: 'div', class: 'detailBlock', childrenArray: [eventDetailsInvitedTitle, participantsWrapper] })
+                eventDetailsContenArray.push(eventDetailsInvitedContainer)
+                // details
+                if (details.trim() != '') eventDetailsContenArray.push(
+                  createElement({
+                    elementType: 'div', class: 'detailBlock', childrenArray: [
+                      createElement({ elementType: 'div', textContent: 'Details:' }),
+                      createElement({ elementType: 'div', textContent: details }),
+                    ]
+                  })
+                )
+                let eventDetailsContentDiv = createElement({ elementType: 'div', class: 'eventDetailsContentDiv', childrenArray: eventDetailsContenArray })
+                scheduleDetailsSection.appendChild(eventDetailsContentDiv)
+                showScheduleDetailsSection();
               }
-              else { }
-              eventDetailsContenArray.push(
-                createElement({
-                  elementType: 'div', class: 'detailBlock', childrenArray: [
-                    createElement({ elementType: 'div', textContent: 'Occurence:' }),
-                    createElement({ elementType: 'div', textContent: occurrenceText }),
-                  ]
-                })
-              )
-              // context
-              if (context.trim() != '') eventDetailsContenArray.push(
-                createElement({
-                  elementType: 'div', class: 'detailBlock', childrenArray: [
-                    createElement({ elementType: 'div', textContent: 'Context:' }),
-                    createElement({ elementType: 'div', textContent: context }),
-                  ]
-                })
-              )
-              // link
-              if (activityLink.trim() != '') eventDetailsContenArray.push(
-                createElement({
-                  elementType: 'div', class: 'detailBlock', childrenArray: [
-                    createElement({ elementType: 'div', textContent: 'Link:' }),
-                    createElement({ elementType: 'div', textContent: activityLink }),
-                  ]
-                })
-              )
-              // location
-              if (eventLocation.trim() != '') eventDetailsContenArray.push(
-                createElement({
-                  elementType: 'div', class: 'detailBlock', childrenArray: [
-                    createElement({ elementType: 'div', textContent: 'Location:' }),
-                    createElement({ elementType: 'div', textContent: eventLocation }),
-                  ]
-                })
-              )
-              // organizer
-              let eventDetailsOrganizerTitle = createElement({ elementType: 'div', textContent: 'Event Organizer: ' })
-              let eventDetailsOrganizer = userForAttendanceList(owner, [{ element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }), functionCall: () => { call(owner.userID, true, false, false, false, null) } }])
-              let eventDetailsOrganizerContainer = createElement({ elementType: 'div', class: 'detailBlock', childrenArray: [eventDetailsOrganizerTitle, eventDetailsOrganizer] })
-              eventDetailsContenArray.push(eventDetailsOrganizerContainer)
-              // participant
-              let eventDetailsInvitedTitle = createElement({ elementType: 'div', textContent: 'Invited Users: ' })
-              let eventDetailsInvitedUsers = Participants.map(participant => {
-                /**
-                 * 0: not attending
-                 * 1: maybe
-                 * 2: attending: default
-                 */
-                let attendanceClass = 'bx bxs-user-check';
-                let attendanceTitle = 'Attending'
-                if (participant.attending == 0) { attendanceClass = 'bx bxs-user-x'; attendanceTitle = 'Not attending' }
-                if (participant.attending == 1) { attendanceClass = 'bx bxs-user-minus'; attendanceTitle = 'Attendance not sure' }
-                if (participant.attending == 2) { attendanceClass = 'bx bxs-user-check'; attendanceTitle = 'Attending' }
-                return userForAttendanceList(participant.userInfo, [
-                  { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: attendanceClass })], title: attendanceTitle }), functionCall: () => { } },
-                  { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }), functionCall: () => { call(participant.userInfo.userID, true, false, false, false, null) } }
-                ])
-              })
-              let participantsWrapper = createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: eventDetailsInvitedUsers })
-              let eventDetailsInvitedContainer = createElement({ elementType: 'div', class: 'detailBlock', childrenArray: [eventDetailsInvitedTitle, participantsWrapper] })
-              eventDetailsContenArray.push(eventDetailsInvitedContainer)
-              // details
-              if (details.trim() != '') eventDetailsContenArray.push(
-                createElement({
-                  elementType: 'div', class: 'detailBlock', childrenArray: [
-                    createElement({ elementType: 'div', textContent: 'Details:' }),
-                    createElement({ elementType: 'div', textContent: details }),
-                  ]
-                })
-              )
-              let eventDetailsContentDiv = createElement({ elementType: 'div', class: 'eventDetailsContentDiv', childrenArray: eventDetailsContenArray })
-              scheduleDetailsSection.appendChild(eventDetailsContentDiv)
-              showScheduleDetailsSection();
-            }
-          }),
-        ]
+            }),
+          ]
+        })
+        let participantsProfilePics = Participants.map(participant => makeProfilePicture(participant.userInfo))
+        let sheduleParticipantsDiv = createElement({ elementType: 'div', class: 'sheduleParticipantsDiv', childrenArray: participantsProfilePics })
+        let sheduleContentDiv = createElement({ elementType: 'div', class: 'sheduleContentDiv', childrenArray: [eventTopSection, scheduleBody, organizer, sheduleParticipantsDiv] })
+        return createElement({ elementType: 'div', class: 'scheduleDiv', childrenArray: [timeDiv, sheduleContentDiv] })
       })
-      let participantsProfilePics = Participants.map(participant => makeProfilePicture(participant.userInfo))
-      let sheduleParticipantsDiv = createElement({ elementType: 'div', class: 'sheduleParticipantsDiv', childrenArray: participantsProfilePics })
-      let sheduleContentDiv = createElement({ elementType: 'div', class: 'sheduleContentDiv', childrenArray: [eventTopSection, scheduleBody, organizer, sheduleParticipantsDiv] })
-      return createElement({ elementType: 'div', class: 'scheduleDiv', childrenArray: [timeDiv, sheduleContentDiv] })
-    })
-    let dayContentDiv = createElement({ elementType: 'div', class: 'dayContentDiv', childrenArray: dayContentsArray })
-    let dayElement = createElement({ elementType: 'div', class: 'scheduleDay', childrenArray: [dayTitle, dayContentDiv] })
-    return dayElement
+      let dayContentDiv = createElement({ elementType: 'div', class: 'dayContentDiv', childrenArray: dayContentsArray })
+      let dayElement = createElement({ elementType: 'div', class: 'scheduleDay', childrenArray: [dayTitle, dayContentDiv] })
+      return dayElement
+    }
+    renderCalendar()
+    return {
+      addDayOnScheduleList: addDayOnScheduleList,
+      displayDayOnlyOnSchedule: displayDayOnlyOnSchedule,
+      renderCalendar: renderCalendar
+    }
   }
-  renderCalendar()
-  return {
-    addDayOnScheduleList: addDayOnScheduleList,
-    displayDayOnlyOnSchedule: displayDayOnlyOnSchedule,
-    renderCalendar: renderCalendar
-  }
-}
+})(functionalityOptionsArray);

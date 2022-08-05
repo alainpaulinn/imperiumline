@@ -451,6 +451,7 @@ body {
         outline: none;
         border-radius: $borderRadius;
         border: none;
+        color: var(--lightText);
         transition: all 0.4s;
 
         &:hover {
@@ -835,7 +836,7 @@ body {
       color: var(--lightText);
       background-color: var(--primaryBackground);
       border-radius: $borderRadius;
-      
+
       input {
         background-color: var(--primaryBackground);
         outline: none;
@@ -1164,6 +1165,9 @@ body {
       display: flex;
       justify-content: center;
       align-items: center;
+      &:hover{
+        color: var(--hoverColor);
+      }
     }
   }
 
@@ -1765,6 +1769,7 @@ body {
     flex-wrap: wrap;
     max-height: 15rem;
     overflow-y: auto;
+    gap: 1rem;
 
     div {
       display: flex;
@@ -1803,6 +1808,8 @@ body {
         border-radius: $borderRadius;
         width: 1.5rem;
         height: 1.5rem;
+        min-width: 1.5rem;
+        min-height: 1.5rem;
         cursor: pointer;
         outline: none;
         border: none;
@@ -1816,6 +1823,9 @@ body {
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
+        }
+        &:hover{
+          color: var(--hoverColor);
         }
       }
     }
@@ -5253,6 +5263,10 @@ body {
           color: var(--lightText);
         }
       }
+      p{
+        font-size: 1.5rem;
+        text-align: center;
+      }
     }
 
     .centralHeader {
@@ -5488,7 +5502,8 @@ body {
             align-items: center;
 
             .position {
-              flex: 1
+              flex: 1;
+              padding: 1rem;
             }
           }
         }

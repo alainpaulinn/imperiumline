@@ -354,6 +354,7 @@ body {
   outline: none;
   border-radius: 15px;
   border: none;
+  color: var(--lightText);
   transition: all 0.4s;
 }
 .inScreenPanel .popupBody .editBlock button:hover {
@@ -939,6 +940,9 @@ body {
   justify-content: center;
   align-items: center;
 }
+.c-openchat__box .listMember button:hover {
+  color: var(--hoverColor);
+}
 .c-openchat__box__header {
   border-bottom: 1px solid var(--primaryBackground);
   padding: 1rem 1rem;
@@ -1427,6 +1431,7 @@ body {
   flex-wrap: wrap;
   max-height: 15rem;
   overflow-y: auto;
+  gap: 1rem;
 }
 .w-input-container .taggedMessageInTying div {
   display: flex;
@@ -1457,6 +1462,8 @@ body {
   border-radius: 15px;
   width: 1.5rem;
   height: 1.5rem;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
   cursor: pointer;
   outline: none;
   border: none;
@@ -1469,6 +1476,9 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+.w-input-container .taggedMessageInTying div button:hover {
+  color: var(--hoverColor);
 }
 
 .w-input-text-group {
@@ -4358,6 +4368,10 @@ body {
   font-size: 30rem;
   color: var(--lightText);
 }
+.c-time-admin_panel .central-Options .adminWelcomeDiv p {
+  font-size: 1.5rem;
+  text-align: center;
+}
 .c-time-admin_panel .central-Options .centralHeader {
   display: flex;
   padding: 1rem;
@@ -4552,6 +4566,7 @@ body {
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .positionDiv .position {
   flex: 1;
+  padding: 1rem;
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivTemporary {
   display: flex;
