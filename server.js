@@ -418,6 +418,7 @@ io.on('connection', (socket) => {
             case 0:  //call from Chat
               let groupMembersToCall = await getRoomParticipantArray(callTo)
               initiateCall(groupMembersToCall)
+              console.log('callTo', callTo)
               break;
             case 1: //call from callogs
               let existingCallParticipants = await getCallParticipants(previousCallId)
@@ -455,7 +456,10 @@ io.on('connection', (socket) => {
                 if (groupMembersToCall[i].userID == connectedUsers[j].id) { socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id)); } //update callog for each connected user
               }
             }
-            socket.emit('prepareCallingOthers', { callUniqueId, callType: videoPresentation == 1 ? "video" : "audio", groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall, callTitle: 'Untitled Call' });
+            let _calltype = videoPresentation == 1 ? "video" : "audio"
+            let callInitiationInfo = { callUniqueId, callType: _calltype, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall, callTitle: 'Untitled Call' }
+            socket.emit('prepareCallingOthers', callInitiationInfo);
+            console.log('callInitiationInfo2', callInitiationInfo)
           }
         })
     })

@@ -261,6 +261,7 @@ body {
   left: 0;
   width: 100%;
   display: flex;
+  gap: 1rem;
   padding: 1rem;
   justify-content: center;
   flex-wrap: wrap;
@@ -272,7 +273,6 @@ body {
 .footer a {
   display: flex;
   align-items: center;
-  padding-right: 40px;
   opacity: 0.6;
   font-size: 14px;
   font-weight: normal;
@@ -282,11 +282,9 @@ body {
   letter-spacing: normal;
   color: var(--lightText) !important;
   text-decoration: none;
+  text-align: center;
+  gap: 0.25em;
 }
-.footer a i {
-  margin-left: 5px;
-}
-
 .content-container {
   width: 100%;
   display: flex;

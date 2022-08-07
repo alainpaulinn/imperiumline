@@ -1,6 +1,6 @@
 //Get data from the chatsFromDataServer
 var socket = io();
-let displayedScreen = 'chats'
+let displayedScreen = 0; // 0: chats, 1: call log, 2: ongoig call, 3: calendar, 4: admin panel
 let taggedMessages = [];
 let openchat__box__info // the actual element holding all messages
 let messageTagsField;
@@ -275,24 +275,24 @@ let functionalityOptionsArray = [
     },
   ];
 
-  const showSection = index => () => {
-    for (let i = 0; i < sidepanelElements.length; i++) {
-      if (sidepanelElements[i].index != index) {
-        sidepanelElements[i].panel.style.display = "none";
-        sidepanelElements[i].subMenuDiv.classList.add('undropped-down')
-        sidepanelElements[i].dropIcon.classList.remove('rotate180');
-      }
-      else {
-        if (sidepanelElements[i].redirect) window.location.replace(sidepanelElements[i].redirect);
+  // const showSection = index => () => {
+  //   for (let i = 0; i < sidepanelElements.length; i++) {
+  //     if (sidepanelElements[i].index != index) {
+  //       sidepanelElements[i].panel.style.display = "none";
+  //       sidepanelElements[i].subMenuDiv.classList.add('undropped-down')
+  //       sidepanelElements[i].dropIcon.classList.remove('rotate180');
+  //     }
+  //     else {
+  //       if (sidepanelElements[i].redirect) window.location.replace(sidepanelElements[i].redirect);
 
-        sidepanelElements[i].panel.style.display = "flex";
-        sidepanelElements[i].subMenuDiv.classList.remove('undropped-down')
-        sidepanelElements[i].dropIcon.classList.add('rotate180');
-        document_title.innerText = sidepanelElements[i].title;
-        console.log(sidepanelElements[i])
-      }
-    }
-  }
+  //       sidepanelElements[i].panel.style.display = "flex";
+  //       sidepanelElements[i].subMenuDiv.classList.remove('undropped-down')
+  //       sidepanelElements[i].dropIcon.classList.add('rotate180');
+  //       document_title.innerText = sidepanelElements[i].title;
+  //       console.log(sidepanelElements[i])
+  //     }
+  //   }
+  // }
 
   const showDefSection = index => () => {
     for (let i = 0; i < defaultElements.length; i++) {
@@ -319,7 +319,7 @@ let functionalityOptionsArray = [
     let { functionalityId, panel, title, icon, subMenu } = option
     let builtOption = createSidePanelElement(title, icon, subMenu)
     sidePanelDiv.append(builtOption.optionContainer)
-    builtOption.triggerButton.addEventListener("click", showSection(o))
+    builtOption.triggerButton.addEventListener("click", () => { displayAppSection(o); })
     return {
       index: o,
       panel: panel,
@@ -330,6 +330,7 @@ let functionalityOptionsArray = [
       optionContainer: builtOption.optionContainer
     }
   });
+  sidepanelElements[2].triggerButton.parentElement.parentElement.remove()// remove the ongoing call button element
 
   let spacer = createElement({ elementType: 'nav', class: 'c-sidepanel__nav c-sidepanel__nav--spacer c-friends' })
   sidePanelDiv.append(spacer)
@@ -595,10 +596,10 @@ let functionalityOptionsArray = [
     let contentElementsArray = feedback.map(feedbackObj => {
       let type = feedbackObj.type == 'positive' ? 'Success' : 'Failure'
       let blockClass = feedbackObj.type == 'positive' ? 'positiveFeedback' : 'negativeFeedback'
-      
+
       let feedbackTitle = createElement({ elementType: 'p', textContent: type })
       let feedbackMessage = createElement({ elementType: 'div', textContent: feedbackObj.message })
-      let feedbackBlock = createElement({ elementType: 'div', class: 'editBlock '+ blockClass, childrenArray: [feedbackTitle, feedbackMessage] })
+      let feedbackBlock = createElement({ elementType: 'div', class: 'editBlock ' + blockClass, childrenArray: [feedbackTitle, feedbackMessage] })
       return feedbackBlock;
     })
 
@@ -636,7 +637,7 @@ let functionalityOptionsArray = [
       let { functionalityId, panel, title, icon, subMenu } = adminOption
       let builtOption = createAdminpanel(title, icon, subMenu, superAdmin, admin)
       sidepanelElements[sidepanelElements.length - 1].optionContainer.after(builtOption.optionContainer)
-      builtOption.triggerButton.addEventListener("click", showSection(functionalityId - 1))
+      builtOption.triggerButton.addEventListener("click", () => { displayAppSection(functionalityId - 1) })
       sidepanelElements.push({
         index: functionalityId - 1,
         panel: panel,
@@ -1800,45 +1801,22 @@ let functionalityOptionsArray = [
     }
   });
   // })(functionalityOptionsArray);
-  function showMessagesPanel() {
-    displayAppSection(0);
-    // messages_panel.style.display = "flex";
-    // call_log_panel.style.display = "none";
-    // ongoing_call_panel.style.display = "none";
-    // time_scheduling_panel.style.display = "none";
-
-    // document_title.innerText = "Messages";
-  }
+  // function showMessagesPanel() {
+  //   displayAppSection(0);
+  //   displayedScreen = 0
+  // }
   function showCallHistoryPanel() {
     displayAppSection(1);
-    // messages_panel.style.display = "none";
-    // call_log_panel.style.display = "flex";
-    // ongoing_call_panel.style.display = "none";
-    // time_scheduling_panel.style.display = "none";
-
-    // document_title.innerText = "Calls";
   }
-  function showOngoingCallSection() {
-    displayAppSection(2);
-    // messages_panel.style.display = "none";
-    // call_log_panel.style.display = "none";
-    // ongoing_call_panel.style.display = "flex";
-    // time_scheduling_panel.style.display = "none";
-
-    // document_title.innerText = "ongoing call";
-  }
-  function showTimeSchedulingSection() {
-    displayAppSection(3);
-    // messages_panel.style.display = "none";
-    // call_log_panel.style.display = "none";
-    // ongoing_call_panel.style.display = "none";
-    // time_scheduling_panel.style.display = "flex";
-
-    // document_title.innerText = "Calendar";
-  }
+  // function displayAppSection(2) {
+  //   displayAppSection(2);
+  // }
+  // function displayAppSection(3) {
+  //   displayAppSection(3);
+  // }
 
   function displayAppSection(sectionIndex) {
-    console.log('displayAppSection', sidepanelElements, sectionIndex)
+    if(displayedScreen != 2) displayedScreen = sectionIndex // store the current screen except if it is the call screen
     for (let i = 0; i < sidepanelElements.length; i++) {
       if (sidepanelElements[i].index != sectionIndex) {
         sidepanelElements[i].panel.style.display = "none";
@@ -2118,8 +2096,8 @@ let functionalityOptionsArray = [
         let moreButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })] })
         let userToDisplay = users.filter(user => user.userID != myID)
         chatActions = [
-          { element: callButton, functionCall: () => { call(userToDisplay[0].userID, true, false, false, true, null) } },
-          { element: videoButton, functionCall: () => { call(userToDisplay[0].userID, true, true, false, true, null) } },
+          { element: callButton, functionCall: () => { call(roomID, true, false, false, true, null) } },
+          { element: videoButton, functionCall: () => { call(roomID, true, true, false, true, null) } },
           { element: moreButton, functionCall: () => { console.log('moreButton', userToDisplay[0].userID) } }
         ]
         if (userToDisplay.length < 1) { // in case we have only one user (viewer)
@@ -2666,6 +2644,7 @@ let functionalityOptionsArray = [
           topBar.callScreenHeader.textContent = ''
           stream.getTracks().forEach((track) => { console.log('track', track); track.stop(); stream.removeTrack(track); })
           myStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); myStream.removeTrack(track); })
+          leaveCall();
         })
 
         muteMicrophoneBtn.addEventListener('click', () => {
@@ -2816,8 +2795,25 @@ let functionalityOptionsArray = [
         },
         actions: [
           { type: 'normal', displayText: 'Reject', actionFunction: () => { socket.emit("callRejected", callUniqueId); responded = true } },
-          { type: 'confirm', displayText: 'Audio', actionFunction: () => { caller_me = myInfo; _callUniqueId = callUniqueId; callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers, callTitle); responded = true } },
-          { type: 'confirm', displayText: 'Video', actionFunction: () => { caller_me = myInfo; _callUniqueId = callUniqueId; callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers, callTitle); responded = true } },
+          {
+            type: 'confirm', displayText: 'Audio', actionFunction: () => {
+              caller_me = myInfo;
+              _callUniqueId = callUniqueId;
+              callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers, callTitle);
+              responded = true;
+              sidepanelElements[1].triggerButton.parentElement.parentElement.after(sidepanelElements[2].triggerButton.parentElement.parentElement); // display the button to access the ongoing call
+            }
+          },
+
+          {
+            type: 'confirm', displayText: 'Video', actionFunction: () => {
+              caller_me = myInfo;
+              _callUniqueId = callUniqueId;
+              callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers, callTitle);
+              responded = true;
+              sidepanelElements[1].triggerButton.parentElement.parentElement.after(sidepanelElements[2].triggerButton.parentElement.parentElement); // display the button to access the ongoing call
+            }
+          },
         ],
         obligatoryActions: {
           onDisplay: () => { responded = false; },
@@ -2865,7 +2861,7 @@ let functionalityOptionsArray = [
         rightPanel.participantsBox.textContent = ''
         rightPanel.participantsBox.append(mySideVideoDiv)
         leftPanel = createLeftPanel()
-        showOngoingCallSection()
+        displayAppSection(2)
       }, (err) => { alert('Failed to get local media stream', err); });
     }
     socket.on('updateAllParticipantsList', allUsers => {
@@ -3058,7 +3054,7 @@ let functionalityOptionsArray = [
       // let { name, profilePicture, surname, userID } = caller
       // let { name, profilePicture, surname, userID } = allUsers array
       // let { name, profilePicture, surname, userID, role } = specialStatuseUsers array
-
+      console.log('allUsers', allUsers)
       isGroup = allUsers.length > 2 ? true : false
       callees = allUsers.filter(user => { return user.userID != caller.userID })
       console.log(allUsers)
@@ -3342,7 +3338,7 @@ let functionalityOptionsArray = [
       let statement = "";
       if (callMediaType == 'userMedia') statement = ""
       if (callMediaType == 'screenMedia') statement = "'s screen"
-      let videoElement = createElement({ elementType: 'video', srcObject: stream, class: 'callParticipant', autoPlay: "true" }); videoElement.play()
+      let videoElement = createElement({ elementType: 'video', srcObject: stream, class: 'callParticipant', autoPlay: true }); //videoElement.play()
 
       let miniVideowner = createElement({ elementType: 'div', class: 'miniVideowner', textContent: name + " " + surname + statement })
       let muteBtn = createElement({ elementType: 'button', title: 'Mute Video', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-volume-mute' })] })
@@ -3542,8 +3538,7 @@ let functionalityOptionsArray = [
       socket.emit('leaveCall', { callUniqueId: _callUniqueId })
       if (screenSharing == true) stopScreenSharing()
       if (myStream) myStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
-      if (myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
-      console.log('participants before leaving the call', participants)
+      if (myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all screen stream tracks are closed
       for (let i = 0; i < participants.length; i++) { removePeer(participants[i].userInfo.userID) }
       mySideVideoDiv.remove();
       rightPanel.participantsBox.textContent = '';
@@ -3553,6 +3548,8 @@ let functionalityOptionsArray = [
       bottomPanel.textContent = '';
       allUsersArray = []
       leftPanel.clearAttendanceList()
+      sidepanelElements[2].triggerButton.parentElement.parentElement.remove(); // remove the ongoing call button
+      displayAppSection(displayedScreen) // display the previously displayed screen
     }
     function createRightPartPanel() {
       let participantsCount = 0;
@@ -4156,16 +4153,17 @@ let functionalityOptionsArray = [
   function initiateChat(corespondantId) {
     console.log('corespondantId', corespondantId)
     socket.emit('makeChat', corespondantId)
-    displayAppSection(0);
+    displayAppSection(0); // display messages section
   }
 
   function initiateCall(initiationInfo) {
     let { callTo, audio, video, group, fromChat, previousCallId } = initiationInfo
     navigator.getUserMedia({ video: true, audio: true }, stream => {  //test user media accessibiity
       socket.emit("initiateCall", { callTo, audio, video, group, fromChat, previousCallId })
-      showOngoingCallSection()
+      displayAppSection(2)
       startWaitingTone()
       stream.getTracks().forEach(track => { track.stop(); stream.removeTrack(track); })  //stop media tracks
+      sidepanelElements[1].triggerButton.parentElement.parentElement.after(sidepanelElements[2].triggerButton.parentElement.parentElement); // display the button to access the ongoing call
     }, (err) => { alert('Failed to get local media stream', err); });
   }
 
@@ -4615,7 +4613,7 @@ let functionalityOptionsArray = [
         bodyContent: 'Some event changes happened to your calendar click on "Open Calendar" to check changes.'
       },
       actions: [
-        { type: 'confirm', displayText: 'Open Calendar', actionFunction: showTimeSchedulingSection }
+        { type: 'confirm', displayText: 'Open Calendar', actionFunction: () => { displayAppSection(3) } }
       ],
       obligatoryActions: {
         onDisplay: () => { console.log('Notification Displayed') },
