@@ -94,9 +94,7 @@ io.on('connection', (socket) => {
           }
         }
       }
-      console.log('myInformation ID', id)
       socket.emit('myId', myInformation);
-      console.log('myInformation', myInformation)
       db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess`, room.chatID, room.name, room.type, room.profilePicture, room.creationDate, room.lastActionDate FROM `participants` LEFT JOIN room ON room.chatID = participants.roomID WHERE participants.userID = ? ORDER BY `room`.`lastActionDate` DESC', [id], async (err, mychatResults) => {
         if (err) return console.log(err)
         console.log('mychatResults', mychatResults)
@@ -105,7 +103,6 @@ io.on('connection', (socket) => {
           socket.join(roomID)
           socket.emit('displayChat', await getRoomInfo(roomID, id))
         });
-
       })
       //send call log to the connected user
       socket.emit('updateCallLog', await getCallLog(id))
@@ -116,7 +113,12 @@ io.on('connection', (socket) => {
       lastYear.setFullYear(today.getFullYear() - 1)
       let nextYear = new Date()
       nextYear.setFullYear(today.getFullYear() + 1)
-      socket.emit('initialFillCalendar', await getEvents(id, lastYear, nextYear))
+      socket.emit('fillCalendar', await getEvents(id, lastYear, nextYear))
+
+      let initialDate = new Date()
+      let endDate = new Date()
+      let dateEvents = await getEvents(id, initialDate, endDate)
+      socket.emit('dayEvents', dateEvents)
     })
     // prepare to receive files
     // Make an instance of SocketIOFileUpload and listen on this socket:
@@ -129,6 +131,8 @@ io.on('connection', (socket) => {
       // security check
       if (/\.exe$/.test(event.file.name)) {
         uploader.abort(event.file.id, socket);
+        console.log('file upload aborted')
+        return;
       }
       if (!event.file.meta.fileRole) return console.log("unable to upload file: " + event.file.name, "invalid Role")
       switch (event.file.meta.fileRole) {
@@ -236,7 +240,7 @@ io.on('connection', (socket) => {
       if (access_roomId == false) return console.log('user cannot delete a message that does not belong to him')
       let deleteResult = await deleteMessage(messageId)
       if (deleteResult.type == 'positive') io.sockets.in(messageId).emit('deletedMessage', { roomId: access_roomId, messageId: messageId });
-      socket.emit('feedback', [deleteResult])
+      socket.emit('serverFeedback', [deleteResult])
     })
     socket.on('searchPeople', (searchPeople) => {
       db.query("SELECT `id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchPeople + '%', '%' + searchPeople + '%', '%' + searchPeople + '%'], async (err, userSearchResult) => {
@@ -647,7 +651,6 @@ io.on('connection', (socket) => {
       let initialDate = new Date(dateReceived)
       let endDate = new Date(dateReceived)
       let dateEvents = await getEvents(id, initialDate, endDate)
-      console.log('datEvents', dateEvents)
       socket.emit('dayEvents', dateEvents)
     })
 
@@ -663,17 +666,17 @@ io.on('connection', (socket) => {
     socket.on('deleteEvent', async (eventId) => {
       let foundEvent = await getEventDetails(eventId)
       if(foundEvent == undefined) {
-        socket.emit('feedback', [{ type: 'negative', message: 'An error occurred while deleting the event' }])
+        socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while deleting the event' }])
         console.log('event not found')
         return;
       }
       if (foundEvent.owner.userID == id) {
         db.query("DELETE FROM `events` where eventId = ?", [eventId], async (err, result) => { })
-        socket.emit('feedback', [{ type: 'positive', message: 'the event was deleted successfully' }])
+        socket.emit('serverFeedback', [{ type: 'positive', message: 'the event was deleted successfully' }])
         console.log('event found')
       }
       else {
-        socket.emit('feedback', [{ type: 'negative', message: 'An error occurred while deleting the event' }])
+        socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while deleting the event' }])
         console.log('event not found')
       }
     })
@@ -746,7 +749,7 @@ io.on('connection', (socket) => {
       let userInfoUpdateResult = await updateUserInfo(userID, name, surname, email, positionId)
       let passwordResult = await updateUserPassword(userID, password)
       socket.emit('manageUsers', await getCompanyUsers(companyId))
-      socket.emit('feedback', [userInfoUpdateResult, passwordResult])
+      socket.emit('serverFeedback', [userInfoUpdateResult, passwordResult])
     })
     socket.on('editPosition', async (updateObject) => {
       console.log('editPosition', updateObject)
@@ -756,7 +759,7 @@ io.on('connection', (socket) => {
 
       let editPositionResult = await editPosition(positionId, companyId, positionName)
       socket.emit('managePositions', await getCompanyPositions(companyId))
-      socket.emit('feedback', [editPositionResult])
+      socket.emit('serverFeedback', [editPositionResult])
     })
     // Delete
     socket.on('deleteUserInfo', async (updateObject) => {
@@ -768,7 +771,7 @@ io.on('connection', (socket) => {
       let deleteUserResult = await deleteUser(userToDelete)
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
       socket.emit('manageUsers', await getCompanyUsers(companyId))
-      socket.emit('feedback', [deleteUserResult])
+      socket.emit('serverFeedback', [deleteUserResult])
     })
     socket.on('revokeAdminAccess', async (updateObject) => {
       console.log('revokeAdminAccess', updateObject)
@@ -779,7 +782,7 @@ io.on('connection', (socket) => {
       let revokeAdminAccessResult = await revokeAdminAccess(adminToDelete, companyId)
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
       socket.emit('manageAdmins', await getCompanyAdmins(companyId))
-      socket.emit('feedback', [revokeAdminAccessResult])
+      socket.emit('serverFeedback', [revokeAdminAccessResult])
     })
     socket.on('deletePosition', async (updateObject) => {
       console.log('deletePosition', updateObject)
@@ -790,7 +793,7 @@ io.on('connection', (socket) => {
       let deletePositionResult = await deletePosition(positionId, companyId)
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
       socket.emit('managePositions', await getCompanyPositions(companyId))
-      socket.emit('feedback', [deletePositionResult])
+      socket.emit('serverFeedback', [deletePositionResult])
     })
     // Create New
     socket.on('saveNewUserInfo', async (updateObject) => {
@@ -802,7 +805,7 @@ io.on('connection', (socket) => {
       let createUserResult = await createUser(name, surname, email, positionId, password, companyId)
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
       socket.emit('manageUsers', await getCompanyUsers(companyId))
-      socket.emit('feedback', [createUserResult])
+      socket.emit('serverFeedback', [createUserResult])
     })
     socket.on('giveNewAdminAccess', async (updateObject) => {
       console.log('giveNewAdminAccess', updateObject)
@@ -813,7 +816,7 @@ io.on('connection', (socket) => {
       let makeUserAdminResult = await makeUserAdmin(userId, companyId, id)
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
       socket.emit('manageAdmins', await getCompanyAdmins(companyId))
-      socket.emit('feedback', [makeUserAdminResult])
+      socket.emit('serverFeedback', [makeUserAdminResult])
       // console.log('executed')
     })
     socket.on('createPosition', async (updateObject) => {
@@ -825,7 +828,7 @@ io.on('connection', (socket) => {
       let createPositionResult = await createPosition(positionName, companyId)
       socket.emit('adminNumbers', await getNumbersArray('admin', companyId))
       socket.emit('managePositions', await getCompanyPositions(companyId))
-      socket.emit('feedback', [createPositionResult])
+      socket.emit('serverFeedback', [createPositionResult])
       // console.log('executed')
     })
 
@@ -880,7 +883,7 @@ io.on('connection', (socket) => {
 
       let editCompaniesResult = await editCompany(companyId, companyName, description)
       socket.emit('superManageCompanies', await getAllCompanies())
-      socket.emit('feedback', [editCompaniesResult])
+      socket.emit('serverFeedback', [editCompaniesResult])
     })
     // Delete
     socket.on('superManageDeleteCompanies', async (deleteObject) => {
@@ -892,7 +895,7 @@ io.on('connection', (socket) => {
       let editCompaniesResult = await deleteCompany(companyId)
       socket.emit('superManageCompanies', await getAllCompanies())
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
-      socket.emit('feedback', [editCompaniesResult])
+      socket.emit('serverFeedback', [editCompaniesResult])
     })
     socket.on('revokePrimaryAdminAccess', async (deleteObject) => {
       let { adminToDelete } = deleteObject
@@ -902,7 +905,7 @@ io.on('connection', (socket) => {
       let deletePrimaryAdminResult = await deletePrimaryAdmin(adminToDelete)
       socket.emit('superManageAdmins', await getAllPrimaryAdmins())
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin'))
-      socket.emit('feedback', [deletePrimaryAdminResult])
+      socket.emit('serverFeedback', [deletePrimaryAdminResult])
     })
     socket.on('revokeSuperAdminAccess', async (deleteObject) => {
       let { superAdminId } = deleteObject
@@ -912,7 +915,7 @@ io.on('connection', (socket) => {
       let deleteSuperAdminResult = await deleteSuperAdmin(superAdminId)
       socket.emit('superManageSuperAdmins', await getAllSuperAdmins())
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin'))
-      socket.emit('feedback', [deleteSuperAdminResult])
+      socket.emit('serverFeedback', [deleteSuperAdminResult])
     })
     // Create New
     socket.on('superManageCreateCompany', async (createObject) => {
@@ -923,7 +926,7 @@ io.on('connection', (socket) => {
       let createCompanyResult = await createCompany(companyName, companyDescription)
       socket.emit('superManageCompanies', await getAllCompanies())
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin'))
-      socket.emit('feedback', [createCompanyResult])
+      socket.emit('serverFeedback', [createCompanyResult])
     })
     socket.on('superManageCreateAdmin', async (createObject) => {
       console.log('superManageCreateAdmin', createObject)
@@ -934,7 +937,7 @@ io.on('connection', (socket) => {
       let createPrimaryAdminResult = await createPrimaryAdmin(companyId, adminName, adminSurname, adminEmail, adminPassword, id)
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
       socket.emit('superManageAdmins', await getAllPrimaryAdmins())
-      socket.emit('feedback', [createPrimaryAdminResult])
+      socket.emit('serverFeedback', [createPrimaryAdminResult])
     })
     socket.on('superManageCreateSuperAdmin', async (createObject) => {
       console.log('superManageCreateSuperAdmin', createObject)
@@ -945,7 +948,7 @@ io.on('connection', (socket) => {
       let createSuperAdminResult = await createSuperAdmin(companyId, adminName, adminSurname, adminEmail, adminPassword, id)
       socket.emit('superAdminNumbers', await getNumbersArray('superAdmin', companyId))
       socket.emit('superManageSuperAdmins', await getAllSuperAdmins())
-      socket.emit('feedback', [createSuperAdminResult])
+      socket.emit('serverFeedback', [createSuperAdminResult])
     })
 
     // Search

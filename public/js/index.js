@@ -338,7 +338,10 @@ let functionalityOptionsArray = [
     let { panel, title, icon, subMenu } = option;
     let builtOption = createSidePanelElement(title, icon, subMenu)
     sidePanelDiv.append(builtOption.optionContainer)
-    builtOption.triggerButton.addEventListener("click", showDefSection(o))
+    builtOption.triggerButton.addEventListener("click", () => {
+      showDefSection(o);
+      expandSidepanel()
+    })
     return {
       index: o,
       panel: panel ? panel : null,
@@ -584,9 +587,29 @@ let functionalityOptionsArray = [
   socket.on('redirect', function (destination) {
     window.location.href = destination;
   });
-  socket.on('feedback', function (feedback) {
-    if (feedback.type == 'negative') console.log('feedback', feedback)
-    if (feedback.type == 'positie') console.log('feedback', feedback)
+  socket.on('serverFeedback', function (feedback) {
+    console.log('Receiveing a feedback from server feedback', feedback)
+    if (feedback.type == 'negative') console.log('serverFeedback', feedback)
+    if (feedback.type == 'positive') console.log('serverFeedback', feedback)
+
+    let contentElementsArray = feedback.map(feedbackObj => {
+      let type = feedbackObj.type == 'positive' ? 'Success' : 'Failure'
+      let blockClass = feedbackObj.type == 'positive' ? 'positiveFeedback' : 'negativeFeedback'
+      
+      let feedbackTitle = createElement({ elementType: 'p', textContent: type })
+      let feedbackMessage = createElement({ elementType: 'div', textContent: feedbackObj.message })
+      let feedbackBlock = createElement({ elementType: 'div', class: 'editBlock '+ blockClass, childrenArray: [feedbackTitle, feedbackMessage] })
+      return feedbackBlock;
+    })
+
+    let icon = 'bx bxs-info-circle'
+    let title = 'Information'
+    let okButton = createElement({ elementType: 'button', textContent: 'Ok' })
+    let actions = [{ element: okButton, functionCall: () => { } }]
+    let constraints = { icon, title, contentElementsArray, actions }
+    createInScreenPopup(constraints).then(editPopup => {
+      okButton.addEventListener('click', editPopup.closePopup)
+    })
   })
   socket.on('myId', function (myInformation) {
     console.log('myId :', myInformation);
@@ -3883,7 +3906,7 @@ let functionalityOptionsArray = [
                 chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
                 actions = [
                   { element: callAgainButton, functionCall: () => { console.log('ring again user', userInfo.userID) } },
-                  { element: chatButton, functionCall: () => { initiateChat( userInfo.userID) } }
+                  { element: chatButton, functionCall: () => { initiateChat(userInfo.userID) } }
                 ]
                 presenceDiv = userForAttendanceList(userInfo, actions)
                 componentsArray[i] = { userInfo: userInfo, presenceDiv: presenceDiv, onlineStatus: userInfo.status, onCallStatus: 'absent' }
@@ -4045,6 +4068,7 @@ let functionalityOptionsArray = [
     if (configuration.xmlns) elementToReturn.setAttribute('xmlns', configuration.xmlns)
     if (configuration.viewBox) elementToReturn.setAttribute('viewBox', configuration.viewBox)
     if (configuration.autoplay) elementToReturn.autoplay = configuration.autoplay
+    if (configuration.accept) elementToReturn.setAttribute('accept', configuration.accept)
     return elementToReturn
   }
 
@@ -4333,7 +4357,7 @@ let functionalityOptionsArray = [
     async function removePopup() {
       inScreenPanel.classList.remove('visible')
       inscreenPanelContainer.classList.remove('popupActive')
-      await new Promise(resolve => setTimeout(resolve, 3000))
+      await new Promise(resolve => setTimeout(resolve, 3))
       inScreenPanel.remove()
     }
     defaultClosebtn.addEventListener('click', removePopup)
@@ -4399,7 +4423,7 @@ let functionalityOptionsArray = [
       let editControls = createElement({ elementType: 'div', class: 'editControls', tabIndex: "0", childrenArray: [coverDeleteBtn, changePictureBtn] })
       let photoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [editButton, editControls] })
 
-      let coverPictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'coverPictureInputElement', class: 'hidden' })
+      let coverPictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'coverPictureInputElement', class: 'hidden', accept: "image/*" })
       let selectCoverBtn = createElement({ elementType: 'label', for: 'coverPictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
       let coverPicProgressBar = createBarLoader()
       coverPhotoDiv.append(selectCoverBtn, coverPictureInputElement, coverPicProgressBar)
@@ -4447,7 +4471,7 @@ let functionalityOptionsArray = [
       let profilePhotoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [profileEditButton, profileEditControls] })
       let profilePhotoActions = createElement({ elementType: 'div', class: 'photoActions', childrenArray: [profilePhotoActionEdit] })
 
-      let profilePictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'profilePictureInputElement', class: 'hidden' })
+      let profilePictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'profilePictureInputElement', class: 'hidden', accept: "image/*" })
       let selectPictureBtn = createElement({ elementType: 'label', for: 'profilePictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-upload' })] })
       selectPictureBtn.addEventListener('blur', () => { selectPictureBtn.classList.remove('visible') })
       let circleLoader = createCircleLoader()
@@ -4519,7 +4543,7 @@ let functionalityOptionsArray = [
     inscreenPanelContainer.classList.add('popupActive')
     mainCentralProfileDiv.classList.add('visible')
 
-    async function closePopup(){
+    async function closePopup() {
       mainCentralProfileDiv.classList.remove('visible')
       inscreenPanelContainer.classList.remove('popupActive')
       await new Promise(resolve => setTimeout(resolve, 3000))
@@ -4616,6 +4640,12 @@ let functionalityOptionsArray = [
     }
     eventSectionObject.renderCalendar()
   }))
+
+  socket.on('fillCalendar', (calendarEventObj => {
+    calendarObject = calendarEventObj
+    eventSectionObject.renderCalendar()
+  }))
+
   socket.on('dayEvents', (eventObj => {
     for (const key in eventObj) {
       if (Object.hasOwnProperty.call(eventObj, key)) {

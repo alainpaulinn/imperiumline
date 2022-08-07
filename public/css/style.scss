@@ -35,12 +35,12 @@ $white: rgb(255, 255, 255);
   --hoverColor: var(--notification)
 }
 
-.light{
+.light {
   // text color:
   --lightText: rgb(58, 60, 61);
   // background-color:
-  --focusAreaBackgroundColor: rgb(245,249,253);
-  --primaryBackground: rgb(235,240,246);
+  --focusAreaBackgroundColor: rgb(245, 249, 253);
+  --primaryBackground: rgb(235, 240, 246);
   --secondaryBackground: rgb(255, 255, 255);
   --tertiaryBackground: rgb(235, 235, 235);
 
@@ -465,6 +465,22 @@ body {
         cursor: pointer;
       }
 
+      &.positiveFeedback {
+        background-color: #009e2d;
+        padding: 1rem;
+        border-radius: $borderRadius;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      &.negativeFeedback {
+        background-color: #bf0000;
+        padding: 1rem;
+        border-radius: $borderRadius;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
       .flex-1 {
         flex: 1;
       }
@@ -780,6 +796,7 @@ body {
         }
       }
     }
+
     &:hover {
       color: var(--hoverColor);
     }
@@ -1165,7 +1182,8 @@ body {
       display: flex;
       justify-content: center;
       align-items: center;
-      &:hover{
+
+      &:hover {
         color: var(--hoverColor);
       }
     }
@@ -1744,6 +1762,7 @@ body {
 
     &:hover {
       color: var(--hoverColor);
+
       svg,
       i {}
     }
@@ -1824,7 +1843,8 @@ body {
           left: 50%;
           transform: translate(-50%, -50%);
         }
-        &:hover{
+
+        &:hover {
           color: var(--hoverColor);
         }
       }
@@ -3008,6 +3028,7 @@ body {
           display: flex;
           align-items: center;
           transition: all 0.4s;
+
           p {
             color: var(--lightText);
           }
@@ -3837,6 +3858,7 @@ body {
     &:hover {
       background-color: var(--focusAreaBackgroundColor);
       color: var(--hoverColor);
+
       .pill-label {
         color: var(--notification);
       }
@@ -3875,6 +3897,7 @@ body {
       &:after {
         transform: rotate(-90deg);
       }
+
       .circle {
         position: absolute;
         width: 100%;
@@ -4907,6 +4930,7 @@ body {
     flex-wrap: wrap;
     padding: 1rem;
     color: var(--lightText);
+
     .userProfileDiv {
       top: -7rem;
       left: 2rem;
@@ -5263,7 +5287,8 @@ body {
           color: var(--lightText);
         }
       }
-      p{
+
+      p {
         font-size: 1.5rem;
         text-align: center;
       }
