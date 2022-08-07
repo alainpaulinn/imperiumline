@@ -11,7 +11,7 @@
     <title>Imperium Line</title>
 </head>
 
-<body>
+<body class="dark">
     <div class="background">
         <span></span>
         <span></span>
@@ -30,39 +30,50 @@
                 <section class="appIntro">
                     <H1>Welcome to Imperium&nbsp;Line</H1>
                     <p>
-                        Imperium Line is a private and group messaging platform. It enables unlimited
-                        number of audio and video calls.
+                        Modern, online, free chat, audio and video calls app,
+                        with advantages of organizing your work on a calendar.
+                        Join Imperium Line today.
                     </p>
                 </section>
                 <section class="wrapper">
-                    <div class="heading">
-                        <h1 class="text text-large">Sign In</h1>
-                        <p class="text text-normal">New user? <span><a href="/signUp" class="text text-links">Create an
-                                    account</a></span>
-                        </p>
+                    <div class="formTopSection">
+                        <div class="heading">
+                            <h1 class="text text-large">Sign In</h1>
+                            <p class="text text-normal">New user? <span><a href="/signUp" class="text text-links">Create
+                                        an
+                                        account</a></span>
+                            </p>
+                        </div>
+                        <div class="switch"><input id="themeToggler" type="checkbox"><label for="themeToggler"></label>
+                        </div>
                     </div>
+
                     <form name="login" class="form" action="/auth/login" method="POST">
                         <div class="error-control">
                             {{>login_messages}}
                         </div>
                         <div class="input-control">
                             <label for="email" class="input-label" hidden>Email Address</label>
-                            <input type="email" name="email" required class="input-field" placeholder="Email Address">
+                            <input type="email" name="email" required class="input-field" placeholder="Email Address"
+                                autocomplete="username">
                         </div>
                         <div class="input-control">
                             <label for="password" class="input-label" hidden>Password</label>
-                            <input id="password_login" type="password" name="password" required class="input-field"
-                                placeholder="Password">
+                            <input id="password_login" type="password" name="password" required class="input-field passswordField"
+                                placeholder="Password" autocomplete="current-password">
                         </div>
                         <div class="input-control">
                             <div class="input-control-item">
-                                <input type="checkbox" name="visible" id="passwordVisible" hidden />
-                                <label for="passwordVisible" class="input-label" id="visibleLabel"><i class='bx bxs-show'></i><p>Show Password</p></label>
+                                <input type="checkbox" name="visible" class="passwordCheckbox" id="passwordVisible" hidden />
+                                <label for="passwordVisible" class="input-label visibleLabel" id="visibleLabel"><i
+                                        class='bx bxs-show'></i>
+                                    <p>Show Password</p>
+                                </label>
                             </div>
-                            <div class="input-control-item">
+                            {{!-- <div class="input-control-item">
                                 <input type="checkbox" name="remember" id="remember" />
                                 <label for="remember" class="input-label" id="rememberLabel">Remember Me</label>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="input-control">
                             <a href="#" class="text text-links">Forgot Password <i class='bx bx-shield-quarter'></i></a>
@@ -78,59 +89,61 @@
             <h2>Features</h2>
             <div class="features">
                 <div class="feature-item">
-                    <i class='bx bxs-comment-dots' ></i>
-                    <h3>Todo List</h3>
-                    <p>Function 1
+                    <i class='bx bxs-comment-dots'></i>
+                    <h3>Instant Messaging</h3>
+                    <p>Imperium Line allows you to communicate with colleagues by messages instantly and conveniently.
                     </p>
                 </div>
                 <div class="feature feature-item">
-                    <i class='bx bxs-phone-call' ></i>
-                    <h3>Pomodoro Timer</h3>
-                    <p>Function 2</p>
+                    <i class='bx bxs-phone-call'></i>
+                    <h3>Audio Calls</h3>
+                    <p>Imperium Line offers the ability to contact and converse with people in real-time with a voice calls.</p>
                 </div>
                 <div class="feature feature-item">
-                    <i class='bx bxs-calendar' ></i>
-                    <h3>Shelf</h3>
-                    <p>Function 3</p>
+                    <i class='bx bxs-video'></i>
+                    <h3>Video Calls</h3>
+                    <p>In addition to voice calls, Imperium Line also offers video calls, including a group function, which allows more than eight participants on one call.</p>
                 </div>
                 <div class="feature feature-item">
-                    <i class='bx bxs-bookmarks'></i>
-                    <h3>Bookmark</h3>
-                    <p>Function 4</p>
+                    <i class='bx bxs-calendar'></i>
+                    <h3>Calendar</h3>
+                    <p>While working and dealing with many events with colleagues and clients, the schedule can be easily messy. Imperium offers a solution to schedule and visualize the events on a calendar for better organization</p>
                 </div>
                 <div class="feature feature-item">
-                    <i class='bx bxs-cloud'></i>
-                    <h3>Weather Information</h3>
-                    <p>Function 5</p>
+                    <i class='bx bx-devices' ></i>
+                    <h3>Cross Platform</h3>
+                    <p>Imperium line offers a desktop version for Mac and for PC and Linux. Check the bottom ribbon for the platform you use. In addition the application os ffully mobile responsive, so it can be used on small and large devices</p>
                 </div>
                 <div class="feature feature-item">
-                    <i class='bx bx-image'></i>
-                    <h3>Dynamic Wallpaper</h3>
-                    <p>Function 6</p>
+                    <i class='bx bxs-moon' ></i>
+                    <h3>Dark and Light modes</h3>
+                    <p>Working in the evening or in darker environments with too bright visuals can be eye dammaging. That is the reason why Imperium Line offers a beautiful complete dark mode.</p>
                 </div>
+
             </div>
 
             <div class="get-involved">
-                <p>Have a feature idea? Or, Want to get involved in the development? Imperium Line is open source!</p>
-                <a target="_blank" href="https://github.com/alainpaulinn/imperiumline">
-                    <p>Find Imperium Line on GitHub</p> <i class='bx bxl-github'></i>
-                </a>
-            </div>
-        </section>
+                <div class="get-involved-content">
+                    <p>Find Imperium Line on gitHub!</p>
+                    <a target="_blank" href="https://github.com/alainpaulinn/imperiumline">
+                        <p>GitHub</p> <i class='bx bxl-github'></i>
+                    </a>
+                </div>
 
-        <section class="cta">
-            <div class="cta-btn">
-                <p>Your new chat app awaits!</p>
-                <a href="https://github.com/alainpaulinn/imperiumline.git">Download Imperium Line Now!</a>
-                <p class="warning">If prompt, Click Accept/Add to install the Application.</p>
             </div>
         </section>
     </div>
     <div class="footer">
         <a href="mailto:alainpaulinn@gmail.com">Contact Us</a>
-        <a href="/download/windows"><p>Windows</p><i class='bx bxl-windows'></i> </a>
-        <a href="/download/mac"> <p>Mac</p><i class='bx bxl-apple'></i> </a>
-        <a href="/download/linux"> <p>Linux</p><i class='bx bxl-tux' ></i> </a>
+        <a href="/download/windows">
+            <p>Windows</p><i class='bx bxl-windows'></i>
+        </a>
+        <a href="/download/mac">
+            <p>Mac</p><i class='bx bxl-apple'></i>
+        </a>
+        <a href="/download/linux">
+            <p>Linux</p><i class='bx bxl-tux'></i>
+        </a>
     </div>
     <div class="notifications" id="notificationsDiv">
     </div>

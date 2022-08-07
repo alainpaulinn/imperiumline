@@ -3250,22 +3250,18 @@ body {
 .switch {
   display: inline-flex;
 }
-
 .switch input[type=checkbox] {
   height: 0;
   width: 0;
   visibility: hidden;
 }
-
 .switch input[type=checkbox]:checked + label {
   background: var(--notification);
 }
-
 .switch input[type=checkbox]:checked + label::after {
   left: calc(100% - 4px);
   transform: translateX(-100%);
 }
-
 .switch label {
   cursor: pointer;
   width: 48px;
@@ -3275,7 +3271,6 @@ body {
   border-radius: 15px;
   position: relative;
 }
-
 .switch label::after {
   content: "";
   position: absolute;

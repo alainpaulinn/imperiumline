@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function (event) { //check for cookie consent when the document is loaded
   //cookie notification
   if (localStorage.getItem("cookieConsentIL") != 'given') {
@@ -107,54 +106,37 @@ function createElement(configuration) {
   if (configuration.onclick) elementToReturn.addEventListener('click', configuration.onclick)
   return elementToReturn
 }
-
-
-let visibleLabel = document.getElementById('visibleLabel')
-let passwordVisible = document.getElementById('passwordVisible')
-let password_login = document.getElementById("password_login");
-visibleLabel.addEventListener('click', () => {
-  visibleLabel.textContent = '';
-  if (passwordVisible.checked) {
-    let icon = document.createElement('i'); icon.setAttribute('class', 'bx bxs-show');
-    let text = document.createElement('p'); text.textContent = 'Show Password';
-    visibleLabel.append(icon, text)
-
-    password_login.type = 'password';
-
-  }
-  else {
-    let icon = document.createElement('i'); icon.setAttribute('class', 'bx bxs-hide');
-    let text = document.createElement('p'); text.textContent = 'Hide Password';
-    visibleLabel.append(icon, text)
-
-    password_login.type = 'text'
-
-  }
-  console.log(passwordVisible.checked)
-  console.log(visibleLabel.checked)
+let passwordCheckboxes = document.querySelectorAll('.passwordCheckbox')
+let passswordFields = document.querySelectorAll('.passswordField')
+let visibleLabels = document.querySelectorAll('.visibleLabel')
+visibleLabels.forEach(visibleLabel => {
+  visibleLabel.addEventListener('click', () => {
+    visibleLabel.textContent = '';
+    passwordCheckboxes.forEach(passwordCheckbox => {
+      if (passwordCheckbox.checked) {
+        let icon = document.createElement('i'); icon.setAttribute('class', 'bx bxs-show');
+        let text = document.createElement('p'); text.textContent = 'Show Password';
+        visibleLabel.append(icon, text)
+        passswordFields.forEach(field => field.type = 'password')
+      }
+      else {
+        let icon = document.createElement('i'); icon.setAttribute('class', 'bx bxs-hide');
+        let text = document.createElement('p'); text.textContent = 'Hide Password';
+        visibleLabel.append(icon, text)
+        passswordFields.forEach(field => field.type = 'text')
+      }
+    })
+  })
 })
 
-let visibleLabelRegister = document.getElementById('visibleLabelRegister')
-let passwordCheckboxRegister = document.getElementById('passwordCheckboxRegister')
-let password_loginRegister = document.getElementById("password_login");
-visibleLabelRegister.addEventListener('click', () => {
-  visibleLabelRegister.textContent = '';
-  if (passwordCheckboxRegister.checked) {
-    let icon = document.createElement('i'); icon.setAttribute('class', 'bx bxs-show');
-    let text = document.createElement('p'); text.textContent = 'Show Password';
-    visibleLabelRegister.append(icon, text)
-
-    password_loginRegister.type = 'password';
-
+let themeToggler = document.getElementById('themeToggler')
+themeToggler.addEventListener('change', () => {
+  if (themeToggler.checked) {
+    document.body.classList.add('light')
+    document.body.classList.remove('dark')
   }
   else {
-    let icon = document.createElement('i'); icon.setAttribute('class', 'bx bxs-hide');
-    let text = document.createElement('p'); text.textContent = 'Hide Password';
-    visibleLabelRegister.append(icon, text)
-
-    password_loginRegister.type = 'text'
-
+    document.body.classList.add('dark')
+    document.body.classList.remove('light')
   }
-  console.log(passwordVisible.checked)
-  console.log(visibleLabelRegister.checked)
 })

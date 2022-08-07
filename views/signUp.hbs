@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/signUp.css">
+    <link rel="stylesheet" href="/css/connect.css">
     <link rel="stylesheet" href="/css/connectBackground.css">
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
     <title>Imperium Line - sign up</title>
 </head>
 
-<body>
+<body class="dark">
     <div class="background">
         <span></span>
         <span></span>
@@ -35,43 +35,58 @@
                     </p>
                 </section>
                 <section class="wrapper">
-                    <div class="heading">
-                        <h1 class="text text-large">Sign Up</h1>
-                        <p class="text text-normal">Already have an account? <span><a href="/connect" class="text text-links">Log in</a></span>
-                        </p>
+                    <div class="formTopSection">
+                        <div class="heading">
+                            <h1 class="text text-large">Sign Up</h1>
+                            <p class="text text-normal">Already have an account? <span><a href="/connect"
+                                        class="text text-links">Log in</a></span>
+                            </p>
+                        </div>
+                        <div class="switch"><input id="themeToggler" type="checkbox"><label for="themeToggler"></label>
+                        </div>
                     </div>
+
                     <form name="login" class="form" action="/auth/register" method="POST">
                         <div class="error-control">
                             {{>register_messages}}
                         </div>
                         <div class="input-control">
                             <label for="name" class="input-label" hidden>Name</label>
-                            <input id="name" type="text" name="name" value="{{name}}" placeholder="Name" class="input-field" required />
+                            <input id="name" type="text" name="name" value="{{name}}" placeholder="Name"
+                                class="input-field" required />
                         </div>
                         <div class="input-control">
                             <label for="surname" class="input-label" hidden>Surname</label>
-                            <input id="surname" type="text" name="surname" value="{{surname}}" placeholder="Surname" class="input-field" required />
+                            <input id="surname" type="text" name="surname" value="{{surname}}" placeholder="Surname"
+                                class="input-field" required />
                         </div>
                         <div class="input-control">
                             <label for="email" class="input-label" hidden>Email</label>
-                            <input id="email" type="email" name="email" value="{{surname}}" placeholder="Email" class="input-field" required />
+                            <input id="email" type="email" name="email" value="{{surname}}" placeholder="Email"
+                                class="input-field" required />
                         </div>
                         <div class="input-control">
                             <label for="password_loginRegister" class="input-label" hidden>Password</label>
-                            <input id="password_loginRegister" type="password" name="password" value="{{surname}}" placeholder="Create password" class="input-field" required />
+                            <input id="password_loginRegister" type="password" name="password" value="{{surname}}"
+                                placeholder="Create password" class="input-field passswordField" required />
                         </div>
                         <div class="input-control">
                             <label for="password_confirm" class="input-label" hidden>Password</label>
-                            <input id="password_confirm" type="password" name="password_confirm" value="{{surname}}" placeholder="Confirm password" class="input-field" required />
+                            <input id="password_confirm" type="password" name="password_confirm" value="{{surname}}"
+                                placeholder="Confirm password" class="input-field passswordField" required />
                         </div>
                         <div class="input-control">
                             <div class="input-control-item">
-                                <input type="checkbox" name="visible" id="passwordCheckboxRegister" hidden />
-                                <label for="passwordCheckboxRegister" class="input-label" id="visibleLabelRegister"><i class='bx bxs-show'></i><p>Show Password</p></label>
+                                <input type="checkbox" name="visible" class="passwordCheckbox" id="passwordCheckboxRegister" hidden />
+                                <label for="passwordCheckboxRegister" class="input-label visibleLabel" id="visibleLabelRegister"><i
+                                        class='bx bxs-show'></i>
+                                    <p>Show Password</p>
+                                </label>
                             </div>
                         </div>
                         <div class="input-control">
-                            {{!-- <a href="#" class="text text-links">Forgot Password <i class='bx bx-shield-quarter'></i></a> --}}
+                            {{!-- <a href="#" class="text text-links">Forgot Password <i
+                                    class='bx bx-shield-quarter'></i></a> --}}
                             <input type="submit" name="submit" class="input-submit" value="Sign Up">
                         </div>
                     </form>

@@ -3940,46 +3940,46 @@ body {
 ///////////////////////SWITCH/////////////////////
 .switch {
   display: inline-flex;
-}
 
-.switch input[type=checkbox] {
-  height: 0;
-  width: 0;
-  visibility: hidden;
-}
+  input[type=checkbox] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
 
-.switch input[type=checkbox]:checked+label {
-  background: var(--notification);
-}
+    &:checked+label {
+      background: var(--notification);
+      &::after {
+        left: calc(100% - 4px);
+        transform: translateX(-100%);
+      }
+    }
+  }
 
-.switch input[type=checkbox]:checked+label::after {
-  left: calc(100% - 4px);
-  transform: translateX(-100%);
-}
+  label {
+    cursor: pointer;
+    width: 48px;
+    height: 24px;
+    background: var(--notification);
+    display: block;
+    border-radius: $borderRadius;
+    position: relative;
 
-.switch label {
-  cursor: pointer;
-  width: 48px;
-  height: 24px;
-  background: var(--notification);
-  display: block;
-  border-radius: $borderRadius;
-  position: relative;
-}
-
-.switch label::after {
-  content: "";
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 16px;
-  height: 16px;
-  background: var(--lightText);
-  border-radius: $borderRadius;
-  transition: 0.3s;
+    &::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 16px;
+      height: 16px;
+      background: var(--lightText);
+      border-radius: $borderRadius;
+      transition: 0.3s;
+    }
+  }
 }
 
 ////////////////////Call Buttons////////////////
+
 .universalCallButtons {
   min-width: 0;
   display: flex;

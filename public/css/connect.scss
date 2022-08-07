@@ -13,10 +13,55 @@ $c-chats: rgb(255, 255, 255);
 $warning-bg: rgb(255, 212, 212);
 $borderRadius: 15px;
 
+.dark {
+  // text color:
+  --lightText: rgb(205, 210, 214);
+  // background-color:
+  --focusAreaBackgroundColor: rgb(24, 27, 31);
+  --primaryBackground: rgb(12, 18, 26);
+  --secondaryBackground: rgb(6, 9, 14);
+  --tertiaryBackground: rgb(0, 0, 0);
+
+  --notification: rgb(0, 48, 97);
+  --warning-bg: rgb(255, 212, 212);
+  --borderRadius: 15px;
+
+  // message background
+  --receivedMessageBg: var(--primaryBackground);
+  --sentMessageBg: var(--notification);
+
+  // hover Color
+  --hoverColor: var(--notification);
+
+  --transparentBg: rgba(255, 255, 255, 0.13);
+}
+
+.light {
+  // text color:
+  --lightText: rgb(58, 60, 61);
+  // background-color:
+  --focusAreaBackgroundColor: rgb(245, 249, 253);
+  --primaryBackground: rgb(235, 240, 246);
+  --secondaryBackground: rgb(255, 255, 255);
+  --tertiaryBackground: rgb(235, 235, 235);
+
+  --notification: #ffffff;
+  --warning-bg: rgb(255, 212, 212);
+  --borderRadius: 15px;
+
+  // message background
+  --receivedMessageBg: rgb(211, 219, 230);
+  --sentMessageBg: rgb(247, 247, 247);
+
+  // hover Color
+  --hoverColor: rgb(0, 48, 97);
+
+  --transparentBg: rgba(255, 255, 255, 0.178);
+}
+
 /* width */
 *::-webkit-scrollbar {
   width: 5px;
-
 }
 
 /* Track */
@@ -74,7 +119,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: rgba(238, 238, 238, 0.5);
+    background: var(--transparentBg);
 
     //box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.5);
     padding: 1rem;
@@ -92,9 +137,9 @@ body {
     }
 
     .content {
-      color: #777;
+      color: var(--lightText);
       //width: 100%;
-      background: white;
+      background: var(--primaryBackground);
       display: none;
 
       .form-group {
@@ -121,11 +166,11 @@ body {
         outline: none;
         border: none;
         border-radius: $borderRadius;
-        background-color: #EBF0F6;
+        color: var(--secondaryBackground);
       }
 
       .submit-btn {
-        color: #eee;
+        color: var(--lightText);
         background-color: #004992;
         cursor: pointer;
         width: 150px;
@@ -155,11 +200,11 @@ body {
         padding: 10px;
 
         background-color: transparent;
-        color: #777;
+        color: var(--lightText);
       }
 
       .active {
-        color: #eee;
+        color: var(--lightText);
         display: block;
         background-color: #003061;
         flex: 5;
@@ -190,7 +235,7 @@ body {
       margin: 0 0 40px;
       text-align: center;
       grid-column: 1 / -1;
-      color: #383544;
+      color: var(--lightText);
     }
 
     .features {
@@ -198,16 +243,17 @@ body {
       flex-wrap: wrap;
       justify-content: center;
       gap: 25px;
+      color: var(--lightText);
 
       .feature-item {
         width: 300px;
-        background-color: rgba(255, 255, 255, 0.896);
+        background-color: var(--primaryBackground);
         // border: 1px solid #fff;
         text-align: center;
         border-radius: $borderRadius;
         padding: 1rem;
         margin-bottom: 50px;
-        box-shadow: 0 0 15px 0.5px rgba(56, 53, 68, 0.1);
+        box-shadow: 0 0 15px 0.5px rgba(0, 0, 0, 0.493);
         transition: box-shadow 0.3s;
         position: relative;
         border-radius: $borderRadius;
@@ -224,13 +270,13 @@ body {
           border-radius: $borderRadius;
           box-shadow: 0 3px 15px 2px rgba(0, 0, 0, 0.2);
           padding: 11px;
-          color: $notification;
-          background-color: #fff;
+          color: var(--lightText);
+          background-color: var(--secondaryBackground);;
           font-size: 2.5rem;
         }
 
         h3 {
-          font-size: 17px;
+          font-size: 1.5rem;
           margin-bottom: 5px;
         }
       }
@@ -240,66 +286,41 @@ body {
 
     .get-involved {
       grid-column: 1 / -1;
-      text-align: center;
-
-      a {
-        display: inline-block;
-        flex-shrink: 0;
-        text-decoration: none;
-        color: #fff;
-        background-color: #383544;
-        padding: 15px 30px;
-        border-radius: $borderRadius;
-        margin: 20px 0;
-        box-shadow: 0 0 8px 1px rgba(56, 53, 68, 0.5);
-        transition: all 0.3s;
-
-        &:hover {
-          box-shadow: 2px 2px 10px 1px rgba(56, 53, 68, 0.8);
-          background-color: darken($color: #383544, $amount: 5%);
-        }
-
-        i {
-          vertical-align: middle;
-          margin-left: 5px;
-          font-size: 15px;
-        }
-      }
-    }
-  }
-
-  .cta {
-    text-align: center;
-
-    .cta-btn {
-      padding: 100px 0;
-
-      p {
-        font-size: 2.5rem;
-        margin: 0;
-      }
-
-      a {
-        display: inline-block;
-        font-size: 1.5rem;
-        text-decoration: none;
-        color: #fff;
-        background-color: $notification;
-        padding: 20px 80px;
-        border-radius: $borderRadius;
-        margin: 50px 0;
-        box-shadow: 0 0 8px 1px rgba(56, 53, 68, 0.5);
-        transition: all 0.3s;
-
-        &:hover {
-          box-shadow: 2px 2px 10px 1px rgba(56, 53, 68, 0.6);
-          background-color: darken($color: $notification, $amount: 5%);
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      // align-items: center;
+      // text-align: center;
+      color: var(--lightText);
+      .get-involved-content{
+        display: flex;
+        flex-direction: column;
+        a {
+          display: flex;
+          flex-shrink: 0;
+          text-decoration: none;
+          color: var(--lightText);
+          background-color: var(--tertiaryBackground);
+          padding: 1rem;
+          border-radius: $borderRadius;
+          margin: 20px 0;
+          box-shadow: 0 0 17px 1px rgba(0, 0, 0, 0.486);
+          transition: all 0.3s;
+          color: var(--lightText);
+          justify-content: center;
+  
+          &:hover {
+            color: var(--hoverColor);
+          }
+  
+          i {
+            vertical-align: middle;
+            margin-left: 5px;
+            font-size: 15px;
+          }
         }
       }
-
-      .warning {
-        font-size: 14px;
-      }
+      
     }
   }
 }
@@ -313,7 +334,8 @@ body {
   padding: 1rem;
   justify-content: center;
   flex-wrap: wrap;
-  background-color: rgba(255, 255, 255, 0.4);
+  // background-color: rgba(255, 255, 255, 0.4);
+  background-color: var(--primaryBackground);
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.15);
   align-items: center;
   z-index: 1;
@@ -329,7 +351,7 @@ body {
     font-stretch: normal;
     line-height: normal;
     letter-spacing: normal;
-    color: #121011 !important;
+    color: var(--lightText) !important;
     text-decoration: none;
 
     i {
@@ -337,11 +359,6 @@ body {
     }
   }
 }
-
-
-
-
-
 .content-container {
   width: 100%;
   display: flex;
@@ -351,8 +368,9 @@ body {
     margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    // justify-content: space-between;
     max-width: 40%;
+    color: var(--lightText);
 
     h1 {
       font-size: 3rem;
@@ -361,15 +379,15 @@ body {
 
     p {
       font-size: 1.5rem;
-      color: $body;
+      color: var(--lightText);
     }
   }
 
   .text-links {
     font-size: 1rem;
     font-weight: 400;
-    color: $notification;
-    text-decoration: none;
+    color: var(--lightText);
+    // text-decoration: none;
   }
 
   .wrapper {
@@ -379,20 +397,27 @@ body {
     outline: none;
     border-radius: $borderRadius;
 
-    background: white;
+    background: var(--primaryBackground);
     display: flex;
     flex-direction: column;
 
-    .heading {
-      width: 100%;
+    .formTopSection{
       display: flex;
-      flex-direction: column;
-      gap: 1rem;
-
-      h1 {
-        font-size: 2rem;
+      gap: 0.5rem;
+      width: 100%;
+      .heading {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        flex: 1;
+        color: var(--lightText);
+        h1 {
+          font-size: 2rem;
+        }
       }
     }
+    
 
     .form {
       margin-top: 2rem;
@@ -406,6 +431,7 @@ body {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        color: var(--lightText);
 
         //margin-bottom: 1.25rem;
         .input-control-item {
@@ -416,6 +442,8 @@ body {
           input {
             margin-right: 5px;
             cursor: pointer;
+            background-color: var(--tertiaryBackground);
+            color: var(--lightText);
           }
 
           label {
@@ -459,18 +487,12 @@ body {
 
       .message-failure {
         border-radius: $borderRadius;
-        margin: 8px;
-        padding: 8px;
-        background-color: rgb(255, 167, 167);
-        color: #777;
+        color: rgb(255, 0, 0);
       }
 
       .message-success {
         border-radius: $borderRadius;
-        margin: 8px;
-        padding: 8px;
-        background-color: rgb(136, 255, 165);
-        color: #777;
+        background-color: rgb(0, 255, 64);
       }
 
       .input-field {
@@ -480,13 +502,14 @@ body {
         line-height: inherit;
         width: 100%;
         height: auto;
-        padding: 0.75rem 1.25rem;
+        padding: 1rem;
         border: none;
         outline: none;
         border-radius: 2rem;
-        background: $sidepanel;
+        background: var(--secondaryBackground);
         text-transform: unset;
         text-rendering: optimizeLegibility;
+        color: var(--lightText);
       }
 
       .input-submit {
@@ -497,12 +520,12 @@ body {
         cursor: pointer;
         min-width: 40%;
         height: auto;
-        padding: 0.65rem 1rem;
+        padding: 1rem;
         border: none;
         outline: none;
         border-radius: 2rem;
-        color: white;
-        background: $notification;
+        color: var(--lightText);
+        background: var(--notification);
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
         text-transform: capitalize;
         text-rendering: optimizeLegibility;
@@ -510,33 +533,6 @@ body {
     }
   }
 }
-
-
-// @media (max-width: 1040px) {
-//     .banner {
-//         padding-top: 20px;
-//         .banner-left, .banner-right {
-//             grid-column: span 2;
-//         }
-//         .banner-right {
-//             padding-top: 10px;
-//             .btn {
-//                 &:first-child {
-//                     padding-left: 0;
-//                 }
-//             }
-//         }
-//     }
-//     .feature-section {
-//         grid-template-columns: repeat(4, 150px);
-//         .feature {
-//             grid-column: span 2;
-//         }
-//         .get-involved {
-//             grid-column: span 4;
-//         }
-//     }
-// }
 
 
 // Notifications css
@@ -559,8 +555,6 @@ body {
     background: $sidepanel-bg;
     border-radius: $borderRadius;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-    //padding: 1rem 1rem 0rem 1rem;
-    //margin: 0rem 2rem;
 
     overflow: hidden;
     flex-shrink: 0;
@@ -587,7 +581,7 @@ body {
         display: flex;
         justify-content: center;
         align-items: center;
-        color: white;
+        color: var(--lightText);
         background-color: #003061;
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
         transition: all 0.4s;
@@ -614,12 +608,12 @@ body {
 
       .normal {
         background-color: $sidepanel;
-        color: $body;
+        color: var(--lightText);
       }
 
       .confirm {
         background-color: $notification;
-        color: white;
+        color: var(--lightText);
       }
 
 
@@ -630,6 +624,46 @@ body {
       background-color: rgba(0, 0, 0, 0.76);
     }
 
+  }
+}
+
+.switch {
+  display: inline-flex;
+
+  input[type=checkbox] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+
+    &:checked+label {
+      background: var(--notification);
+      &::after {
+        left: calc(100% - 4px);
+        transform: translateX(-100%);
+      }
+    }
+  }
+
+  label {
+    cursor: pointer;
+    width: 48px;
+    height: 24px;
+    background: var(--notification);
+    display: block;
+    border-radius: $borderRadius;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 16px;
+      height: 16px;
+      background: var(--lightText);
+      border-radius: $borderRadius;
+      transition: 0.3s;
+    }
   }
 }
 
@@ -645,8 +679,6 @@ body {
 
   .feature-section {
     grid-template-columns: repeat(2, 200px);
-
-    // grid-auto-columns: 400px;
     .get-involved {
       grid-column: span 2;
     }
@@ -681,7 +713,6 @@ body {
   .feature-section {
     grid-template-columns: repeat(2, 140px);
 
-    // grid-auto-columns: 400px;
     .get-involved {
       grid-column: span 2;
     }
@@ -693,5 +724,135 @@ body {
     margin: 0;
     padding: 1rem;
     max-width: 100%;
+  }
+}
+
+////////////////////////////////BACKGROUND/////////////////////////
+@keyframes move {
+  100% {
+      transform: translate3d(0, 0, 1px) rotate(360deg);
+  }
+}
+
+.background {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background: var(--primaryBackground);
+  overflow: hidden;
+  z-index: -999;
+
+  span {
+      width: 45vmin;
+      height: 45vmin;
+      border-radius: 45vmin;
+      backface-visibility: hidden;
+      position: absolute;
+      animation: move;
+      animation-duration: 12;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+
+      &:nth-child(0) {
+          color: #005aff;
+          top: 43%;
+          left: 88%;
+          animation-duration: 97s;
+          animation-delay: -132s;
+          transform-origin: 4vw 21vh;
+          box-shadow: 90vmin 0 11.901808246489937vmin currentColor;
+      }
+
+      &:nth-child(1) {
+          color: var(--notification);
+          top: 43%;
+          left: 93%;
+          animation-duration: 224s;
+          animation-delay: -304s;
+          transform-origin: 14vw 1vh;
+          box-shadow: 90vmin 0 11.262822183770906vmin currentColor;
+      }
+
+      &:nth-child(2) {
+          color: var(--primaryBackground);
+          top: 77%;
+          left: 65%;
+          animation-duration: 381s;
+          animation-delay: -260s;
+          transform-origin: 6vw 9vh;
+          box-shadow: -90vmin 0 12.200983853557796vmin currentColor;
+      }
+
+      &:nth-child(3) {
+          color: var(--tertiaryBackground);
+          top: 53%;
+          left: 83%;
+          animation-duration: 320s;
+          animation-delay: -270s;
+          transform-origin: 7vw -9vh;
+          box-shadow: -90vmin 0 11.935107618936929vmin currentColor;
+      }
+
+      &:nth-child(4) {
+          color: #005aff;
+          top: 50%;
+          left: 46%;
+          animation-duration: 298s;
+          animation-delay: -72s;
+          transform-origin: -15vw -1vh;
+          box-shadow: -90vmin 0 11.750846479178882vmin currentColor;
+      }
+
+      &:nth-child(5) {
+          color: var(--secondaryBackground);
+          top: 42%;
+          left: 26%;
+          animation-duration: 20s;
+          animation-delay: -136s;
+          transform-origin: -12vw -1vh;
+          box-shadow: 90vmin 0 11.255576755830687vmin currentColor;
+      }
+
+      &:nth-child(6) {
+          color: #005aff;
+          top: 23%;
+          left: 16%;
+          animation-duration: 266s;
+          animation-delay: -333s;
+          transform-origin: -15vw 7vh;
+          box-shadow: -90vmin 0 11.824600487760055vmin currentColor;
+      }
+
+      &:nth-child(7) {
+          color: #005aff;
+          top: 80%;
+          left: 6%;
+          animation-duration: 26s;
+          animation-delay: -264s;
+          transform-origin: -19vw -21vh;
+          box-shadow: 90vmin 0 11.46704592995466vmin currentColor;
+      }
+
+      &:nth-child(8) {
+          color: #FFACAC;
+          top: 7%;
+          left: 24%;
+          animation-duration: 266s;
+          animation-delay: -164s;
+          transform-origin: 19vw 23vh;
+          box-shadow: -90vmin 0 12.218125449306182vmin currentColor;
+      }
+
+      &:nth-child(9) {
+          color: #005aff;
+          top: 9%;
+          left: 80%;
+          animation-duration: 136s;
+          animation-delay: -50s;
+          transform-origin: 12vw 18vh;
+          box-shadow: 90vmin 0 12.232572510313979vmin currentColor;
+      }
   }
 }

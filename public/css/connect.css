@@ -1,4 +1,34 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+.dark {
+  --lightText: rgb(205, 210, 214);
+  --focusAreaBackgroundColor: rgb(24, 27, 31);
+  --primaryBackground: rgb(12, 18, 26);
+  --secondaryBackground: rgb(6, 9, 14);
+  --tertiaryBackground: rgb(0, 0, 0);
+  --notification: rgb(0, 48, 97);
+  --warning-bg: rgb(255, 212, 212);
+  --borderRadius: 15px;
+  --receivedMessageBg: var(--primaryBackground);
+  --sentMessageBg: var(--notification);
+  --hoverColor: var(--notification);
+  --transparentBg: rgba(255, 255, 255, 0.13);
+}
+
+.light {
+  --lightText: rgb(58, 60, 61);
+  --focusAreaBackgroundColor: rgb(245, 249, 253);
+  --primaryBackground: rgb(235, 240, 246);
+  --secondaryBackground: rgb(255, 255, 255);
+  --tertiaryBackground: rgb(235, 235, 235);
+  --notification: #ffffff;
+  --warning-bg: rgb(255, 212, 212);
+  --borderRadius: 15px;
+  --receivedMessageBg: rgb(211, 219, 230);
+  --sentMessageBg: rgb(247, 247, 247);
+  --hoverColor: rgb(0, 48, 97);
+  --transparentBg: rgba(255, 255, 255, 0.178);
+}
+
 /* width */
 *::-webkit-scrollbar {
   width: 5px;
@@ -58,7 +88,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: rgba(238, 238, 238, 0.5);
+  background: var(--transparentBg);
   padding: 1rem;
   transition: all 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
@@ -73,8 +103,8 @@ body {
   cursor: pointer;
 }
 .wrapper .login-register .content {
-  color: #777;
-  background: white;
+  color: var(--lightText);
+  background: var(--primaryBackground);
   display: none;
 }
 .wrapper .login-register .content .form-group {
@@ -96,10 +126,10 @@ body {
   outline: none;
   border: none;
   border-radius: 15px;
-  background-color: #EBF0F6;
+  color: var(--secondaryBackground);
 }
 .wrapper .login-register .content .submit-btn {
-  color: #eee;
+  color: var(--lightText);
   background-color: #004992;
   cursor: pointer;
   width: 150px;
@@ -123,10 +153,10 @@ body {
   flex: 1;
   padding: 10px;
   background-color: transparent;
-  color: #777;
+  color: var(--lightText);
 }
 .wrapper .login-register ul .active {
-  color: #eee;
+  color: var(--lightText);
   display: block;
   background-color: #003061;
   flex: 5;
@@ -150,22 +180,23 @@ body {
   margin: 0 0 40px;
   text-align: center;
   grid-column: 1/-1;
-  color: #383544;
+  color: var(--lightText);
 }
 .wrapper .feature-section .features {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 25px;
+  color: var(--lightText);
 }
 .wrapper .feature-section .features .feature-item {
   width: 300px;
-  background-color: rgba(255, 255, 255, 0.896);
+  background-color: var(--primaryBackground);
   text-align: center;
   border-radius: 15px;
   padding: 1rem;
   margin-bottom: 50px;
-  box-shadow: 0 0 15px 0.5px rgba(56, 53, 68, 0.1);
+  box-shadow: 0 0 15px 0.5px rgba(0, 0, 0, 0.493);
   transition: box-shadow 0.3s;
   position: relative;
   border-radius: 15px;
@@ -182,67 +213,46 @@ body {
   border-radius: 15px;
   box-shadow: 0 3px 15px 2px rgba(0, 0, 0, 0.2);
   padding: 11px;
-  color: rgb(0, 48, 97);
-  background-color: #fff;
+  color: var(--lightText);
+  background-color: var(--secondaryBackground);
   font-size: 2.5rem;
 }
 .wrapper .feature-section .features .feature-item h3 {
-  font-size: 17px;
+  font-size: 1.5rem;
   margin-bottom: 5px;
 }
 .wrapper .feature-section .get-involved {
   grid-column: 1/-1;
-  text-align: center;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  color: var(--lightText);
 }
-.wrapper .feature-section .get-involved a {
-  display: inline-block;
+.wrapper .feature-section .get-involved .get-involved-content {
+  display: flex;
+  flex-direction: column;
+}
+.wrapper .feature-section .get-involved .get-involved-content a {
+  display: flex;
   flex-shrink: 0;
   text-decoration: none;
-  color: #fff;
-  background-color: #383544;
-  padding: 15px 30px;
+  color: var(--lightText);
+  background-color: var(--tertiaryBackground);
+  padding: 1rem;
   border-radius: 15px;
   margin: 20px 0;
-  box-shadow: 0 0 8px 1px rgba(56, 53, 68, 0.5);
+  box-shadow: 0 0 17px 1px rgba(0, 0, 0, 0.486);
   transition: all 0.3s;
+  color: var(--lightText);
+  justify-content: center;
 }
-.wrapper .feature-section .get-involved a:hover {
-  box-shadow: 2px 2px 10px 1px rgba(56, 53, 68, 0.8);
-  background-color: #2c2a36;
+.wrapper .feature-section .get-involved .get-involved-content a:hover {
+  color: var(--hoverColor);
 }
-.wrapper .feature-section .get-involved a i {
+.wrapper .feature-section .get-involved .get-involved-content a i {
   vertical-align: middle;
   margin-left: 5px;
   font-size: 15px;
-}
-.wrapper .cta {
-  text-align: center;
-}
-.wrapper .cta .cta-btn {
-  padding: 100px 0;
-}
-.wrapper .cta .cta-btn p {
-  font-size: 2.5rem;
-  margin: 0;
-}
-.wrapper .cta .cta-btn a {
-  display: inline-block;
-  font-size: 1.5rem;
-  text-decoration: none;
-  color: #fff;
-  background-color: rgb(0, 48, 97);
-  padding: 20px 80px;
-  border-radius: 15px;
-  margin: 50px 0;
-  box-shadow: 0 0 8px 1px rgba(56, 53, 68, 0.5);
-  transition: all 0.3s;
-}
-.wrapper .cta .cta-btn a:hover {
-  box-shadow: 2px 2px 10px 1px rgba(56, 53, 68, 0.6);
-  background-color: #002348;
-}
-.wrapper .cta .cta-btn .warning {
-  font-size: 14px;
 }
 
 .footer {
@@ -254,7 +264,7 @@ body {
   padding: 1rem;
   justify-content: center;
   flex-wrap: wrap;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: var(--primaryBackground);
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.15);
   align-items: center;
   z-index: 1;
@@ -270,7 +280,7 @@ body {
   font-stretch: normal;
   line-height: normal;
   letter-spacing: normal;
-  color: #121011 !important;
+  color: var(--lightText) !important;
   text-decoration: none;
 }
 .footer a i {
@@ -286,8 +296,8 @@ body {
   margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   max-width: 40%;
+  color: var(--lightText);
 }
 .content-container .appIntro h1 {
   font-size: 3rem;
@@ -295,13 +305,12 @@ body {
 }
 .content-container .appIntro p {
   font-size: 1.5rem;
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
 }
 .content-container .text-links {
   font-size: 1rem;
   font-weight: 400;
-  color: rgb(0, 48, 97);
-  text-decoration: none;
+  color: var(--lightText);
 }
 .content-container .wrapper {
   max-width: 30rem;
@@ -309,17 +318,24 @@ body {
   border: none;
   outline: none;
   border-radius: 15px;
-  background: white;
+  background: var(--primaryBackground);
   display: flex;
   flex-direction: column;
 }
-.content-container .wrapper .heading {
+.content-container .wrapper .formTopSection {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+.content-container .wrapper .formTopSection .heading {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  flex: 1;
+  color: var(--lightText);
 }
-.content-container .wrapper .heading h1 {
+.content-container .wrapper .formTopSection .heading h1 {
   font-size: 2rem;
 }
 .content-container .wrapper .form {
@@ -333,6 +349,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: var(--lightText);
 }
 .content-container .wrapper .form .input-control .input-control-item {
   display: flex;
@@ -342,6 +359,8 @@ body {
 .content-container .wrapper .form .input-control .input-control-item input {
   margin-right: 5px;
   cursor: pointer;
+  background-color: var(--tertiaryBackground);
+  color: var(--lightText);
 }
 .content-container .wrapper .form .input-control .input-control-item label {
   display: flex;
@@ -373,17 +392,11 @@ body {
 }
 .content-container .wrapper .form .message-failure {
   border-radius: 15px;
-  margin: 8px;
-  padding: 8px;
-  background-color: rgb(255, 167, 167);
-  color: #777;
+  color: rgb(255, 0, 0);
 }
 .content-container .wrapper .form .message-success {
   border-radius: 15px;
-  margin: 8px;
-  padding: 8px;
-  background-color: rgb(136, 255, 165);
-  color: #777;
+  background-color: rgb(0, 255, 64);
 }
 .content-container .wrapper .form .input-field {
   font-family: inherit;
@@ -392,13 +405,14 @@ body {
   line-height: inherit;
   width: 100%;
   height: auto;
-  padding: 0.75rem 1.25rem;
+  padding: 1rem;
   border: none;
   outline: none;
   border-radius: 2rem;
-  background: rgb(235, 240, 246);
+  background: var(--secondaryBackground);
   text-transform: unset;
   text-rendering: optimizeLegibility;
+  color: var(--lightText);
 }
 .content-container .wrapper .form .input-submit {
   font-family: inherit;
@@ -408,12 +422,12 @@ body {
   cursor: pointer;
   min-width: 40%;
   height: auto;
-  padding: 0.65rem 1rem;
+  padding: 1rem;
   border: none;
   outline: none;
   border-radius: 2rem;
-  color: white;
-  background: rgb(0, 48, 97);
+  color: var(--lightText);
+  background: var(--notification);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
   text-transform: capitalize;
   text-rendering: optimizeLegibility;
@@ -462,7 +476,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--lightText);
   background-color: #003061;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
   transition: all 0.4s;
@@ -485,15 +499,51 @@ body {
 }
 .notifications .notification .notificationActions .normal {
   background-color: rgb(235, 240, 246);
-  color: rgb(91, 94, 97);
+  color: var(--lightText);
 }
 .notifications .notification .notificationActions .confirm {
   background-color: rgb(0, 48, 97);
-  color: white;
+  color: var(--lightText);
 }
 .notifications .notification .notificationProgressBar {
   height: 3px;
   background-color: rgba(0, 0, 0, 0.76);
+}
+
+.switch {
+  display: inline-flex;
+}
+.switch input[type=checkbox] {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+.switch input[type=checkbox]:checked + label {
+  background: var(--notification);
+}
+.switch input[type=checkbox]:checked + label::after {
+  left: calc(100% - 4px);
+  transform: translateX(-100%);
+}
+.switch label {
+  cursor: pointer;
+  width: 48px;
+  height: 24px;
+  background: var(--notification);
+  display: block;
+  border-radius: 15px;
+  position: relative;
+}
+.switch label::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 16px;
+  height: 16px;
+  background: var(--lightText);
+  border-radius: 15px;
+  transition: 0.3s;
 }
 
 @media (max-width: 742px) {
@@ -543,4 +593,150 @@ body {
     padding: 1rem;
     max-width: 100%;
   }
+}
+@-webkit-keyframes move {
+  100% {
+    transform: translate3d(0, 0, 1px) rotate(360deg);
+  }
+}
+@keyframes move {
+  100% {
+    transform: translate3d(0, 0, 1px) rotate(360deg);
+  }
+}
+.background {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background: var(--primaryBackground);
+  overflow: hidden;
+  z-index: -999;
+}
+.background span {
+  width: 45vmin;
+  height: 45vmin;
+  border-radius: 45vmin;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  position: absolute;
+  -webkit-animation: move;
+          animation: move;
+  -webkit-animation-duration: 12;
+          animation-duration: 12;
+  -webkit-animation-timing-function: linear;
+          animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}
+.background span:nth-child(0) {
+  color: #005aff;
+  top: 43%;
+  left: 88%;
+  -webkit-animation-duration: 97s;
+          animation-duration: 97s;
+  -webkit-animation-delay: -132s;
+          animation-delay: -132s;
+  transform-origin: 4vw 21vh;
+  box-shadow: 90vmin 0 11.9018082465vmin currentColor;
+}
+.background span:nth-child(1) {
+  color: var(--notification);
+  top: 43%;
+  left: 93%;
+  -webkit-animation-duration: 224s;
+          animation-duration: 224s;
+  -webkit-animation-delay: -304s;
+          animation-delay: -304s;
+  transform-origin: 14vw 1vh;
+  box-shadow: 90vmin 0 11.2628221838vmin currentColor;
+}
+.background span:nth-child(2) {
+  color: var(--primaryBackground);
+  top: 77%;
+  left: 65%;
+  -webkit-animation-duration: 381s;
+          animation-duration: 381s;
+  -webkit-animation-delay: -260s;
+          animation-delay: -260s;
+  transform-origin: 6vw 9vh;
+  box-shadow: -90vmin 0 12.2009838536vmin currentColor;
+}
+.background span:nth-child(3) {
+  color: var(--tertiaryBackground);
+  top: 53%;
+  left: 83%;
+  -webkit-animation-duration: 320s;
+          animation-duration: 320s;
+  -webkit-animation-delay: -270s;
+          animation-delay: -270s;
+  transform-origin: 7vw -9vh;
+  box-shadow: -90vmin 0 11.9351076189vmin currentColor;
+}
+.background span:nth-child(4) {
+  color: #005aff;
+  top: 50%;
+  left: 46%;
+  -webkit-animation-duration: 298s;
+          animation-duration: 298s;
+  -webkit-animation-delay: -72s;
+          animation-delay: -72s;
+  transform-origin: -15vw -1vh;
+  box-shadow: -90vmin 0 11.7508464792vmin currentColor;
+}
+.background span:nth-child(5) {
+  color: var(--secondaryBackground);
+  top: 42%;
+  left: 26%;
+  -webkit-animation-duration: 20s;
+          animation-duration: 20s;
+  -webkit-animation-delay: -136s;
+          animation-delay: -136s;
+  transform-origin: -12vw -1vh;
+  box-shadow: 90vmin 0 11.2555767558vmin currentColor;
+}
+.background span:nth-child(6) {
+  color: #005aff;
+  top: 23%;
+  left: 16%;
+  -webkit-animation-duration: 266s;
+          animation-duration: 266s;
+  -webkit-animation-delay: -333s;
+          animation-delay: -333s;
+  transform-origin: -15vw 7vh;
+  box-shadow: -90vmin 0 11.8246004878vmin currentColor;
+}
+.background span:nth-child(7) {
+  color: #005aff;
+  top: 80%;
+  left: 6%;
+  -webkit-animation-duration: 26s;
+          animation-duration: 26s;
+  -webkit-animation-delay: -264s;
+          animation-delay: -264s;
+  transform-origin: -19vw -21vh;
+  box-shadow: 90vmin 0 11.46704593vmin currentColor;
+}
+.background span:nth-child(8) {
+  color: #FFACAC;
+  top: 7%;
+  left: 24%;
+  -webkit-animation-duration: 266s;
+          animation-duration: 266s;
+  -webkit-animation-delay: -164s;
+          animation-delay: -164s;
+  transform-origin: 19vw 23vh;
+  box-shadow: -90vmin 0 12.2181254493vmin currentColor;
+}
+.background span:nth-child(9) {
+  color: #005aff;
+  top: 9%;
+  left: 80%;
+  -webkit-animation-duration: 136s;
+          animation-duration: 136s;
+  -webkit-animation-delay: -50s;
+          animation-delay: -50s;
+  transform-origin: 12vw 18vh;
+  box-shadow: 90vmin 0 12.2325725103vmin currentColor;
 }/*# sourceMappingURL=connect.css.map */
