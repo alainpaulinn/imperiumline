@@ -839,7 +839,7 @@ body {
     position: relative;
     top: 0;
     background-color: var(--secondaryBackground);
-    z-index: 1;
+    z-index: 0;
     padding: 1rem;
 
     div {
@@ -1122,6 +1122,57 @@ body {
 
     &--active {
       color: var(--notification);
+    }
+  }
+}
+
+.c-openchat-details {
+  width: 350px;
+  height: calc(100vh - 2rem);
+  margin: 1rem 1rem 1rem 0rem;
+  display: flex;
+  flex-direction: column;
+  color: var(--lightText);
+  display: flex;
+  flex-direction: column;
+  background-color: var(--secondaryBackground);
+  border-radius: 15px;
+  overflow: hidden;
+
+  .openedChatDetailsTopSection {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+    border-bottom: 1px solid var(--primaryBackground);
+  }
+
+  .openChatDetailsContenDiv {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--secondaryBackground);
+    overflow-y: auto;
+
+    .detailBlock {
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+      border-radius: 15px;
+      padding: 1rem;
+      background-color: var(--primaryBackground);
+
+      .listMemberWrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .listMember {
+          border-radius: $borderRadius;
+        }
+      }
     }
   }
 }
@@ -3826,6 +3877,7 @@ body {
   text-align: center;
   display: flex;
   justify-content: center;
+  gap: 0.5rem;
 
   .pill {
     display: flex;
@@ -3836,13 +3888,13 @@ body {
     height: 3rem;
     background: var(--primaryBackground);
     color: var(--lightText);
-    padding: 0 0.75rem 0 1.5rem;
-    margin-left: 0.5rem;
+    padding: 1rem;
     border-radius: $borderRadius;
     border: 1px solid var(--tertiaryBackground);
     overflow: hidden;
     cursor: pointer;
     transition: background-color 0.24s ease;
+    gap: 1rem;
     @extend .noSelect;
 
     .pill-label {
@@ -3874,7 +3926,6 @@ body {
       position: relative;
       width: 2rem;
       height: 2rem;
-      margin-left: 1rem;
       @extend .noSelect;
 
       &:before,
@@ -3900,11 +3951,14 @@ body {
 
       .circle {
         position: absolute;
-        width: 100%;
-        height: 100%;
         background-color: var(--notification);
         border-radius: $borderRadius;
         transition: all 0.4s cubic-bezier(1.000, 0.000, 0.000, 1.000);
+        aspect-ratio: 1;
+        height: 2rem;
+        width: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
       }
     }
   }
@@ -3921,16 +3975,15 @@ body {
 
     .circle {
 
-      transform: scale(15);
+      // width: 100vh;
+      transform: scale(15) !important;
     }
 
     &:before {
-
       transform: rotate(135deg) translateX(-2px) translateY(-2px) !important;
     }
 
     &:after {
-
       transform: rotate(-135deg) translateX(-2px) translateY(-2px) !important;
       width: 5.5px !important;
     }
@@ -3948,6 +4001,7 @@ body {
 
     &:checked+label {
       background: var(--notification);
+
       &::after {
         left: calc(100% - 4px);
         transform: translateX(-100%);
@@ -4802,17 +4856,7 @@ body {
     }
   }
 
-  .dummyTemplateElement {
-    display: flex;
-    width: calc(100% - 4rem);
-    height: calc(100% - 4rem);
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    margin: 2rem;
-    text-align: center;
-    color: var(--lightText);
-  }
+
 
   .hidden {
     display: none;
@@ -4845,6 +4889,18 @@ body {
     }
   }
 
+}
+
+.dummyTemplateElement {
+  display: flex;
+  width: calc(100% - 4rem);
+  height: calc(100% - 4rem);
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin: 2rem;
+  text-align: center;
+  color: var(--lightText);
 }
 
 :root {
@@ -5631,6 +5687,15 @@ body {
           height: 100%;
           width: 100%;
         }
+
+        .c-openchat-details {
+          height: 100%;
+          margin: 0;
+          max-width: 100%;
+          min-width: 100%;
+          width: 100%;
+          max-height: calc(100% - 30px - 3rem);
+        }
       }
     }
   }
@@ -5690,6 +5755,7 @@ body {
       max-width: 100%;
       min-width: 100%;
       width: 100%;
+      max-height: calc(100% - 30px - 3rem);
     }
   }
 
@@ -5787,6 +5853,21 @@ body {
 
   .tabletButton {
     display: flex !important;
+  }
+
+  .c-messages_panel {
+    .c-chats {}
+
+    .c-openchat {}
+
+    .c-openchat-details {
+      position: absolute;
+      right: 0;
+      width: 350px;
+      border-radius: 15px;
+      box-shadow: black;
+      box-shadow: 0px 0px 20px -7px rgb(0 0 0);
+    }
   }
 
   .c-call_log_panel {

@@ -1816,7 +1816,7 @@ let functionalityOptionsArray = [
   // }
 
   function displayAppSection(sectionIndex) {
-    if(displayedScreen != 2) displayedScreen = sectionIndex // store the current screen except if it is the call screen
+    if (displayedScreen != 2) displayedScreen = sectionIndex // store the current screen except if it is the call screen
     for (let i = 0; i < sidepanelElements.length; i++) {
       if (sidepanelElements[i].index != sectionIndex) {
         sidepanelElements[i].panel.style.display = "none";
@@ -1838,13 +1838,25 @@ let functionalityOptionsArray = [
   // mobule responsiveness functions
   let chats_panel = document.getElementById('chats_panel')
   let chatContent_panel = document.getElementById('chatContent_panel')
+  let chatDetails_panel = document.getElementById('chatDetails_panel')
   function showChatList() {
     chats_panel.classList.remove('mobileHiddenElement')
     chatContent_panel.classList.add('mobileHiddenElement')
+    chatDetails_panel.classList.add('mobileHiddenElement')
+    chatDetails_panel.classList.add('tabletHiddenElement')
   }
   function showChatContent() {
     chats_panel.classList.add('mobileHiddenElement')
     chatContent_panel.classList.remove('mobileHiddenElement')
+    chatDetails_panel.classList.add('mobileHiddenElement')
+    chatDetails_panel.classList.add('tabletHiddenElement')
+  }
+
+  function showChatDetails() {
+    chats_panel.classList.add('mobileHiddenElement')
+    chatContent_panel.classList.add('mobileHiddenElement')
+    chatDetails_panel.classList.remove('mobileHiddenElement')
+    chatDetails_panel.classList.remove('tabletHiddenElement')
   }
 
   //////////////////////////// to be used later if needed /////////////////////////////////
@@ -2079,6 +2091,9 @@ let functionalityOptionsArray = [
     let { roomInfo, messagesArray } = openChatInfo
     let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = roomInfo
     // let { roomID, roomName, type, profilePicture, myID, messagesArray, usersArray } = roomInfo;
+    chatDetails_panel.textContent = '';
+    chatDetails_panel.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any Convesation to see its more details here' }));
+
     selectedChatId = roomID
     taggedMessages = [];
     let imageContainer;
@@ -2098,7 +2113,12 @@ let functionalityOptionsArray = [
         chatActions = [
           { element: callButton, functionCall: () => { call(roomID, true, false, false, true, null) } },
           { element: videoButton, functionCall: () => { call(roomID, true, true, false, true, null) } },
-          { element: moreButton, functionCall: () => { console.log('moreButton', userToDisplay[0].userID) } }
+          {
+            element: moreButton, functionCall: () => {
+              showChatDetails();
+              fillInChatDetails();
+            }
+          }
         ]
         if (userToDisplay.length < 1) { // in case we have only one user (viewer)
           chatTitleText = 'Deleted User'
@@ -2116,7 +2136,12 @@ let functionalityOptionsArray = [
         else chatTitleText = roomName;
         let groupCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(roomID, true, false, false, true, null) } })
         let groupVideoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(roomID, true, false, false, true, null) } })
-        let groupMoreButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => { console.log('groupMoreButton clicked') } })
+        let groupMoreButton = createElement({
+          elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
+            showChatDetails();
+            fillInChatDetails();
+          }
+        })
         openchat__box__header = createElement({
           elementType: 'div', class: 'c-openchat__box__header', childrenArray: [
             mobileButton,
@@ -2186,6 +2211,83 @@ let functionalityOptionsArray = [
       socket.emit('message', message)
       if (taggedMessages.length > 0) messageTagsField.remove()
       taggedMessages = [];
+    }
+
+    function fillInChatDetails() {
+      chatDetails_panel.textContent = '';
+      let backButton = createElement({
+        elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
+        onclick: showChatContent
+      })
+      let chatName = roomName == null ? '(No name)' : roomName;
+      let chatType = createElement({ elementType: 'div', class: 'chatType', textContent: type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName })
+      let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton, chatType] })
+
+      let participantsDivs = users.map(user => {
+        let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+        let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+        let actions = [
+          { element: messageButton, functionCall: () => { initiateChat(user.userID) } },
+          { element: callButton, functionCall: () => { call(user.userID, true, false, false, false, null) } }
+        ]
+        return userForAttendanceList(user, actions)
+      })
+      let detailsArray = []
+      let participantsBlock = createElement({
+        elementType: 'div', class: 'detailBlock', childrenArray: [
+          createElement({ elementType: 'div', textContent: 'Chat Participants' }),
+          createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: participantsDivs })
+        ]
+      })
+      detailsArray.push(participantsBlock)
+      if (type == 1) {
+        let chatnameBlock = createElement({
+          elementType: 'div', class: 'detailBlock', childrenArray: [
+            createElement({ elementType: 'div', textContent: 'Group Name:' }),
+            createElement({
+              elementType: 'div', childrenArray: [
+                createElement({ elementType: 'div', class: 'conversationName', textContent: chatName }),
+                createElement({
+                  elementType: 'button', textContent: 'Change', onclick: () => {
+                    let icon, title, contentElementsArray, actions;
+
+                    let chatNameLabel = createElement({ elementType: 'label', for: 'chatName', textContent: 'Chat name' })
+                    let chatNameInput = createElement({ elementType: 'input', id: 'chatName' + 'chooseNew', placeHolder: 'Chat name', value: roomName == null ? '' : roomName })
+                    let chatNameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chatNameLabel, chatNameInput] })
+
+                    icon = 'bx bxs-edit-alt'
+                    title = 'Change chat name'
+                    contentElementsArray = [chatNameBlock]
+
+                    let cancelButton = createElement({ elementType: 'button', textContent: 'Cancel' })
+                    let confirmButton = createElement({ elementType: 'button', textContent: 'Save' })
+                    actions = [
+                      { element: confirmButton, functionCall: () => {
+                        socket.emit('changeRoomName', chatNameInput.value )
+                      } },
+                      { element: cancelButton, functionCall: () => { } }
+                    ]
+                    let constraints = { icon, title, contentElementsArray, actions }
+                    // actions is an array of a button and a function of what it does
+                    createInScreenPopup(constraints).then(editPopup => {
+                      cancelButton.addEventListener('click', editPopup.closePopup);
+                      confirmButton.addEventListener('click', editPopup.closePopup);
+                    })
+
+                  }
+                })
+              ]
+            })
+          ]
+        })
+        detailsArray.push(chatnameBlock)
+      }
+      console.log('roomName', roomName)
+
+      let openChatDetailsContenDiv = createElement({ elementType: 'div', class: 'openChatDetailsContenDiv', childrenArray: detailsArray })
+      chatDetails_panel.appendChild(openedChatDetailsTopSection)
+      chatDetails_panel.appendChild(openChatDetailsContenDiv)
+
     }
   }
 
