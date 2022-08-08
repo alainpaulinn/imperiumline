@@ -932,7 +932,8 @@ body {
   background-color: var(--secondaryBackground);
   overflow-y: auto;
 }
-.c-openchat-details .openChatDetailsContenDiv .detailBlock {
+
+.detailBlock {
   display: flex;
   flex-direction: column;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
@@ -940,13 +941,40 @@ body {
   padding: 1rem;
   background-color: var(--primaryBackground);
 }
-.c-openchat-details .openChatDetailsContenDiv .detailBlock .listMemberWrapper {
+.detailBlock .listMember {
+  border-radius: 15px;
+}
+.detailBlock .listMemberWrapper {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-.c-openchat-details .openChatDetailsContenDiv .detailBlock .listMemberWrapper .listMember {
+.detailBlock .subDetailBlock {
   border-radius: 15px;
+  display: flex;
+  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  border-radius: 15px;
+  padding: 1rem;
+  background-color: var(--secondaryBackground);
+  align-items: center;
+  gap: 1rem;
+}
+.detailBlock .subDetailBlock div {
+  flex: 1;
+}
+.detailBlock .subDetailBlock button {
+  background-color: var(--primaryBackground);
+  outline: none;
+  border-radius: 15px;
+  border: none;
+  color: var(--lightText);
+  transition: all 0.4s;
+  padding: 1rem;
+  cursor: pointer;
+}
+.detailBlock .subDetailBlock button:hover {
+  color: var(--hoverColor);
+  transition: all 0.4s;
 }
 
 .c-notification {
@@ -3976,22 +4004,6 @@ body {
   padding: 1rem;
   background-color: var(--secondaryBackground);
   overflow-y: auto;
-}
-.schedule-container .scheduleDetailsSection .eventDetailsContentDiv .detailBlock {
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  border-radius: 15px;
-  padding: 1rem;
-  background-color: var(--primaryBackground);
-}
-.schedule-container .scheduleDetailsSection .eventDetailsContentDiv .detailBlock .listMember {
-  border-radius: 15px;
-}
-.schedule-container .scheduleDetailsSection .eventDetailsContentDiv .detailBlock .listMemberWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 }
 .schedule-container button {
   background-color: var(--primaryBackground);

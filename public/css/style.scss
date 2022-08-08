@@ -1156,22 +1156,57 @@ body {
     background-color: var(--secondaryBackground);
     overflow-y: auto;
 
-    .detailBlock {
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-      border-radius: 15px;
-      padding: 1rem;
+
+  }
+}
+
+.detailBlock {
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  border-radius: 15px;
+  padding: 1rem;
+  background-color: var(--primaryBackground);
+
+  .listMember {
+    border-radius: $borderRadius;
+  }
+
+  .listMemberWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+
+  }
+
+  .subDetailBlock {
+    border-radius: $borderRadius;
+    display: flex;
+    box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+    border-radius: 15px;
+    padding: 1rem;
+    background-color: var(--secondaryBackground);
+    align-items: center;
+    gap: 1rem;
+
+    div{
+      flex: 1;
+    }
+
+    button {
       background-color: var(--primaryBackground);
+      outline: none;
+      border-radius: $borderRadius;
+      border: none;
+      color: var(--lightText);
+      transition: all 0.4s;
+      padding: 1rem;
+      cursor: pointer;
 
-      .listMemberWrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-
-        .listMember {
-          border-radius: $borderRadius;
-        }
+      &:hover {
+        color: var(--hoverColor);
+        transition: all 0.4s;
       }
     }
   }
@@ -4815,25 +4850,25 @@ body {
       background-color: var(--secondaryBackground);
       overflow-y: auto;
 
-      .detailBlock {
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-        border-radius: $borderRadius;
-        padding: 1rem;
-        background-color: var(--primaryBackground);
+      // .detailBlock {
+      //   display: flex;
+      //   flex-direction: column;
+      //   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+      //   border-radius: $borderRadius;
+      //   padding: 1rem;
+      //   background-color: var(--primaryBackground);
 
-        .listMember {
-          border-radius: $borderRadius;
-        }
+      //   .listMember {
+      //     border-radius: $borderRadius;
+      //   }
 
-        .listMemberWrapper {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
+      //   .listMemberWrapper {
+      //     display: flex;
+      //     flex-direction: column;
+      //     gap: 0.5rem;
 
-        }
-      }
+      //   }
+      // }
     }
   }
 

@@ -2245,11 +2245,14 @@ let functionalityOptionsArray = [
           elementType: 'div', class: 'detailBlock', childrenArray: [
             createElement({ elementType: 'div', textContent: 'Group Name:' }),
             createElement({
-              elementType: 'div', childrenArray: [
+              elementType: 'div', class:'subDetailBlock', childrenArray: [
                 createElement({ elementType: 'div', class: 'conversationName', textContent: chatName }),
                 createElement({
                   elementType: 'button', textContent: 'Change', onclick: () => {
                     let icon, title, contentElementsArray, actions;
+
+                    let notificationBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: '*Leave the field empty if you want to delete the donversation name' })
+
 
                     let chatNameLabel = createElement({ elementType: 'label', for: 'chatName', textContent: 'Chat name' })
                     let chatNameInput = createElement({ elementType: 'input', id: 'chatName' + 'chooseNew', placeHolder: 'Chat name', value: roomName == null ? '' : roomName })
@@ -2257,13 +2260,14 @@ let functionalityOptionsArray = [
 
                     icon = 'bx bxs-edit-alt'
                     title = 'Change chat name'
-                    contentElementsArray = [chatNameBlock]
-
+                    contentElementsArray = [chatNameBlock, notificationBlock]
                     let cancelButton = createElement({ elementType: 'button', textContent: 'Cancel' })
                     let confirmButton = createElement({ elementType: 'button', textContent: 'Save' })
                     actions = [
                       { element: confirmButton, functionCall: () => {
-                        socket.emit('changeRoomName', chatNameInput.value )
+                        let sendvalue = chatNameInput.value.trim()
+                        if(sendvalue == '') sendvalue = null
+                        socket.emit('changeRoomName',  {roomName: sendvalue, roomID: roomID} )
                       } },
                       { element: cancelButton, functionCall: () => { } }
                     ]

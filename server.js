@@ -296,6 +296,33 @@ io.on('connection', (socket) => {
       })
 
     })
+
+    socket.on('changeRoomName', async (changeDetails) => {
+      let {roomName, roomID} = changeDetails
+      console.log('changeRoomName', roomName, roomID)
+      let groupMembers = await getRoomParticipantArray(roomID)
+      let thisParticipant = groupMembers.find(participant => participant.userID === id)
+      if(thisParticipant ==  undefined) return console.log('this user cannot change the conversation name because he is not part of the group')
+      db.query("UPDATE `room` SET `name`= ? WHERE `chatID` = ?", [roomName, roomID], async (err, result) => {
+        if(err){
+          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error offurred while changing the group name.' }])        }
+        else{
+          // socket.emit('chatContent', await getChatFullInfo(roomID, id))
+          socket.emit('serverFeedback', [{ type: 'positive', message: 'the group name was changed successfully.' }])
+          for (let i = 0; i < connectedUsers.length; i++) {
+            for (let j = 0; j < groupMembers.length; j++) {
+              if (connectedUsers[i].id == groupMembers[j].userID) {
+                // connectedUsers[i].socket.emit
+                socket.to(connectedUsers[i].socket.id).emit('chatContent', await getChatFullInfo(roomID, connectedUsers[i].id));
+              }
+            }
+          }
+        }
+
+      })
+    })
+
+
     socket.on('messageReaction', (reactionIdentifiers) => {
       //reactionIdentifiers {messageId, selectedChatId, reaction}
       console.log(reactionIdentifiers, id)
@@ -387,7 +414,7 @@ io.on('connection', (socket) => {
         for (let i = 0; i < connectedUsers.length; i++) {
           for (let j = 0; j < thisCallparticipants.length; j++) {
             if (connectedUsers[i].id == thisCallparticipants[j].userID) {
-              connectedUsers[i].socket.emit
+              // connectedUsers[i].socket.emit
               socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
             }
           }
@@ -500,7 +527,7 @@ io.on('connection', (socket) => {
       for (let i = 0; i < connectedUsers.length; i++) {
         for (let j = 0; j < thisCallparticipants.length; j++) {
           if (connectedUsers[i].id == thisCallparticipants[j].userID) {
-            connectedUsers[i].socket.emit
+            // connectedUsers[i].socket.emit
             socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
           }
         }
@@ -541,7 +568,7 @@ io.on('connection', (socket) => {
       for (let i = 0; i < connectedUsers.length; i++) {
         for (let j = 0; j < thisCallparticipants.length; j++) {
           if (connectedUsers[i].id == thisCallparticipants[j].userID) {
-            connectedUsers[i].socket.emit
+            // connectedUsers[i].socket.emit
             socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
           }
         }
@@ -1917,8 +1944,12 @@ function revokeAdminAccess(adminToDelete, companyId) {
 function makeUserAdmin(userId, companyId, id) {
   return new Promise(function (resolve, reject) {
     db.query('INSERT INTO `admins`(`company_id`, `admin_id`, `done_by`) VALUES (?,?,?)', [companyId, userId, id], async (err, report) => {
-      if (err) resolve({ type: 'negative', message: 'An error occured while giving the admin access' });
-      resolve({ type: 'positive', message: 'Admin Access was givens successfully' })
+      if (err) {
+        console.log(err)
+        if(err.code == 'ER_DUP_ENTRY')  resolve({ type: 'negative', message: 'The user is already and admin' });
+        else resolve({ type: 'negative', message: 'An error occured while giving the admin access' });
+      }
+      else resolve({ type: 'positive', message: 'Admin Access was givens successfully' })
     })
   })
 }
