@@ -1975,7 +1975,7 @@ let functionalityOptionsArray = [
       for (let i = 0; i < displayedMessages.length; i++) {
         const displayedMessage = displayedMessages[i];
         if(displayedMessage.object.id == receivedReactionsInfo.message){
-          existingMessageObject.reactionsDiv.replaceWith(msgReactions)
+          displayedMessage.reactionsDiv.replaceWith(msgReactions)
         }
       }
       
