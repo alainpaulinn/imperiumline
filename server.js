@@ -341,7 +341,7 @@ io.on('connection', (socket) => {
                         console.error(err);
                       }
                       else {
-
+                        console.log('reaction has updated successfully')
                         io.sockets.in(reactionIdentifiers.selectedChatId + '').emit('updateReaction',
                           {
                             chat: reactionIdentifiers.selectedChatId,

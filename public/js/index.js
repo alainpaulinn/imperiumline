@@ -1972,6 +1972,7 @@ let functionalityOptionsArray = [
       //  = buildReaction(receivedReactionsInfo.details)
       let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
       let existingMessageObject = displayedMessages.find(displayedMessage => displayedMessage.object.id == receivedReactionsInfo.message)
+      console.log('existingMessageObject', existingMessageObject)
       if (existingMessageObject) {
         existingMessageObject.reactionsDiv.after(msgReactions)
         existingMessageObject.reactionsDiv.remove()
