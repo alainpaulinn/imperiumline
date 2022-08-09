@@ -1973,9 +1973,14 @@ let functionalityOptionsArray = [
       let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
       // let existingMessageObject = displayedMessages.find(displayedMessage => displayedMessage.object.id == receivedReactionsInfo.message)
       for (let i = 0; i < displayedMessages.length; i++) {
-        const displayedMessage = displayedMessages[i];
-        if(displayedMessage.object.id == receivedReactionsInfo.message){
-          displayedMessage.reactionsDiv.replaceWith(msgReactions)
+        
+        if(displayedMessages[i].object.id == receivedReactionsInfo.message){
+          
+          console.log('existing', displayedMessages[i])
+        console.log('new', msgReactions)
+
+          displayedMessages[i].reactionsDiv.replaceWith(msgReactions)
+          displayedMessages[i].reactionsDiv = msgReactions
         }
       }
       
