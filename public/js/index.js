@@ -1971,14 +1971,20 @@ let functionalityOptionsArray = [
     if (selectedChatId == receivedReactionsInfo.chat) { // update reaction in case it is on the open chat
       //  = buildReaction(receivedReactionsInfo.details)
       let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
-      let existingMessageObject = displayedMessages.find(displayedMessage => displayedMessage.object.id == receivedReactionsInfo.message)
-      
-      if (existingMessageObject) {
-        console.log('existingMessageObject ', existingMessageObject, 'replaced with ' , msgReactions)
-        existingMessageObject.reactionsDiv.replaceWith(msgReactions)
-        // existingMessageObject.reactionsDiv.remove()
-        // existingMessageObject.reactionsDiv = msgReactions
+      // let existingMessageObject = displayedMessages.find(displayedMessage => displayedMessage.object.id == receivedReactionsInfo.message)
+      for (let i = 0; i < displayedMessages.length; i++) {
+        const displayedMessage = displayedMessages[i];
+        if(displayedMessage.object.id == receivedReactionsInfo.message){
+          existingMessageObject.reactionsDiv.replaceWith(msgReactions)
+        }
       }
+      
+      // if (existingMessageObject) {
+      //   console.log('existingMessageObject ', existingMessageObject, 'replaced with ' , msgReactions)
+      //   existingMessageObject.reactionsDiv.replaceWith(msgReactions)
+      //   existingMessageObject.reactionsDiv.remove()
+      //   existingMessageObject.reactionsDiv = msgReactions
+      // }
     }
     else {
       if (mySavedID == receivedReactionsInfo.messageOwner.userID) { // show reaction if it is done on my message in chat
