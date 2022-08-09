@@ -1974,9 +1974,9 @@ let functionalityOptionsArray = [
       let existingMessageObject = displayedMessages.find(displayedMessage => displayedMessage.object.id == receivedReactionsInfo.message)
       console.log('existingMessageObject', existingMessageObject)
       if (existingMessageObject) {
-        existingMessageObject.reactionsDiv.after(msgReactions)
-        existingMessageObject.reactionsDiv.remove()
-        existingMessageObject.reactionsDiv = msgReactions
+        existingMessageObject.reactionsDiv.replaceWith(msgReactions)
+        // existingMessageObject.reactionsDiv.remove()
+        // existingMessageObject.reactionsDiv = msgReactions
       }
     }
     else {
