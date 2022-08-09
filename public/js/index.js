@@ -1972,8 +1972,9 @@ let functionalityOptionsArray = [
       //  = buildReaction(receivedReactionsInfo.details)
       let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
       let existingMessageObject = displayedMessages.find(displayedMessage => displayedMessage.object.id == receivedReactionsInfo.message)
-      console.log('existingMessageObject', existingMessageObject)
+      
       if (existingMessageObject) {
+        console.log('existingMessageObject ', existingMessageObject, 'replaced with ' , msgReactions)
         existingMessageObject.reactionsDiv.replaceWith(msgReactions)
         // existingMessageObject.reactionsDiv.remove()
         // existingMessageObject.reactionsDiv = msgReactions
