@@ -962,6 +962,10 @@ body {
 .detailBlock .subDetailBlock div {
   flex: 1;
 }
+.detailBlock .subDetailBlock div .largeImage {
+  width: 100%;
+  border-radius: 15px;
+}
 .detailBlock .subDetailBlock button {
   background-color: var(--primaryBackground);
   outline: none;
@@ -975,6 +979,31 @@ body {
 .detailBlock .subDetailBlock button:hover {
   color: var(--hoverColor);
   transition: all 0.4s;
+}
+.detailBlock .subDetailBlock .uploadIcon {
+  visibility: visible;
+  opacity: 1;
+  position: static !important;
+  left: unset;
+  top: unset;
+  transform: translate(0, 0);
+}
+.detailBlock .subDetailBlock .progress {
+  visibility: hidden;
+  opacity: 0;
+  background: var(--secondaryBackground);
+  border-radius: 100px;
+  align-items: center;
+  position: static !important;
+  top: 0;
+  left: 0;
+  transform: translate(0, 0);
+  padding: 0 4px;
+  height: 20px;
+  width: 100%;
+}
+.detailBlock .subDetailBlock.hidden {
+  display: block;
 }
 
 .c-notification {
@@ -4275,6 +4304,7 @@ body {
   outline: none;
   background-color: var(--primaryBackground);
   box-shadow: 0px 0px 17px -7px rgb(0, 0, 0);
+  transition: all 0.4s;
 }
 .uploadIcon i {
   font-size: 18px;
@@ -4282,6 +4312,9 @@ body {
 .uploadIcon.visible {
   visibility: visible;
   opacity: 1;
+}
+.uploadIcon:hover {
+  color: var(--hoverColor);
 }
 
 .hidden {

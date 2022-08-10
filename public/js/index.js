@@ -1839,6 +1839,12 @@ let functionalityOptionsArray = [
   let chats_panel = document.getElementById('chats_panel')
   let chatContent_panel = document.getElementById('chatContent_panel')
   let chatDetails_panel = document.getElementById('chatDetails_panel')
+
+  chatDetails_panel.clearPanel = () => {
+    chatDetails_panel.textContent = '';
+    chatDetails_panel.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any Convesation to see its more details here' }));
+  }
+
   function showChatList() {
     chats_panel.classList.remove('mobileHiddenElement')
     chatContent_panel.classList.add('mobileHiddenElement')
@@ -1968,28 +1974,14 @@ let functionalityOptionsArray = [
   }
   socket.on('updateReaction', function (receivedReactionsInfo) {
     console.log('updateReaction', receivedReactionsInfo, mySavedID, selectedChatId)
-    if (selectedChatId == receivedReactionsInfo.chat) { // update reaction in case it is on the open chat
-      //  = buildReaction(receivedReactionsInfo.details)
+    if (selectedChatId == receivedReactionsInfo.chat && displayedScreen == 0) { // update reaction in case it is on the open chat
       let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
-      // let existingMessageObject = displayedMessages.find(displayedMessage => displayedMessage.object.id == receivedReactionsInfo.message)
       for (let i = 0; i < displayedMessages.length; i++) {
-        
-        if(displayedMessages[i].object.id == receivedReactionsInfo.message){
-          
-          console.log('existing', displayedMessages[i])
-        console.log('new', msgReactions)
-
+        if (displayedMessages[i].object.id == receivedReactionsInfo.message) {
           displayedMessages[i].reactionsDiv.replaceWith(msgReactions)
           displayedMessages[i].reactionsDiv = msgReactions
         }
       }
-      
-      // if (existingMessageObject) {
-      //   console.log('existingMessageObject ', existingMessageObject, 'replaced with ' , msgReactions)
-      //   existingMessageObject.reactionsDiv.replaceWith(msgReactions)
-      //   existingMessageObject.reactionsDiv.remove()
-      //   existingMessageObject.reactionsDiv = msgReactions
-      // }
     }
     else {
       if (mySavedID == receivedReactionsInfo.messageOwner.userID) { // show reaction if it is done on my message in chat
@@ -2004,19 +1996,41 @@ let functionalityOptionsArray = [
             bodyContent: receivedReactionsInfo.performer.name + ' ' + receivedReactionsInfo.performer.surname + ' reacted to your message'
           },
           actions: [ // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
-            { type: 'confirm', displayText: 'Open chat', actionFunction: () => { requestChatContent(receivedReactionsInfo.chat) } }
+            {
+              type: 'confirm', displayText: 'Open chat', actionFunction: () => {
+                requestChatContent(receivedReactionsInfo.chat);
+                displayAppSection(0)
+              }
+            }
           ],
           obligatoryActions: {
             onDisplay: () => { console.log('Notification Displayed') },
             onHide: () => { console.log('Notification Hidden') },
             onEnd: () => { console.log('Notification Ended') },
           },
-          delay: 7000,
+          delay: 10000,
           tone: 'notification'
         })
       }
     }
   })
+
+  socket.on('chatNameChange', function ({ roomName, roomID }) {
+    for (let i = 0; i < availableChats.length; i++) {
+      if (availableChats[i].roomID == roomID) {
+        availableChats[i].conversationButton.updatetitle(roomName)
+      }
+    }
+  });
+
+  socket.on('chatProfilePictureChange', function ({ profilePicture, roomID }) {
+    for (let i = 0; i < availableChats.length; i++) {
+      if (availableChats[i].roomID == roomID) {
+        availableChats[i].conversationButton.updateGroupProfilePicture(profilePicture)
+      }
+    }
+  });
+
   function buildReaction(details, myID) {
     let reactions = details.map(reaction => {
       let reactorsTitle = createElement({ elementType: 'div', class: 'title', textContent: 'Reactions' });
@@ -2075,6 +2089,25 @@ let functionalityOptionsArray = [
       availableChats.forEach(chat => { chat.conversationButton.classList.remove("openedChat") })
       chatListItem.classList.add("openedChat");
     })
+    if (type == 1) {
+      chatListItem.updatetitle = (_title) => {
+        let _titleText = _title == null ? users.map(user => user.name + ' ' + user.surname).join(', ') : _title;
+        let _chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: _titleText });
+        chatTitle.replaceWith(_chatTitle);
+        chatTitle = _chatTitle;
+      }
+      chatListItem.updateUsers = (_users) => {
+        users = _users
+      }
+      chatListItem.updateGroupProfilePicture = (_profilePicture) => {
+        let newImageCOntainter;
+        if (_profilePicture == null) { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
+        else { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: _profilePicture }) }
+        imageContainer.replaceWith(newImageCOntainter)
+        imageContainer = newImageCOntainter
+      }
+    }
+
     return chatListItem;
   }
   function makeProfilePicture(userInfo) {
@@ -2104,8 +2137,7 @@ let functionalityOptionsArray = [
     let { roomInfo, messagesArray } = openChatInfo
     let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = roomInfo
     // let { roomID, roomName, type, profilePicture, myID, messagesArray, usersArray } = roomInfo;
-    chatDetails_panel.textContent = '';
-    chatDetails_panel.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any Convesation to see its more details here' }));
+    chatDetails_panel.clearPanel();
 
     selectedChatId = roomID
     taggedMessages = [];
@@ -2258,30 +2290,28 @@ let functionalityOptionsArray = [
           elementType: 'div', class: 'detailBlock', childrenArray: [
             createElement({ elementType: 'div', textContent: 'Group Name:' }),
             createElement({
-              elementType: 'div', class:'subDetailBlock', childrenArray: [
+              elementType: 'div', class: 'subDetailBlock', childrenArray: [
                 createElement({ elementType: 'div', class: 'conversationName', textContent: chatName }),
                 createElement({
                   elementType: 'button', textContent: 'Change', onclick: () => {
                     let icon, title, contentElementsArray, actions;
-
                     let notificationBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: '*Leave the field empty if you want to delete the donversation name' })
-
-
                     let chatNameLabel = createElement({ elementType: 'label', for: 'chatName', textContent: 'Chat name' })
                     let chatNameInput = createElement({ elementType: 'input', id: 'chatName' + 'chooseNew', placeHolder: 'Chat name', value: roomName == null ? '' : roomName })
                     let chatNameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chatNameLabel, chatNameInput] })
-
                     icon = 'bx bxs-edit-alt'
                     title = 'Change chat name'
                     contentElementsArray = [chatNameBlock, notificationBlock]
                     let cancelButton = createElement({ elementType: 'button', textContent: 'Cancel' })
                     let confirmButton = createElement({ elementType: 'button', textContent: 'Save' })
                     actions = [
-                      { element: confirmButton, functionCall: () => {
-                        let sendvalue = chatNameInput.value.trim()
-                        if(sendvalue == '') sendvalue = null
-                        socket.emit('changeRoomName',  {roomName: sendvalue, roomID: roomID} )
-                      } },
+                      {
+                        element: confirmButton, functionCall: () => {
+                          let sendvalue = chatNameInput.value.trim()
+                          if (sendvalue == '') sendvalue = null
+                          socket.emit('changeRoomName', { roomName: sendvalue, roomID: roomID })
+                        }
+                      },
                       { element: cancelButton, functionCall: () => { } }
                     ]
                     let constraints = { icon, title, contentElementsArray, actions }
@@ -2298,9 +2328,61 @@ let functionalityOptionsArray = [
           ]
         })
         detailsArray.push(chatnameBlock)
-      }
-      console.log('roomName', roomName)
+        // change picture
+        let srclink = profilePicture == null ? '/private/profiles/group.jpeg' : profilePicture
+        let pictureContainer = createElement({ elementType: 'img', class: 'largeImage', src: srclink })
+        let groupPictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'groupPictureInputElement', class: 'hidden', accept: "image/*" })
+        let selectgroupPictureBtn = createElement({ elementType: 'label', for: 'groupPictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
 
+        let defaultButton = createElement({
+          elementType: 'button', textContent: 'Default', onclick: () => {
+
+          }
+        })
+        let groupPicProgressBar = createBarLoader()
+        let progressBarBlock = createElement({ elementType: 'div', class: 'subDetailBlock hidden', childrenArray:[groupPicProgressBar] })
+        let changePicBlock = createElement({
+          elementType: 'div', class: 'detailBlock', childrenArray: [
+            createElement({ elementType: 'div', textContent: 'Group profile Picture:' }),
+            createElement({ elementType: 'div', class: 'subDetailBlock', childrenArray: [createElement({ elementType: 'div', childrenArray: [pictureContainer] }), groupPictureInputElement, selectgroupPictureBtn, defaultButton] }),
+            progressBarBlock,
+          ]
+        })
+        
+        // listen to coverPhotoUpload
+        var groupProfilePictureUploader = new SocketIOFileUpload(socket);
+        groupProfilePictureUploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
+        groupProfilePictureUploader.listenOnInput(groupPictureInputElement);
+        // Do something on start progress:
+        groupProfilePictureUploader.addEventListener("start", function (event) {
+          event.file.meta.fileRole = "groupProfilePicture";
+          event.file.meta.roomID = roomID;
+          groupPicProgressBar.classList.add('visible');
+          progressBarBlock.classList.remove('hidden');
+        });
+        // Do something on upload progress:
+        groupProfilePictureUploader.addEventListener("progress", function (event) {
+          var percent = (event.bytesLoaded / event.file.size) * 100;
+          groupPicProgressBar.setPercentage(percent.toFixed(2))
+          console.log("File is", percent.toFixed(2), "percent loaded");
+        });
+        // Do something when a file is uploaded:
+        groupProfilePictureUploader.addEventListener("complete", function (event) {
+          // console.log("complete", event.detail.name);
+          groupPicProgressBar.classList.remove('visible');
+          console.log("profilePhoto", event);
+          pictureContainer.src = 'private/profiles/' + event.detail.name
+          profilePicture = 'private/profiles/' + event.detail.name
+          progressBarBlock.classList.add('hidden');
+          for (let i = 0; i < availableChats.length; i++) {
+            if (availableChats[i].roomID == roomID) {
+              availableChats[i].conversationButton.updateGroupProfilePicture('private/profiles/' + event.detail.name)
+            }
+          }
+        });
+
+        detailsArray.push(changePicBlock);
+      }
       let openChatDetailsContenDiv = createElement({ elementType: 'div', class: 'openChatDetailsContenDiv', childrenArray: detailsArray })
       chatDetails_panel.appendChild(openedChatDetailsTopSection)
       chatDetails_panel.appendChild(openChatDetailsContenDiv)

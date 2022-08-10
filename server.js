@@ -142,6 +142,9 @@ io.on('connection', (socket) => {
         case 'coverPicture':
           uploader.dir = "private/cover"
           break;
+        case 'groupProfilePicture':
+          uploader.dir = "private/profiles"
+          break;
         default:
           break;
       }
@@ -163,6 +166,10 @@ io.on('connection', (socket) => {
         case 'coverPicture':
           fs.renameSync('private/cover/' + event.file.name, 'private/cover/' + fileName);
           updateDBCoverPicture(id, 'private/cover/' + fileName)
+          break;
+        case 'groupProfilePicture':
+          fs.renameSync('private/profiles/' + event.file.name, 'private/profiles/' + fileName);
+          updateDBGroupPicture(event.file.meta.roomID, 'private/profiles/' + fileName)
           break;
       }
       event.file.clientDetail.name = fileName
@@ -298,27 +305,36 @@ io.on('connection', (socket) => {
     })
 
     socket.on('changeRoomName', async (changeDetails) => {
-      let {roomName, roomID} = changeDetails
+      let { roomName, roomID } = changeDetails
       console.log('changeRoomName', roomName, roomID)
       let groupMembers = await getRoomParticipantArray(roomID)
       let thisParticipant = groupMembers.find(participant => participant.userID === id)
-      if(thisParticipant ==  undefined) return console.log('this user cannot change the conversation name because he is not part of the group')
+      if (thisParticipant == undefined) return console.log('this user cannot change the conversation name because he is not part of the group')
       db.query("UPDATE `room` SET `name`= ? WHERE `chatID` = ?", [roomName, roomID], async (err, result) => {
-        if(err){
-          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error offurred while changing the group name.' }])        }
-        else{
-          // socket.emit('chatContent', await getChatFullInfo(roomID, id))
-          socket.emit('serverFeedback', [{ type: 'positive', message: 'the group name was changed successfully.' }])
-          for (let i = 0; i < connectedUsers.length; i++) {
-            for (let j = 0; j < groupMembers.length; j++) {
-              if (connectedUsers[i].id == groupMembers[j].userID) {
-                // connectedUsers[i].socket.emit
-                socket.to(connectedUsers[i].socket.id).emit('chatContent', await getChatFullInfo(roomID, connectedUsers[i].id));
-              }
-            }
-          }
+        if (err) {
+          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error offurred while changing the group name.' }])
         }
+        else {
+          io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
+          socket.emit('serverFeedback', [{ type: 'positive', message: 'the group name was changed successfully.' }])
+        }
+      })
+    })
 
+    socket.on('changeRoomProfilePicture', async (changeDetails) => {
+      let { profilePicture, roomID } = changeDetails
+      console.log('changeprofilePicture', profilePicture, roomID)
+      let groupMembers = await getRoomParticipantArray(roomID)
+      let thisParticipant = groupMembers.find(participant => participant.userID === id)
+      if (thisParticipant == undefined) return console.log('this user cannot change the conversation profile picture because he is not part of the group')
+      db.query("UPDATE `room` SET `profilePicture`= ? WHERE `chatID` = ?", [profilePicture, roomID], async (err, result) => {
+        if (err) {
+          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error offurred while changing the group profile picture.' }])
+        }
+        else {
+          io.sockets.in(roomID + '').emit('chatProfilePictureChange', changeDetails);
+          socket.emit('serverFeedback', [{ type: 'positive', message: 'the group profile picture was changed successfully.' }])
+        }
       })
     })
 
@@ -696,7 +712,7 @@ io.on('connection', (socket) => {
 
     socket.on('deleteEvent', async (eventId) => {
       let foundEvent = await getEventDetails(eventId)
-      if(foundEvent == undefined) {
+      if (foundEvent == undefined) {
         socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while deleting the event' }])
         console.log('event not found')
         return;
@@ -1104,6 +1120,11 @@ function updateDBCoverPicture(userID, fileName) {
 }
 function updateDBProfilePicture(userID, fileName) {
   db.query('UPDATE `user` SET `profilePicture` = ? WHERE `user`.`id` = ?', [fileName, userID], async (err, _myEvents) => {
+    if (err) return console.log(err)
+  })
+}
+function updateDBGroupPicture(roomID, fileName) {
+  db.query('UPDATE `room` SET `profilePicture`= ? WHERE `chatID` = ?', [fileName, roomID], async (err, _myEvents) => {
     if (err) return console.log(err)
   })
 }
@@ -1946,7 +1967,7 @@ function makeUserAdmin(userId, companyId, id) {
     db.query('INSERT INTO `admins`(`company_id`, `admin_id`, `done_by`) VALUES (?,?,?)', [companyId, userId, id], async (err, report) => {
       if (err) {
         console.log(err)
-        if(err.code == 'ER_DUP_ENTRY')  resolve({ type: 'negative', message: 'The user is already and admin' });
+        if (err.code == 'ER_DUP_ENTRY') resolve({ type: 'negative', message: 'The user is already and admin' });
         else resolve({ type: 'negative', message: 'An error occured while giving the admin access' });
       }
       else resolve({ type: 'positive', message: 'Admin Access was givens successfully' })
