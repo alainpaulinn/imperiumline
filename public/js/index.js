@@ -2278,6 +2278,81 @@ let functionalityOptionsArray = [
         return userForAttendanceList(user, actions)
       })
       let detailsArray = []
+
+      let userSearchInput = createElement({ elementType: 'input', placeHolder: 'Search person' })
+      let popupBody = createElement({
+        elementType: 'div', class: 'popupBody', childrenArray: [
+          createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Type to search for users to add to the conversation' })
+        ]
+      })
+      let addParticipantPopupDiv = createElement({
+        elementType: 'div', class: 'detailsPopupDiv', childrenArray: [
+          createElement({
+            elementType: 'div', class: 'popupHeader', childrenArray: [
+              userSearchInput,
+              createElement({ elementType: 'button', textContent: 'Done', onclick: hideSearchBoxToggle })
+            ]
+          }),
+          popupBody
+        ]
+      })
+      userSearchInput.addEventListener('input', () => {
+        socket.emit('addRoomParticipantsSearch', { roomID: roomID, searchText: userSearchInput.value })
+        console.log('addRoomParticipantsSearch', { roomID: roomID, searchText: userSearchInput.value })
+      })
+      socket.on('addRoomParticipantsSearch', (foundUsers) => {
+        popupBody.textContent = ''
+        console.lof(foundUsers)
+        if (foundUsers.length < 1) {
+          popupBody.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No user found with such criteria' }))
+        }
+        else {
+          let foundPantsDivs = foundUsers.map(user => {
+            let addButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-plus' })] })
+            let actions = [
+              {
+                element: addButton, functionCall: () => {
+                  socket.emit('addUserToRoom', {userID: user.userID, roomID: roomID})
+                  console.log('addUserToRoom', {userID: user.userID, roomID: roomID})
+                  removeUserDiv()
+                }
+              }
+            ]
+            let userdiv = userForAttendanceList(user, actions)
+            function removeUserDiv(){
+              userdiv.remove()
+            }
+            return userdiv
+          })
+          foundPantsDivs.appendChild(
+            createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: foundPantsDivs })
+          )
+        }
+
+      })
+
+      let addParticipantsButton = createElement({
+        elementType: 'div', class: 'detailBlock', childrenArray: [
+          createElement({ elementType: 'div', textContent: 'Chat Participants' }),
+          createElement({
+            elementType: 'button', class: 'subDetailBlock', childrenArray: [
+              createElement({ elementType: 'div', class: '', textContent: users.length + ' Particiants' }),
+              createElement({
+                elementType: 'button', textContent: 'Add Participants', onclick: () => {
+                  hideSearchBoxToggle()
+                  userSearchInput.focus()
+                }
+              })
+            ]
+          }),
+          addParticipantPopupDiv
+        ]
+      })
+      function hideSearchBoxToggle() {
+        addParticipantPopupDiv.classList.toggle('visible');
+      }
+      detailsArray.push(addParticipantsButton)
+
       let participantsBlock = createElement({
         elementType: 'div', class: 'detailBlock', childrenArray: [
           createElement({ elementType: 'div', textContent: 'Chat Participants' }),
@@ -2285,6 +2360,7 @@ let functionalityOptionsArray = [
         ]
       })
       detailsArray.push(participantsBlock)
+
       if (type == 1) {
         let chatnameBlock = createElement({
           elementType: 'div', class: 'detailBlock', childrenArray: [
@@ -2340,7 +2416,7 @@ let functionalityOptionsArray = [
           }
         })
         let groupPicProgressBar = createBarLoader()
-        let progressBarBlock = createElement({ elementType: 'div', class: 'subDetailBlock hidden', childrenArray:[groupPicProgressBar] })
+        let progressBarBlock = createElement({ elementType: 'div', class: 'subDetailBlock hidden', childrenArray: [groupPicProgressBar] })
         let changePicBlock = createElement({
           elementType: 'div', class: 'detailBlock', childrenArray: [
             createElement({ elementType: 'div', textContent: 'Group profile Picture:' }),
@@ -2348,7 +2424,7 @@ let functionalityOptionsArray = [
             progressBarBlock,
           ]
         })
-        
+
         // listen to coverPhotoUpload
         var groupProfilePictureUploader = new SocketIOFileUpload(socket);
         groupProfilePictureUploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit

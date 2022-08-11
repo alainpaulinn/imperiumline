@@ -337,6 +337,16 @@ io.on('connection', (socket) => {
         }
       })
     })
+    socket.on('addRoomParticipantsSearch', async (changeDetails) => {
+      let { roomID, searchText } = changeDetails
+      let groupMembers = await getRoomParticipantArray(roomID)
+      let foundUsers = await searchUsers(searchText, id, company_id, false, 15)
+      let nonParticipating  = foundUsers.find(user => groupMembers.some( usr=>{
+        return usr.userID != user.userID;
+      }) )
+
+      socket.emit('addRoomParticipantsSearch', nonParticipating)
+    })
 
 
     socket.on('messageReaction', (reactionIdentifiers) => {

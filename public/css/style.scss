@@ -1189,9 +1189,14 @@ body {
     background-color: var(--secondaryBackground);
     align-items: center;
     gap: 1rem;
+    color: var(--lightText);
+    border: none;
+    outline: none;
 
     div {
       flex: 1;
+      text-align: left;
+
       .largeImage {
         width: 100%;
         border-radius: $borderRadius;
@@ -1233,7 +1238,7 @@ body {
       position: static !important;
       top: 0;
       left: 0;
-      transform: translate(0,0);
+      transform: translate(0, 0);
       padding: 0 4px;
       height: 20px;
       width: 100%;
@@ -1242,6 +1247,62 @@ body {
     &.hidden {
       display: block;
     }
+
+
+  }
+
+  .detailsPopupDiv {
+    
+    width: 100%;
+    border-radius: $borderRadius;
+    height: 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.4s ease-in-out;
+
+    &.visible {
+      margin: 1rem 0;
+      height: 15rem;
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .popupHeader {
+      display: flex;
+      width: 100%;
+      gap: 0.5rem;
+      input {
+        flex: 1;
+        color: var(--lightText);
+        border-radius: $borderRadius;
+        padding: 1rem;
+        border: none;
+        outline: none;
+        background-color: var(--secondaryBackground);
+      }
+
+      button {
+        background-color: var(--secondaryBackground);
+        outline: none;
+        border-radius: $borderRadius;
+        border: none;
+        color: var(--lightText);
+        transition: all 0.4s;
+        padding: 1rem;
+        cursor: pointer;
+
+        &:hover {
+          color: var(--hoverColor);
+          transition: all 0.4s;
+        }
+      }
+    }
+
+    .popupBody {
+      min-height: 4rem;
+      margin: 1rem;
+    }
+
   }
 }
 

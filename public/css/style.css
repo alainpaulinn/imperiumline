@@ -958,9 +958,13 @@ body {
   background-color: var(--secondaryBackground);
   align-items: center;
   gap: 1rem;
+  color: var(--lightText);
+  border: none;
+  outline: none;
 }
 .detailBlock .subDetailBlock div {
   flex: 1;
+  text-align: left;
 }
 .detailBlock .subDetailBlock div .largeImage {
   width: 100%;
@@ -1004,6 +1008,52 @@ body {
 }
 .detailBlock .subDetailBlock.hidden {
   display: block;
+}
+.detailBlock .detailsPopupDiv {
+  width: 100%;
+  border-radius: 15px;
+  height: 0;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.4s ease-in-out;
+}
+.detailBlock .detailsPopupDiv.visible {
+  margin: 1rem 0;
+  height: 15rem;
+  visibility: visible;
+  opacity: 1;
+}
+.detailBlock .detailsPopupDiv .popupHeader {
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+}
+.detailBlock .detailsPopupDiv .popupHeader input {
+  flex: 1;
+  color: var(--lightText);
+  border-radius: 15px;
+  padding: 1rem;
+  border: none;
+  outline: none;
+  background-color: var(--secondaryBackground);
+}
+.detailBlock .detailsPopupDiv .popupHeader button {
+  background-color: var(--secondaryBackground);
+  outline: none;
+  border-radius: 15px;
+  border: none;
+  color: var(--lightText);
+  transition: all 0.4s;
+  padding: 1rem;
+  cursor: pointer;
+}
+.detailBlock .detailsPopupDiv .popupHeader button:hover {
+  color: var(--hoverColor);
+  transition: all 0.4s;
+}
+.detailBlock .detailsPopupDiv .popupBody {
+  min-height: 4rem;
+  margin: 1rem;
 }
 
 .c-notification {
