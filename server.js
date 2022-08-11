@@ -341,12 +341,36 @@ io.on('connection', (socket) => {
       let { roomID, searchText } = changeDetails
       let groupMembers = await getRoomParticipantArray(roomID)
       let foundUsers = await searchUsers(searchText, id, company_id, false, 15)
-      let nonParticipating  = foundUsers.find(user => groupMembers.some( usr=>{
-        return usr.userID != user.userID;
-      }) )
-
-      socket.emit('addRoomParticipantsSearch', nonParticipating)
+      let groupMembersIds = groupMembers.map(groupMember => groupMember.userID)
+      for (let i = 0; i < foundUsers.length; i++) {
+        if (groupMembersIds.includes(foundUsers[i].userID)) {
+          foundUsers.splice(foundUsers[i], 1)
+        }
+      }
+      socket.emit('addRoomParticipantsSearch', foundUsers)
     })
+
+    socket.on('addUserToRoom', async ({ userID, roomID }) => {
+      let groupMembers = await getRoomParticipantArray(roomID)
+      let thisParticipant = groupMembers.find(participant => participant.userID === id)
+      if (thisParticipant == undefined) return console.log('this user cannot add users to the conversation because he is not part of the group')
+      db.query("INSERT INTO `participants`(`userID`, `roomID`) VALUES (?,?)", [userID, roomID], async (err, result) => {
+        if (err) {
+          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error offurred while changing the group name.' }])
+        }
+        else {
+          io.sockets.in(roomID + '').emit('chatUsersChange', await getRoomParticipantArray(roomID));
+          socket.emit('serverFeedback', [{ type: 'positive', message: 'the group member added successfully.' }])
+          for (let i = 0; i < connectedUsers.length; i++) { // add the ysers to the room
+            if (connectedUsers[i].id === userID) {
+              connectedUsers[i].socket.join(roomID + '')
+              socket.to(connectedUsers[i].socket.id).emit('displayNewCreatedChat', await getRoomInfo(roomID, connectedUsers[i].id));
+            }
+          }
+        }
+      })
+    })
+
 
 
     socket.on('messageReaction', (reactionIdentifiers) => {

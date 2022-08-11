@@ -1053,7 +1053,9 @@ body {
 }
 .detailBlock .detailsPopupDiv .popupBody {
   min-height: 4rem;
-  margin: 1rem;
+  margin: 1rem 0;
+  height: calc(100% - 3rem);
+  overflow-y: auto;
 }
 
 .c-notification {
