@@ -2015,22 +2015,6 @@ let functionalityOptionsArray = [
     }
   })
 
-  socket.on('chatNameChange', function ({ roomName, roomID }) {
-    for (let i = 0; i < availableChats.length; i++) {
-      if (availableChats[i].roomID == roomID) {
-        availableChats[i].conversationButton.updatetitle(roomName)
-      }
-    }
-  });
-
-  socket.on('chatProfilePictureChange', function ({ profilePicture, roomID }) {
-    for (let i = 0; i < availableChats.length; i++) {
-      if (availableChats[i].roomID == roomID) {
-        availableChats[i].conversationButton.updateGroupProfilePicture(profilePicture)
-      }
-    }
-  });
-
   function buildReaction(details, myID) {
     let reactions = details.map(reaction => {
       let reactorsTitle = createElement({ elementType: 'div', class: 'title', textContent: 'Reactions' });
@@ -2127,21 +2111,87 @@ let functionalityOptionsArray = [
     var searchField = document.getElementById('searchField')
     searchField.focus();
   })
+  
+  let selectedChat_TitleDiv;
+  let selectedChat_profilePicture;
+  let selectedChat_usersArray;
+  let selectedChat_details_HeaderTitle;
+  let selectedChat_details_changeTitle;
+  let selectedChat_details_participantsDivWrapper;
+  let selectedChat_details_userCountDiv;
 
-  //focu on the typing element
-  function setFocus() {
-    document.getElementById('w-input-text').focus();
+  socket.on('chatNameChange', function ({ roomName, roomID }) {
+    for (let i = 0; i < availableChats.length; i++) {
+      if (availableChats[i].roomID == roomID) {
+        availableChats[i].conversationButton.updatetitle(roomName)
+      }
+    }
+    if(selectedChatId != roomID) return; // escape if this is happening to a non displayed chat
+    selectedChat_TitleDiv?.textContent = roomName
+  });
+
+  socket.on('chatProfilePictureChange', function ({ profilePicture, roomID }) {
+    for (let i = 0; i < availableChats.length; i++) {
+      if (availableChats[i].roomID == roomID) {
+        availableChats[i].conversationButton.updateGroupProfilePicture(profilePicture)
+      }
+    }
+    if(selectedChatId != roomID) return; // escape if this is happening to a non displayed chat
+    selectedChat_profilePicture.src = profilePicture
+  });
+
+
+  function generateParticipantsDiv(givenUsers){
+    let participantsDivs = givenUsers.map(user => {
+      let removeButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-x' })] })
+      let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let actions = [
+        { element: callButton, functionCall: () => { call(user.userID, true, false, false, false, null) } },
+        { element: removeButton, functionCall: () => { socket.emit('removeRoomParticipant', { roomID: roomID, userID: user.userID }) } },
+      ]
+      if (user.userID == mySavedID) actions = [
+        {
+          element: removeButton, functionCall: () => {
+            socket.emit('removeRoomParticipant', { roomID: roomID, userID: user.userID })
+          }
+        },
+      ]
+      let userDiv = userForAttendanceList(user, actions)
+      removeButton.addEventListener('click', () => { userDiv.remove })
+      return userDiv
+    })
+    return participantsDivs
   }
+
+  // updateCurrentUsers //and users in the conversation
+  socket.on('chatUsersChange', changeDetails => {
+    let {chatUsers, roomID} = changeDetails
+    // update details participant block
+    if(selectedChatId != roomID) return; // escape if this is happening to a non displayed chat
+    let newParticipantsBlock = createElement({
+      elementType: 'div', class: 'detailBlock', childrenArray: [
+        createElement({ elementType: 'div', textContent: 'Chat Participants' }),
+        createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(chatUsers) })
+      ]
+    })
+    selectedChat_details_participantsDivWrapper?.replaceWith(newParticipantsBlock)
+    selectedChat_details_participantsDivWrapper = newParticipantsBlock
+    selectedChat_usersArray = chatUsers
+    // update usersCount on details screen
+    let newUsersCount = createElement({ elementType: 'div', class: '', textContent: chatUsers.length + ' Particiants' })
+    selectedChat_details_userCountDiv?.replaceWith(newUsersCount)
+    selectedChat_details_userCountDiv = newUsersCount
+    // it will also trigger chat name change for group chats without names on the server side
+  })
 
   function displayChatOnChatArea(openChatInfo) {
     let { roomInfo, messagesArray } = openChatInfo
     let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = roomInfo
-    // let { roomID, roomName, type, profilePicture, myID, messagesArray, usersArray } = roomInfo;
+    selectedChat_usersArray = users
     chatDetails_panel.clearPanel();
 
     selectedChatId = roomID
     taggedMessages = [];
-    let imageContainer;
     let chatTitleText = ''
     let openchat__box__header;
     let chatActions = []
@@ -2168,15 +2218,17 @@ let functionalityOptionsArray = [
         if (userToDisplay.length < 1) { // in case we have only one user (viewer)
           chatTitleText = 'Deleted User'
           openchat__box__header = userForAttendanceList(deletedUser, [], [mobileButton])
+          selectedChat_TitleDiv = openchat__box__header.memberNameDiv
         } else {
           chatTitleText = userToDisplay[0].name + ' ' + userToDisplay[0].surname
-          imageContainer = makeProfilePicture(userToDisplay[0])
+          selectedChat_profilePicture = makeProfilePicture(userToDisplay[0])
           openchat__box__header = userForAttendanceList(userToDisplay[0], chatActions, [mobileButton])
+          selectedChat_TitleDiv = openchat__box__header.memberNameDiv
         }
         break;
       case 1:
-        if (profilePicture == null) { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
-        else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
+        if (profilePicture == null) { selectedChat_profilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
+        else { selectedChat_profilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
         if (roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
         else chatTitleText = roomName;
         let groupCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(roomID, true, false, false, true, null) } })
@@ -2187,15 +2239,11 @@ let functionalityOptionsArray = [
             fillInChatDetails();
           }
         })
+        selectedChat_TitleDiv = createElement({ elementType: 'p', class: 'c-openchat__box__name', textContent: chatTitleText })
         openchat__box__header = createElement({
           elementType: 'div', class: 'c-openchat__box__header', childrenArray: [
             mobileButton,
-            createElement({
-              elementType: 'div', class: 'c-chat-title', childrenArray: [
-                imageContainer,
-                createElement({ elementType: 'p', class: 'c-openchat__box__name', textContent: chatTitleText })
-              ]
-            }),
+            createElement({ elementType: 'div', class: 'c-chat-title', childrenArray: [ selectedChat_profilePicture, selectedChat_TitleDiv] }),
             createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [groupCallButton, groupVideoButton, groupMoreButton] })
           ]
         })
@@ -2268,26 +2316,7 @@ let functionalityOptionsArray = [
       let chatType = createElement({ elementType: 'div', class: 'chatType', textContent: type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName })
       let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton, chatType] })
 
-      let participantsDivs = users.map(user => {
-        let removeButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-x' })] })
-        let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-        let actions = [
-          { element: callButton, functionCall: () => { call(user.userID, true, false, false, false, null) } },
-          { element: removeButton, functionCall: () => { socket.emit('removeRoomParticipant', { roomID: roomID, userID: user.userID }) } },
-        ]
-        if (user.userID == mySavedID) actions = [
-          {
-            element: removeButton, functionCall: () => {
-              socket.emit('removeRoomParticipant', { roomID: roomID, userID: user.userID })
-            }
-          },
-        ]
-        let userDiv = userForAttendanceList(user, actions)
-        removeButton.addEventListener('click', () => { userDiv.remove })
-        return userDiv
-      })
       let detailsArray = []
-
 
       if (type == 1) {
         let userSearchInput = createElement({ elementType: 'input', placeHolder: 'Search person' })
@@ -2341,13 +2370,13 @@ let functionalityOptionsArray = [
           }
         })
 
-
+        selectedChat_details_userCountDiv = createElement({ elementType: 'div', class: '', textContent: users.length + ' Particiants' })
         let addParticipantsButton = createElement({
           elementType: 'div', class: 'detailBlock', childrenArray: [
             createElement({ elementType: 'div', textContent: 'Chat Participants' }),
             createElement({
               elementType: 'button', class: 'subDetailBlock', childrenArray: [
-                createElement({ elementType: 'div', class: '', textContent: users.length + ' Particiants' }),
+                selectedChat_details_userCountDiv,
                 createElement({
                   elementType: 'button', textContent: 'Add Participants', onclick: () => {
                     hideSearchBoxToggle()
@@ -2364,41 +2393,15 @@ let functionalityOptionsArray = [
         }
         detailsArray.push(addParticipantsButton)
 
-        let participantsBlock = createElement({
+        selectedChat_details_participantsDivWrapper = createElement({
           elementType: 'div', class: 'detailBlock', childrenArray: [
             createElement({ elementType: 'div', textContent: 'Chat Participants' }),
-            createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: participantsDivs })
+            createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(users) })
           ]
         })
-        detailsArray.push(participantsBlock)
+        detailsArray.push(selectedChat_details_participantsDivWrapper)
 
-        // updateCurrentUsers //and users in the conversation
-        socket.on('chatUsersChange', chatUsers => {
-          let addedParticipantsDivs = chatUsers.map(user => {
-            let removeButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-            let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-            let actions = [
-              { element: callButton, functionCall: () => { call(user.userID, true, false, false, false, null) } },
-              { element: removeButton, functionCall: () => { socket.emit('removeRoomParticipant', { roomID: roomID, userID: user.userID }) } },
-            ]
-            if (user.userID == mySavedID) actions = [
-              { element: removeButton, functionCall: () => { socket.emit('removeRoomParticipant', { roomID: roomID, userID: user.userID }) } },
-            ]
-            let userDiv = userForAttendanceList(user, actions)
-            removeButton.addEventListener('click', () => { userDiv.remove })
-            return userDiv
-          })
-
-          let newParticipantsBlock = createElement({
-            elementType: 'div', class: 'detailBlock', childrenArray: [
-              createElement({ elementType: 'div', textContent: 'Chat Participants' }),
-              createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: addedParticipantsDivs })
-            ]
-          })
-          participantsBlock.replaceWith(newParticipantsBlock)
-          participantsBlock = newParticipantsBlock
-          users = chatUsers
-        })
+        //
 
 
         let chatnameBlock = createElement({
@@ -4405,6 +4408,8 @@ let functionalityOptionsArray = [
     if (preActions != undefined) elementsArray = preActions.concat(elementsArray)
 
     let presentMember = createElement({ elementType: 'div', class: 'listMember', childrenArray: elementsArray })
+    presentMember.memberNameDiv = memberName
+    presentMember.memberRoleDiv = memberRole
     return presentMember
   }
   function companyForList(companyInfo, actions, preActions) {
