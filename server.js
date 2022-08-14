@@ -168,8 +168,12 @@ io.on('connection', (socket) => {
           updateDBCoverPicture(id, 'private/cover/' + fileName)
           break;
         case 'groupProfilePicture':
-          fs.renameSync('private/profiles/' + event.file.name, 'private/profiles/' + fileName);
-          updateDBGroupPicture(event.file.meta.roomID, 'private/profiles/' + fileName)
+          let picturePath = 'private/profiles/' + fileName
+          let roomID = event.file.meta.roomID
+          fs.renameSync('private/profiles/' + event.file.name, picturePath);
+          updateDBGroupPicture(roomID, picturePath)
+          io.sockets.in(roomID + '').emit('chatProfilePictureChange', { profilePicture: picturePath, roomID: roomID });
+          socket.emit('serverFeedback', [{ type: 'positive', message: 'the group profile picture was changed successfully.' }])
           break;
       }
       event.file.clientDetail.name = fileName
@@ -178,12 +182,22 @@ io.on('connection', (socket) => {
     // Error handler:
     uploader.on("error", (event) => {
       console.log("Error from uploader", event);
+      socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while Uploading the file.' }])
     });
     socket.on("deleteCoverPicture", () => {
       deleteCoverPicture(id)
     })
     socket.on("deleteProfilePicture", () => {
       deleteProfilePicture(id)
+    })
+    socket.on("chatProfilePictureDelete", async (roomID) => {
+      let groupMembers = await getRoomParticipantArray(roomID)
+      let thisParticipant = groupMembers.find(participant => participant.userID === id)
+      if (thisParticipant == undefined) return console.log('this user cannot delete conversation profile picture because he is not part of the group')
+
+      deleteGroupProfilePicture(roomID)
+      io.sockets.in(roomID + '').emit('chatProfilePictureChange', { profilePicture: 'private/profiles/group.jpeg', roomID: roomID})
+      socket.emit('serverFeedback', [{ type: 'positive', message: 'Group chat profile picture removed successfully.' }])
     })
     //-----------------------------------
     socket.on('requestChatContent', async (chatIdentification) => {
@@ -310,12 +324,19 @@ io.on('connection', (socket) => {
       let groupMembers = await getRoomParticipantArray(roomID)
       let thisParticipant = groupMembers.find(participant => participant.userID === id)
       if (thisParticipant == undefined) return console.log('this user cannot change the conversation name because he is not part of the group')
+      let roombasicinfo =  await getChatRoomBasicInfo(roomID)
+      if(roombasicinfo.type != 1) { // prevents from changing a name of a private chat
+        socket.emit('serverFeedback', [{ type: 'negative', message: 'this conversation name cannot be changed because it is not a group chat.' }])
+        return console.log('this conversation name cannot be changed because it is not a group chat')
+      }
       db.query("UPDATE `room` SET `name`= ? WHERE `chatID` = ?", [roomName, roomID], async (err, result) => {
         if (err) {
           socket.emit('serverFeedback', [{ type: 'negative', message: 'An error offurred while changing the group name.' }])
         }
         else {
-          
+          // if(roomName == null || roomName?.trim == ''){
+          //   changeDetails.roomName = groupMembers.map(user => user.name + ' ' + user.surname).join();
+          // }
           io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
           socket.emit('serverFeedback', [{ type: 'positive', message: 'the group name was changed successfully.' }])
         }
@@ -330,7 +351,7 @@ io.on('connection', (socket) => {
       if (thisParticipant == undefined) return console.log('this user cannot change the conversation profile picture because he is not part of the group')
       db.query("UPDATE `room` SET `profilePicture`= ? WHERE `chatID` = ?", [profilePicture, roomID], async (err, result) => {
         if (err) {
-          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error offurred while changing the group profile picture.' }])
+          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while changing the group profile picture.' }])
         }
         else {
           io.sockets.in(roomID + '').emit('chatProfilePictureChange', changeDetails);
@@ -342,10 +363,10 @@ io.on('connection', (socket) => {
       let { roomID, searchText } = changeDetails
       let groupMembers = await getRoomParticipantArray(roomID)
       let foundUsers = await searchUsers(searchText, id, company_id, false, 15)
-      console.log("found users",foundUsers)
+      console.log("found users", foundUsers)
       for (let i = 0; i < foundUsers.length; i++) {
         for (let j = 0; j < groupMembers.length; j++) {
-          if(foundUsers[i]?.userID === groupMembers[j].userID) foundUsers.splice(i, 1);
+          if (foundUsers[i]?.userID === groupMembers[j].userID) foundUsers.splice(i, 1);
         }
       }
       socket.emit('addRoomParticipantsSearch', foundUsers)
@@ -361,7 +382,7 @@ io.on('connection', (socket) => {
         }
         else {
           let updatedRoomMembers = await getRoomParticipantArray(roomID)
-          io.sockets.in(roomID + '').emit('chatUsersChange', {chatUsers: updatedRoomMembers, roomID: roomID});
+          io.sockets.in(roomID + '').emit('chatUsersChange', { chatUsers: updatedRoomMembers, roomID: roomID });
           socket.emit('serverFeedback', [{ type: 'positive', message: 'the group member added successfully.' }])
           for (let i = 0; i < connectedUsers.length; i++) { // add the ysers to the room
             if (connectedUsers[i].id === userID) {
@@ -370,8 +391,33 @@ io.on('connection', (socket) => {
             }
           }
           let chatDetails = await getChatRoomBasicInfo(roomID)
-          let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(), roomID: roomID} 
-          if(chatDetails.type == 1 && chatDetails.name == null) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
+          let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(), roomID: roomID }
+          if (chatDetails.type == 1 && chatDetails.name == null) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
+        }
+      })
+    })
+
+    socket.on('removeRoomParticipant', async ({ roomID, userID }) => {
+      let groupMembers = await getRoomParticipantArray(roomID)
+      let thisParticipant = groupMembers.find(participant => participant.userID === id)
+      if (thisParticipant == undefined) return console.log('this user cannot remove users to the conversation because he is not part of the group')
+      db.query("DELETE FROM `participants` WHERE `userID` = ? AND `roomID` = ?", [userID, roomID], async (err, result) => {
+        if (err) {
+          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error offurred while removing the user to the group.' }])
+        }
+        else {
+          let updatedRoomMembers = await getRoomParticipantArray(roomID)
+          io.sockets.in(roomID + '').emit('chatUsersChange', { chatUsers: updatedRoomMembers, roomID: roomID });
+          socket.emit('serverFeedback', [{ type: 'positive', message: 'the group member removed successfully.' }])
+          for (let i = 0; i < connectedUsers.length; i++) { // add the users to the room
+            if (connectedUsers[i].id === userID) {
+              connectedUsers[i].socket.join(roomID + '')
+              socket.to(connectedUsers[i].socket.id).emit('displayNewCreatedChat', await getRoomInfo(roomID, connectedUsers[i].id));
+            }
+          }
+          let chatDetails = await getChatRoomBasicInfo(roomID)
+          let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(), roomID: roomID }
+          if (chatDetails.type == 1 && chatDetails.name == null) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
         }
       })
     })
@@ -1174,6 +1220,11 @@ function deleteProfilePicture(userID) {
 }
 function deleteCoverPicture(userID) {
   db.query('UPDATE `user` SET `coverPicture` = ? WHERE `user`.`id` = ?', [null, userID], async (err, _myEvents) => {
+    if (err) return console.log(err)
+  })
+}
+function deleteGroupProfilePicture(roomID) {
+  db.query('UPDATE `room` SET `profilePicture`= ? WHERE `chatID` = ?', [null, roomID], async (err, _myEvents) => {
     if (err) return console.log(err)
   })
 }
