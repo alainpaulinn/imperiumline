@@ -687,10 +687,11 @@ body {
   background-color: var(--primaryBackground);
   outline: none;
   width: 100%;
-  padding: 10px 10px 10px 40px;
+  padding: 1rem;
+  padding-left: 3rem;
   font-size: 13px;
   border-radius: 15px;
-  border: 1px solid var(--lightText);
+  border: none;
   color: var(--lightText);
 }
 .c-chats__header .newChat {
@@ -2909,7 +2910,6 @@ body {
   border: 1px solid var(--notification);
   width: 50px;
   height: 50px;
-  margin-right: 10px;
   border-radius: 15px;
   text-transform: uppercase;
   display: flex;
@@ -3152,6 +3152,8 @@ body {
   height: 50px;
   margin-right: 10px;
   border-radius: 15px;
+  -o-object-fit: cover;
+     object-fit: cover;
   text-transform: uppercase;
   display: flex;
   justify-content: center;
@@ -3996,6 +3998,7 @@ body {
 }
 .schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayTitle {
   padding: 0.5rem;
+  color: var(--lightText);
   text-align: center;
 }
 .schedule-container .mainScheduleList .eventsContainer .scheduleDay .dayContentDiv {

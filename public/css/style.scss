@@ -858,10 +858,13 @@ body {
         background-color: var(--primaryBackground);
         outline: none;
         width: 100%;
-        padding: 10px 10px 10px 40px;
+        padding: 1rem;
+        padding-left: 3rem;
         font-size: 13px;
         border-radius: $borderRadius;
-        border: 1px solid var(--lightText);
+        // border: 1px solid var(--lightText);
+        border: none;
+        
         color: var(--lightText);
       }
     }
@@ -3518,9 +3521,9 @@ body {
           border: 1px solid var(--notification);
           width: 50px;
           height: 50px;
-          margin-right: 10px;
           border-radius: $borderRadius;
           text-transform: uppercase;
+          
           display: flex;
           justify-content: center;
           -ms-flex-align: center;
@@ -3809,6 +3812,7 @@ body {
               height: 50px;
               margin-right: 10px;
               border-radius: $borderRadius;
+              object-fit: cover;
               text-transform: uppercase;
               display: flex;
               justify-content: center;
@@ -4828,7 +4832,7 @@ body {
         .dayTitle {
           padding: 0.5rem;
           // background-color: var(--notification);
-          // color: white;
+          color: var(--lightText);
           text-align: center;
         }
 
