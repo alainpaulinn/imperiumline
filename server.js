@@ -201,6 +201,10 @@ io.on('connection', (socket) => {
     })
     //-----------------------------------
     socket.on('requestChatContent', async (chatIdentification) => {
+      let groupMembers = await getRoomParticipantArray(chatIdentification)
+      let thisParticipant = groupMembers.find(participant => participant.userID === id)
+      if (thisParticipant == undefined) return console.log('this user cannot open conversation because he is not part of the group')
+
       socket.emit('chatContent', await getChatFullInfo(chatIdentification, id))
     });
     socket.on('message', async (message) => {
@@ -412,7 +416,7 @@ io.on('connection', (socket) => {
           for (let i = 0; i < connectedUsers.length; i++) { // add the users to the room
             if (connectedUsers[i].id === userID) {
               connectedUsers[i].socket.join(roomID + '')
-              socket.to(connectedUsers[i].socket.id).emit('displayNewCreatedChat', await getRoomInfo(roomID, connectedUsers[i].id));
+              socket.to(connectedUsers[i].socket.id).emit('removeChatAccessElements', changeDetails);
             }
           }
           let chatDetails = await getChatRoomBasicInfo(roomID)
