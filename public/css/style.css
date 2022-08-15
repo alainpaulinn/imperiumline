@@ -2919,6 +2919,9 @@ body {
   background-color: var(--notification);
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
 }
+.c-ongoing_call_panel .call-container .mainVideoDiv .audioCallCover .audioCallCoverName {
+  color: var(--lightText);
+}
 .c-ongoing_call_panel .call-container .mainVideoDiv .callControls {
   transition: all 0.4s;
   display: flex;

@@ -416,7 +416,7 @@ io.on('connection', (socket) => {
           for (let i = 0; i < connectedUsers.length; i++) { // add the users to the room
             if (connectedUsers[i].id === userID) {
               connectedUsers[i].socket.join(roomID + '')
-              socket.to(connectedUsers[i].socket.id).emit('removeChatAccessElements', changeDetails);
+              socket.to(connectedUsers[i].socket.id).emit('removeChatAccessElements', { roomID, userID });
             }
           }
           let chatDetails = await getChatRoomBasicInfo(roomID)

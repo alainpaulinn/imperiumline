@@ -589,10 +589,6 @@ let functionalityOptionsArray = [
     window.location.href = destination;
   });
   socket.on('serverFeedback', function (feedback) {
-    console.log('Receiveing a feedback from server feedback', feedback)
-    if (feedback.type == 'negative') console.log('serverFeedback', feedback)
-    if (feedback.type == 'positive') console.log('serverFeedback', feedback)
-
     let contentElementsArray = feedback.map(feedbackObj => {
       let type = feedbackObj.type == 'positive' ? 'Success' : 'Failure'
       let blockClass = feedbackObj.type == 'positive' ? 'positiveFeedback' : 'negativeFeedback'
@@ -2091,6 +2087,15 @@ let functionalityOptionsArray = [
         imageContainer.replaceWith(newImageCOntainter)
         imageContainer = newImageCOntainter
       }
+      chatListItem.kickedOut = ()=>{
+        chatMessage.textContent = "You were removed from conversation";
+        chatDate.remove()
+        let newChatListItem = chatListItem.cloneNode(true)
+        chatListItem.replaceWith(newChatListItem)
+        for (let i = 0; i < availableChats.length; i++) {
+          if(availableChats[i].roomID == roomID) availableChats[i].conversationButton = newChatListItem
+        }
+      }
     }
 
     return chatListItem;
@@ -2112,7 +2117,7 @@ let functionalityOptionsArray = [
     var searchField = document.getElementById('searchField')
     searchField.focus();
   })
-
+  let typingBox
   let selectedChat_TitleDiv;
   let selectedChat_profilePicture;
   let selectedChat_usersArray;
@@ -2151,6 +2156,7 @@ let functionalityOptionsArray = [
       }
     }
     if (selectedChatId != roomID) return; // escape if this is happening to a non displayed chat
+    console.log("happenned")
     if (selectedChat_profilePicture) selectedChat_profilePicture.src = profilePicture
     if (selectedChat_details_profilePic_changeDiv) selectedChat_details_profilePic_changeDiv.src = profilePicture
   });
@@ -2207,6 +2213,19 @@ let functionalityOptionsArray = [
     selectedChat_details_userCountDiv = newUsersCount
     // it will also trigger chat name change for group chats without names on the server side
   })
+  // remove chat elements if someone is removed from a conversation
+  socket.on('removeChatAccessElements', changeDetails => {
+    let { roomID, userID } = changeDetails 
+    for (let i = 0; i < availableChats.length; i++) {
+      if (availableChats[i].roomID == roomID) {
+        availableChats[i].conversationButton.kickedOut()
+      }
+    }
+    if (selectedChatId != roomID) return; // escape if this is happening to a non displayed chat
+    if(typingBox) typingBox.remove()
+  })
+
+
 
   function displayChatOnChatArea(openChatInfo) {
     let { roomInfo, messagesArray } = openChatInfo
@@ -2284,7 +2303,7 @@ let functionalityOptionsArray = [
     let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
     inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
     let sendMessageButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
-    let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [/* emojiButton, attachButton, */ inputContainer, sendMessageButton] })
+    typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [/* emojiButton, attachButton, */ inputContainer, sendMessageButton] })
     let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox] })
     open_chat_box.textContent = '';
     open_chat_box.append(chatBox)
