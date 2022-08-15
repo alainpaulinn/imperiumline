@@ -101,6 +101,7 @@ io.on('connection', (socket) => {
         mychatResults.forEach(async myChat => {
           let roomID = myChat.roomID + '';
           socket.join(roomID)
+          console.log('mychatResults', mychatResults)
           socket.emit('displayChat', await getRoomInfo(roomID, id))
         });
       })
@@ -196,7 +197,7 @@ io.on('connection', (socket) => {
       if (thisParticipant == undefined) return console.log('this user cannot delete conversation profile picture because he is not part of the group')
 
       deleteGroupProfilePicture(roomID)
-      io.sockets.in(roomID + '').emit('chatProfilePictureChange', { profilePicture: 'private/profiles/group.jpeg', roomID: roomID})
+      io.sockets.in(roomID + '').emit('chatProfilePictureChange', { profilePicture: 'private/profiles/group.jpeg', roomID: roomID })
       socket.emit('serverFeedback', [{ type: 'positive', message: 'Group chat profile picture removed successfully.' }])
     })
     //-----------------------------------
@@ -253,7 +254,7 @@ io.on('connection', (socket) => {
               }
               console.log("Last inserted ID", participantResult.insertId)
               let chatInfo = await getRoomInfo(message.toRoom, id)
-              io.sockets.in(message.toRoom).emit('newMessage', { chatInfo, expectedUser, insertedMessage });
+              io.sockets.in(message.toRoom + '').emit('newMessage', { chatInfo, expectedUser, insertedMessage });
             })
           })
         })
@@ -264,7 +265,7 @@ io.on('connection', (socket) => {
       let access_roomId = await checkMessageOwnership(messageId, id)
       if (access_roomId == false) return console.log('user cannot delete a message that does not belong to him')
       let deleteResult = await deleteMessage(messageId)
-      if (deleteResult.type == 'positive') io.sockets.in(messageId).emit('deletedMessage', { roomId: access_roomId, messageId: messageId });
+      if (deleteResult.type == 'positive') io.sockets.in(messageId + '').emit('deletedMessage', { roomId: access_roomId, messageId: messageId });
       socket.emit('serverFeedback', [deleteResult])
     })
     socket.on('searchPeople', (searchPeople) => {
@@ -328,14 +329,14 @@ io.on('connection', (socket) => {
       let groupMembers = await getRoomParticipantArray(roomID)
       let thisParticipant = groupMembers.find(participant => participant.userID === id)
       if (thisParticipant == undefined) return console.log('this user cannot change the conversation name because he is not part of the group')
-      let roombasicinfo =  await getChatRoomBasicInfo(roomID)
-      if(roombasicinfo.type != 1) { // prevents from changing a name of a private chat
+      let roombasicinfo = await getChatRoomBasicInfo(roomID)
+      if (roombasicinfo.type != 1) { // prevents from changing a name of a private chat
         socket.emit('serverFeedback', [{ type: 'negative', message: 'this conversation name cannot be changed because it is not a group chat.' }])
         return console.log('this conversation name cannot be changed because it is not a group chat')
       }
       db.query("UPDATE `room` SET `name`= ? WHERE `chatID` = ?", [roomName, roomID], async (err, result) => {
         if (err) {
-          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error offurred while changing the group name.' }])
+          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while changing the group name.' }])
         }
         else {
           // if(roomName == null || roomName?.trim == ''){
@@ -363,6 +364,7 @@ io.on('connection', (socket) => {
         }
       })
     })
+
     socket.on('addRoomParticipantsSearch', async (changeDetails) => {
       let { roomID, searchText } = changeDetails
       let groupMembers = await getRoomParticipantArray(roomID)
@@ -376,29 +378,63 @@ io.on('connection', (socket) => {
       socket.emit('addRoomParticipantsSearch', foundUsers)
     })
 
+    socket.on('createNewGroupChatSearch', async (searchText) => {
+      let foundUsers = await searchUsers(searchText, id, company_id, false, 15)
+      console.log('searchText', searchText)
+      socket.emit('createNewGroupChatSearch', foundUsers)
+    })
+    socket.on('createNewGroupChat', async ({ groupName, users }) => {
+      let curatedUsers = [...new Set(users)] // to avoid duplicates
+      let groupCreationResult = await createNewGroupChat(groupName)
+      let feedbackMessages = []
+      if (groupCreationResult.type == 'negative') {
+        socket.emit('serverFeedback', [groupCreationResult])
+
+        return;
+      }
+      else {
+        feedbackMessages.push(groupCreationResult)
+        let roomID = groupCreationResult.insertId
+        console.log('roomID', roomID)
+        for (let i = 0; i < curatedUsers.length; i++) {
+          let additionFeedback = await addUserToRoom(curatedUsers[i], roomID)
+          if (additionFeedback.type == 'positive') {
+            for (let j = 0; j < connectedUsers.length; j++) { // add the ysers to the room
+              if (connectedUsers[j].id == curatedUsers[i]) {
+                connectedUsers[j].socket.join(roomID + '')
+                socket.to(connectedUsers[j].socket.id).emit('displayNewCreatedChat', await getRoomInfo(roomID, connectedUsers[j].id));
+              }
+            }
+          }
+          feedbackMessages.push(additionFeedback)
+        }
+        addUserToRoom(id, roomID)
+        socket.join(roomID + '')
+        socket.emit('displayNewCreatedChat', await getRoomInfo(roomID, id));
+        socket.emit('serverFeedback', feedbackMessages) // give the feedback to the creator  
+      }
+    })
+
     socket.on('addUserToRoom', async ({ userID, roomID }) => {
       let groupMembers = await getRoomParticipantArray(roomID)
       let thisParticipant = groupMembers.find(participant => participant.userID === id)
       if (thisParticipant == undefined) return console.log('this user cannot add users to the conversation because he is not part of the group')
-      db.query("INSERT IGNORE INTO `participants`(`userID`, `roomID`) VALUES (?,?)", [userID, roomID], async (err, result) => {
-        if (err) {
-          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error offurred while Adding the user to the group.' }])
-        }
-        else {
-          let updatedRoomMembers = await getRoomParticipantArray(roomID)
-          io.sockets.in(roomID + '').emit('chatUsersChange', { chatUsers: updatedRoomMembers, roomID: roomID });
-          socket.emit('serverFeedback', [{ type: 'positive', message: 'the group member added successfully.' }])
-          for (let i = 0; i < connectedUsers.length; i++) { // add the ysers to the room
-            if (connectedUsers[i].id === userID) {
-              connectedUsers[i].socket.join(roomID + '')
-              socket.to(connectedUsers[i].socket.id).emit('displayNewCreatedChat', await getRoomInfo(roomID, connectedUsers[i].id));
-            }
+
+      let additionFeedback = await addUserToRoom(userID, roomID)
+      socket.emit('serverFeedback', [additionFeedback])
+      if (additionFeedback.type == 'positive') {
+        let updatedRoomMembers = await getRoomParticipantArray(roomID)
+        io.sockets.in(roomID + '').emit('chatUsersChange', { chatUsers: updatedRoomMembers, roomID: roomID });
+        for (let i = 0; i < connectedUsers.length; i++) { // add the ysers to the room
+          if (connectedUsers[i].id === userID) {
+            connectedUsers[i].socket.join(roomID + '')
+            socket.to(connectedUsers[i].socket.id).emit('displayNewCreatedChat', await getRoomInfo(roomID, connectedUsers[i].id));
           }
-          let chatDetails = await getChatRoomBasicInfo(roomID)
-          let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(), roomID: roomID }
-          if (chatDetails.type == 1 && chatDetails.name == null) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
         }
-      })
+        let chatDetails = await getChatRoomBasicInfo(roomID)
+        let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(), roomID: roomID }
+        if (chatDetails.type == 1 && chatDetails.name == null) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
+      }
     })
 
     socket.on('removeRoomParticipant', async ({ roomID, userID }) => {
@@ -407,7 +443,7 @@ io.on('connection', (socket) => {
       if (thisParticipant == undefined) return console.log('this user cannot remove users to the conversation because he is not part of the group')
       db.query("DELETE FROM `participants` WHERE `userID` = ? AND `roomID` = ?", [userID, roomID], async (err, result) => {
         if (err) {
-          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error offurred while removing the user to the group.' }])
+          socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while removing the user to the group.' }])
         }
         else {
           let updatedRoomMembers = await getRoomParticipantArray(roomID)
@@ -1148,10 +1184,10 @@ io.on('connection', (socket) => {
       let roomsArray = Array.from(socket.rooms);
       roomsArray.forEach(async function (room) {
         if (isNumeric(room) && !room.includes('-allAnswered-sockets')) {
-          socket.to(room).emit('userDisconnected', { id: id, room: room })
+          socket.to(room + '').emit('userDisconnected', { id: id, room: room })
         }
         if (!isNumeric(room) && room.includes('-allAnswered-sockets')) {
-          socket.to(room).emit('userDisconnectedFromCall', { userInfo: await getUserInfo(id), room: room })
+          socket.to(room + '').emit('userDisconnectedFromCall', { userInfo: await getUserInfo(id), room: room })
           let callUniqueId = room.replace('-allAnswered-sockets', '');
           setUserCallStatus(id, callUniqueId, 'offCall')
 
@@ -1202,6 +1238,22 @@ function formatDate(unfDate) {
   return fDate;
 }
 
+function addUserToRoom(userID, roomID) {
+  return new Promise(function (resolve, reject) {
+    db.query("INSERT IGNORE INTO `participants`(`userID`, `roomID`) VALUES (?,?)", [userID, roomID], async (err, result) => {
+      if (err) resolve({ type: 'negative', message: 'An error occurred while Adding the user to the group.' })
+      else resolve({ type: 'positive', message: 'the group member was added successfully' })
+    })
+  })
+}
+function createNewGroupChat(groupName) {
+  return new Promise(function (resolve, reject) {
+    db.query("INSERT INTO `room`( `name`, `type`, `profilePicture`) VALUES (? , ? , ?)", [groupName, 1, null], async (err, result) => {
+      if (err) resolve({ type: 'negative', message: 'An error occurred while Adding the user to the group.' })
+      else resolve({ type: 'positive', message: 'the group member was added successfully', insertId: result.insertId })
+    })
+  })
+}
 function updateDBCoverPicture(userID, fileName) {
   db.query('UPDATE `user` SET `coverPicture` = ? WHERE `user`.`id` = ?', [fileName, userID], async (err, _myEvents) => {
     if (err) return console.log(err)
@@ -1576,7 +1628,7 @@ function deleteMessage(messageId) {
     db.query('UPDATE `message` SET`message`= "__deleted message__" WHERE `id` = ?',
       [messageId], async (err, messageTags) => {
         if (err) resolve({ type: 'negative', message: 'An error occured while deleting the message' });
-        resolve({ type: 'positive', message: 'The message was deleted successfully' })
+        else resolve({ type: 'positive', message: 'The message was deleted successfully' })
       });
   })
 }
@@ -1659,6 +1711,7 @@ function getRoomInfo(roomID, viewerID) {
   return new Promise(async function (resolve, reject) {
     let participants = await getRoomParticipantArray(roomID)
     let roomBasicInfo = await getChatRoomBasicInfo(roomID)
+
     let { chatID, name, type, profilePicture, creationDate, lastActionDate } = roomBasicInfo
 
     let lastMessage = await getChatRoomLastMessage(roomID)

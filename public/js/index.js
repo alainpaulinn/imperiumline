@@ -2087,13 +2087,13 @@ let functionalityOptionsArray = [
         imageContainer.replaceWith(newImageCOntainter)
         imageContainer = newImageCOntainter
       }
-      chatListItem.kickedOut = ()=>{
+      chatListItem.kickedOut = () => {
         chatMessage.textContent = "You were removed from conversation";
         chatDate.remove()
         let newChatListItem = chatListItem.cloneNode(true)
         chatListItem.replaceWith(newChatListItem)
         for (let i = 0; i < availableChats.length; i++) {
-          if(availableChats[i].roomID == roomID) availableChats[i].conversationButton = newChatListItem
+          if (availableChats[i].roomID == roomID) availableChats[i].conversationButton = newChatListItem
         }
       }
     }
@@ -2215,14 +2215,14 @@ let functionalityOptionsArray = [
   })
   // remove chat elements if someone is removed from a conversation
   socket.on('removeChatAccessElements', changeDetails => {
-    let { roomID, userID } = changeDetails 
+    let { roomID, userID } = changeDetails
     for (let i = 0; i < availableChats.length; i++) {
       if (availableChats[i].roomID == roomID) {
         availableChats[i].conversationButton.kickedOut()
       }
     }
     if (selectedChatId != roomID) return; // escape if this is happening to a non displayed chat
-    if(typingBox) typingBox.remove()
+    if (typingBox) typingBox.remove()
   })
 
 
@@ -2681,9 +2681,7 @@ let functionalityOptionsArray = [
   }
 
   function scrollToBottom(div) { div.scrollTop = div.scrollHeight; }
-
   function reactionTo(messageId, reaction) { socket.emit('messageReaction', { messageId, selectedChatId, reaction }) }
-
   function sameDay(d1, d2) { return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate(); }
 
   let searchField = document.getElementById('searchField')
@@ -2692,7 +2690,6 @@ let functionalityOptionsArray = [
     socket.emit('searchPeople', text);
   })
   let searchResults = document.getElementById('searchResults')
-
   socket.on('searchPerson', (searchPeople) => {
     searchResults.textContent = '';
     searchPeople.forEach(userInfo => {
@@ -2723,6 +2720,98 @@ let functionalityOptionsArray = [
     searchResultsContainer.classList.toggle("searchIntoView")
     chatContainingDiv.classList.toggle("hideLeft")
   }
+
+  // new Group chat
+  let newGroupChatBtn = document.getElementById('newGroupChat')
+  // let resultsUsersDiv;
+  let selectedUsersIDsArray = [];
+  let selectedUsersDiv = createElement({ elementType: 'div', class: 'editBlock flex-column' })
+  let resultsUsersDiv = createElement({ elementType: 'div', class: 'editBlock flex-column', childrenArray:[
+    createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Search for users to add in the box above, the results will appear here.' })
+  ]})
+  newGroupChatBtn.addEventListener("click", () => {
+    let groupNameInputLabel = createElement({ elementType: 'div', for: 'groupNameInput', class: 'editBlock', textContent: 'Type Here the name of the group conversation, and leave it empty if you do not want to set the name. the name and profile picture can be set later' })
+    let groupNameInput = createElement({ elementType: 'input', id: 'groupNameInput', class: 'textField', name: 'groupName', type: 'text', placeHolder: 'Group Name' })
+    let groupNameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [groupNameInput] })
+
+    let groupUserSearchInput = createElement({ elementType: 'input', id: 'groupUserSearchInput', class: 'textField', name: 'groupName', type: 'text', placeHolder: 'Search user to add' })
+    let groupuserSearchBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [groupUserSearchInput] })
+
+    let selectedUsersIntroBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Selected users:' })
+    let searchresultIntroBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Search results:' })
+
+
+    groupUserSearchInput.addEventListener('input', () => {
+      socket.emit('createNewGroupChatSearch', groupUserSearchInput.value.trim())
+    })
+
+    let icon = 'bx bxs-group'
+    let title = 'Create a new Group'
+    let contentElementsArray = [groupNameInputLabel, groupNameBlock, groupuserSearchBlock, selectedUsersIntroBlock, selectedUsersDiv, searchresultIntroBlock, resultsUsersDiv]
+    let cancelButton = createElement({ elementType: 'button', textContent: 'Cancel' })
+    let createButton = createElement({ elementType: 'button', textContent: 'Create' })
+    let actions = [
+      {
+        element: cancelButton, functionCall: () => {
+          selectedUsersIDsArray = []
+          selectedUsersDiv.textContent = ''
+          resultsUsersDiv.textContent = ''
+        }
+      },
+      {
+        element: createButton, functionCall: () => {
+          let sendValue = groupNameInput.value.trim() == '' ? null : groupNameInput.value.trim()
+          socket.emit('createNewGroupChat', { groupName: sendValue, users: selectedUsersIDsArray })
+          selectedUsersIDsArray = []
+          selectedUsersDiv.textContent = ''
+          resultsUsersDiv.textContent = ''
+        }
+      }
+    ]
+    let constraints = { icon, title, contentElementsArray, actions }
+    createInScreenPopup(constraints).then(editPopup => {
+      cancelButton.addEventListener('click', editPopup.closePopup);
+      createButton.addEventListener('click', editPopup.closePopup);
+    })
+  })
+  socket.on('createNewGroupChatSearch', users => {
+    console.log('happenner 1')
+    if (!resultsUsersDiv) return
+    console.log('happenner 2')
+    resultsUsersDiv.textContent = ''
+    if (users.length < 1) {
+      return resultsUsersDiv.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users found with the given criteria' }))
+    }
+
+    users.forEach(user => {
+      let addButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'p', textContent: 'Add' }), createElement({ elementType: 'i', class: 'bx bxs-user-plus' })] })
+      let actions = []
+      if (selectedUsersIDsArray.includes(user.userID)) {}
+      else {
+        let userDiv;
+        actions = [{
+          element: addButton, functionCall: () => {
+            selectedUsersIDsArray.push(user.userID)
+            let addedUserDiv
+            let removeButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'p', textContent: 'Remove' }), createElement({ elementType: 'i', class: 'bx bxs-user-check' })] })
+            let addedActions = [{
+              element: removeButton, functionCall: () => {
+                selectedUsersIDsArray = selectedUsersIDsArray.filter((id) => id != user.userID);
+                addedUserDiv.remove() // remove the div from selected users divs
+                resultsUsersDiv.appendChild(userDiv) // append the previous div
+              }
+            }]
+            addedUserDiv = userForAttendanceList(user, addedActions)
+            selectedUsersDiv.appendChild(addedUserDiv) // display the div in selected users section
+            userDiv.remove() // remove the search result
+          }
+        }]
+        userDiv = userForAttendanceList(user, actions)
+        resultsUsersDiv.appendChild(userDiv)
+      }
+    })
+  })
+
 
   function buildOptions(message, myID, messageTextDiv) {
     let referenceBtn = createElement({

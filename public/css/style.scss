@@ -366,6 +366,7 @@ body {
   justify-content: center;
   align-items: center;
   transition: all 0.4s;
+  z-index: 2;
 
   &.popupActive {
     // display: flex !important;
@@ -503,6 +504,16 @@ body {
 
       .full-width {
         width: 100%;
+      }
+
+      .listMember{
+        padding: 0rem;
+        width: 100%;
+        button{
+          max-width: 8rem;
+          justify-content: center;
+          gap: 1rem;
+        }
       }
     }
 

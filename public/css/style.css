@@ -277,6 +277,7 @@ body {
   justify-content: center;
   align-items: center;
   transition: all 0.4s;
+  z-index: 2;
 }
 .inscreenPanelContainer.popupActive {
   visibility: visible !important;
@@ -396,6 +397,15 @@ body {
 }
 .inScreenPanel .popupBody .editBlock .full-width {
   width: 100%;
+}
+.inScreenPanel .popupBody .editBlock .listMember {
+  padding: 0rem;
+  width: 100%;
+}
+.inScreenPanel .popupBody .editBlock .listMember button {
+  max-width: 8rem;
+  justify-content: center;
+  gap: 1rem;
 }
 .inScreenPanel .popupBody .flex-column {
   flex-direction: column;
