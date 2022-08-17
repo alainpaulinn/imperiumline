@@ -450,8 +450,9 @@ io.on('connection', (socket) => {
           io.sockets.in(roomID + '').emit('chatUsersChange', { chatUsers: updatedRoomMembers, roomID: roomID });
           socket.emit('serverFeedback', [{ type: 'positive', message: 'the group member removed successfully.' }])
           for (let i = 0; i < connectedUsers.length; i++) { // add the users to the room
-            if (connectedUsers[i].id === userID) {
-              connectedUsers[i].socket.join(roomID + '')
+            if (connectedUsers[i].id == userID) {
+              connectedUsers[i].socket.leave(roomID + '')
+              console.log('removeChatAccessElements', { roomID, userID });
               socket.to(connectedUsers[i].socket.id).emit('removeChatAccessElements', { roomID, userID });
             }
           }

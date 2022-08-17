@@ -14,6 +14,9 @@ let chats = [];
 let mySavedID;
 let myName, Mysurname;
 
+let silentNotifications = false;
+let appTheme = 'dark';
+
 let deletedUser = { userID: 0, name: 'Deleted', surname: 'User', role: 'Deleted User', profilePicture: null, status: 'offline' }
 // to be used in case we have a deleted user
 
@@ -105,20 +108,34 @@ let functionalityOptionsArray = [
     if (darkModeCheckBox.checked) {
       c_app.classList.remove(darkClass);
       c_app.classList.add(lightClass);
+      localStorage.setItem('imperiumLine_theme', lightClass)
     }
     else {
       c_app.classList.add(darkClass);
       c_app.classList.remove(lightClass);
+      localStorage.setItem('imperiumLine_theme', darkClass)
     }
   })
   let darkmodeActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [darkModeCheckBox, createElement({ elementType: 'label', for: 'toggle1' })] })
+  let previousThemeSetting = localStorage.getItem('imperiumLine_theme')
+  if(previousThemeSetting) appTheme = previousThemeSetting
+  if (previousThemeSetting == 'dark') {darkModeCheckBox.checked = false; c_app.classList.add('dark'); c_app.classList.remove('light');}
+  if (previousThemeSetting == 'light') {darkModeCheckBox.checked = true; c_app.classList.add('light'); c_app.classList.remove('dark')}
 
   // silence audio switch
   let silenceCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle2' })
   silenceCheckBox.addEventListener('change', (event) => {
-    if (silenceCheckBox.checked) alert('notifications Ring deactivated');
-    else alert('notifications Ring activated');
+    if (silenceCheckBox.checked) {
+      silentNotifications = true;
+      stopWaitingTone(); 
+      localStorage.setItem('imperiumLine_silentNotifications', 'true')
+    }
+    else { silentNotifications = false; localStorage.setItem('imperiumLine_silentNotifications', 'false'); }
   })
+  let previousSilentNotificationSetting = localStorage.getItem('imperiumLine_silentNotifications')
+  if (previousSilentNotificationSetting == 'true') {silentNotifications = true; silenceCheckBox.checked = true}
+  if (previousSilentNotificationSetting == 'false') {silentNotifications = false; silenceCheckBox.checked = false}
+
   let silenceActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [silenceCheckBox, createElement({ elementType: 'label', for: 'toggle2' })] })
 
   // choose Audio/video output
@@ -2201,7 +2218,7 @@ let functionalityOptionsArray = [
     let newParticipantsBlock = createElement({
       elementType: 'div', class: 'detailBlock', childrenArray: [
         createElement({ elementType: 'div', textContent: 'Chat Participants' }),
-        createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(chatUsers, roomID) })
+        createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(chatUsers, roomID, true) })
       ]
     })
     selectedChat_details_participantsDivWrapper?.replaceWith(newParticipantsBlock)
@@ -2215,6 +2232,8 @@ let functionalityOptionsArray = [
   })
   // remove chat elements if someone is removed from a conversation
   socket.on('removeChatAccessElements', changeDetails => {
+    console.log('availableChats', availableChats)
+    console.log('typingBox', typingBox)
     let { roomID, userID } = changeDetails
     for (let i = 0; i < availableChats.length; i++) {
       if (availableChats[i].roomID == roomID) {
@@ -2726,9 +2745,11 @@ let functionalityOptionsArray = [
   // let resultsUsersDiv;
   let selectedUsersIDsArray = [];
   let selectedUsersDiv = createElement({ elementType: 'div', class: 'editBlock flex-column' })
-  let resultsUsersDiv = createElement({ elementType: 'div', class: 'editBlock flex-column', childrenArray:[
-    createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Search for users to add in the box above, the results will appear here.' })
-  ]})
+  let resultsUsersDiv = createElement({
+    elementType: 'div', class: 'editBlock flex-column', childrenArray: [
+      createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Search for users to add in the box above, the results will appear here.' })
+    ]
+  })
   newGroupChatBtn.addEventListener("click", () => {
     let groupNameInputLabel = createElement({ elementType: 'div', for: 'groupNameInput', class: 'editBlock', textContent: 'Type Here the name of the group conversation, and leave it empty if you do not want to set the name. the name and profile picture can be set later' })
     let groupNameInput = createElement({ elementType: 'input', id: 'groupNameInput', class: 'textField', name: 'groupName', type: 'text', placeHolder: 'Group Name' })
@@ -2786,7 +2807,7 @@ let functionalityOptionsArray = [
     users.forEach(user => {
       let addButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'p', textContent: 'Add' }), createElement({ elementType: 'i', class: 'bx bxs-user-plus' })] })
       let actions = []
-      if (selectedUsersIDsArray.includes(user.userID)) {}
+      if (selectedUsersIDsArray.includes(user.userID)) { }
       else {
         let userDiv;
         actions = [{
@@ -4619,7 +4640,9 @@ let functionalityOptionsArray = [
     }, (err) => { alert('Failed to get local media stream', err); });
   }
 
-  function startWaitingTone() { waitingTone.play() }
+  function startWaitingTone() {
+    if (silentNotifications == false) waitingTone.play()
+  }
   function stopWaitingTone() { waitingTone.currentTime = 0; waitingTone.pause() }
 
   function videoConnectingScreen(constraints) {
