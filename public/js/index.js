@@ -3048,7 +3048,7 @@ let functionalityOptionsArray = [
 
 
     socket.on('prepareCallingOthers', initiatedCallInfo => {
-      navigator.getUserMedia({ video: { optional: optionalResolutions }, audio: true }, stream => {
+      navigator.getUserMedia({ video: { /*optional: optionalResolutions,*/ deviceId:chosenDevices?.videoInput?.deviceId }, audio: true }, stream => {
         let { callUniqueId, callType, caller, groupMembersToCall_fullInfo, allUsers, callTitle } = initiatedCallInfo
         let { userID, name, surname, profilePicture, role } = caller
 
@@ -4020,7 +4020,7 @@ let functionalityOptionsArray = [
       allUsersArray = []
       leftPanel.clearAttendanceList()
       sidepanelElements[2].triggerButton.parentElement.parentElement.remove(); // remove the ongoing call button
-      displayAppSection(displayedScreen) // display the previously displayed screen
+      displayAppSection(0) // display the previously displayed screen
     }
     function createRightPartPanel() {
       let participantsCount = 0;
@@ -4633,8 +4633,8 @@ let functionalityOptionsArray = [
     let { callTo, audio, video, group, fromChat, previousCallId } = initiationInfo
     navigator.getUserMedia({ video: true, audio: true }, stream => {  //test user media accessibiity
       socket.emit("initiateCall", { callTo, audio, video, group, fromChat, previousCallId })
-      displayAppSection(2)
-      startWaitingTone()
+      displayAppSection(2) // show the calls screen
+      startWaitingTone() // start the waiting tone
       stream.getTracks().forEach(track => { track.stop(); stream.removeTrack(track); })  //stop media tracks
       sidepanelElements[1].triggerButton.parentElement.parentElement.after(sidepanelElements[2].triggerButton.parentElement.parentElement); // display the button to access the ongoing call
     }, (err) => { alert('Failed to get local media stream', err); });
@@ -4706,8 +4706,8 @@ let functionalityOptionsArray = [
     // run the On display event
     onDisplay()
     let notificationTone;
-    if (tone == 'notification') { notificationTone = new Audio('/private/audio/imperiumLineNotification.mp3'); notificationTone.play() }
-    if (tone == 'call') {
+    if (tone == 'notification' && silentNotifications == false) { notificationTone = new Audio('/private/audio/imperiumLineNotification.mp3'); notificationTone.play() }
+    if (tone == 'call' && silentNotifications == false) {
       notificationTone = new Audio('/private/audio/imperiumLineCall.mp3'); notificationTone.play()
       notificationTone.addEventListener('ended', function () { this.currentTime = 0; this.play(); }, false);
     }
