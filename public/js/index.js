@@ -292,26 +292,6 @@ let functionalityOptionsArray = [
       ]
     },
   ];
-
-  // const showSection = index => () => {
-  //   for (let i = 0; i < sidepanelElements.length; i++) {
-  //     if (sidepanelElements[i].index != index) {
-  //       sidepanelElements[i].panel.style.display = "none";
-  //       sidepanelElements[i].subMenuDiv.classList.add('undropped-down')
-  //       sidepanelElements[i].dropIcon.classList.remove('rotate180');
-  //     }
-  //     else {
-  //       if (sidepanelElements[i].redirect) window.location.replace(sidepanelElements[i].redirect);
-
-  //       sidepanelElements[i].panel.style.display = "flex";
-  //       sidepanelElements[i].subMenuDiv.classList.remove('undropped-down')
-  //       sidepanelElements[i].dropIcon.classList.add('rotate180');
-  //       document_title.innerText = sidepanelElements[i].title;
-  //       console.log(sidepanelElements[i])
-  //     }
-  //   }
-  // }
-
   const showDefSection = index => () => {
     for (let i = 0; i < defaultElements.length; i++) {
       if (defaultElements[i].index != index) {
