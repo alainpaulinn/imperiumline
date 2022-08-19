@@ -3279,12 +3279,11 @@ body {
             input {
               border-radius: $borderRadius;
               outline: none;
-              background-color: var(--secondaryBackground);
+              background: var(--primaryBackground);
               border: none;
               flex: 1;
               color: var(--lightText);
-              background: $lightenSidepanel;
-              padding: .5rem 1rem;
+              padding: 1rem;
             }
 
             button {
@@ -3293,7 +3292,7 @@ body {
               border-radius: $borderRadius;
               outline: none;
               border: none;
-              padding: .5rem 1rem;
+              padding: 1rem;
               cursor: pointer;
               display: flex;
               align-items: center;
@@ -3307,11 +3306,6 @@ body {
                 color: var(--hoverColor);
               }
             }
-
-            // .searchField{
-            //   background-color: var(--primaryBackground);
-            //   border-radius: $borderRadius;
-            // }
           }
 
           .invitedDiv {

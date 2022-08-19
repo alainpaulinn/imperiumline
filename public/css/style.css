@@ -2710,12 +2710,11 @@ body {
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .searchField input {
   border-radius: 15px;
   outline: none;
-  background-color: var(--secondaryBackground);
+  background: var(--primaryBackground);
   border: none;
   flex: 1;
   color: var(--lightText);
-  background: rgb(239, 242, 245);
-  padding: 0.5rem 1rem;
+  padding: 1rem;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .searchField button {
   background: var(--primaryBackground);
@@ -2723,7 +2722,7 @@ body {
   border-radius: 15px;
   outline: none;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;

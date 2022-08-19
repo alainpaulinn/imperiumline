@@ -145,7 +145,8 @@ let functionalityOptionsArray = [
   let audioInputSelection = createElement({ elementType: 'div' })
   let speakerLabel = createElement({ elementType: 'p', textContent: "Speaker: " })
   let audioOutputSelection = createElement({ elementType: 'div' })
-  let importantInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions is required" })
+  let importantInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions is required to access available devices" })
+  let importantInfoMore = createElement({ elementType: 'div', textContent: "*After the changes are savec, click on the 'Done button, or the 'x' button' and refresh the page" })
 
   let doneButton = createElement({ elementType: 'button', textContent: 'Done' })
 
@@ -239,7 +240,7 @@ let functionalityOptionsArray = [
       createInScreenPopup({
         icon: 'bx bx-devices',
         title: "Choose Media Devices",
-        contentElementsArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, importantInfo],
+        contentElementsArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, importantInfo, importantInfoMore],
         actions: [{ element: doneButton, functionCall: () => { console.log("Done") } }]
       })
         .then(devicePopForm => { doneButton.addEventListener("click", devicePopForm.closePopup) })
@@ -3048,7 +3049,7 @@ let functionalityOptionsArray = [
 
 
     socket.on('prepareCallingOthers', initiatedCallInfo => {
-      navigator.getUserMedia({ video: { /*optional: optionalResolutions,*/ deviceId:chosenDevices?.videoInput?.deviceId }, audio: true }, stream => {
+      navigator.getUserMedia({ video: {deviceId:chosenDevices?.videoInput?.deviceId }, audio: true }, stream => {
         let { callUniqueId, callType, caller, groupMembersToCall_fullInfo, allUsers, callTitle } = initiatedCallInfo
         let { userID, name, surname, profilePicture, role } = caller
 
