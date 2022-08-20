@@ -616,7 +616,7 @@ io.on('connection', (socket) => {
                     caller: await getUserInfo(id),
                     allUsers: groupMembersToCall,
                     myInfo: await getUserInfo(connectedUsers[j].id),
-                    callTitle: 'Untitled Call'
+                    callTitle: 'Untitled Calls'
                   });
                   console.log("--->connectedUser identified", connectedUsers[j].id)
                   groupMembersToCall_fullInfo.push({ peerId: connectedUsers[j].callId, userProfileIdentifier: groupMembersToCall[i] })
@@ -626,7 +626,7 @@ io.on('connection', (socket) => {
               }
             }
             let _calltype = videoPresentation == 1 ? "video" : "audio"
-            let callInitiationInfo = { callUniqueId, callType: _calltype, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall, callTitle: 'Untitled Call' }
+            let callInitiationInfo = { callUniqueId, callType: _calltype, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall, callTitle: 'Untitled Calls' }
             socket.emit('prepareCallingOthers', callInitiationInfo);
             console.log('callInitiationInfo2', callInitiationInfo)
           }
