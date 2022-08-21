@@ -764,10 +764,10 @@ io.on('connection', (socket) => {
       insertCallParticipant(callUniqueId, 1, userID, id) //  is a fictional ID
     })
 
-    socket.on('ringAgain', ({ userID, callUniqueId }) => {
+    socket.on('ringAgain', async({ userID, callUniqueId }) => {
       let access = await checkCallAccess(id, callUniqueId)
       if (access != true) { return console.log('User :', id, ' cannot add user :', identifications.userID, ' to call because he has no access to this call :', identifications.callUniqueId) }
-      let { callUniqueId, userID, callType, callTitle } = identifications
+      // let { callUniqueId, userID, callType, callTitle } = identifications
 
       let thisCallparticipantsInFull = await getCallParticipants(callUniqueId)
       let thisCallparticipants = thisCallparticipantsInFull.map(participant => { return participant.userID }) //get all people who are allowed in this call
