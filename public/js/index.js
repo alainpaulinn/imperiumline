@@ -3132,7 +3132,7 @@ let functionalityOptionsArray = [
         if (awaitedDiv.userID == userInfo.userID) {
 
           let memberProfilePicture;
-          if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+          if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
           else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
 
           let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
@@ -3152,7 +3152,7 @@ let functionalityOptionsArray = [
           let ringAgainText = createElement({ elementType: 'p', textContent: 'Ring Again' })
           let ringAgainButton = createElement({ elementType: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
           ringAgainButton.addEventListener('click', () => {
-            socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: callUniqueId, callType: globalCallType, callTitle: _callTitle})
+            socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: callUniqueId, callType: globalCallType, callTitle: _callTitle })
             updateButtonContent(ringAgainButton, 'ringing')
             console.log('ring again USER', userInfo.userID)
           })
@@ -3234,6 +3234,12 @@ let functionalityOptionsArray = [
       if (videoCoverDiv) if (videoCoverDiv.calleesDiv) videoCoverDiv.calleesDiv.prepend(addeduserDiv)
       if (awaitedUserDivs) awaitedUserDivs.push({ userID: userInfo.userID, div: addeduserDiv })
 
+      //add this new users to the attendance list
+      allUsersArray.push(userInfo)
+      leftPanel.addUser(userInfo)
+    })
+
+    socket.on('ringingAgain', userInfo => {
       //add this new users to the attendance list
       allUsersArray.push(userInfo)
       leftPanel.addUser(userInfo)
@@ -4357,7 +4363,7 @@ let functionalityOptionsArray = [
                   { element: offlineButton, functionCall: () => { } },
                   {
                     element: callAgainButton, functionCall: () => {
-                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId:_callUniqueId, callType: globalCallType, callTitle: _callTitle})
+                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
                       updateButtonContent(callAgainButton, 'ringing')
                       console.log('ring again user', userInfo.userID)
                     }
@@ -4373,7 +4379,7 @@ let functionalityOptionsArray = [
                 actions = [
                   {
                     element: callAgainButton, functionCall: () => {
-                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId:_callUniqueId, callType: globalCallType, callTitle: _callTitle })
+                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
                       updateButtonContent(callAgainButton, 'ringing')
                       console.log('ring again user', userInfo.userID)
                     }
@@ -4391,7 +4397,7 @@ let functionalityOptionsArray = [
                   { element: notAnsweredButton, functionCall: () => { } },
                   {
                     element: callAgainButton, functionCall: () => {
-                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId:_callUniqueId, callType: globalCallType, callTitle: _callTitle })
+                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
                       updateButtonContent(callAgainButton, 'ringing')
                       console.log('ring again user', userInfo.userID)
                     }
@@ -4411,34 +4417,46 @@ let functionalityOptionsArray = [
       }
 
       function addUser(user) {
-        if (user.userID == mySavedID) { //do not put any button on my presence div
-          let presenceDiv = userForAttendanceList(user, [])
-          componentsArray.push({ userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'present' })
-        }
-        else {
-          if (user.status == 'offline') {
-            let offlineButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
-            let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-            let actions = [
-              { element: offlineButton, functionCall: () => { } },
-              { element: chatButton, functionCall: () => { initiateChat(user.userID) } }
-            ]
-            let presenceDiv = userForAttendanceList(user, actions)
-            componentsArray.push({ userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'offline' })
+        for (let i = 0; i < componentsArray.length; i++) { // loop throught all components array
+          if (componentsArray[i].userInfo.userID == user.userID) { // check if the user to add already exists
+            let newElements = generateUserActions(user)
+            // replace it with a new div status
+            componentsArray[i].presenceDiv.replaceWith(newElements.presenceDiv)
+            componentsArray[i] = newElements
           }
-          else {
-            let ringButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
-            let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-            let actions = [
-              { element: ringButton, functionCall: () => { } },
-              { element: chatButton, functionCall: () => { initiateChat(user.userID) } },
-            ]
-            let presenceDiv = userForAttendanceList(user, actions)
-            componentsArray.push({ userInfo: user, presenceDiv: presenceDiv, onlineStatus: user.status, onCallStatus: 'ringing' })
-          }
+          else componentsArray.push(generateUserActions(user))
         }
         refreshAttendaceList()
         updateNumbers()
+
+        function generateUserActions(_user) {
+          if (_user.userID == mySavedID) { //do not put any button on my presence div
+            let presenceDiv = userForAttendanceList(_user, [])
+            return ({ userInfo: _user, presenceDiv: presenceDiv, onlineStatus: _user.status, onCallStatus: 'present' })
+          }
+          else {
+            if (_user.status == 'offline') {
+              let offlineButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
+              let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+              let actions = [
+                { element: offlineButton, functionCall: () => { } },
+                { element: chatButton, functionCall: () => { initiateChat(_user.userID) } }
+              ]
+              let presenceDiv = userForAttendanceList(_user, actions)
+              return ({ userInfo: _user, presenceDiv: presenceDiv, onlineStatus: _user.status, onCallStatus: 'offline' })
+            }
+            else {
+              let ringButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
+              let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+              let actions = [
+                { element: ringButton, functionCall: () => { } },
+                { element: chatButton, functionCall: () => { initiateChat(_user.userID) } },
+              ]
+              let presenceDiv = userForAttendanceList(_user, actions)
+              return ({ userInfo: _user, presenceDiv: presenceDiv, onlineStatus: _user.status, onCallStatus: 'ringing' })
+            }
+          }
+        }
       }
       function clearAttendanceList() {
         allUsersArray = []
