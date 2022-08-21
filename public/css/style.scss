@@ -3536,6 +3536,7 @@ body {
           color: var(--lightText);
           background-color: var(--notification);
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          object-fit: cover;
         }
         .audioCallCoverName{
           color: var(--lightText);

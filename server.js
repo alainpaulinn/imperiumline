@@ -665,7 +665,7 @@ io.on('connection', (socket) => {
       setUserCallStatus(id, callUniqueId, 'onCall') // set this user to in-call status
       socket.join(callUniqueId + '-allAnswered-sockets'); // become a member of the call room
 
-      //check connected people from allowed people
+      //check connected people from allowed people and update their call log
       for (let i = 0; i < connectedUsers.length; i++) {
         for (let j = 0; j < thisCallparticipants.length; j++) {
           if (connectedUsers[i].id == thisCallparticipants[j].userID) {

@@ -2364,7 +2364,7 @@ let functionalityOptionsArray = [
       selectedChat_details_participantsDivWrapper = createElement({
         elementType: 'div', class: 'detailBlock', childrenArray: [
           createElement({ elementType: 'div', textContent: 'Chat Participants' }),
-          createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(users, roomID, type == 1) })
+          createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(selectedChat_usersArray, roomID, type == 1) })
         ]
       })
       detailsArray.push(selectedChat_details_participantsDivWrapper)
@@ -3302,7 +3302,7 @@ let functionalityOptionsArray = [
         myStream = stream // store our stream globally so that to access it whenever needed
         // store the call type fpr incoming videos and sending our stream
         saveLocalMediaStream(answertype, stream)
-        // let properStream = getStreamToUseLocally(answertype, myStream)
+
         callInfo = { callUniqueId, callType: globalCallType, callTitle: callTitle ? callTitle : 'Untitled Call', isTeam: false }
         socket.emit("answerCall", { myPeerId, callUniqueId, callType: answertype })
         topBar = createTopBar(callInfo, myInfo) // create top bar
@@ -3313,7 +3313,7 @@ let functionalityOptionsArray = [
         rightPanel.participantsBox.textContent = ''
         rightPanel.participantsBox.append(mySideVideoDiv)
         leftPanel = createLeftPanel()
-        displayAppSection(2)
+        displayAppSection(2) // display the ongoing call panel
       }, (err) => { alert('Failed to get local media stream', err); });
     }
     socket.on('updateAllParticipantsList', allUsers => {
