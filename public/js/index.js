@@ -3152,7 +3152,7 @@ let functionalityOptionsArray = [
           let ringAgainText = createElement({ elementType: 'p', textContent: 'Ring Again' })
           let ringAgainButton = createElement({ elementType: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
           ringAgainButton.addEventListener('click', () => {
-            socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId })
+            socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: callUniqueId, callType: globalCallType, callTitle: _callTitle})
             updateButtonContent(ringAgainButton, 'ringing')
             console.log('ring again USER', userInfo.userID)
           })
@@ -3193,7 +3193,7 @@ let functionalityOptionsArray = [
           let ringAgainText = createElement({ elementType: 'p', textContent: 'Ring Again' })
           let ringAgainButton = createElement({ elementType: 'button', childrenArray: [ringAgainIcon, ringAgainText] })
           ringAgainButton.addEventListener('click', () => {
-            socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId })
+            socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: callUniqueId, callType: globalCallType, callTitle: _callTitle })
             updateButtonContent(ringAgainButton, 'ringing')
             console.log('ring again USER', userInfo.userID)
           })
@@ -3874,6 +3874,7 @@ let functionalityOptionsArray = [
               participants[i].screenMedia.isOnMainVideo = false;
             }
           }
+          showCallMainScreen()
         })
       }
       return callParticipantDiv;
@@ -4356,7 +4357,7 @@ let functionalityOptionsArray = [
                   { element: offlineButton, functionCall: () => { } },
                   {
                     element: callAgainButton, functionCall: () => {
-                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId:_callUniqueId })
+                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId:_callUniqueId, callType: globalCallType, callTitle: _callTitle})
                       updateButtonContent(callAgainButton, 'ringing')
                       console.log('ring again user', userInfo.userID)
                     }
@@ -4372,7 +4373,7 @@ let functionalityOptionsArray = [
                 actions = [
                   {
                     element: callAgainButton, functionCall: () => {
-                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId:_callUniqueId })
+                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId:_callUniqueId, callType: globalCallType, callTitle: _callTitle })
                       updateButtonContent(callAgainButton, 'ringing')
                       console.log('ring again user', userInfo.userID)
                     }
@@ -4390,7 +4391,7 @@ let functionalityOptionsArray = [
                   { element: notAnsweredButton, functionCall: () => { } },
                   {
                     element: callAgainButton, functionCall: () => {
-                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId:_callUniqueId })
+                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId:_callUniqueId, callType: globalCallType, callTitle: _callTitle })
                       updateButtonContent(callAgainButton, 'ringing')
                       console.log('ring again user', userInfo.userID)
                     }

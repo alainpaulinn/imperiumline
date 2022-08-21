@@ -5993,6 +5993,11 @@ body {
   .mobileHiddenElement {
     display: none !important;
   }
+
+  .popdown{
+    width: 100%;
+    left: 0;
+  }
 }
 
 @media (max-width: 1200px) {
