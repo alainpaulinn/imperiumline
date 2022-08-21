@@ -3232,7 +3232,7 @@ let functionalityOptionsArray = [
     })
     // -------------------------------------
     socket.on('incomingCall', incomingCallInfo => {
-      let { callUniqueId, callType, caller, myInfo, allUsers, callTitle } = incomingCallInfo
+      let { callUniqueId, callType, caller, myInfo, allUsers, callTitle, callStage } = incomingCallInfo
       let { name, profilePicture, surname, userID } = caller
 
       let responded = false;
@@ -3251,7 +3251,7 @@ let functionalityOptionsArray = [
             type: 'confirm', displayText: 'Audio', actionFunction: () => {
               caller_me = myInfo;
               _callUniqueId = callUniqueId;
-              callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers, callTitle);
+              callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage);
               responded = true;
               sidepanelElements[1].triggerButton.parentElement.parentElement.after(sidepanelElements[2].triggerButton.parentElement.parentElement); // display the button to access the ongoing call
             }
@@ -3261,7 +3261,7 @@ let functionalityOptionsArray = [
             type: 'confirm', displayText: 'Video', actionFunction: () => {
               caller_me = myInfo;
               _callUniqueId = callUniqueId;
-              callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers, callTitle);
+              callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage);
               responded = true;
               sidepanelElements[1].triggerButton.parentElement.parentElement.after(sidepanelElements[2].triggerButton.parentElement.parentElement); // display the button to access the ongoing call
             }
@@ -3294,7 +3294,7 @@ let functionalityOptionsArray = [
       }
     })
 
-    function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers, callTitle) {
+    function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage) {
       navigator.getUserMedia({ video: true, audio: true }, stream => {
         responded = true
         _callTitle = callTitle
@@ -3304,7 +3304,7 @@ let functionalityOptionsArray = [
         saveLocalMediaStream(answertype, stream)
 
         callInfo = { callUniqueId, callType: globalCallType, callTitle: callTitle ? callTitle : 'Untitled Call', isTeam: false }
-        socket.emit("answerCall", { myPeerId, callUniqueId, callType: answertype })
+        socket.emit("answerCall", { myPeerId, callUniqueId, callType: answertype, callStage })
         topBar = createTopBar(callInfo, myInfo) // create top bar
         rightPanel = createRightPartPanel()
         bottomPanel = createBottomPart()
@@ -3322,7 +3322,7 @@ let functionalityOptionsArray = [
     })
 
     socket.on('connectUser', userToConnect => {
-      let { peerId, userInfo, callType } = userToConnect
+      let { peerId, userInfo, callType, callStage } = userToConnect
       let { userID, name, surname, profilePicture, role } = userInfo
       let callMediaType = 'userMedia' // set Dafault calltype
       let options = { metadata: { userInfo: caller_me, callType: globalCallType, callMediaType: callMediaType, audioState: globalAudioState } }

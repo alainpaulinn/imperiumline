@@ -616,7 +616,8 @@ io.on('connection', (socket) => {
                     caller: await getUserInfo(id),
                     allUsers: groupMembersToCall,
                     myInfo: await getUserInfo(connectedUsers[j].id),
-                    callTitle: 'Untitled Calls'
+                    callTitle: 'Untitled Calls',
+                    callStage: 'initial'
                   });
                   console.log("--->connectedUser identified", connectedUsers[j].id)
                   groupMembersToCall_fullInfo.push({ peerId: connectedUsers[j].callId, userProfileIdentifier: groupMembersToCall[i] })
@@ -649,7 +650,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('answerCall', async data => {
-      let { myPeerId, callUniqueId, callType } = data;
+      let { myPeerId, callUniqueId, callType, callStage } = data;
       console.log('user ', id, ' has joined the call ', callUniqueId, ' and requests to be called')
 
       let thisCallparticipants = await getCallParticipants(callUniqueId) //get all people who are allowed in this call
@@ -661,7 +662,7 @@ io.on('connection', (socket) => {
       socket.emit('updateAllParticipantsList', thisCallparticipants) // this is because if someone answers this call, while the called has added other users, the caller will not have a list
 
       //inform all users who accepted the call- to call me
-      socket.to(callUniqueId + '-allAnswered-sockets').emit('connectUser', { peerId: myPeerId, userInfo: await getUserInfo(id), callType });
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('connectUser', { peerId: myPeerId, userInfo: await getUserInfo(id), callType, callStage });
       setUserCallStatus(id, callUniqueId, 'onCall') // set this user to in-call status
       socket.join(callUniqueId + '-allAnswered-sockets'); // become a member of the call room
 
@@ -753,7 +754,8 @@ io.on('connection', (socket) => {
             caller: await getUserInfo(id),
             allUsers: thisCallparticipantsInFull,
             myInfo: await getUserInfo(connectedUsers[j].id),
-            callTitle: callTitle
+            callTitle: callTitle,
+            callStage: 'added'
           });
           socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id)); // update callee callog
         }
