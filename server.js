@@ -790,10 +790,7 @@ io.on('connection', (socket) => {
         }
       }
       io.sockets.in(callUniqueId + '-allAnswered-sockets').emit('ringingAgain', { callUniqueId: callUniqueId, userInfo: await getUserInfo(userID) })
-      // insertCallParticipant(callUniqueId, 1, userID, id) //  is a fictional ID
     })
-
-
 
     // for testing only
     socket.on('showConnectedUsers', () => {

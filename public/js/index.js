@@ -3209,6 +3209,7 @@ let functionalityOptionsArray = [
     // Handle added users to call
     socket.on('userAddedToCall', (additionDetails) => {
       let { callUniqueId, userInfo } = additionDetails
+      if(callUniqueId != _callUniqueId) return; // escape if the cange is not in the current call
       console.log('additionDetails', additionDetails)
       let memberProfilePicture;
       if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
@@ -3239,7 +3240,10 @@ let functionalityOptionsArray = [
       leftPanel.addUser(userInfo)
     })
 
-    socket.on('ringingAgain', userInfo => {
+    socket.on('ringingAgain', actionDetails => {
+      let { callUniqueId, userInfo } = actionDetails
+      if(callUniqueId != _callUniqueId) return; // escape if the cange is not in the current call
+
       //add this new users to the attendance list
       allUsersArray.push(userInfo)
       leftPanel.addUser(userInfo)
@@ -4417,15 +4421,17 @@ let functionalityOptionsArray = [
       }
 
       function addUser(user) {
+        let elementFound =  false
         for (let i = 0; i < componentsArray.length; i++) { // loop throught all components array
           if (componentsArray[i].userInfo.userID == user.userID) { // check if the user to add already exists
             let newElements = generateUserActions(user)
             // replace it with a new div status
             componentsArray[i].presenceDiv.replaceWith(newElements.presenceDiv)
             componentsArray[i] = newElements
+            elementFound = true
           }
-          else componentsArray.push(generateUserActions(user))
         }
+        if(elementFound == false) componentsArray.push(generateUserActions(user)) // if the user does not exist in the first place
         refreshAttendaceList()
         updateNumbers()
 
