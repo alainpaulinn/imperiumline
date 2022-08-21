@@ -711,11 +711,11 @@ io.on('connection', (socket) => {
       for (let i = 0; i < connectedUsers.length; i++) {
         for (let j = 0; j < thisCallparticipants.length; j++) {
           if (connectedUsers[i].id == thisCallparticipants[j].userID) {
-            // connectedUsers[i].socket.emit
             socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
           }
         }
       }
+      socket.emit('updateCallLog', await getCallLog(id));
     })
     // search to add new users to call
     socket.on('searchPeopleToInviteToCall', async (callSearchData) => {
@@ -763,6 +763,36 @@ io.on('connection', (socket) => {
       io.sockets.in(callUniqueId + '-allAnswered-sockets').emit('userAddedToCall', { callUniqueId: callUniqueId, userInfo: await getUserInfo(userID) })
       insertCallParticipant(callUniqueId, 1, userID, id) //  is a fictional ID
     })
+
+    socket.on('ringAgain', ({ userID, callUniqueId }) => {
+      let access = await checkCallAccess(id, callUniqueId)
+      if (access != true) { return console.log('User :', id, ' cannot add user :', identifications.userID, ' to call because he has no access to this call :', identifications.callUniqueId) }
+      let { callUniqueId, userID, callType, callTitle } = identifications
+
+      let thisCallparticipantsInFull = await getCallParticipants(callUniqueId)
+      let thisCallparticipants = thisCallparticipantsInFull.map(participant => { return participant.userID }) //get all people who are allowed in this call
+      thisCallparticipantsInFull.push(await getUserInfo(userID))
+      for (let j = 0; j < connectedUsers.length; j++) {
+        //console.log("searching to add connectedUser", connectedUsers[j].id)
+        if (connectedUsers[j].id == userID && !thisCallparticipants.includes(userID)) {
+          connectedUsers[j].socket.join(callUniqueId + '');
+          socket.to(connectedUsers[j].socket.id).emit('incomingCall', {
+            callUniqueId: callUniqueId,
+            callType: callType,
+            caller: await getUserInfo(id),
+            allUsers: thisCallparticipantsInFull,
+            myInfo: await getUserInfo(connectedUsers[j].id),
+            callTitle: callTitle,
+            callStage: 'added'
+          });
+          socket.to(connectedUsers[j].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[j].id)); // update callee callog
+        }
+      }
+      io.sockets.in(callUniqueId + '-allAnswered-sockets').emit('userAddedToCall', { callUniqueId: callUniqueId, userInfo: await getUserInfo(userID) })
+      insertCallParticipant(callUniqueId, 1, userID, id) //  is a fictional ID
+    })
+
+
 
     // for testing only
     socket.on('showConnectedUsers', () => {
