@@ -13,6 +13,7 @@ let friends = [];
 let chats = [];
 let mySavedID;
 let myName, Mysurname;
+let _myPeerId;
 
 let silentNotifications = false;
 let appTheme = 'dark';
@@ -496,8 +497,16 @@ let functionalityOptionsArray = [
         callDirection = createElement({ elementType: 'div', class: 'callType blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'In' })] })
       }
 
-      let audioAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(logUpdate.callUniqueId, true, false, true, false, logUpdate.callUniqueId) } })
-      let videoAgainButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(logUpdate.callUniqueId, true, true, true, false, logUpdate.callUniqueId) } })
+      let audioAgainButton = createElement({
+        elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => {
+          call(logUpdate.callUniqueId, true, false, true, false, logUpdate.callId)
+        }
+      })
+      let videoAgainButton = createElement({
+        elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => {
+          call(logUpdate.callUniqueId, true, true, true, false, logUpdate.callId)
+        }
+      })
 
       let moreButton = createElement({
         elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
@@ -3003,6 +3012,7 @@ let functionalityOptionsArray = [
   // when my peer is ready with an ID ---> this means that we cannot receive a call before a peer Id is opened
   myPeer.on('open', myPeerId => {
     console.log('my peer is now connected with id: ' + myPeerId)
+    _myPeerId = myPeerId
     let myStream;
     let myScreenStream;
     let _callUniqueId;
@@ -3120,7 +3130,7 @@ let functionalityOptionsArray = [
         })
         determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
 
-
+        if(initiatedCallInfo.callStage == 'rejoin') socket.emit('readyForRejoin', {...initiatedCallInfo, peerId: myPeerId});
       }, (err) => { alert('Failed to get local media stream', err); });
     })
     // -------------------------------------
@@ -3209,7 +3219,7 @@ let functionalityOptionsArray = [
     // Handle added users to call
     socket.on('userAddedToCall', (additionDetails) => {
       let { callUniqueId, userInfo } = additionDetails
-      if(callUniqueId != _callUniqueId) return; // escape if the cange is not in the current call
+      if (callUniqueId != _callUniqueId) return; // escape if the cange is not in the current call
       console.log('additionDetails', additionDetails)
       let memberProfilePicture;
       if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
@@ -3242,7 +3252,7 @@ let functionalityOptionsArray = [
 
     socket.on('ringingAgain', actionDetails => {
       let { callUniqueId, userInfo } = actionDetails
-      if(callUniqueId != _callUniqueId) return; // escape if the cange is not in the current call
+      if (callUniqueId != _callUniqueId) return; // escape if the cange is not in the current call
 
       leftPanel.addUser(userInfo)
     })
@@ -3346,6 +3356,8 @@ let functionalityOptionsArray = [
       let sideVideoDiv
       let bubble
 
+      console.log('tryionh yp call peer', peerId, userInfo)
+
       let participant = {
         userInfo: userInfo,
         peerId: peerId,
@@ -3422,12 +3434,11 @@ let functionalityOptionsArray = [
       if (callMediaType == 'userMedia') { call.answer(myStream); callMediaTypeText = callMediaType } // check if it is a screen share or a user video/audio share
       if (callMediaType == 'screenMedia') { call.answer(); callMediaTypeText = callMediaType }
 
+      console.log(incomingPeerInfo, 'present');
       leftPanel.updateUserStatus(incomingPeerInfo, 'present');
       call.once('stream', function (remoteStream) {
         for (let i = 0; i < remoteStream.getTracks().length; i++) { const track = remoteStream.getTracks()[i]; track.muted = false; } //i decided to unmute these tracks becaise for some reason i was receiveing muted tracks
         if (callMediaType == 'userMedia') { // if the presented media is userMedia
-
-
 
           let maindiv = document.getElementById('mainVideoDiv')
           if (participants.length == 0) { // if it is the first user connection display on the main videoDiv
@@ -4392,7 +4403,7 @@ let functionalityOptionsArray = [
       }
 
       function addUser(user) {
-        let elementFound =  false
+        let elementFound = false
         for (let i = 0; i < componentsArray.length; i++) { // loop throught all components array
           if (componentsArray[i].userInfo.userID == user.userID) { // check if the user to add already exists
             let newElements = generateUserActions(user)
@@ -4402,11 +4413,11 @@ let functionalityOptionsArray = [
             elementFound = true
           }
         }
-        if(elementFound == false) componentsArray.push(generateUserActions(user)) // if the user does not exist in the first place
+        if (elementFound == false) componentsArray.push(generateUserActions(user)) // if the user does not exist in the first place
         refreshAttendaceList()
         updateNumbers()
       }
-      
+
       function generateUserActions(_user) {
         if (_user.userID == mySavedID) { //do not put any button on my presence div
           let presenceDiv = userForAttendanceList(_user, [])
@@ -4647,7 +4658,7 @@ let functionalityOptionsArray = [
   function initiateCall(initiationInfo) {
     let { callTo, audio, video, group, fromChat, previousCallId } = initiationInfo
     navigator.getUserMedia({ video: true, audio: true }, stream => {  //test user media accessibiity
-      socket.emit("initiateCall", { callTo, audio, video, group, fromChat, previousCallId })
+      socket.emit("initiateCall", { callTo, audio, video, group, fromChat, previousCallId, myPeerId: _myPeerId })
       displayAppSection(2) // show the calls screen
       startWaitingTone() // start the waiting tone
       stream.getTracks().forEach(track => { track.stop(); stream.removeTrack(track); })  //stop media tracks
