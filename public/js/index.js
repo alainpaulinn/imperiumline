@@ -13,7 +13,6 @@ let friends = [];
 let chats = [];
 let mySavedID;
 let myName, Mysurname;
-let _myPeerId;
 
 let silentNotifications = false;
 let appTheme = 'dark';
@@ -3012,7 +3011,6 @@ let functionalityOptionsArray = [
   // when my peer is ready with an ID ---> this means that we cannot receive a call before a peer Id is opened
   myPeer.on('open', myPeerId => {
     console.log('my peer is now connected with id: ' + myPeerId)
-    _myPeerId = myPeerId
     let myStream;
     let myScreenStream;
     let _callUniqueId;
@@ -3321,7 +3319,7 @@ let functionalityOptionsArray = [
     })
 
     function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage) {
-      navigator.getUserMedia({ video: true, audio: true }, stream => {
+      navigator.getUserMedia({ video: { deviceId: chosenDevices?.videoInput?.deviceId }, audio: true }, stream => {
         responded = true
         _callTitle = callTitle
         allUsersArray = allUsers
@@ -4026,7 +4024,9 @@ let functionalityOptionsArray = [
       awaitedUserDivs = [];
       topBar.callScreenHeader.textContent = '';
       bottomPanel.textContent = '';
-      allUsersArray = []
+      allUsersArray = [];
+      participants = [];
+      rightPanel.clearAllMessages();
       leftPanel.clearAttendanceList()
       sidepanelElements[2].triggerButton.parentElement.parentElement.remove(); // remove the ongoing call button
       displayAppSection(0) // display the previously displayed screen
@@ -4086,6 +4086,7 @@ let functionalityOptionsArray = [
         inputText.textContent = '';
       }
       function incrementUnreadCount() { unreadmessagesCount = unreadmessagesCount + 1; messagesSelectorbtn.textContent = ('Messages ' + unreadmessagesCount) }
+      function resetUnreadCount() { unreadmessagesCount = 0; messagesSelectorbtn.textContent = ('Messages ' + unreadmessagesCount) }
       function setParticipantsCount(count) { participantsSelectorBtn.textContent = ('Correspondants ' + count) }
 
       let rightPartContentDiv = createElement({ elementType: 'div', class: 'rightPartContentDiv', childrenArray: [callParticipantsDiv, callMessagingDiv] })
@@ -4209,7 +4210,11 @@ let functionalityOptionsArray = [
         messagesBox: c_openchat__box__info, // contains an addMessage(message) function to add messages to the conversation
         incrementUnread: () => { if (callMessagingDiv.classList.contains('hideDivAside')) { incrementUnreadCount() } },
         participantsBox: callParticipantsDiv,
-        setParticipantsCount: setParticipantsCount // a function that accepts an integer
+        setParticipantsCount: setParticipantsCount, // a function that accepts an integer
+        clearAllMessages: ()=>{ 
+          resetUnreadCount();
+          c_openchat__box__info.textContent = ''
+        }
       }
     }
     function createLeftPanel() {
@@ -4657,8 +4662,8 @@ let functionalityOptionsArray = [
 
   function initiateCall(initiationInfo) {
     let { callTo, audio, video, group, fromChat, previousCallId } = initiationInfo
-    navigator.getUserMedia({ video: true, audio: true }, stream => {  //test user media accessibiity
-      socket.emit("initiateCall", { callTo, audio, video, group, fromChat, previousCallId, myPeerId: _myPeerId })
+    navigator.getUserMedia({ video: { deviceId: chosenDevices?.videoInput?.deviceId }, audio: true }, stream => {  //test user media accessibiity
+      socket.emit("initiateCall", { callTo, audio, video, group, fromChat, previousCallId })
       displayAppSection(2) // show the calls screen
       startWaitingTone() // start the waiting tone
       stream.getTracks().forEach(track => { track.stop(); stream.removeTrack(track); })  //stop media tracks
