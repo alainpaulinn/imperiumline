@@ -3426,6 +3426,7 @@ let functionalityOptionsArray = [
 
     //for incoming Peer Calls
     myPeer.on('call', call => {
+      stopWaitingTone() // stop waiting tone if any tone is ringing
       let incomingPeerInfo = call.metadata.userInfo
       let callType = call.metadata.callType
       let callMediaType = call.metadata.callMediaType
@@ -3434,7 +3435,6 @@ let functionalityOptionsArray = [
       if (callMediaType == 'userMedia') { call.answer(myStream); callMediaTypeText = callMediaType } // check if it is a screen share or a user video/audio share
       if (callMediaType == 'screenMedia') { call.answer(); callMediaTypeText = callMediaType }
 
-      console.log(incomingPeerInfo, 'present');
       leftPanel.updateUserStatus(incomingPeerInfo, 'present');
       call.once('stream', function (remoteStream) {
         for (let i = 0; i < remoteStream.getTracks().length; i++) { const track = remoteStream.getTracks()[i]; track.muted = false; } //i decided to unmute these tracks becaise for some reason i was receiveing muted tracks

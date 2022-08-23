@@ -759,7 +759,7 @@ io.on('connection', (socket) => {
       let { callUniqueId, searchText } = callSearchData
       console.log('callSearchData', callSearchData)
       let foundUsers = await searchUsers(searchText, id, company_id, false, 15)
-      let thisCallParticipantsIDs = await getCallParticipants(callUniqueId).map(participant => participant.userID) //get all people who are allowed in this call
+      let thisCallParticipantsIDs = await getRoomParticipantArrayByCallUniqID(callUniqueId).map(participant => participant.userID) //get all people who are allowed in this call
       for (let i = 0; i < foundUsers.length; i++) {
         if (thisCallParticipantsIDs.includes(foundUsers[i].userID)) foundUsers.splice(i, 1)
       }
