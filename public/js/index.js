@@ -4807,7 +4807,7 @@ let functionalityOptionsArray = [
   function createTopBar(callInfo, myInfo) {
     let { callUniqueId, callType, callTitle, isTeam } = callInfo
     let callScreenHeader = document.getElementById('callScreenHeader')
-    let MeetingTitle = createElement({ elementType: 'div', class: 'MeetingTitle', textContent: callTitle })
+    let MeetingTitle = createElement({ elementType: 'div', class: 'MeetingTitle', textContent: callTitle + ' ◉ Meeting' })
     let headerLeftPart = createElement({ elementType: 'div', class: 'headerLeftPart', childrenArray: [MeetingTitle] })
     let input = createElement({ elementType: 'input', placeHolder: 'Search users' })
     let doneBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-check' }), createElement({ elementType: 'p', textContent: 'Done' })] })
@@ -5527,7 +5527,7 @@ let functionalityOptionsArray = [
         let headerTimeDiv = createElement({ elementType: 'div', class: 'headerTimeDiv', childrenArray: [scheduleHeader, sheduleTimeInFull] })
 
         function joinEvent() {
-          call(owner.userID, true, false, false, false, null)
+          call(eventId, true, false, false, false, 'joinEvent')
         }
 
         let eventTopSection = createElement({
