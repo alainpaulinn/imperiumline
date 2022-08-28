@@ -571,12 +571,12 @@ io.on('connection', (socket) => {
       if (group === false) groupPresentation = 0;
 
 
-      
+
 
       console.log('previousCallId', previousCallId)
       if (previousCallId == 'joinEvent') {
         let eventId = callTo
-        let givenTitle = await getEventTitle(eventId) 
+        let givenTitle = await getEventTitle(eventId)
         console.log('Happenned')
         let eventParticipants = await getEventParticipants(eventId)
         let eventParticipantUserInfos = eventParticipants.map((participant) => participant.userInfo)
@@ -864,27 +864,11 @@ io.on('connection', (socket) => {
     })
 
     ////////////////Meeting/schedule planning/////////////////
-    socket.on('scheduleInviteSearch', inviteId => {
-      db.query("SELECT `id`, `name`, `surname`, `email`, `profilePicture`, `company_id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 10", ['%' + inviteId + '%', '%' + inviteId + '%', '%' + inviteId + '%'], async (err, userSearchResult) => {
-        if (err) return console.log(err)
-        let foundUsersusers = userSearchResult.map(searchPerson => {
-          return {
-            company_id: searchPerson.company_id,
-            email: searchPerson.email,
-            id: searchPerson.id,
-            name: searchPerson.name,
-            profilePicture: searchPerson.profilePicture,
-            surname: searchPerson.surname
-          }
-        })
-        var listWithoutMe = foundUsersusers.filter(function (user) {
-          return user.id != id;
-        });
-        console.log("scheduleInviteResults listWithoutMe", listWithoutMe)
-        socket.emit('scheduleInviteResults', listWithoutMe)
-
-      })
+    socket.on('inviteUserToEventSearch', async searchText => {
+      let foundUsers = await searchUsers(searchText, id, company_id, false, 15)
+      socket.emit('inviteUserToEventSearch', foundUsers)
     })
+
     ///////////New Event/schedule/meeting plan////////////////////////////////
     socket.on('newEventCreation', (newEventCreation) => {
       console.log("newEventCreation", newEventCreation)
@@ -916,6 +900,7 @@ io.on('connection', (socket) => {
       )
     })
 
+
     socket.on('dayEvents', async dateReceived => {
       let initialDate = new Date(dateReceived)
       let endDate = new Date(dateReceived)
@@ -940,16 +925,33 @@ io.on('connection', (socket) => {
         return;
       }
       if (foundEvent.owner.userID == id) {
+        
+
         db.query("DELETE FROM `events` where eventId = ?", [eventId], async (err, result) => { })
         socket.emit('serverFeedback', [{ type: 'positive', message: 'the event was deleted successfully' }])
         console.log('event found')
+
+        let today = new Date()
+        let lastYear = new Date()
+        lastYear.setFullYear(today.getFullYear() - 1)
+        let nextYear = new Date()
+        nextYear.setFullYear(today.getFullYear() + 1)
+        
+        foundEvent.Participants.forEach( async (participant) => {
+          for (let j = 0; j < connectedUsers.length; j++) {
+            const connectedUser = connectedUsers[j];
+            if (connectedUser.id == participant.userInfo.userID) {
+              socket.to(connectedUser.socket.id).emit('updateCalendar', await getEvents(connectedUsers.id, lastYear, nextYear));
+              socket.to(connectedUser.socket.id).emit('initialFillCalendar', await getEvents(connectedUsers.id, lastYear, nextYear))
+            }
+          }
+        })
       }
       else {
         socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while deleting the event' }])
         console.log('event not found')
       }
     })
-
 
     socket.on('videoStateChange', async changeData => {
       let { callUniqueId, state } = changeData
@@ -1536,7 +1538,10 @@ function getEventDetails(givenEventId) {
     db.query('SELECT `eventId`, `ownerId`, `title`, `eventLocation`, `context`, `activityLink`, `details`, `startTime`, `endTime`, `occurrence`, `recurrenceType`, `startRecurrenceDate`, `endRecurrenceDate`, `type`, `oneTimeDate` FROM `events` WHERE `eventId` = ? LIMIT 1',
       [givenEventId], async (err, myEventResults) => {
         if (err) return console.log(err);
-        if (myEventResults.length < 1) return console.log("no event found with that Id");
+        if (myEventResults.length < 1) {
+          console.log("no event found with that Id");
+          resolve(undefined)
+        }
         let { eventId, ownerId, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate } = myEventResults[0];
         var _myEventResults = {
           eventId,
@@ -1594,8 +1599,8 @@ function getEventParticipants(givenEventId) {
 function getEventTitle(givenEventId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `eventId`, `ownerId`, `title` FROM `events` WHERE `eventId` = ?', [givenEventId], async (err, events) => {
-      if (err) console.log(err) 
-      if(events.length < 1) resolve(null)
+      if (err) console.log(err)
+      if (events.length < 1) resolve(null)
       else resolve(events[0].title)
     })
   })
@@ -1603,8 +1608,8 @@ function getEventTitle(givenEventId) {
 function getcallTitle(callUniqueId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `callUniqueId`, `callTitle` FROM `calls` WHERE `callUniqueId` = ?', [callUniqueId], async (err, calls) => {
-      if (err) console.log(err) 
-      if(calls.length < 1) resolve(null)
+      if (err) console.log(err)
+      if (calls.length < 1) resolve(null)
       else resolve(calls[0].callTitle)
     })
   })

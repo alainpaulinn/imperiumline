@@ -3128,7 +3128,7 @@ let functionalityOptionsArray = [
         })
         determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
 
-        if(initiatedCallInfo.callStage == 'rejoin') socket.emit('readyForRejoin', {...initiatedCallInfo, peerId: myPeerId});
+        if (initiatedCallInfo.callStage == 'rejoin') socket.emit('readyForRejoin', { ...initiatedCallInfo, peerId: myPeerId });
       }, (err) => { alert('Failed to get local media stream', err); });
     })
     // -------------------------------------
@@ -4211,7 +4211,7 @@ let functionalityOptionsArray = [
         incrementUnread: () => { if (callMessagingDiv.classList.contains('hideDivAside')) { incrementUnreadCount() } },
         participantsBox: callParticipantsDiv,
         setParticipantsCount: setParticipantsCount, // a function that accepts an integer
-        clearAllMessages: ()=>{ 
+        clearAllMessages: () => {
           resetUnreadCount();
           c_openchat__box__info.textContent = ''
         }
@@ -5235,11 +5235,11 @@ let functionalityOptionsArray = [
         newEventCreation.occurrence = 1
         newEventCreation.startRecurrenceDate = formatDate(new Date()).substring(0, 10)
         newEventCreation.endRecurrenceDate = formatDate(new Date()).substring(0, 10)
-        newEventCreation.type
+        newEventCreation.type = 1
         newEventCreation.oneTimeDate = formatDate(new Date()).substring(0, 5)
         newEventCreation.startTime = formatDate(new Date()).substring(-3, 10)
         newEventCreation.endTime = formatDate(new Date()).substring(-3, 10)
-
+        newEventCreation.inviteList = []
         // title
         let titleInput = createElement({ elementType: 'input', class: 'textField', name: 'title', type: 'text', placeHolder: 'Title' })
         let titleBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [titleInput] })
@@ -5251,7 +5251,7 @@ let functionalityOptionsArray = [
           availableOptions: [{ id: 1, name: "Meeting" }, { id: 2, name: "Task" }],
           placeHolder: "Meeting Type",
           selectorWidth: '100%',
-          onOptionChange: (option) => { option == null ? newEventCreation.type = null : newEventCreation.type = option.id }
+          onOptionChange: (option) => { option == null ? newEventCreation.type : newEventCreation.type = option.id }
         });
         // start - end time
         let timeEventStartTimeInput = createElement({ elementType: 'input', class: 'flex-1', id: 'timeEventStartTimeInput', placeHolder: 'Start Time' })
@@ -5337,10 +5337,75 @@ let functionalityOptionsArray = [
         let linkBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [linkInput] })
         let detailsInput = createElement({ elementType: 'textarea', class: 'textField', name: 'details', type: 'text', placeHolder: 'Details' })
         let detailsBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [detailsInput] })
+
+        let InviteUserInputSearch = createElement({ elementType: 'input', class: 'textField', type: 'text', placeHolder: 'Search user to invite to the event' })
+        let InviteUserInputSearchBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [InviteUserInputSearch] })
+
+        let selectedUsersIntroBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Selected users:' })
+        let selectedUsersDiv = createElement({ elementType: 'div', class: 'editBlock flex-column' })
+        let searchresultIntroBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Search results:' })
+        let resultsUsersDiv = createElement({
+          elementType: 'div', class: 'editBlock flex-column', childrenArray: [
+            createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Search for users to invite in the box above, the results will appear here.' })
+          ]
+        })
+
+        InviteUserInputSearch.addEventListener('input', () => {
+          let searchText = InviteUserInputSearch.value
+          socket.emit('inviteUserToEventSearch', searchText)
+          console.log('inviteUserToEventSearch', searchText)
+        })
+
+        socket.on('inviteUserToEventSearch', (usersResult) => {
+          resultsUsersDiv.textContent = '';
+          function createSelectedUserDiv(user) {
+            let userDiv
+            let removeButton = createElement({ elementType: 'button', textContent: 'Remove' })
+            let actions = [{
+              element: removeButton, functionCall: () => {
+                for (let j = 0; j < newEventCreation.inviteList.length; j++) if (newEventCreation.inviteList[j] == user.userID) newEventCreation.inviteList.splice(j, 1)
+                userDiv.remove() // remove this div from added users div
+                resultsUsersDiv.prepend(createSearchResutDiv(user))
+              }
+            }]
+            userDiv = userForAttendanceList(user, actions)
+            return userDiv
+          }
+
+          function createSearchResutDiv(user) {
+            let userDiv
+            let inviteButton = createElement({ elementType: 'button', textContent: 'Add User' })
+            let actions = [{
+              element: inviteButton, functionCall: () => {
+                if (!newEventCreation.inviteList.includes(user.userID)) newEventCreation.inviteList.push(user.userID) // check so as to avoid duplicates
+                userDiv.remove() // remove this div from sesrch result
+                selectedUsersDiv.append(createSelectedUserDiv(user))
+              }
+            }]
+            userDiv = userForAttendanceList(user, actions)
+            return userDiv
+          }
+          for (let i = 0; i < usersResult.length; i++) if (newEventCreation.inviteList.includes(usersResult[i].userID)) usersResult.splice(i, 1)
+          if (usersResult.length < 1) return resultsUsersDiv.append(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users found with given criteria.' }))
+          for (let i = 0; i < usersResult.length; i++) resultsUsersDiv.appendChild(createSearchResutDiv(usersResult[i]))
+        })
+
         ///////////Implementing the POPUP DIV
         let icon = 'bx bxs-calendar'
         let title = 'Create new event'
-        let contentElementsArray = [titleBlock, eventTypeBlock, timeStartEndBlock, recurrenceBlock, contextBlock, locationBlock, linkBlock, detailsBlock]
+        let contentElementsArray = [titleBlock,
+          eventTypeBlock,
+          timeStartEndBlock,
+          recurrenceBlock,
+          contextBlock,
+          locationBlock,
+          linkBlock,
+          detailsBlock,
+          InviteUserInputSearchBlock,
+          selectedUsersIntroBlock,
+          selectedUsersDiv,
+          searchresultIntroBlock,
+          resultsUsersDiv]
         let actions = [
           {
             element: submitButton, functionCall: () => {
@@ -5366,7 +5431,7 @@ let functionalityOptionsArray = [
               details = detailsInput.value.trim() // not obligatory
               newEventCreation.details = details
 
-              newEventCreation.inviteList = []
+
               let emptyValues = returnEmptyString([title,
                 context,
                 newEventCreation.startTime,
@@ -5380,6 +5445,7 @@ let functionalityOptionsArray = [
               )
               if (emptyValues.length > 0) console.log('not full', newEventCreation)
               else console.log('full', newEventCreation)
+              newEventCreation.inviteList = [...new Set(newEventCreation.inviteList)] // ensure there are no duplicates
               socket.emit('newEventCreation', newEventCreation)
             }
           }
