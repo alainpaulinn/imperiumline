@@ -10,7 +10,9 @@
   --borderRadius: 15px;
   --receivedMessageBg: var(--primaryBackground);
   --sentMessageBg: var(--notification);
-  --hoverColor: var(--notification) ;
+  --hoverColor: var(--notification);
+  --audioCallCover: rgb(0, 0, 0);
+  --transparentBg: rgba(0, 0, 0, 0.5);
 }
 
 .light {
@@ -25,6 +27,8 @@
   --receivedMessageBg: rgb(211, 219, 230);
   --sentMessageBg: rgb(247, 247, 247);
   --hoverColor: rgb(0, 48, 97);
+  --audioCallCover: var(--focusAreaBackgroundColor);
+  --transparentBg: rgba(255, 255, 255, 0.5) ;
 }
 
 /* width */
@@ -259,6 +263,10 @@ body {
 }
 .c-sidepanel__nav__link button .rotate180 {
   transform: rotate(180deg);
+}
+
+.c-sidepanel + .c-messages_panel {
+  width: 100%;
 }
 
 .inscreenPanelContainer {
@@ -2664,8 +2672,12 @@ body {
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .inviteSomeone p {
   color: var(--lightText);
+  transition: all 0.4s;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .inviteSomeone:hover {
+  color: var(--hoverColor);
+}
+.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .inviteSomeone:hover p {
   color: var(--hoverColor);
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown {
@@ -2952,7 +2964,7 @@ body {
   padding: 0.5rem;
   border: none;
   outline: none;
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--transparentBg);
   color: var(--lightText);
   cursor: pointer;
 }
@@ -2960,7 +2972,7 @@ body {
   background: rgba(0, 0, 0, 0.4);
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv .callControls .alwaysVisibleControls .callControl.active {
-  background-color: var(--notification);
+  background-color: var(--hoverColor);
   box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv .callControls .hiddableControls {
@@ -2984,7 +2996,7 @@ body {
   font-size: 18px;
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv .callControls .hiddableControls .callControl.active {
-  background-color: var(--notification);
+  background-color: var(--hoverColor);
   box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv .callControls .hiddableControls .hangupbtn {
@@ -3112,7 +3124,7 @@ body {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: var(--transparentBg);
 }
 .c-ongoing_call_panel .rightPart .rightPartContentDiv .callParticipantsDiv .callParticipantDiv .sideVideoControls button {
   transition: all 0.4s;
@@ -3187,7 +3199,7 @@ body {
   padding: 0.5rem;
   display: flex;
   color: var(--lightText);
-  background: black;
+  background: var(--primaryBackground);
   border-radius: 15px;
 }
 .c-ongoing_call_panel .rightPart .rightPartContentDiv .callMessagingDiv {
@@ -3683,7 +3695,7 @@ body {
   margin-left: 0.5rem;
 }
 .videoCoverDiv .calleesDiv .listMember button:hover {
-  color: var(--notification);
+  color: var(--hoverColor);
 }
 .videoCoverDiv .waitingCallControls {
   margin-top: auto;
@@ -3707,7 +3719,7 @@ body {
   font-size: 18px;
 }
 .videoCoverDiv .waitingCallControls .callControl.active {
-  background-color: var(--notification);
+  background-color: var(--hoverColor);
   box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, 0.6);
 }
 .videoCoverDiv .waitingCallControls .hangupbtn {

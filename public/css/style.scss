@@ -32,7 +32,11 @@ $white: rgb(255, 255, 255);
   --sentMessageBg: var(--notification);
 
   // hover Color
-  --hoverColor: var(--notification)
+  --hoverColor: var(--notification);
+
+  --audioCallCover: rgb(0, 0, 0);
+
+  --transparentBg: rgba(0, 0, 0, 0.5);
 }
 
 .light {
@@ -54,6 +58,10 @@ $white: rgb(255, 255, 255);
 
   // hover Color
   --hoverColor: rgb(0, 48, 97);
+
+  --audioCallCover: var(--focusAreaBackgroundColor);
+  
+  --transparentBg: rgba(255, 255, 255, 0.5)
 }
 
 
@@ -3227,10 +3235,14 @@ body {
 
           p {
             color: var(--lightText);
+            transition: all 0.4s;
           }
 
           &:hover {
             color: var(--hoverColor);
+            p{
+              color: var(--hoverColor);
+            }
           }
         }
 
@@ -3565,7 +3577,7 @@ body {
             padding: .5rem;
             border: none;
             outline: none;
-            background: rgba(0, 0, 0, 0.1);
+            background: var(--transparentBg);
             color: var(--lightText);
             cursor: pointer;
 
@@ -3574,7 +3586,7 @@ body {
             }
 
             &.active {
-              background-color: var(--notification);
+              background-color: var(--hoverColor);
               box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
             }
           }
@@ -3605,7 +3617,7 @@ body {
             }
 
             &.active {
-              background-color: var(--notification);
+              background-color: var(--hoverColor);
               box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
             }
           }
@@ -3756,7 +3768,7 @@ body {
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: var(--transparentBg);
 
             button {
               transition: all 0.4s;
@@ -3846,7 +3858,7 @@ body {
               padding: 0.5rem;
               display: flex;
               color: var(--lightText);
-              background: black;
+              background: var(--primaryBackground);
               border-radius: 15px;
             }
           }
@@ -4435,7 +4447,7 @@ body {
         }
 
         &:hover {
-          color: var(--notification);
+          color: var(--hoverColor);
         }
       }
     }
@@ -4467,7 +4479,7 @@ body {
       }
 
       &.active {
-        background-color: var(--notification);
+        background-color: var(--hoverColor);
         box-shadow: 0px 0px 15px 8px rgba(255, 255, 255, .6);
       }
 

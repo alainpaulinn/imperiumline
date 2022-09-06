@@ -1397,14 +1397,10 @@ function getEvents(userId, initalDate, endDate) {
         //create an object with properties which represent all of the dates between thos intervals
         let eventDates = {};
         let currentDate = initalDate
-        //console.log("currentDate", currentDate, initalDate)
         while (currentDate <= endDate) {
-          //console.log("curr", currentDate)
           eventDates[currentDate.toISOString().slice(0, 10)] = [];
           currentDate.setDate(currentDate.getDate() + 1);
         }
-        //console.log("Event Dates", eventDates);
-        //console.log(eventDates)
         for (let eventNumber = 0; eventNumber < _myEvents.length; eventNumber++) {
           /**
            * {
@@ -1457,8 +1453,6 @@ function getEvents(userId, initalDate, endDate) {
           }
            */
           let eventdetails = await getEventDetails(_myEvents[eventNumber].eventId);
-          //console.log("eventdetails", eventdetails)
-          //console.log("eventDates", eventDates)
           if (eventdetails.occurrence == 1) {
             if (eventDates[eventdetails.oneTimeDate]) eventDates[eventdetails.oneTimeDate].push(eventdetails);
           }
@@ -1471,12 +1465,8 @@ function getEvents(userId, initalDate, endDate) {
             let checkStartDate = new Date(eventdetails.startRecurrenceDate);
             let checkEndDate = new Date(eventdetails.endRecurrenceDate);
             let operationDate = checkStartDate;
-
             //number of difference in days
             let dayDifference = dayDif(checkStartDate, checkEndDate) + 1;
-            // console.log(checkStartDate, checkEndDate)
-            // console.log(dayDifference)
-
             //everyday
             if (eventdetails.recurrenceType == 1) {
               for (let i = 0; i < dayDifference; i++) {
@@ -1565,8 +1555,6 @@ function getEventDetails(givenEventId) {
       })
   })
 }
-//getEventDetails(3).then(console.log)
-//getEvents(9, new Date("2022-03-15"), new Date("2022-03-23")).then(console.log)
 
 const insertEventParticipant = (eventId, participantId) => {
   /**
