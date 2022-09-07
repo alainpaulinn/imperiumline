@@ -5089,20 +5089,23 @@ let functionalityOptionsArray = [
     }
     return progress
   }
-  // window.onbeforeunload = function () {
-  //   deleteAllCookies()
-  //   return 'Are you sure you want to leave?';
-  // };
-  // function deleteAllCookies() {
-  //   var cookies = document.cookie.split(";");
 
-  //   for (var i = 0; i < cookies.length; i++) {
-  //     var cookie = cookies[i];
-  //     var eqPos = cookie.indexOf("=");
-  //     var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-  //     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-  //   }
-  // }
+  // this deletes the cookie on exit if the user has chosed one time connection
+  // this also preents ome from disconnecting
+  window.onbeforeunload = function () {
+    deleteAllCookies()
+    return 'Are you sure you want to leave?';
+  };
+  function deleteAllCookies() {
+    var cookies = document.cookie.split(";");
+
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i];
+      var eqPos = cookie.indexOf("=");
+      var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+  }
 
   ////////////// EVENTS SCHEDULER //////////////////////
   let calendarObject = {}
