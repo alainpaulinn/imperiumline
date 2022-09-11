@@ -2695,6 +2695,32 @@ let functionalityOptionsArray = [
   function reactionTo(messageId, reaction) { socket.emit('messageReaction', { messageId, selectedChatId, reaction }) }
   function sameDay(d1, d2) { return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate(); }
 
+  let searchExistingChatsField = document.getElementById('searchExistingChatsField')
+  searchExistingChatsField.addEventListener('input', function () {
+    if (searchExistingChatsField.value == '') {
+      chatContainer.textContent = ''
+      for (let i = 0; i < availableChats.length; i++) {
+        chatContainer.append(availableChats[i].conversationButton)
+      }
+    }
+    else {
+      chatContainer.textContent = ''
+      chatContainer.append(createElement({
+        elementType: 'div', class: 'flex flex-center-y flex-center-x full-height', childrenArray: [
+          createElement({
+            elementType: 'div', class: 'spinner',
+            childrenArray: [
+              createElement({ elementType: 'div' }),
+              createElement({ elementType: 'div' }),
+              createElement({ elementType: 'div' })
+            ]
+          })
+        ]
+      }))
+    }
+  })
+
+
   let searchField = document.getElementById('searchField')
   searchField.addEventListener('input', function () {
     var text = this.value;
@@ -2788,9 +2814,7 @@ let functionalityOptionsArray = [
     })
   })
   socket.on('createNewGroupChatSearch', users => {
-    console.log('happenner 1')
     if (!resultsUsersDiv) return
-    console.log('happenner 2')
     resultsUsersDiv.textContent = ''
     if (users.length < 1) {
       return resultsUsersDiv.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users found with the given criteria' }))

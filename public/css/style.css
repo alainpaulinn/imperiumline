@@ -265,10 +265,6 @@ body {
   transform: rotate(180deg);
 }
 
-.c-sidepanel + .c-messages_panel {
-  width: 100%;
-}
-
 .inscreenPanelContainer {
   background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
@@ -4400,6 +4396,22 @@ body {
 
 .hidden {
   display: none !important;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center-x {
+  justify-content: center;
+}
+
+.flex-center-y {
+  align-items: center;
+}
+
+.full-height {
+  height: 100%;
 }
 
 .progress {
