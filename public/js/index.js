@@ -1928,7 +1928,7 @@ let functionalityOptionsArray = [
     let existingChat = availableChats.find(chat => chat.roomID == chatInfo.roomID)
     if (!existingChat) {
       chatContainer.prepend(chatContainerDiv);
-      availableChats.unshift({ roomID: chatInfo.roomID, conversationButton })
+      availableChats.unshift({ roomID: chatInfo.roomID, conversationButton: chatContainerDiv })
     }
     else {
       chatContainer.prepend(chatContainerDiv);
@@ -2054,6 +2054,7 @@ let functionalityOptionsArray = [
         break;
       case 1:
         if (mySavedID == lastmessage.from.userID) { writenBy = "Me: "; }
+        else if (mySavedID == lastmessage.from.id == 0) { writenBy = '' }
         else { writenBy = lastmessage.from.name + ": "; }
         if (profilePicture == null) { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
         else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
@@ -2574,6 +2575,8 @@ let functionalityOptionsArray = [
         messageElement = createReceivedMessage(message, myID, true)
         groupMessages = createReceivedGroup(profilePic, messageElement)
       }
+      openchat__box__info.textContent = '' // clear the textBox
+      openchat__box__info.appendChild(createElement({ elementType: 'div', class: 'push-down' })) // push down all contents
       openchat__box__info.appendChild(separator)
       openchat__box__info.appendChild(groupMessages)
     }
