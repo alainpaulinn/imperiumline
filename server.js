@@ -97,7 +97,6 @@ io.on('connection', (socket) => {
       socket.emit('myId', myInformation);
       db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess`, room.chatID, room.name, room.type, room.profilePicture, room.creationDate, room.lastActionDate FROM `participants` LEFT JOIN room ON room.chatID = participants.roomID WHERE participants.userID = ? ORDER BY `room`.`lastActionDate` DESC', [id], async (err, mychatResults) => {
         if (err) return console.log(err)
-        console.log('mychatResults', mychatResults)
         mychatResults.forEach(async myChat => {
           let roomID = myChat.roomID + '';
           socket.join(roomID)
@@ -268,59 +267,60 @@ io.on('connection', (socket) => {
       if (deleteResult.type == 'positive') io.sockets.in(messageId + '').emit('deletedMessage', { roomId: access_roomId, messageId: messageId });
       socket.emit('serverFeedback', [deleteResult])
     })
-    socket.on('searchPeople', (searchPeople) => {
-      db.query("SELECT `id` FROM `user` WHERE `name` LIKE ? OR `surname` LIKE ? OR `email` LIKE ? LIMIT 15", ['%' + searchPeople + '%', '%' + searchPeople + '%', '%' + searchPeople + '%'], async (err, userSearchResult) => {
-        if (err) return console.log(err)
-        let foundUsers = await searchUsers(searchPeople, id, company_id, false, 15)
-        socket.emit('searchPerson', foundUsers)
-      })
+    socket.on('searchPeople', async (searchPeople) => {
+      let foundUsers = await searchUsers(searchPeople, id, company_id, false, 15)
+      socket.emit('searchPerson', foundUsers)
     })
-    socket.on('makeChat', (makeChat) => {
+    socket.on('searchChats', async (searchText) => {
+      let foundConversationIDs = []
+      let foundUsers = await searchUsers(searchText, id, company_id, false, 15) // for private (non Group) chats
+      let foundGroups = await searchGroupsByName(searchText, id, 15) // for group chats
+      for (let i = 0; i < foundGroups.length; i++) {
+        if (!foundConversationIDs.includes(foundGroups[i])) foundConversationIDs.push(foundGroups[i])
+      }
+      for (let i = 0; i < foundUsers.length; i++) {
+        let memberRooms = await getuserChatsIds(foundUsers[i].userID)
+        let myMemberRooms = await getuserChatsIds(id)
+        let commonEntry = await findCommonElement(memberRooms, myMemberRooms)
+        if (commonEntry.exists == true && !foundConversationIDs.includes(commonEntry.id)) foundConversationIDs.push(commonEntry.id)
+      }
+
+
+      let foundConversations = []
+      for (let i = 0; i < foundConversationIDs.length; i++) {
+        foundConversations.push(await getRoomInfo(foundConversationIDs[i], id))
+        console.log('room', foundConversationIDs[i])
+      }
+      console.log('foundConversations', foundConversations)
+      socket.emit('searchChats', foundConversations)
+    })
+    socket.on('makeChat', async (makeChat) => {
       if (makeChat == id) return console.log(`user with ID ${id} wanted to create a chat with himself and was dismissed`)
-      let memberRooms = [];
-
-      db.query("SELECT `id`, `userID`, `roomID` FROM `participants` WHERE `userID` = ?", [makeChat], async (err, dbChatCheck) => {
-        if (err) return console.log(err)
-        memberRooms = dbChatCheck.map(room => { return room.roomID })
-        db.query("SELECT `id`, `userID`, `roomID` FROM `participants` WHERE `userID` = ?", [id], async (err, dbMyChatCheck) => {
-          if (err) return console.log(err)
-
-          let myMemberRooms = dbMyChatCheck.map(room => { return room.roomID })
-
-          //finally check if we have common priavate conversation
-          let commonEntry = await findCommonElement(memberRooms, myMemberRooms)
-          switch (commonEntry.exists) {
-            case true:
-              // socket.emit('displayChat', await getRoomInfo(commonEntry.id, id))
-              socket.emit('clickOnChat', commonEntry.id)
-              //socket.emit('chatContent', await getChatFullInfo(commonEntry.id, id))  
-              break;
-            case false:
-              /////////CREATE A NEW CHAT
-              let createdChatId = await createChat(id, makeChat)
-              let partnerConnectionInstances = connectedUsers.filter(user => { return user.id == makeChat })
-              let myConnectionInstances = connectedUsers.filter(user => { return user.id == id })
-
-              partnerConnectionInstances.forEach(connection => { //make partner join the room
-                connection.socket.join(createdChatId + '');
-              });
-
-              myConnectionInstances.forEach(connection => { // join me to the room
-                connection.socket.join(createdChatId + '');
-              });
-              //Send to all concerned people / logged in instances
-              io.sockets.in(createdChatId + '').emit('displayNewCreatedChat', await getRoomInfo(createdChatId, id));
-              socket.emit('clickOnChat', createdChatId)
-              //for the person who opened the chat -> open the chat
-              break;
-
-            default:
-              break;
-          }
-        })
-
-      })
-
+      let memberRooms = await getuserChatsIds(makeChat)
+      let myMemberRooms = await getuserChatsIds(id)
+      //finally check if we have common priavate conversation
+      let commonEntry = await findCommonElement(memberRooms, myMemberRooms)
+      switch (commonEntry.exists) {
+        case true:
+          // socket.emit('displayChat', await getRoomInfo(commonEntry.id, id))
+          socket.emit('clickOnChat', commonEntry.id)
+          //socket.emit('chatContent', await getChatFullInfo(commonEntry.id, id))  
+          break;
+        case false:
+          /////////CREATE A NEW CHAT
+          let createdChatId = await createChat(id, makeChat)
+          let partnerConnectionInstances = connectedUsers.filter(user => { return user.id == makeChat })
+          let myConnectionInstances = connectedUsers.filter(user => { return user.id == id })
+          partnerConnectionInstances.forEach(connection => { connection.socket.join(createdChatId + ''); }); //make partner join the room
+          myConnectionInstances.forEach(connection => { connection.socket.join(createdChatId + ''); }); // join me to the room
+          //Send to all concerned people / logged in instances
+          io.sockets.in(createdChatId + '').emit('displayNewCreatedChat', await getRoomInfo(createdChatId, id));
+          socket.emit('clickOnChat', createdChatId)
+          //for the person who opened the chat -> open the chat
+          break;
+        default:
+          break;
+      }
     })
 
     socket.on('changeRoomName', async (changeDetails) => {
@@ -925,7 +925,7 @@ io.on('connection', (socket) => {
         return;
       }
       if (foundEvent.owner.userID == id) {
-        
+
 
         db.query("DELETE FROM `events` where eventId = ?", [eventId], async (err, result) => { })
         socket.emit('serverFeedback', [{ type: 'positive', message: 'the event was deleted successfully' }])
@@ -936,8 +936,8 @@ io.on('connection', (socket) => {
         lastYear.setFullYear(today.getFullYear() - 1)
         let nextYear = new Date()
         nextYear.setFullYear(today.getFullYear() + 1)
-        
-        foundEvent.Participants.forEach( async (participant) => {
+
+        foundEvent.Participants.forEach(async (participant) => {
           for (let j = 0; j < connectedUsers.length; j++) {
             const connectedUser = connectedUsers[j];
             if (connectedUser.id == participant.userInfo.userID) {
@@ -1951,6 +1951,14 @@ function searchUsers(searchterm, myId, company_id, includeMe, limit) {
     })
   })
 }
+function searchGroupsByName(searchterm, userID, limit) { // returns onlu IDs
+  return new Promise(function (resolve, reject) {
+    db.query("SELECT participants.id, participants.userID, participants.roomID, `chatID`, `name` FROM `room` FULL JOIN participants ON participants.roomID = chatID HAVING `name` LIKE ? AND participants.userID = ? LIMIT ?", ['%' + searchterm + '%', userID, limit], async (err, chatSearchResult) => {
+      if (err) return console.log(err)
+      else resolve(chatSearchResult.map(chat => chat.chatID))
+    })
+  })
+}
 function getUserRole(roleId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `position` FROM `positions` WHERE `id` = ?', [roleId], async (err, roles) => {
@@ -2000,6 +2008,15 @@ function createChat(me, other) {
         })
       })
     });
+  })
+}
+
+function getuserChatsIds(userID) {
+  return new Promise(function (resolve, reject) {
+    db.query("SELECT `id`, `userID`, `roomID` FROM `participants` WHERE `userID` = ?", [userID], async (err, userChats) => {
+      if (err) return console.log(err)
+      else resolve(userChats.map(room => { return room.roomID }))
+    })
   })
 }
 function roomUserCount(roomId) {

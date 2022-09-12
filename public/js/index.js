@@ -13,18 +13,22 @@ let friends = [];
 let chats = [];
 let mySavedID;
 let myName, Mysurname;
-
 let silentNotifications = false;
 let appTheme = 'dark';
 
-let deletedUser = { userID: 0, name: 'Deleted', surname: 'User', role: 'Deleted User', profilePicture: null, status: 'offline' }
-// to be used in case we have a deleted user
-
+let deletedUser = {
+  userID: 0,
+  name: 'Deleted',
+  surname: 'User',
+  role: 'Deleted User',
+  profilePicture: null,
+  status: 'offline'
+}// to be used in case we have a deleted user
 let openChatInfo;
 let availableChats = [];
+let searchedChats = [];
 let chatContainer = document.querySelector("#place_for_chats")
 let body = document.getElementsByTagName('body')[0]
-
 let openProfileDiv;
 let openPopupDiv;
 /////////////////////SIDEPANEL SWITCH///////////////////////////
@@ -34,7 +38,6 @@ let call_log_panel = document.getElementById("call_log_panel")
 let ongoing_call_panel = document.getElementById("ongoing_call_panel")
 let time_scheduling_panel = document.getElementById("time-scheduling_panel")
 let work_shift_panel = document.getElementById("work_shifts_Panel")
-
 let document_title = document.getElementsByTagName("title")[0]
 
 // messages elements declaration
@@ -1915,7 +1918,10 @@ let functionalityOptionsArray = [
   socket.on('clickOnChat', function (chatToClick) {
     let existingChat = availableChats.find(chat => chat.roomID == chatToClick)
     if (!existingChat) { }
-    else existingChat.conversationButton.click()
+    else {
+      existingChat.conversationButton.click();
+      bringChatIntoView(chatToClick)
+    }
   });
   socket.on('chatContent', function (chatContent) {
     openChatInfo = chatContent;
@@ -2074,8 +2080,7 @@ let functionalityOptionsArray = [
       open_chat_box.textContent = ''
       open_chat_box.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // append spinner for waiting server response
       requestChatContent(roomID)
-      availableChats.forEach(chat => { chat.conversationButton.classList.remove("openedChat") })
-      chatListItem.classList.add("openedChat");
+      markChatAsOpened(roomID)
     })
     if (type == 1) {
       chatListItem.updatetitle = (_title) => {
@@ -2698,10 +2703,7 @@ let functionalityOptionsArray = [
   let searchExistingChatsField = document.getElementById('searchExistingChatsField')
   searchExistingChatsField.addEventListener('input', function () {
     if (searchExistingChatsField.value == '') {
-      chatContainer.textContent = ''
-      for (let i = 0; i < availableChats.length; i++) {
-        chatContainer.append(availableChats[i].conversationButton)
-      }
+      restoreMessages()
     }
     else {
       chatContainer.textContent = ''
@@ -2717,9 +2719,55 @@ let functionalityOptionsArray = [
           })
         ]
       }))
+      socket.emit('searchChats', searchExistingChatsField.value);
+    }
+  })
+  socket.on('searchChats', foundChats => {
+    searchedChats = []
+    if (foundChats.length < 1) {
+      chatContainer.textContent = ''
+      chatContainer.append(createElement({
+        elementType: 'div', class: 'flex flex-center-y flex-center-x full-height', childrenArray: [
+          createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No conversations found with given criteria.' })
+        ]
+      }))
+    }
+    else {
+      chatContainer.textContent = ''
+      console.log('foundChats', foundChats)
+      for (let i = 0; i < foundChats.length; i++) {
+        let conversationButton = showOnChatList(foundChats[i])
+        chatContainer.append(conversationButton)
+        searchedChats.push({ roomID: foundChats[i].roomID, conversationButton: foundChats[i].conversationButton })
+        conversationButton.addEventListener('click', () => {
+          restoreMessages()
+
+        })
+      }
+      chatContainer.append()
     }
   })
 
+  function restoreMessages() {
+    chatContainer.textContent = ''
+    for (let i = 0; i < availableChats.length; i++) {
+      chatContainer.append(availableChats[i].conversationButton)
+    }
+  }
+
+  function markChatAsOpened(chatId) {
+    availableChats.forEach(chat => { chat.conversationButton.classList.remove("openedChat") })
+    for (let j = 0; j < availableChats.length; j++) {
+      if (availableChats[j].roomID == chatId) availableChats[j].conversationButton.classList.add("openedChat");
+      bringChatIntoView(chatId)
+    }
+  }
+
+  function bringChatIntoView(chatId) {
+    for (let j = 0; j < availableChats.length; j++) {
+      if (availableChats[j].roomID == chatId) availableChats[j].conversationButton.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
 
   let searchField = document.getElementById('searchField')
   searchField.addEventListener('input', function () {
