@@ -100,7 +100,6 @@ io.on('connection', (socket) => {
         mychatResults.forEach(async myChat => {
           let roomID = myChat.roomID + '';
           socket.join(roomID)
-          console.log('mychatResults', mychatResults)
           socket.emit('displayChat', await getRoomInfo(roomID, id))
         });
       })
@@ -281,10 +280,11 @@ io.on('connection', (socket) => {
       for (let i = 0; i < foundUsers.length; i++) {
         let memberRooms = await getuserChatsIds(foundUsers[i].userID)
         let myMemberRooms = await getuserChatsIds(id)
-        let commonEntry = await findCommonElement(memberRooms, myMemberRooms)
-        if (commonEntry.exists == true && !foundConversationIDs.includes(commonEntry.id)) foundConversationIDs.push(commonEntry.id)
+        let commonEntry = await findAllCommonElements(memberRooms, myMemberRooms)
+        for (let m = 0; m < commonEntry.length; m++) {
+          if (!foundConversationIDs.includes(commonEntry[m]))  foundConversationIDs.push(commonEntry[m])
+        }
       }
-
 
       let foundConversations = []
       for (let i = 0; i < foundConversationIDs.length; i++) {
@@ -1489,7 +1489,6 @@ function getEvents(userId, initalDate, endDate) {
             //monday-friday
             else if (eventdetails.recurrenceType == 3) {
               for (let i = 0; i < dayDifference; i++) {
-                console.log("monday-friday loop running", i)
                 let operationDateString = operationDate.toISOString().slice(0, 10)
                 //get Day(), 0 for Sunday, 1 for Monday, 2 for Tuesday, and so on
                 if ((operationDate.getDay() == 1 || operationDate.getDay() == 2 || operationDate.getDay() == 3 || operationDate.getDay() == 4 || operationDate.getDay() == 5) && eventDates[operationDateString]) {
@@ -1502,7 +1501,6 @@ function getEvents(userId, initalDate, endDate) {
             //weekend
             else if (eventdetails.recurrenceType == 4) {
               for (let i = 0; i < dayDifference; i++) {
-                console.log("weekend loop running", i)
                 let operationDateString = operationDate.toISOString().slice(0, 10)
                 //get Day(), 0 for Sunday, 1 for Monday, 2 for Tuesday, and so on
 
@@ -2028,21 +2026,28 @@ function roomUserCount(roomId) {
   })
 }
 
-function findCommonElement(array1, array2) {
+async function findCommonElement(array1, array2) {
   console.log('array1, array2', array1, array2)
-  return new Promise(async function (resolve, reject) {
-    const filteredArray = array1.filter(value => array2.includes(value));
-    var uniqueIds = [];
-    filteredArray.forEach(array => { if (!uniqueIds.includes(array)) uniqueIds.push(array) })
-    let resultObject = { exists: false, id: null };
-    for (let i = 0; i < uniqueIds.length; i++) {
-      if (await roomUserCount(uniqueIds[i]) == 2) {
-        resultObject = { exists: true, id: uniqueIds[i] };
-        break;
-      }
+  const filteredArray = array1.filter(value => array2.includes(value));
+  var uniqueIds = [];
+  filteredArray.forEach(array => { if (!uniqueIds.includes(array)) uniqueIds.push(array) })
+  let resultObject = { exists: false, id: null };
+  for (let i = 0; i < uniqueIds.length; i++) {
+    if (await roomUserCount(uniqueIds[i]) == 2) {
+      resultObject = { exists: true, id: uniqueIds[i] };
+      break;
     }
-    resolve(resultObject);
-  })
+  }
+  return resultObject
+}
+async function findAllCommonElements(array1, array2) {
+  let resultElements = []
+  for (let i = 0; i < array1.length; i++) {
+    for (let j = 0; j < array2.length; j++) {
+      if (array1[i] == array2[j] && !resultElements.includes(array2[j])) resultElements.push(array2[j]);
+    }
+  }
+  return resultElements
 }
 
 function getSuperadminAccess(userID) {
