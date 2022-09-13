@@ -1905,11 +1905,37 @@ let functionalityOptionsArray = [
     messages_panel.appendChild(c_chats)
     messages_panel.appendChild(c_openchat)
   }
-  socket.on('displayChat', function (chat) {
-    let conversationButton = showOnChatList(chat)
-    chatContainer.append(conversationButton)
-    availableChats.push({ roomID: chat.roomID, conversationButton })
+  socket.on('displayChat', function (roomInfos) {
+    console.log('roomInfos', roomInfos)
+    for (let i = 0; i < roomInfos.length; i++) {
+      let supposedChatItem = checkObjectContaining(availableChats, ['roomID'], roomInfos[i].roomID)
+      let conversationButton = showOnChatList(roomInfos[i])
+      if(supposedChatItem == undefined){ // create New chat item
+        chatContainer.append(conversationButton)
+        availableChats.push({ roomID: roomInfos[i].roomID, conversationButton })
+      }
+      else{ // update existing chat item
+        supposedChatItem.conversationButton.replaceWith(conversationButton)
+        supposedChatItem.conversationButton = conversationButton
+      }
+    }
   });
+
+  function checkObjectContaining(objectArray, placeValueStringArray, searchValue){
+    for (let i = 0; i < objectArray.length; i++) {
+      let hierarchicalValue = objectArray[i]
+      for (let j = 0; j < placeValueStringArray.length; j++){
+        hierarchicalValue = hierarchicalValue[placeValueStringArray[j]]
+        if(j == placeValueStringArray.length - 1){ // at the end of each hierarchical level, check if we are on the last level and then analyze if we have the desired value
+          if(hierarchicalValue == searchValue){
+            return objectArray[i]
+          }
+        }
+      }
+    }
+    return undefined;
+  }
+
   socket.on('displayNewCreatedChat', function (chat) {
     let conversationButton = showOnChatList(chat)
     chatContainer.prepend(conversationButton)

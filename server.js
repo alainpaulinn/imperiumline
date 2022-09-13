@@ -97,11 +97,20 @@ io.on('connection', (socket) => {
       socket.emit('myId', myInformation);
       db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess`, room.chatID, room.name, room.type, room.profilePicture, room.creationDate, room.lastActionDate FROM `participants` LEFT JOIN room ON room.chatID = participants.roomID WHERE participants.userID = ? ORDER BY `room`.`lastActionDate` DESC', [id], async (err, mychatResults) => {
         if (err) return console.log(err)
-        mychatResults.forEach(async myChat => {
-          let roomID = myChat.roomID + '';
-          socket.join(roomID)
-          socket.emit('displayChat', await getRoomInfo(roomID, id))
-        });
+        // mychatResults.forEach(async myChat => {
+        //   let roomID = myChat.roomID + '';
+        //   socket.join(roomID)
+        //   socket.emit('displayChat', await getRoomInfo(roomID, id))
+        // });
+        let roomInfos = []
+        for (let i = 0; i < mychatResults.length; i++) {
+          const myChat = mychatResults[i];
+          socket.join(myChat.roomID + '')
+          roomInfos.push(await getRoomInfo(myChat.roomID, id))
+        }
+        console.log('roomInfos', roomInfos)
+
+        socket.emit('displayChat', roomInfos)
       })
       //send call log to the connected user
       socket.emit('updateCallLog', await getCallLog(id))
@@ -282,7 +291,7 @@ io.on('connection', (socket) => {
         let myMemberRooms = await getuserChatsIds(id)
         let commonEntry = await findAllCommonElements(memberRooms, myMemberRooms)
         for (let m = 0; m < commonEntry.length; m++) {
-          if (!foundConversationIDs.includes(commonEntry[m]))  foundConversationIDs.push(commonEntry[m])
+          if (!foundConversationIDs.includes(commonEntry[m])) foundConversationIDs.push(commonEntry[m])
         }
       }
 
