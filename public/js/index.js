@@ -617,8 +617,11 @@ let functionalityOptionsArray = [
       okButton.addEventListener('click', editPopup.closePopup)
     })
   })
+  let myInfoReceived = false;
   socket.on('myId', function (myInformation) {
-    console.log('myId :', myInformation);
+    if(myInfoReceived == true) return;
+    myInfoReceived = true;
+    
     let { userInfo, adminShip } = myInformation;
     let { superAdmin, admin } = adminShip;
 
@@ -1910,26 +1913,24 @@ let functionalityOptionsArray = [
     for (let i = 0; i < roomInfos.length; i++) {
       let supposedChatItem = checkObjectContaining(availableChats, ['roomID'], roomInfos[i].roomID)
       let conversationButton = showOnChatList(roomInfos[i])
-      if(supposedChatItem == undefined){ // create New chat item
+      if (supposedChatItem == undefined) { // create New chat item
         chatContainer.append(conversationButton)
         availableChats.push({ roomID: roomInfos[i].roomID, conversationButton })
       }
-      else{ // update existing chat item
+      else { // update existing chat item
         supposedChatItem.conversationButton.replaceWith(conversationButton)
         supposedChatItem.conversationButton = conversationButton
       }
     }
   });
 
-  function checkObjectContaining(objectArray, placeValueStringArray, searchValue){
+  function checkObjectContaining(objectArray, placeValueStringArray, searchValue) {
     for (let i = 0; i < objectArray.length; i++) {
       let hierarchicalValue = objectArray[i]
-      for (let j = 0; j < placeValueStringArray.length; j++){
+      for (let j = 0; j < placeValueStringArray.length; j++) {
         hierarchicalValue = hierarchicalValue[placeValueStringArray[j]]
-        if(j == placeValueStringArray.length - 1){ // at the end of each hierarchical level, check if we are on the last level and then analyze if we have the desired value
-          if(hierarchicalValue == searchValue){
-            return objectArray[i]
-          }
+        if (j == placeValueStringArray.length - 1) { // at the end of each hierarchical level, check if we are on the last level and then analyze if we have the desired value
+          if (hierarchicalValue == searchValue) return objectArray[i]
         }
       }
     }
