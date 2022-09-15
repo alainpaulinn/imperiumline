@@ -1,6 +1,8 @@
 const mysql = require('mysql');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
+const pwValidator = require('./pwValidator');
+
 //const exphbs = require('express-handlebars')
 //var ejs = require('ejs');
 
@@ -25,12 +27,19 @@ exports.register = (req, res) => {
         //if errors on select
         if (err) {
             console.log(err);
-        }
-        
-        //if user already exists
-        if (result.length > 0) {
             return res.render('signUp', {
-                register_message_failure: 'this email is already registered',
+                register_message_failure: 'An Error occurred while registering. Please try again later.',
+                name: name,
+                surname: surname,
+                password: password,
+                password_confirm: password_confirm
+            })
+        }
+
+        //if user already exists
+        else if (result.length > 0) {
+            return res.render('signUp', {
+                register_message_failure: 'this email is already registered by another user',
                 name: name,
                 surname: surname,
                 password: password,
@@ -40,16 +49,23 @@ exports.register = (req, res) => {
         //if passwords do not match
         else if (password !== password_confirm) {
             return res.render('signUp', {
-                register_message_failure: 'The passwords do not match',
+                register_message_failure: 'The given passwords do not match',
                 name: name,
                 surname: surname,
                 email: email
             })
         }
 
+        else if (!pwValidator.validate(password)) {
+            return res.render('signUp', {
+                register_message_failure: 'The specified password does not meet the minimum requirements for a secure password.  Minimum length 8, Maximum length 100, Must have uppercase letters, Must have lowercase letters, Must have at least 2 digits, Should not have spaces, Must not include common known things or places easily guessable passwords', 
+                name: name,
+                surname: surname,
+                email: email
+            })
+          }
+
         let hashed_salted_password = await bcrypt.hash(password, 10);
-        //just for testing purposes
-        console.log(hashed_salted_password);
         //now register the user in the DB
         db.query("INSERT INTO user SET ?", { name: name, surname: surname, email: email, password: hashed_salted_password, positionId: 1, company_id: 1 }, (err, result) => {
             //if we get some errors while registering the user
@@ -58,8 +74,11 @@ exports.register = (req, res) => {
             }
             //if registration successfull
             else {
-                res.render('signUp', {
-                    register_message_success: "The account is registered successfully. Go ahead with Login"
+                // res.render('signUp', {
+                //     register_message_success: "The account is registered successfully. Go ahead with Login"
+                // })
+                res.render('connect', {
+                    login_message_success: 'The account is registered successfully. Go ahead with Login',
                 })
             }
         })

@@ -393,6 +393,7 @@ body {
   color: rgb(255, 0, 0);
 }
 .content-container .wrapper .form .message-success {
+  padding: 1rem;
   border-radius: 15px;
   background-color: rgb(0, 255, 64);
 }
