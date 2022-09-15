@@ -12,7 +12,7 @@ CREATE TABLE `companies` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `companies` (`comanyname`, `description`) VALUES
-('Test company', 'This is the initial company to test if the application works well')
+('Test company', 'This is the initial company to test if the application works well');
 
 CREATE TABLE `positions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -25,9 +25,9 @@ CREATE TABLE `positions` (
 
 INSERT INTO `positions` (`position`, `company_id`) VALUES
 ('Early app test user', 1),
-('Central Branding Director', 2),
+('Central Branding Director', 1),
 ('Corporate Security Manager', 1),
-('Future Metrics Vice President', 2),
+('Future Metrics Vice President', 1),
 ('Future Branding Administrator', 1),
 ('Dynamic Resonance Manager', 1),
 ('Lead Markets Developer', 1),
