@@ -2235,7 +2235,7 @@ function updateUserInfo(userID, name, surname, email, positionId) {
 function updateUserPassword(userID, password) {
   return new Promise(async function (resolve, reject) {
     if (!pwValidator.validate(password)) {
-      resolve({ type: 'negative', message: 'The specified password does not meet the minimum requirements for a secure password' });
+      resolve({ type: 'negative', message: 'The specified password does not meet the minimum requirements for a secure password.  Minimum length 8, Maximum length 100, Must have uppercase letters, Must have lowercase letters, Must have at least 2 digits, Should not have spaces, Must not include common known things or places easily guessable passwords' });
       return;
     }
     let hashed_salted_password = await bcrypt.hash(password, 10);
@@ -2259,7 +2259,7 @@ function createUser(name, surname, email, positionId, password, companyId) {
   return new Promise(async function (resolve, reject) {
     if (name.trim() == '' || surname.trim() == '' || email.trim() == '' || positionId == '') resolve({ type: 'negative', message: 'Invalid data given Please check the input data' })
     if (!pwValidator.validate(password)) {
-      resolve({ type: 'negative', message: 'The specified password does not meet the minimum requirements for a secure password' });
+      resolve({ type: 'negative', message: 'The specified password does not meet the minimum requirements for a secure password.  Minimum length 8, Maximum length 100, Must have uppercase letters, Must have lowercase letters, Must have at least 2 digits, Should not have spaces, Must not include common known things or places easily guessable passwords' });
       return;
     }
     let hashed_salted_password = await bcrypt.hash(password, 10);
@@ -2475,8 +2475,9 @@ function createPrimaryAdmin(companyId, adminName, adminSurname, adminEmail, admi
     if (existingPositionId == null) {
       existingPositionId = await createPositionReturn('Company Administrator', companyId)
     }
-    let createdUserid = await createUserReturn(adminName, adminSurname, adminEmail, existingPositionId, adminPassword, companyId)
-    resolve(await createPrimaryAdminReturn(companyId, createdUserid, doneBy, 1))
+    let createdUserResult = await createUserReturn(adminName, adminSurname, adminEmail, existingPositionId, adminPassword, companyId)
+    if (createdUserResult.value == null) resolve({ type: createdUserResult.type, message: createdUserResult.message })
+    else resolve(await createPrimaryAdminReturn(companyId, createdUserResult.value, doneBy, 1))
   })
 }
 
@@ -2499,13 +2500,26 @@ function createPositionReturn(positionName, companyId) {
 }
 function createUserReturn(name, surname, email, positionId, password, companyId) {
   return new Promise(async function (resolve, reject) {
-    if (name.trim() == '' || surname.trim() == '' || email.trim() == '' || positionId == '') return console.log("one or many properties are empty", name, surname, email, positionId, companyId)
-    if (!pwValidator.validate(password)) { return console.log('password is not conform', error) }
+    if (name.trim() == '' || surname.trim() == '' || email.trim() == '' || positionId == '') {
+      console.log("one or many properties are empty", name, surname, email, positionId, companyId)
+      resolve({ type: 'negative', message: 'One or many fields are missing.', value: null })
+      return
+    }
+    if (!pwValidator.validate(password)) {
+      console.log('password is not conform', error)
+      resolve({ type: 'negative', message: 'The specified password does not meet the minimum requirements for a secure password.  Minimum length 8, Maximum length 100, Must have uppercase letters, Must have lowercase letters, Must have at least 2 digits, Should not have spaces, Must not include common known things or places easily guessable passwords.', value: null })
+      return
+    }
     let hashed_salted_password = await bcrypt.hash(password, 10);
     db.query('INSERT INTO `user`(`name`, `surname`, `email`, `password`, `company_id`, `positionId`) VALUES (?,?,?,?,?,?)',
       [name.trim(), surname.trim(), email.trim(), hashed_salted_password, companyId, positionId], async (err, report) => {
-        if (err) return console.log('error while inserting the user', err);
-        resolve(report.insertId)
+        if (err) {
+          console.log('error while inserting the user', err);
+          resolve({ type: 'negative', message: 'error while inserting the user.', value: null })
+          return
+        }
+        else
+          resolve({ type: 'positive', message: 'error while inserting the user.', value: report.insertId })
       })
   })
 }
@@ -2513,17 +2527,30 @@ function createPrimaryAdminReturn(companyId, adminId, doneBy, isPirmary) {
   return new Promise(async function (resolve, reject) {
     db.query('INSERT INTO `admins`(`company_id`, `admin_id`, `done_by`, `isPirmary`) VALUES (?,?,?,?)',
       [companyId, adminId, doneBy, isPirmary], async (err, report) => {
-        if (err) return console.log('error while inserting the Primary Admin', err);
-        resolve(report.insertId)
+        if (err) {
+          console.log('error while inserting the Primary Admin', err)
+          resolve({ type: 'negative', message: 'User created, But an error occured while inserting the user as Primary Admin.', value: null })
+          return;
+        }
+        else resolve({ type: 'positive', message: 'User created, But an error occured while inserting the user as Primary Admin.', value: report.insertId })
       })
   })
 }
 function createSuperAdminReturn(adminId, doneBy) {
   return new Promise(async function (resolve, reject) {
+    if (adminId == undefined) {
+      console.log('User could not be registered thus can not be made admin');
+      resolve({ type: 'negative', message: 'User could not be registered thus can not be made admin.' })
+      return;
+    }
     db.query('INSERT INTO `superadmins`(`admin_id`, `done_by`) VALUES (?,?)',
       [adminId, doneBy], async (err, report) => {
-        if (err) return console.log('error while inserting the Primary Admin', err);
-        else resolve('success')
+        if (err) {
+          console.log('error while inserting user as the Primary Admin', err);
+          resolve({ type: 'negative', message: 'User was created successfully, but could not be registered as admin.' })
+          return;
+        }
+        else resolve({ type: 'positive', message: 'Super Admin User created successfully.' })
       })
   })
 }
@@ -2572,8 +2599,10 @@ function createSuperAdmin(companyId, adminName, adminSurname, adminEmail, adminP
     if (existingPositionId == null) {
       existingPositionId = await createPositionReturn('Company Administrator', companyId)
     }
-    let createdUserid = await createUserReturn(adminName, adminSurname, adminEmail, existingPositionId, adminPassword, companyId)
-    resolve(await createSuperAdminReturn(createdUserid, doneBy))
+    let createdUserResult = await createUserReturn(adminName, adminSurname, adminEmail, existingPositionId, adminPassword, companyId)
+
+    if (createdUserResult.value == null) resolve({ type: createdUserResult.type, message: createdUserResult.message })
+    else resolve(await createSuperAdminReturn(createdUserResult.value, doneBy))
   })
 }
 
