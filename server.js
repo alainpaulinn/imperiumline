@@ -1027,9 +1027,13 @@ io.on('connection', (socket) => {
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestAdminNumbers info')
 
       let userInfoUpdateResult = await updateUserInfo(userID, name, surname, email, positionId)
-      let passwordResult = await updateUserPassword(userID, password)
+      let serverFeedback = [userInfoUpdateResult]
+      if(password.trim() != ''){
+        let passwordResult = await updateUserPassword(userID, password)
+        serverFeedback.push(passwordResult)
+      }
       socket.emit('manageUsers', await getCompanyUsers(companyId))
-      socket.emit('serverFeedback', [userInfoUpdateResult, passwordResult])
+      socket.emit('serverFeedback', serverFeedback)
     })
     socket.on('editPosition', async (updateObject) => {
       console.log('editPosition', updateObject)
