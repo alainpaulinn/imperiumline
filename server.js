@@ -52,7 +52,7 @@ const sessionMiddleware = session({
     MaxAge: 1000 * 60 * 60 * 24 * 7, //one week max
     sameSite: true,
     secure: true,// TODO: This value has tobe true in Production environment and the application has to have HTTPS enabled
-    httpOnly: true,
+    //httpOnly: true,
   }
 })
 io.use(function (socket, next) {
