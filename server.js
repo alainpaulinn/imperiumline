@@ -51,7 +51,8 @@ const sessionMiddleware = session({
   cookie: {
     MaxAge: 1000 * 60 * 60 * 24 * 7, //one week max
     sameSite: true,
-    secure: false,// TODO: This value has tobe true in Production environment and the application has to have HTTPS enabled
+    secure: true, // TODO: This value has tobe true in Production environment and the application has to have HTTPS enabled
+    //httpOnly: true,
   }
 })
 io.use(function (socket, next) {
@@ -1301,8 +1302,17 @@ io.on('connection', (socket) => {
       let currentPwCheck = await checkCurrentPassword(id, currentPw)
       if(currentPwCheck.value == false) serverFeedback.push(currentPwCheck)
       if (newPw != confirmPw) serverFeedback.push({ type: 'negative', message: '*New Password and Password confirmation should be identical' })
-      let passwordChangeResult = await updateUserPassword(id, newPw)
-      serverFeedback.push(passwordChangeResult)
+
+      let overallResult = true; //default set that every check was successfull
+      for (let i = 0; i < serverFeedback.length; i++) {
+        const response = serverFeedback[i];
+        if(response.type == 'negative') overallResult = false;
+      }
+
+      if (overallResult == false) {
+        let passwordChangeResult = await updateUserPassword(id, newPw)
+        serverFeedback.push(passwordChangeResult)  
+      }
       socket.emit('serverFeedback', serverFeedback)
     })
     //////////////
