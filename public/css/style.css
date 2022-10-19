@@ -303,6 +303,7 @@ body {
   max-height: calc(100% - 2rem);
   max-width: calc(100% - 2rem);
   z-index: 3;
+  max-width: 80%;
 }
 .inScreenPanel.visible {
   visibility: visible;
@@ -376,6 +377,7 @@ body {
   border-radius: 15px;
   flex-direction: column;
   align-items: flex-start;
+  color: var(--active-text-color);
 }
 .inScreenPanel .popupBody .editBlock.negativeFeedback {
   background-color: #bf0000;
@@ -383,6 +385,7 @@ body {
   border-radius: 15px;
   flex-direction: column;
   align-items: flex-start;
+  color: var(--active-text-color);
 }
 .inScreenPanel .popupBody .editBlock .flex-1 {
   flex: 1;
@@ -5055,6 +5058,9 @@ body {
     transition: all 0.4s;
     justify-content: space-between;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0);
+  }
+  .inScreenPanel {
+    max-width: 50%;
   }
 }
 .goodselect {

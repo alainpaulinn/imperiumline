@@ -15,7 +15,6 @@ let mySavedID;
 let myName, Mysurname;
 let silentNotifications = false;
 let appTheme = 'dark';
-
 let deletedUser = {
   userID: 0,
   name: 'Deleted',
@@ -76,6 +75,7 @@ let functionalityOptionsArray = [
 
 
 ((serverOptions) => {
+  let myInfoReceived = false;
   let sidePanelDiv = document.getElementById('c-sidepanel')
   let sidepanelElements = []
   let defaultElements = []
@@ -254,6 +254,50 @@ let functionalityOptionsArray = [
   let logoutButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Logout', onclick: () => { logoutForm.submit(); } })
   // edit profile form
   let editProfileButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Edit' })
+  let changePasswordButton = createElement({
+    elementType: 'button', class: 'importantButton', textContent: 'Change', onclick: () => {
+      if (myInfoReceived == false) return;
+
+      let currentPasswordLabel = createElement({ elementType: 'label', for: 'currentPassword' + 'chooseNew', textContent: 'Current Password' })
+      let currentPasswordInput = createElement({ elementType: 'input', id: 'currentPassword' + 'chooseNew', placeHolder: 'Current Password', type: 'password', required: true })
+      let currentPasswordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [currentPasswordLabel, currentPasswordInput] })
+
+      let newPasswordLabel = createElement({ elementType: 'label', for: 'newPassword' + 'chooseNew', textContent: 'New Password' })
+      let newPasswordInput = createElement({ elementType: 'input', id: 'newPassword' + 'chooseNew', placeHolder: 'New Password', type: 'password' })
+      let newPasswordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [newPasswordLabel, newPasswordInput] })
+
+      let confirmPasswordLabel = createElement({ elementType: 'label', for: 'confirmPassword' + 'chooseconfirm', textContent: 'confirm new Password' })
+      let confirmPasswordInput = createElement({ elementType: 'input', id: 'confirmPassword' + 'chooseconfirm', placeHolder: 'Confirm new Password', type: 'password' })
+      let confirmPasswordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [confirmPasswordLabel, confirmPasswordInput] })
+
+      let noticeBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: '*All fields are required' })
+
+      let changeButton = createElement({ elementType: 'button', textContent: 'Change' })
+      let warningNote = false;
+      createInScreenPopup({
+        icon: 'bx bxs-edit-alt',
+        title: "Change Password",
+        contentElementsArray: [currentPasswordBlock, newPasswordBlock, confirmPasswordBlock, noticeBlock],
+        actions: [{
+          element: changeButton, functionCall: () => {
+            let currentPw = currentPasswordInput.value.trim()
+            let newPw = newPasswordInput.value.trim()
+            let confirmPw = confirmPasswordInput.value.trim()
+            if (currentPw == '' || newPw == '' || confirmPw == '') {
+              warningNote = true;
+              noticeBlock.style.color = 'red';
+            }
+            else {
+              warningNote = false;
+              noticeBlock.style.color = 'var(--lightText)';
+              socket.emit('resetMyPW', {currentPw, newPw, confirmPw})
+            }
+          }
+        }]
+      })
+      // .then(devicePopForm => { changeButton.addEventListener("click", devicePopForm.closePopup) })
+    }
+  })
   let defaultOptions = [
     {
       title: "Preferences",
@@ -291,6 +335,11 @@ let functionalityOptionsArray = [
           text: "Edit profile",
           icon: "bx bxs-user-detail",
           actions: [{ element: editProfileButton }]
+        },
+        {
+          text: "Change Password",
+          icon: "bx bxs-edit-alt",
+          actions: [{ element: changePasswordButton }]
         },
       ]
     },
@@ -617,11 +666,11 @@ let functionalityOptionsArray = [
       okButton.addEventListener('click', editPopup.closePopup)
     })
   })
-  let myInfoReceived = false;
+
   socket.on('myId', function (myInformation) {
-    if(myInfoReceived == true) return;
+    if (myInfoReceived == true) return;
     myInfoReceived = true;
-    
+
     let { userInfo, adminShip } = myInformation;
     let { superAdmin, admin } = adminShip;
 
@@ -4670,6 +4719,7 @@ let functionalityOptionsArray = [
     if (configuration.viewBox) elementToReturn.setAttribute('viewBox', configuration.viewBox)
     if (configuration.autoplay) elementToReturn.autoplay = configuration.autoplay
     if (configuration.accept) elementToReturn.setAttribute('accept', configuration.accept)
+    if (configuration.required) elementToReturn.required = configuration.required
     return elementToReturn
   }
 

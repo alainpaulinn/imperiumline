@@ -51,7 +51,8 @@ const sessionMiddleware = session({
   cookie: {
     MaxAge: 1000 * 60 * 60 * 24 * 7, //one week max
     sameSite: true,
-    secure: false,// TODO: This value has tobe true in Production environment and the application has to have HTTPS enabled
+    secure: true,// TODO: This value has tobe true in Production environment and the application has to have HTTPS enabled
+    httpOnly: true,
   }
 })
 io.use(function (socket, next) {
@@ -1028,7 +1029,7 @@ io.on('connection', (socket) => {
 
       let userInfoUpdateResult = await updateUserInfo(userID, name, surname, email, positionId)
       let serverFeedback = [userInfoUpdateResult]
-      if(password.trim() != ''){
+      if (password.trim() != '') {
         let passwordResult = await updateUserPassword(userID, password)
         serverFeedback.push(passwordResult)
       }
@@ -1291,6 +1292,30 @@ io.on('connection', (socket) => {
       socket.emit('superAdminPrepareSuperAdmins', await getAllSuperAdmins())
     })
     ///////////////
+    //RESET USERS's OWN password
+    socket.on('resetMyPW', async (userData) => {
+      let { currentPw, newPw, confirmPw } = userData;
+      console.log('userData', userData)
+
+      let serverFeedback = []
+      if (currentPw == '' || newPw == '' || confirmPw == '') serverFeedback.push({ type: 'negative', message: '*All fields are required' })
+      let currentPwCheck = await checkCurrentPassword(id, currentPw)
+      if(currentPwCheck.value == false) serverFeedback.push(currentPwCheck)
+      if (newPw != confirmPw) serverFeedback.push({ type: 'negative', message: '*New Password and Password confirmation should be identical' })
+
+      let overallResult = true; //default set that every check was successfull
+      for (let i = 0; i < serverFeedback.length; i++) {
+        const response = serverFeedback[i];
+        if(response.type == 'negative') overallResult = false;
+      }
+
+      if (overallResult == false) {
+        let passwordChangeResult = await updateUserPassword(id, newPw)
+        serverFeedback.push(passwordChangeResult)  
+      }
+      socket.emit('serverFeedback', serverFeedback)
+    })
+    //////////////
     socket.on('disconnecting', () => {
       console.log('socket.roomsssssssssssssssssssssss', socket.rooms); // the Set contains at least the socket ID
       let roomsArray = Array.from(socket.rooms);
@@ -2248,6 +2273,14 @@ function updateUserPassword(userID, password) {
         if (err) resolve({ type: 'negative', message: 'An error occured while executing password change' });
         resolve({ type: 'positive', message: 'User Password was updated successfully' })
       })
+  })
+}
+function checkCurrentPassword(userID, password) {
+  return new Promise(async function (resolve, reject) {
+    db.query('SELECT `id`, `password` FROM `user` WHERE `id` = ?', [userID], async (err, report) => {
+      if (err || report.length < 1) resolve({ type: 'negative', message: 'An error occured while Checking the password', value: false });
+      else resolve({ type: 'positive', message: 'Password checked successfully', value: await bcrypt.compare(password, report[0].password) })
+    })
   })
 }
 
