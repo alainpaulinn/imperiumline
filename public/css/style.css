@@ -107,6 +107,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   transition: all 0.4s;
+  gap: 1.5rem;
 }
 .c-sidepanel__app-header {
   padding-bottom: 1rem;
@@ -166,6 +167,9 @@ body {
   border-radius: 15px;
   background-color: var(--primaryBackground);
 }
+.c-sidepanel__nav.shadow {
+  box-shadow: 0px 0px 17px -7px var(--lightText);
+}
 .c-sidepanel__nav--spacer {
   margin-top: 1.5rem;
 }
@@ -221,6 +225,7 @@ body {
 }
 .c-sidepanel__nav__link svg,
 .c-sidepanel__nav__link i {
+  transition: all 0.4s ease-in-out;
   width: 18px;
   margin-right: 10px;
   font-size: 18px;
@@ -231,7 +236,7 @@ body {
 }
 .c-sidepanel__nav__link:hover svg,
 .c-sidepanel__nav__link:hover i {
-  color: var(--lightText);
+  color: var(--hoverColor);
 }
 .c-sidepanel__nav__link:hover button i {
   color: var(--lightText);
@@ -1241,6 +1246,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
 }
 
@@ -2007,6 +2013,7 @@ body {
   flex-shrink: 0;
   -o-object-fit: cover;
      object-fit: cover;
+  cursor: pointer;
 }
 .c-call_log_panel .callSearchSection .searchResultsDiv .listMember .memberNameRole {
   display: flex;
@@ -2489,6 +2496,7 @@ body {
   flex-shrink: 0;
   -o-object-fit: cover;
      object-fit: cover;
+  cursor: pointer;
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole {
   display: flex;
@@ -2563,6 +2571,7 @@ body {
   flex-shrink: 0;
   -o-object-fit: cover;
      object-fit: cover;
+  cursor: pointer;
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole {
   display: flex;
@@ -2776,6 +2785,7 @@ body {
   flex-shrink: 0;
   -o-object-fit: cover;
      object-fit: cover;
+  cursor: pointer;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberNameRole {
   display: flex;
@@ -3654,6 +3664,7 @@ body {
   flex-shrink: 0;
   -o-object-fit: cover;
      object-fit: cover;
+  cursor: pointer;
 }
 .videoCoverDiv .calleesDiv .listMember .memberNameRole {
   display: flex;
@@ -4800,6 +4811,7 @@ body {
   flex-shrink: 0;
   -o-object-fit: cover;
      object-fit: cover;
+  cursor: pointer;
 }
 
 @media (max-width: 450px) {

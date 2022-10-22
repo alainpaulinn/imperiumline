@@ -81,7 +81,7 @@ let functionalityOptionsArray = [
   let defaultElements = []
   // construct sidepanel
   let hamburger = createElement({ elementType: 'ul', childrenArray: [createElement({ elementType: 'li' }), createElement({ elementType: 'li' }), createElement({ elementType: 'li' })] })
-  let logo = createElement({ elementType: 'div', class: 'c-sidepanel__app-header', childrenArray: [createElement({ elementType: 'div', class: 'c-sidepanel__app-header__hamburger', childrenArray: [hamburger] }), createElement({ elementType: 'h1', textContent: 'Imperium Line' })] })
+  let logo = createElement({ elementType: 'div', class: 'c-sidepanel__app-header', childrenArray: [createElement({ elementType: 'div', class: 'c-sidepanel__app-header__hamburger', title: 'Expand / collapse the sidebar', childrenArray: [hamburger] }), createElement({ elementType: 'h1', textContent: 'Imperium\u00A0Line' })] })
   sidePanelDiv.prepend(logo)
   hamburger.addEventListener('click', toggleExpandSidePanel)
   function toggleExpandSidePanel() {
@@ -253,7 +253,7 @@ let functionalityOptionsArray = [
   let logoutForm = createElement({ elementType: 'form', action: "/auth/logout", method: "post", childrenArray: [createElement({ elementType: 'input', type: 'text', name: 'logout', hidden: "true" })] })
   let logoutButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Logout', onclick: () => { logoutForm.submit(); } })
   // edit profile form
-  let editProfileButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Edit' })
+  let viewProfileButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'View' })
   let changePasswordButton = createElement({
     elementType: 'button', class: 'importantButton', textContent: 'Change', onclick: () => {
       if (myInfoReceived == false) return;
@@ -332,9 +332,9 @@ let functionalityOptionsArray = [
           actions: [{ element: logoutButton }, { element: logoutForm }]
         },
         {
-          text: "Edit profile",
+          text: "View profile",
           icon: "bx bxs-user-detail",
-          actions: [{ element: editProfileButton }]
+          actions: [{ element: viewProfileButton }]
         },
         {
           text: "Change Password",
@@ -369,6 +369,7 @@ let functionalityOptionsArray = [
     let { functionalityId, panel, title, icon, subMenu } = option
     let builtOption = createSidePanelElement(title, icon, subMenu)
     sidePanelDiv.append(builtOption.optionContainer)
+    if(o == displayedScreen) builtOption.optionContainer.classList.add('shadow') // at launch, highlight the default page
     builtOption.triggerButton.addEventListener("click", () => { displayAppSection(o); })
     return {
       index: o,
@@ -382,7 +383,7 @@ let functionalityOptionsArray = [
   });
   sidepanelElements[2].triggerButton.parentElement.parentElement.remove()// remove the ongoing call button element
 
-  let spacer = createElement({ elementType: 'nav', class: 'c-sidepanel__nav c-sidepanel__nav--spacer c-friends' })
+  let spacer = createElement({ elementType: 'nav', class: 'c-sidepanel__nav c-friends' })
   sidePanelDiv.append(spacer)
 
   defaultElements = defaultOptions.map((option, o) => {
@@ -415,7 +416,7 @@ let functionalityOptionsArray = [
       const subMenuElement = subMenu[i];
       let submenuText = createElement({ elementType: 'p', textContent: subMenuElement.text })
       let subMenuIcon = createElement({ elementType: 'i', class: subMenuElement.icon })
-      let submenuLink = createElement({ elementType: 'a', class: 'c-sidepanel__nav__link', childrenArray: [subMenuIcon, submenuText] })
+      let submenuLink = createElement({ elementType: 'a', class: 'c-sidepanel__nav__link', title: subMenuElement.text, childrenArray: [subMenuIcon, submenuText] })
       subMenuElement.actions.forEach(action => { submenuLink.append(action.element); })
       let listitems = createElement({ elementType: 'li', class: 'c-sidepanel__nav__li left-spacer', childrenArray: [submenuLink] })
       subMenuDiv.append(listitems)
@@ -431,7 +432,7 @@ let functionalityOptionsArray = [
 
     let triggerButton = createElement({ elementType: 'div', class: 'c-sidepanel__nav__link remove-rightpadding', childrenArray: childrenArray })
     let optionListitem = createElement({ elementType: 'div', class: 'c-sidepanel__nav__li', childrenArray: [triggerButton, subMenuDiv] })
-    let optionContainer = createElement({ elementType: 'nav', class: 'c-sidepanel__nav c-sidepanel__nav--spacer', childrenArray: [optionListitem] })
+    let optionContainer = createElement({ elementType: 'nav', class: 'c-sidepanel__nav', title: title, childrenArray: [optionListitem] })
 
     if (subMenu.length < 1) triggerButton.addEventListener('click', collapseSidePanel)
     return {
@@ -678,7 +679,7 @@ let functionalityOptionsArray = [
     mySavedID = userInfo.userID;
     myName = userInfo.name;
     Mysurname = userInfo.surname;
-    editProfileButton.addEventListener('click', function () { createProfilePopup(userInfo) })
+    viewProfileButton.addEventListener('click', function () { createProfilePopup(userInfo) })
 
     if (superAdmin.isSuperAdmin == true || admin.isAdmin == true) {
       let adminPanel = createElement({ elementType: 'section', class: 'c-time-admin_panel' })
@@ -1879,6 +1880,7 @@ let functionalityOptionsArray = [
         sidepanelElements[i].panel.style.display = "none";
         sidepanelElements[i].subMenuDiv.classList.add('undropped-down')
         sidepanelElements[i].dropIcon.classList.remove('rotate180');
+        sidepanelElements[i].optionContainer.classList.remove('shadow')
       }
       else {
         if (sidepanelElements[i].redirect) window.location.replace(sidepanelElements[i].redirect);
@@ -1887,6 +1889,7 @@ let functionalityOptionsArray = [
         sidepanelElements[i].subMenuDiv.classList.remove('undropped-down')
         sidepanelElements[i].dropIcon.classList.add('rotate180');
         document_title.innerText = sidepanelElements[i].title;
+        sidepanelElements[i].optionContainer.classList.add('shadow')
         console.log(sidepanelElements[i])
       }
     }
@@ -1998,6 +2001,7 @@ let functionalityOptionsArray = [
       existingChat.conversationButton.click();
       bringChatIntoView(chatToClick)
     }
+    newChatSearchclose()
   });
   socket.on('chatContent', function (chatContent) {
     openChatInfo = chatContent;
@@ -2201,7 +2205,7 @@ let functionalityOptionsArray = [
   }
 
   document.getElementById("newChat").addEventListener("click", () => {
-    chatSearchToogle()
+    newChatSearchToogle()
     var searchField = document.getElementById('searchField')
     searchField.focus();
   })
@@ -2867,12 +2871,12 @@ let functionalityOptionsArray = [
     })
   })
 
-  function chatSearchToogle() {
-    var newSearchBox = document.getElementById("newChatTitle");
-    var oldSearchBox = document.getElementById("chatSearch");
-    var chatContainingDiv = document.getElementById("place_for_chats");
-    var ButtonSearchBox = document.getElementById("newChat")
-    var searchResultsContainer = document.getElementById("searchResults")
+  function newChatSearchToogle() {
+    let newSearchBox = document.getElementById("newChatTitle");
+    let oldSearchBox = document.getElementById("chatSearch");
+    let chatContainingDiv = document.getElementById("place_for_chats");
+    let ButtonSearchBox = document.getElementById("newChat")
+    let searchResultsContainer = document.getElementById("searchResults")
     newSearchBox.classList.toggle('displayed')
     newSearchBox.classList.toggle('unDisplayed')
     oldSearchBox.classList.toggle('unDisplayed')
@@ -2880,6 +2884,20 @@ let functionalityOptionsArray = [
     ButtonSearchBox.classList.toggle("rotate45")
     searchResultsContainer.classList.toggle("searchIntoView")
     chatContainingDiv.classList.toggle("hideLeft")
+  }
+  function newChatSearchclose() {
+    let newSearchBox = document.getElementById("newChatTitle");
+    let oldSearchBox = document.getElementById("chatSearch");
+    let chatContainingDiv = document.getElementById("place_for_chats");
+    let ButtonSearchBox = document.getElementById("newChat")
+    let searchResultsContainer = document.getElementById("searchResults")
+    newSearchBox.classList.remove('displayed')
+    newSearchBox.classList.add('unDisplayed')
+    oldSearchBox.classList.remove('unDisplayed')
+    oldSearchBox.classList.add('displayed')
+    ButtonSearchBox.classList.toggle("rotate45")
+    searchResultsContainer.classList.remove("searchIntoView")
+    chatContainingDiv.classList.remove("hideLeft")
   }
 
   // new Group chat

@@ -50,7 +50,7 @@ const sessionMiddleware = session({
   saveUninitialized: false,
   cookie: {
     MaxAge: 1000 * 60 * 60 * 24 * 7, //one week max
-    sameSite: true,
+    sameSite: 'strict',
     secure: false, // TODO: This value has tobe true in Production environment and the application has to have HTTPS enabled
     httpOnly: true,
   }
@@ -307,29 +307,37 @@ io.on('connection', (socket) => {
     socket.on('makeChat', async (makeChat) => {
       if (makeChat == id) return console.log(`user with ID ${id} wanted to create a chat with himself and was dismissed`)
       let memberRooms = await getuserChatsIds(makeChat)
+      //remove rooms wchich are group conversations
+      for (let i = 0; i < memberRooms.length; i++) {
+        const _roomBasicInfo = await getChatRoomBasicInfo(memberRooms[i])
+        if (_roomBasicInfo.type == 1) memberRooms.splice(i, 1) // remove any group result
+      }
       let myMemberRooms = await getuserChatsIds(id)
       //finally check if we have common priavate conversation
       let commonEntry = await findCommonElement(memberRooms, myMemberRooms)
       switch (commonEntry.exists) {
         case true:
-          // socket.emit('displayChat', await getRoomInfo(commonEntry.id, id))
+          // let roombasicinfo = await getChatRoomBasicInfo(commonEntry.id) //check if a chat was returned
+          // if (roombasicinfo.type == 1) createNewChat() // create a new chat with the user, if a group chat was found
           socket.emit('clickOnChat', commonEntry.id)
-          //socket.emit('chatContent', await getChatFullInfo(commonEntry.id, id))  
           break;
         case false:
-          /////////CREATE A NEW CHAT
-          let createdChatId = await createChat(id, makeChat)
-          let partnerConnectionInstances = connectedUsers.filter(user => { return user.id == makeChat })
-          let myConnectionInstances = connectedUsers.filter(user => { return user.id == id })
-          partnerConnectionInstances.forEach(connection => { connection.socket.join(createdChatId + ''); }); //make partner join the room
-          myConnectionInstances.forEach(connection => { connection.socket.join(createdChatId + ''); }); // join me to the room
-          //Send to all concerned people / logged in instances
-          io.sockets.in(createdChatId + '').emit('displayNewCreatedChat', await getRoomInfo(createdChatId, id));
-          socket.emit('clickOnChat', createdChatId)
-          //for the person who opened the chat -> open the chat
+          createNewChat(); /////////CREATE A NEW CHAT
           break;
         default:
           break;
+      }
+
+      async function createNewChat() {
+        let createdChatId = await createChat(id, makeChat)
+        let partnerConnectionInstances = connectedUsers.filter(user => { return user.id == makeChat })
+        let myConnectionInstances = connectedUsers.filter(user => { return user.id == id })
+        partnerConnectionInstances.forEach(connection => { connection.socket.join(createdChatId + ''); }); //make partner join the room
+        myConnectionInstances.forEach(connection => { connection.socket.join(createdChatId + ''); }); // join me to the room
+        //Send to all concerned people / logged in instances
+        io.sockets.in(createdChatId + '').emit('displayNewCreatedChat', await getRoomInfo(createdChatId, id));
+        socket.emit('clickOnChat', createdChatId)
+        //for the person who opened the chat -> open the chat
       }
     })
 
@@ -1300,18 +1308,18 @@ io.on('connection', (socket) => {
       let serverFeedback = []
       if (currentPw == '' || newPw == '' || confirmPw == '') serverFeedback.push({ type: 'negative', message: '*All fields are required' })
       let currentPwCheck = await checkCurrentPassword(id, currentPw)
-      if(currentPwCheck.value == false) serverFeedback.push(currentPwCheck)
+      if (currentPwCheck.value == false) serverFeedback.push(currentPwCheck)
       if (newPw != confirmPw) serverFeedback.push({ type: 'negative', message: '*New Password and Password confirmation should be identical' })
 
       let overallResult = true; //default set that every check was successfull
       for (let i = 0; i < serverFeedback.length; i++) {
         const response = serverFeedback[i];
-        if(response.type == 'negative') overallResult = false;
+        if (response.type == 'negative') overallResult = false;
       }
 
       if (overallResult == false) {
         let passwordChangeResult = await updateUserPassword(id, newPw)
-        serverFeedback.push(passwordChangeResult)  
+        serverFeedback.push(passwordChangeResult)
       }
       socket.emit('serverFeedback', serverFeedback)
     })
