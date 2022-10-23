@@ -151,7 +151,7 @@ let functionalityOptionsArray = [
   let importantInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions is required to access available devices" })
   let importantInfoMore = createElement({ elementType: 'div', textContent: "*After the changes are savec, click on the 'Done button, or the 'x' button' and refresh the page" })
 
-  let doneButton = createElement({ elementType: 'button', textContent: 'Done' })
+  let doneButton = createElement({ elementType: 'button', textContent: 'Done', title: 'Close' })
 
   let availableDevices = { videoInput: [], audioInput: [], audioOutput: [] }
   let chosenDevices = { videoInput: null, audioInput: null, audioOutput: null }
@@ -239,7 +239,7 @@ let functionalityOptionsArray = [
     })
   });
   let audioVideoInOutBtn = createElement({
-    elementType: 'button', class: 'importantButton', textContent: 'Choose', onclick: () => {
+    elementType: 'button', class: 'importantButton', textContent: 'Choose', title: 'Choose', onclick: () => {
       createInScreenPopup({
         icon: 'bx bx-devices',
         title: "Choose Media Devices",
@@ -251,28 +251,28 @@ let functionalityOptionsArray = [
   })
   // logout form
   let logoutForm = createElement({ elementType: 'form', action: "/auth/logout", method: "post", childrenArray: [createElement({ elementType: 'input', type: 'text', name: 'logout', hidden: "true" })] })
-  let logoutButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Logout', onclick: () => { logoutForm.submit(); } })
+  let logoutButton = createElement({ elementType: 'button', class: 'importantButton', title: 'Logout', textContent: 'Logout', onclick: () => { logoutForm.submit(); } })
   // edit profile form
   let viewProfileButton = createElement({ elementType: 'button', class: 'importantButton', textContent: 'View' })
   let changePasswordButton = createElement({
-    elementType: 'button', class: 'importantButton', textContent: 'Change', onclick: () => {
+    elementType: 'button', class: 'importantButton', title: 'Change', textContent: 'Change', onclick: () => {
       if (myInfoReceived == false) return;
 
       let currentPasswordLabel = createElement({ elementType: 'label', for: 'currentPassword' + 'chooseNew', textContent: 'Current Password' })
-      let currentPasswordInput = createElement({ elementType: 'input', id: 'currentPassword' + 'chooseNew', placeHolder: 'Current Password', type: 'password', required: true })
+      let currentPasswordInput = createElement({ elementType: 'input', id: 'currentPassword' + 'chooseNew', placeHolder: 'Current Password', type: 'password', required: true, autocomplete:'current-password' })
       let currentPasswordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [currentPasswordLabel, currentPasswordInput] })
 
       let newPasswordLabel = createElement({ elementType: 'label', for: 'newPassword' + 'chooseNew', textContent: 'New Password' })
-      let newPasswordInput = createElement({ elementType: 'input', id: 'newPassword' + 'chooseNew', placeHolder: 'New Password', type: 'password' })
+      let newPasswordInput = createElement({ elementType: 'input', id: 'newPassword' + 'chooseNew', placeHolder: 'New Password', type: 'password', required: true, autocomplete:'new-password' })
       let newPasswordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [newPasswordLabel, newPasswordInput] })
 
       let confirmPasswordLabel = createElement({ elementType: 'label', for: 'confirmPassword' + 'chooseconfirm', textContent: 'confirm new Password' })
-      let confirmPasswordInput = createElement({ elementType: 'input', id: 'confirmPassword' + 'chooseconfirm', placeHolder: 'Confirm new Password', type: 'password' })
+      let confirmPasswordInput = createElement({ elementType: 'input', id: 'confirmPassword' + 'chooseconfirm', placeHolder: 'Confirm new Password', type: 'password', required: true, autocomplete:'new-password' })
       let confirmPasswordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [confirmPasswordLabel, confirmPasswordInput] })
 
       let noticeBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: '*All fields are required' })
 
-      let changeButton = createElement({ elementType: 'button', textContent: 'Change' })
+      let changeButton = createElement({ elementType: 'button', title: 'Change', textContent: 'Change' })
       let warningNote = false;
       createInScreenPopup({
         icon: 'bx bxs-edit-alt',
@@ -409,7 +409,7 @@ let functionalityOptionsArray = [
     let iconElement = createElement({ elementType: 'i', class: icon })
     let textElement = createElement({ elementType: 'p', textContent: title })
     let dropIcon = createElement({ elementType: 'i', class: 'bx bx-chevron-down' })
-    let dropElement = createElement({ elementType: 'button', childrenArray: [dropIcon] })
+    let dropElement = createElement({ elementType: 'button', title: 'Expland/Collapse', childrenArray: [dropIcon] })
 
     let subMenuDiv = createElement({ elementType: 'ul', class: 'droppable undropped-down' })
     for (let i = 0; i < subMenu.length; i++) {
@@ -473,7 +473,7 @@ let functionalityOptionsArray = [
   call_log_contact_search_panel.textContent = '';
   let input = createElement({ elementType: 'input', type: 'text', placeHolder: 'Search contacts' })
   let mobileButton = createElement({
-    elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
+    elementType: 'button', title: 'History', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
   })
   let header = createElement({
     elementType: 'div', class: 'c-chats__header', childrenArray: [
@@ -493,8 +493,8 @@ let functionalityOptionsArray = [
     searchResultsDiv.textContent = ''
     searchPeople.forEach((searchPerson) => {
       let searchPersonElement;
-      let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-      let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let audioButton = createElement({ elementType: 'button', title: 'Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', title: 'Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
       let actions = [
         { element: audioButton, functionCall: () => { call(searchPerson.userID, true, false, false, false, null); showCallListSection(); } },
         { element: videoButton, functionCall: () => { call(searchPerson.userID, true, true, false, false, null); showCallListSection(); } },
@@ -516,12 +516,13 @@ let functionalityOptionsArray = [
   let callHistoryArray = []
 
   let searchButton = createElement({
-    elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-contact' })], onclick: showCallContactSearchSection
+    elementType: 'button', title: 'Search users', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-contact' })], onclick: showCallContactSearchSection
   })
-  let incominPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'In' })] })] });
-  let outgoingPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Out' })] })] });
-  let missedPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Missed' })] })] });
-  let callHistoryPageHeader = createElement({ elementType: 'div', class: 'header', childrenArray: [createElement({ elementType: 'div', class: 'pillsContainer', childrenArray: [searchButton, incominPill, outgoingPill, missedPill] })] })
+  // let incominPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'In' })] })] });
+  // let outgoingPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Out' })] })] });
+  // let missedPill = createElement({ elementType: 'div', class: 'pill', childrenArray: [createElement({ elementType: 'div', class: 'pill-icon', childrenArray: [createElement({ elementType: 'div', class: 'circle' })] }), createElement({ elementType: 'div', class: 'pill-label blue', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }), createElement({ elementType: 'p', textContent: 'Missed' })] })] });
+  let callHistoryPageTitle = createElement({ elementType: 'h1', textContent: 'Call History'})
+  let callHistoryPageHeader = createElement({ elementType: 'div', class: 'header', childrenArray: [createElement({ elementType: 'div', class: 'pillsContainer', childrenArray: [searchButton, callHistoryPageTitle, /* incominPill, outgoingPill, missedPill*/ ] })] })
 
   let section_header = createElement({ elementType: 'div', class: 'section-header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Calls' })] })
   let list_call_section_content = createElement({ elementType: 'div', class: 'list-call-section-content' })
@@ -550,18 +551,18 @@ let functionalityOptionsArray = [
       }
 
       let audioAgainButton = createElement({
-        elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => {
+        elementType: 'button', title: 'Call again with audio', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => {
           call(logUpdate.callUniqueId, true, false, true, false, logUpdate.callId)
         }
       })
       let videoAgainButton = createElement({
-        elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => {
+        elementType: 'button', title: 'Call again with video', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => {
           call(logUpdate.callUniqueId, true, true, true, false, logUpdate.callId)
         }
       })
 
       let moreButton = createElement({
-        elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
+        elementType: 'button', title: 'View more information about this call', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
           callDetailsPanel.textContent = ''
           let callDirectionIcon;
           if (logUpdate.missed == 1) { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-off' }) }
@@ -569,7 +570,7 @@ let functionalityOptionsArray = [
           else { callDirectionIcon = createElement({ elementType: 'i', class: 'bx bxs-phone-incoming' }) }
 
           let mobileButton = createElement({
-            elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
+            elementType: 'button', title: 'Back to call history', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-history' })], onclick: showCallListSection
           })
           let detailsPanel_header = createElement({
             elementType: 'div', class: 'section-header', childrenArray: [
@@ -582,7 +583,7 @@ let functionalityOptionsArray = [
             elementType: 'div', class: 'callTitleContent', childrenArray: [
               createElement({ elementType: 'h1', textContent: logUpdate.callTitle })]
           })
-          let drop_button = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })] })
+          let drop_button = createElement({ elementType: 'button', title: 'Expand/collapse', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })] })
           let allPartifipantDiv = createElement({
             elementType: 'div', class: 'allPartifipantDiv', childrenArray: [
               createElement({ elementType: 'div', class: 'header', childrenArray: [createElement({ elementType: 'h1', textContent: 'Participants' }), drop_button] })
@@ -593,8 +594,8 @@ let functionalityOptionsArray = [
           callDetailsPanel.append(detailsPanel_header, details_section_content)
           logUpdate.participantsOnCall.forEach(participant => {
             let participantElement;
-            let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-            let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+            let audioButton = createElement({ elementType: 'button', title: 'Call user with audio', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+            let videoButton = createElement({ elementType: 'button', title: 'Call user with video', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
             let actions = [
               { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null); showCallListSection(); } },
               { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null); showCallListSection(); } },
@@ -606,8 +607,8 @@ let functionalityOptionsArray = [
           })
           logUpdate.participantsOffCall.forEach(participant => {
             let participantElement;
-            let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-            let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+            let audioButton = createElement({ elementType: 'button', title: 'Call user with audio', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+            let videoButton = createElement({ elementType: 'button', title: 'Call user with video', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
             let actions = [
               { element: audioButton, functionCall: () => { call(participant.userID, true, false, false, false, null); showCallListSection(); } },
               { element: videoButton, functionCall: () => { call(participant.userID, true, true, false, false, null); showCallListSection(); } },
@@ -660,7 +661,7 @@ let functionalityOptionsArray = [
 
     let icon = 'bx bxs-info-circle'
     let title = 'Information'
-    let okButton = createElement({ elementType: 'button', textContent: 'Ok' })
+    let okButton = createElement({ elementType: 'button', title: 'OK', textContent: 'Ok' })
     let actions = [{ element: okButton, functionCall: () => { } }]
     let constraints = { icon, title, contentElementsArray, actions }
     createInScreenPopup(constraints).then(editPopup => {
@@ -736,7 +737,7 @@ let functionalityOptionsArray = [
           let savedAdmins;
           let savedSuperAdmins;
 
-          let superAdminButton = createElement({ elementType: 'button', class: 'responsibilityOptionButton', textContent: 'Application Administration' })
+          let superAdminButton = createElement({ elementType: 'button', title: 'Application Administration', class: 'responsibilityOptionButton', textContent: 'Application Administration' })
 
           // --------------CONTROL ELEMENTS
           let managementDivBodyStored // store the di in order to update it in case of a change
@@ -751,7 +752,7 @@ let functionalityOptionsArray = [
 
           let companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: 'favicon.ico' })
           let backButton = createElement({
-            elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showResponsibilitiesPanel
+            elementType: 'button', class: 'mobileButton', title: 'Go back', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showResponsibilitiesPanel
           })
           let companyName = createElement({ elementType: 'div', class: 'companyName', textContent: 'Imperium Line' })
           let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: 'Imperium Line application main administration' })
@@ -816,8 +817,8 @@ let functionalityOptionsArray = [
           })
           function SuperAdmin_createCompaniesMgtBodyElement(companies) {
             contentElements = companies.map((company) => {
-              let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
-              let deleteButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
+              let editButton = createElement({ elementType: 'button', title: 'Edit company', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+              let deleteButton = createElement({ elementType: 'button',title: 'Delete company', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
               let actions = [
                 {
                   element: editButton, functionCall: () => {
@@ -833,7 +834,7 @@ let functionalityOptionsArray = [
                     let icon = 'bx bxs-user-detail'
                     let title = 'Edit User Information'
                     let contentElementsArray = [companyNameBlock, companyDescriptionBlock]
-                    let savebutton = createElement({ elementType: 'button', textContent: 'Save' })
+                    let savebutton = createElement({ elementType: 'button', title: 'Save', textContent: 'Save' })
                     let actions = [{
                       element: savebutton, functionCall: () => {
                         socket.emit('superManageEditCompanies', { companyId: company.id, companyName: companyNameInput.value, description: companyDescriptionInput.value })
@@ -856,8 +857,8 @@ let functionalityOptionsArray = [
                     let icon = 'bx bxs-trash-alt'
                     let title = 'Delete Company confirmation'
                     let contentElementsArray = [question, userBlock, emphasis]
-                    let cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel' })
-                    let deleteButton = createElement({ elementType: 'button', textContent: 'Yes, Delete' })
+                    let cancelButton = createElement({ elementType: 'button', title: 'No, Cancel', textContent: 'No, Cancel' })
+                    let deleteButton = createElement({ elementType: 'button', title: 'Yes, Delete', textContent: 'Yes, Delete' })
                     let actions = [
                       { element: cancelButton, functionCall: () => { } },
                       {
@@ -884,9 +885,9 @@ let functionalityOptionsArray = [
               let { admin, done, done_by, company } = adminObject;
               console.log(admin, done, done_by, adminObject)
               // -- for Admin
-              let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-              let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-              let revokeAdminAccessButton = createElement({ elementType: 'button', textContent: 'Remove' })
+              let messageButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+              let callButton = createElement({ elementType: 'button', title: 'Initiate call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+              let revokeAdminAccessButton = createElement({ elementType: 'button', textContent: 'Remove', title: 'Revoke admin access'})
               let actions
               if (admin.userID == mySavedID) actions = []
               else actions = [
@@ -902,8 +903,8 @@ let functionalityOptionsArray = [
                     let icon = 'bx bxs-trash-alt'
                     let title = 'Revokation of Admin Access'
                     let contentElementsArray = [question, userBlock, emphasis]
-                    let cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel' })
-                    let revokeButton = createElement({ elementType: 'button', textContent: 'Yes, Revoke' })
+                    let cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel', title: 'No, Cancel' })
+                    let revokeButton = createElement({ elementType: 'button', textContent: 'Yes, Revoke', title: 'Yes, Revoke' })
                     let actions = [
                       { element: cancelButton, functionCall: () => { } },
                       {
@@ -921,8 +922,8 @@ let functionalityOptionsArray = [
                 }
               ]
               // --- for DoneBy
-              let DoneByMessageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-              let DoneByCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+              let DoneByMessageButton = createElement({ elementType: 'button', title: 'Open chat' ,childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+              let DoneByCallButton = createElement({ elementType: 'button', title: 'Initiate call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
               let DoneByActions
               if (done_by.userID == mySavedID) DoneByActions = []
               else DoneByActions = [
@@ -954,8 +955,8 @@ let functionalityOptionsArray = [
               let { admin, done, done_by } = adminObject;
               console.log(admin, done, done_by, adminObject)
               // -- for Admin
-              let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-              let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+              let messageButton = createElement({ elementType: 'button', title: 'Open chat',  childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+              let callButton = createElement({ elementType: 'button', title: 'Initite call',  childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
               let revokeAdminAccessButton = createElement({ elementType: 'button', textContent: 'Remove' })
               let actions
               if (admin.userID == mySavedID) actions = []
@@ -972,8 +973,8 @@ let functionalityOptionsArray = [
                     let icon = 'bx bxs-trash-alt'
                     let title = 'Revokation of Super Admin Access'
                     let contentElementsArray = [question, userBlock, emphasis]
-                    let cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel' })
-                    let revokeButton = createElement({ elementType: 'button', textContent: 'Yes, Revoke' })
+                    let cancelButton = createElement({ elementType: 'button', textContent: 'No, Cancel', title: 'No, Cancel'  })
+                    let revokeButton = createElement({ elementType: 'button', textContent: 'Yes, Revoke', title: 'Yes, Revoke'  })
                     let actions = [
                       { element: cancelButton, functionCall: () => { } },
                       {
@@ -991,8 +992,8 @@ let functionalityOptionsArray = [
                 }
               ]
               // --- for DoneBy
-              let DoneByMessageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-              let DoneByCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+              let DoneByMessageButton = createElement({ elementType: 'button', title: 'Open chat' , childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+              let DoneByCallButton = createElement({ elementType: 'button',title: 'Initiate call' , childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
               let DoneByActions
               if (done_by.userID == mySavedID) DoneByActions = []
               else DoneByActions = [
@@ -1040,7 +1041,7 @@ let functionalityOptionsArray = [
                 let icon = 'bx bx-plus'
                 let title = 'Create New Company'
                 let contentElementsArray = [companyNameBlock, companyDescriptionBlock]
-                let savebutton = createElement({ elementType: 'button', textContent: 'Create' })
+                let savebutton = createElement({ elementType: 'button', title: 'Create' , textContent: 'Create' })
                 let actions = [{
                   element: savebutton, functionCall: () => {
                     socket.emit('superManageCreateCompany', { companyName: companyNameInput.value, companyDescription: companyDescriptionInput.value })
@@ -1074,7 +1075,7 @@ let functionalityOptionsArray = [
                 let questionBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please select the Company for which you want to make an Admin.' })
 
                 let chooseLabel = createElement({ elementType: 'label', for: 'choose' + 'chooseNew', textContent: 'choose' })
-                let chooseInput = createElement({ elementType: 'button', id: 'choose' + 'chooseNew', placeHolder: 'choose' })
+                let chooseInput = createElement({ elementType: 'button', id: 'choose' + 'chooseNew', placeHolder: 'choose', title: 'choose'})
                 let chooseBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chooseLabel, chooseInput] })
 
                 let nameLabel = createElement({ elementType: 'label', for: 'name' + 'chooseNew', textContent: 'Name' })
@@ -1095,7 +1096,7 @@ let functionalityOptionsArray = [
                 let passwordInput = createElement({ elementType: 'input', id: 'password' + 'chooseNew', placeHolder: 'Password' })
                 let passwordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [passwordLabel, passwordInput] })
 
-                let submitButton = createElement({ elementType: 'button', class: 'editBlockButtons', textContent: 'Create Admin' })
+                let submitButton = createElement({ elementType: 'button', class: 'editBlockButtons', textContent: 'Create Admin', title: 'Create Admin' })
                 submitButton.disabled = true;
 
                 let selectedCompanyId;
@@ -1158,7 +1159,7 @@ let functionalityOptionsArray = [
                 let questionBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please select the Company for which you want to make an Admin.' })
 
                 let chooseLabel = createElement({ elementType: 'label', for: 'choose' + 'chooseNew', textContent: 'choose' })
-                let chooseInput = createElement({ elementType: 'button', id: 'choose' + 'chooseNew', placeHolder: 'choose' })
+                let chooseInput = createElement({ elementType: 'button', id: 'choose' + 'chooseNew', placeHolder: 'choose', title: 'choose' })
                 let chooseBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chooseLabel, chooseInput] })
 
                 let nameLabel = createElement({ elementType: 'label', for: 'name' + 'chooseNew', textContent: 'Name' })
@@ -1182,7 +1183,7 @@ let functionalityOptionsArray = [
                 let passwordInput = createElement({ elementType: 'input', id: 'password' + 'chooseNew', placeHolder: 'Password' })
                 let passwordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [passwordLabel, passwordInput] })
 
-                let submitButton = createElement({ elementType: 'button', class: 'editBlockButtons', textContent: 'Create Admin' })
+                let submitButton = createElement({ elementType: 'button', class: 'editBlockButtons', textContent: 'Create Admin' , title: 'Create Admin' })
                 submitButton.disabled = true;
 
                 let selectedCompanyId;
@@ -1354,10 +1355,10 @@ let functionalityOptionsArray = [
 
           function createUserMgtBodyElements(usersArray) {
             contentElements = usersArray.map((user) => {
-              let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-              let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-              let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
-              let deleteButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
+              let messageButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+              let callButton = createElement({ elementType: 'button', title: 'Initiate call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+              let editButton = createElement({ elementType: 'button', title: 'Edit User', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+              let deleteButton = createElement({ elementType: 'button', title: 'Delete User', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
               let actions
               if (user.userID == mySavedID) actions = []
               else actions = [
@@ -1455,9 +1456,9 @@ let functionalityOptionsArray = [
               let { admin, done, done_by } = adminObject;
               console.log(admin, done, done_by, adminObject)
               // -- for Admin
-              let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-              let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-              let revokeAdminAccessButton = createElement({ elementType: 'button', textContent: 'Remove' })
+              let messageButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+              let callButton = createElement({ elementType: 'button', title: 'Initiate call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+              let revokeAdminAccessButton = createElement({ elementType: 'button', textContent: 'Remove', title: 'Remove', })
               let actions
               if (admin.userID == mySavedID) actions = []
               else actions = [
@@ -1492,8 +1493,8 @@ let functionalityOptionsArray = [
                 }
               ]
               // --- for DoneBy
-              let DoneByMessageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-              let DoneByCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+              let DoneByMessageButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+              let DoneByCallButton = createElement({ elementType: 'button', title: 'Initiate call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
               let DoneByActions
               if (done_by.userID == mySavedID) DoneByActions = []
               else DoneByActions = [
@@ -1523,8 +1524,8 @@ let functionalityOptionsArray = [
           function createPositionsBodyElements(positions) {
             contentElements = positions.map((position) => {
               let positionElement = createElement({ elementType: 'div', class: 'position', textContent: position.position })
-              let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
-              let deleteButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
+              let editButton = createElement({ elementType: 'button', title: 'Edit Position', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+              let deleteButton = createElement({ elementType: 'button', title: 'Delete Position', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
               let actionButtons = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [editButton, deleteButton] })
               let positionDiv = createElement({ elementType: 'div', class: 'positionDiv', childrenArray: [positionElement, actionButtons] })
 
@@ -1833,13 +1834,13 @@ let functionalityOptionsArray = [
                 if (option.logo == null) companyProfilePic = createElement({ elementType: 'div', class: 'companyProfilePic', textContent: option.name.substring(0, 2) })
                 else companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: option.logo })
                 let backButton = createElement({
-                  elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showResponsibilitiesPanel
+                  elementType: 'button', title: 'Back', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showResponsibilitiesPanel
                 })
                 let companyName = createElement({ elementType: 'div', class: 'companyName', textContent: option.name })
                 let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: option.description })
                 let companyNameDescription = createElement({ elementType: 'div', class: 'companyNameDescription', childrenArray: [companyName, companyDescription] })
                 let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [backButton, companyProfilePic, companyNameDescription] })
-                let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+                let editButton = createElement({ elementType: 'button', title: 'Edit company', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
                 let universalButtons = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [editButton] })
                 let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv, universalButtons] })
                 socket.emit('requestAdminNumbers', option.id)
@@ -1934,7 +1935,7 @@ let functionalityOptionsArray = [
         createElement({ elementType: 'input', type: 'text', placeHolder: 'Search conversations' }), // input
       ]
     })
-    let newChatButton = createElement({ elementType: 'button', class: 'newChat rotate45', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })] })
+    let newChatButton = createElement({ elementType: 'button', title: 'Create new chat', class: 'newChat rotate45', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })] })
     let newChatTitle = createElement({
       elementType: 'div', class: 'newChatTitle unDisplayed', childrenArray: [
         createElement({ elementType: 'label', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-search-alt-2' })] }), // label
@@ -2150,9 +2151,9 @@ let functionalityOptionsArray = [
       default:
         break;
     }
-    let chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: chatTitleText })
+    let chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: chatTitleText, title: chatTitleText, })
     let chatDate = createElement({ elementType: 'span', textContent: new Date(lastmessage.timeStamp).toString('YYYY-MM-dd').substring(0, 24) })
-    let chatMessage = createElement({ elementType: 'p', class: 'c-chats__excerpt', textContent: writenBy + lastmessage.message })
+    let chatMessage = createElement({ elementType: 'p', class: 'c-chats__excerpt', textContent: writenBy + lastmessage.message, title: writenBy + lastmessage.message })
     let chatInformation = createElement({ elementType: 'div', class: 'c-chats__info', childrenArray: [chatTitle, chatDate, chatMessage] })
     let chatListButton = createElement({ elementType: 'button', class: 'c-chats__link', childrenArray: [imageContainer, chatInformation] })
     let chatListItem = createElement({ elementType: 'li', class: 'c-chats__list', childrenArray: [chatListButton] })
@@ -2255,9 +2256,9 @@ let functionalityOptionsArray = [
 
   function generateParticipantsDiv(givenUsers, roomID, removeButtonBool) {
     let participantsDivs = givenUsers.map(user => {
-      let removeButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-x' })] })
-      let callButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-      let messageButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+      let removeButton = createElement({ elementType: 'button', title: 'Remove user from conversation', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-x' })] })
+      let callButton = createElement({ elementType: 'button', title: 'Call user', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let messageButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
       let actions
 
       if (removeButtonBool == true) {
@@ -2334,7 +2335,7 @@ let functionalityOptionsArray = [
     let chatTitleText = ''
     let openchat__box__header;
     let chatActions = []
-    let mobileButton = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showChatList })
+    let mobileButton = createElement({ elementType: 'button', title: 'Back', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showChatList })
     let backToChatsButton;
     switch (type) {
       case 0:
@@ -2368,10 +2369,10 @@ let functionalityOptionsArray = [
         else { selectedChat_profilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: selectedChat_profilePic_src }) }
         if (selectedChat_name == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
         else chatTitleText = selectedChat_name;
-        let groupCallButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(roomID, true, false, false, true, null) } })
-        let groupVideoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(roomID, true, false, false, true, null) } })
+        let groupCallButton = createElement({ elementType: 'button', title: 'Call conversation members by audio', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(roomID, true, false, false, true, null) } })
+        let groupVideoButton = createElement({ elementType: 'button', title: 'Call conversation members by audio', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(roomID, true, false, false, true, null) } })
         let groupMoreButton = createElement({
-          elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
+          elementType: 'button', title: 'Show more about the conversation', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
             showChatDetails();
             fillInChatDetails();
           }
@@ -2390,13 +2391,13 @@ let functionalityOptionsArray = [
     }
     openchat__box__info = createElement({ elementType: 'div', class: 'c-openchat__box__info' })
     openchat__box__info.style.scrollBehavior = "auto" // so that it does not show scrolling while inserting
-    let emojiButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-smile' })] })
-    let attachButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })] })
-    let inputText = createElement({ elementType: 'div', class: 'w-input-text', contentEditable: true })
+    let emojiButton = createElement({ elementType: 'button', title: 'Emoji panel', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-smile' })] })
+    let attachButton = createElement({ elementType: 'button', title: 'Attach a file', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })] })
+    let inputText = createElement({ elementType: 'div', title: 'Type Here your message', class: 'w-input-text', contentEditable: true })
     let inputPlaceHolder = createElement({ elementType: 'div', class: 'w-placeHolder', textContent: 'Type a message' })
     let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
     inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
-    let sendMessageButton = createElement({ elementType: 'button', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
+    let sendMessageButton = createElement({ elementType: 'button', title: 'Send message', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
     typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [/* emojiButton, attachButton, */ inputContainer, sendMessageButton] })
     let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox] })
     open_chat_box.textContent = '';
@@ -2446,7 +2447,7 @@ let functionalityOptionsArray = [
     function fillInChatDetails() {
       chatDetails_panel.textContent = '';
       let backButton = createElement({
-        elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
+        elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
         onclick: showChatContent
       })
       let chatName = selectedChat_name == null ? '(No name)' : selectedChat_name;
@@ -2493,7 +2494,7 @@ let functionalityOptionsArray = [
           }
           else {
             let foundPantsDivs = foundUsers.map(user => {
-              let addButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-plus' })] })
+              let addButton = createElement({ elementType: 'button', title: 'Add user', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-plus' })] })
               let actions = [
                 {
                   element: addButton, functionCall: () => {
@@ -2858,9 +2859,9 @@ let functionalityOptionsArray = [
   socket.on('searchPerson', (searchPeople) => {
     searchResults.textContent = '';
     searchPeople.forEach(userInfo => {
-      let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-      let audioButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-      let videoButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+      let audioButton = createElement({ elementType: 'button', title: 'Initiate audio call',childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', title: 'Initiate video call',childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
       let actions = [
         { element: chatButton, functionCall: () => { initiateChat(userInfo.userID) } },
         { element: audioButton, functionCall: () => { call(userInfo.userID, true, false, false, false, null) } },
@@ -2994,12 +2995,12 @@ let functionalityOptionsArray = [
 
   function buildOptions(message, myID, messageTextDiv) {
     let referenceBtn = createElement({
-      elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })], onclick: () => {
+      elementType: 'button', class: 'expandOptions', title: 'Reply to this message', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })], onclick: () => {
         messageReference(message.id, messageTextDiv, inputContainer)
       }
     })
     let deleteBtn = createElement({
-      elementType: 'button', class: 'expandOptions', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })], onclick: () => {
+      elementType: 'button', class: 'expandOptions', title: 'Delete this message', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })], onclick: () => {
         let icon, title, contentElementsArray, actions;
         icon = 'bx bxs-trash-alt'
         title = 'Delete Message'
@@ -3061,14 +3062,14 @@ let functionalityOptionsArray = [
       messagesTagsinputArea.prepend(messageTagsField)
 
       messageElement = _messageElement.cloneNode(true);
-      closeBtn = createElement({ elementType: 'button', class: 'btn-remove-tag', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x-circle' })] })
+      closeBtn = createElement({ elementType: 'button', title: 'Remove this tagged message', class: 'btn-remove-tag', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x-circle' })] })
       messageToShow = createElement({ elementType: 'div', childrenArray: [messageElement, closeBtn] })
       messageTagsField.appendChild(messageToShow)
     }
     else {
       taggedMessages.push(msgID)
       messageElement = _messageElement.cloneNode(true);
-      closeBtn = createElement({ elementType: 'button', class: 'btn-remove-tag', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x-circle' })] })
+      closeBtn = createElement({ elementType: 'button', title: 'Remove this tagged message', class: 'btn-remove-tag', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x-circle' })] })
       messageToShow = createElement({ elementType: 'div', childrenArray: [messageElement, closeBtn] })
       messageTagsField.appendChild(messageToShow)
     }
@@ -3246,7 +3247,7 @@ let functionalityOptionsArray = [
           }
           else {
 
-            let ringIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
+            let ringIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring bx-tada' })
             let ringText = createElement({ elementType: 'p', textContent: 'Ringing...' })
             let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
 
@@ -3363,7 +3364,7 @@ let functionalityOptionsArray = [
 
 
           let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
-          let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
+          let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [chatIcon] })
           chatButton.addEventListener('click', () => initiateChat(userInfo.userID))
 
           let ringAgainIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
@@ -3405,7 +3406,7 @@ let functionalityOptionsArray = [
       let ringButton = createElement({ elementType: 'button', childrenArray: [ringIcon, ringText] })
 
       let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
-      let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
+      let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [chatIcon] })
       chatButton.addEventListener('click', () => initiateChat(userInfo.userID))
 
       let addeduserDiv = createElement({ elementType: 'div', class: 'listMember', childrenArray: [memberProfilePicture, memberNameRole, ringButton, chatButton] })
@@ -3677,7 +3678,7 @@ let functionalityOptionsArray = [
         let { userID, name, surname, profilePicture, role } = user;
         //element, functionCall
         let chatIcon = createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })
-        let chatButton = createElement({ elementType: 'button', childrenArray: [chatIcon] })
+        let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [chatIcon] })
 
         let ringIcon = createElement({ elementType: 'i', class: 'bx bxs-bell-ring' })
         let ringText = createElement({ elementType: 'p', textContent: 'Ring' })
@@ -4204,7 +4205,7 @@ let functionalityOptionsArray = [
       let participantsCount = 0;
       let unreadmessagesCount = 0;
       // Header
-      let backToMainscreenBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-call bx-flashing' })], onclick: showCallMainScreen })
+      let backToMainscreenBtn = createElement({ elementType: 'button', title: 'Back', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-call bx-flashing' })], onclick: showCallMainScreen })
 
       let participantsSelectorBtn = createElement({ elementType: 'div', class: 'rightHeaderItem participants headerItemSelected', textContent: 'Correspondants ' + participantsCount })
       let messagesSelectorbtn = createElement({ elementType: 'div', class: 'rightHeaderItem callChat', textContent: 'Messages ' + unreadmessagesCount })
@@ -4426,8 +4427,8 @@ let functionalityOptionsArray = [
         for (let i = 0; i < allUsersArray.length; i++) {
           if (!currentUsers.includes(allUsersArray[i].userID)) {
             if (allUsersArray[i].status == 'offline') {
-              let offlineButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
-              let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+              let offlineButton = createElement({ elementType: 'button', title: 'User is offline', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
+              let chatButton = createElement({ elementType: 'button',title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
               let actions = [
                 { element: offlineButton, functionCall: () => { } },
                 { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
@@ -4436,8 +4437,8 @@ let functionalityOptionsArray = [
               componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
             }
             else {
-              let chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-              let ringButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
+              let chatButton = createElement({ elementType: 'button',title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+              let ringButton = createElement({ elementType: 'button',title: 'Phone is ringing', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
               let actions = [
                 { element: ringButton, functionCall: () => { console.log('Ring user', allUsersArray[i].userID); } },
                 { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
@@ -4497,7 +4498,7 @@ let functionalityOptionsArray = [
               case 'ringing':
                 ringButton = createElement({ elementType: 'button' })
                 updateButtonContent(ringButton, 'ringing')
-                chatButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+                chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
                 actions = [
                   { element: ringButton, functionCall: () => { } },
                   { element: chatButton, functionCall: () => { initiateChat(userInfo.userID) } }
@@ -4696,6 +4697,7 @@ let functionalityOptionsArray = [
         button.textContent = ''
         button.appendChild(createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }))
         button.appendChild(createElement({ elementType: 'p', textContent: 'Ringing...' }))
+        button.title = content
       }
 
     }
@@ -4738,6 +4740,7 @@ let functionalityOptionsArray = [
     if (configuration.autoplay) elementToReturn.autoplay = configuration.autoplay
     if (configuration.accept) elementToReturn.setAttribute('accept', configuration.accept)
     if (configuration.required) elementToReturn.required = configuration.required
+    if (configuration.autocomplete) elementToReturn.setAttribute('autocomplete', configuration.autocomplete)
     return elementToReturn
   }
 
@@ -4892,11 +4895,11 @@ let functionalityOptionsArray = [
     let buttonsArray = [];
     actions.forEach(action => {
       let { type, displayText, actionFunction } = action
-      let actionBtn = createElement({ elementType: 'button', class: type, textContent: displayText })
+      let actionBtn = createElement({ elementType: 'button', title: displayText , class: type, textContent: displayText })
       actionBtn.addEventListener('click', () => { actionFunction(); notificationStop(); })
       buttonsArray.push(actionBtn)
     })
-    let dismissbutton = createElement({ elementType: 'button', class: 'normal', textContent: 'Hide' })
+    let dismissbutton = createElement({ elementType: 'button', title: 'Hide Notification', class: 'normal', textContent: 'Hide' })
     buttonsArray.push(dismissbutton)
     let notificationActions = createElement({ elementType: 'div', class: 'notificationActions', childrenArray: buttonsArray })
     //progressbar
@@ -5004,8 +5007,8 @@ let functionalityOptionsArray = [
     doneBtn.addEventListener('click', () => { popDown.classList.toggle('popdownDisplayed') })
     let headerRightPart = createElement({ elementType: 'div', class: 'headerRightPart', childrenArray: [inviteSomeone, popDown] })
     callScreenHeader.textContent = '';
-    let showLeftpartBtn = createElement({ elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-list-check' })], onclick: showCallLeftPart })
-    let showRightpartBtn = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-chat' })], onclick: showCallRightPart })
+    let showLeftpartBtn = createElement({ elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-list-check' })], onclick: showCallLeftPart })
+    let showRightpartBtn = createElement({ elementType: 'button', title: 'Back', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-chat' })], onclick: showCallRightPart })
     callScreenHeader.append(showLeftpartBtn, headerLeftPart, headerRightPart, showRightpartBtn)
     return { callScreenHeader, invitedDiv }
   }
@@ -5014,7 +5017,7 @@ let functionalityOptionsArray = [
     let { icon, title, contentElementsArray, actions } = constraints
     // actions is an array of a button and a function of what it does
     if (openPopupDiv) openPopupDiv.closePopup()
-    let defaultClosebtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
+    let defaultClosebtn = createElement({ elementType: 'button',title: 'Close', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
     let headerActions = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [defaultClosebtn] })
     let headerText = createElement({ elementType: 'div', class: 'headerText', childrenArray: [createElement({ elementType: 'i', class: icon }), createElement({ elementType: 'p', textContent: title })] })
     let popupHeader = createElement({ elementType: 'div', class: 'popupTitle', childrenArray: [headerText, headerActions] })
@@ -5048,7 +5051,7 @@ let functionalityOptionsArray = [
     if (userInfo.cover == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' }) }
     else { coverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: userInfo.cover }) }
     // close div button
-    let closeButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
+    let closeButton = createElement({ elementType: 'button',title: 'Close', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
     let photoActionClose = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [closeButton] })
     let coverPhotoActions = createElement({ elementType: 'div', class: 'photoActions', childrenArray: [photoActionClose] })
     let coverPhotoDiv = createElement({ elementType: 'div', class: 'coverPhotoDiv', childrenArray: [coverPhoto, coverPhotoActions] })
@@ -5091,9 +5094,9 @@ let functionalityOptionsArray = [
 
     if (userInfo.userID == mySavedID) {
       // cover edit - buttons
-      let editButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
-      let coverDeleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
-      let changePictureBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
+      let editButton = createElement({ elementType: 'button',title: 'Edit / Upload new cover photo', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+      let coverDeleteBtn = createElement({ elementType: 'button', title: 'Remove cover photo', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
+      let changePictureBtn = createElement({ elementType: 'button', title: 'Choose photo from files', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
       let editControls = createElement({ elementType: 'div', class: 'editControls', tabIndex: "0", childrenArray: [coverDeleteBtn, changePictureBtn] })
       let photoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [editButton, editControls] })
 
@@ -5138,9 +5141,9 @@ let functionalityOptionsArray = [
 
       //-------------------------------------------------------------------
       // profile edit Buttons
-      let profileEditButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
-      let profileDeleteBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
-      let profileChangePictureBtn = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
+      let profileEditButton = createElement({ elementType: 'button', title: 'Edit profile picture', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+      let profileDeleteBtn = createElement({ elementType: 'button', title: 'Delete profile picture', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })] })
+      let profileChangePictureBtn = createElement({ elementType: 'button', title: 'Choose photo from files', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-camera' })] })
       let profileEditControls = createElement({ elementType: 'div', class: 'editControls', tabIndex: "0", childrenArray: [profileDeleteBtn, profileChangePictureBtn] })
       let profilePhotoActionEdit = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [profileEditButton, profileEditControls] })
       let profilePhotoActions = createElement({ elementType: 'div', class: 'photoActions', childrenArray: [profilePhotoActionEdit] })
@@ -5203,9 +5206,9 @@ let functionalityOptionsArray = [
     } else {
       let universalCallButtons = createElement({
         elementType: 'div', class: 'universalCallButtons', childrenArray: [
-          createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })], onclick: () => { initiateChat(userInfo.userID) } }),
-          createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(userInfo.userID, true, false, false, false, null) } }),
-          createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userInfo.userID, true, true, false, false, null) } })
+          createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })], onclick: () => { initiateChat(userInfo.userID) } }),
+          createElement({ elementType: 'button', title: 'Incitiate audio call',childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(userInfo.userID, true, false, false, false, null) } }),
+          createElement({ elementType: 'button', title: 'Initate video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userInfo.userID, true, true, false, false, null) } })
         ]
       })
       userSecondaryInfo.prepend(universalCallButtons)
@@ -5357,31 +5360,31 @@ let functionalityOptionsArray = [
         updateCalendarDisplay();
       }
     })
-    let mobileButton = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-arrow-back' })], onclick: showMainScheduleList })
+    let mobileButton = createElement({ elementType: 'button',title: 'Back', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-arrow-back' })], onclick: showMainScheduleList })
     let calendarToolBar = createElement({ elementType: 'div', class: 'calendar-toolbar', childrenArray: [todayButton, calendarTitle, mobileButton] })
     let calendar = createElement({ elementType: 'div', class: 'calendar', childrenArray: [weekDays, calendarDays] })
     let yearMinus = createElement({
-      elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-minus' })], onclick: () => {
+      elementType: 'button',title: 'Go to the Previous Year', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-minus' })], onclick: () => {
         date = new Date(date.setFullYear(date.getFullYear() - 1))
         updateCalendarDisplay();
       }
     })
     let yearPlus = createElement({
-      elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })], onclick: () => {
+      elementType: 'button', title: 'Go to the next Year', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })], onclick: () => {
         date = new Date(date.setFullYear(date.getFullYear() + 1))
         updateCalendarDisplay();
       }
     })
     let yearAdjust = createElement({ elementType: 'div', class: 'goto-option', childrenArray: [yearMinus, createElement({ elementType: 'p', textContent: 'Year' }), yearPlus] })
     let monthMinus = createElement({
-      elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-minus' })], onclick: () => {
+      elementType: 'button', title: 'Go to the Previous month', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-minus' })], onclick: () => {
         date.setDate(1);
         date.setMonth(date.getMonth() - 1);
         updateCalendarDisplay();
       }
     })
     let monthPlus = createElement({
-      elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })], onclick: () => {
+      elementType: 'button', title: 'Go to the next month', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-plus' })], onclick: () => {
         date.setDate(1)
         date.setMonth(date.getMonth() + 1);
         updateCalendarDisplay();
@@ -5394,11 +5397,11 @@ let functionalityOptionsArray = [
     let selectionPanel = createElement({ elementType: 'div', class: 'selectionPanel mobileHiddenElement', childrenArray: [calendarCard] })
 
     // main schedule List
-    let gotoCalendatButton = createElement({ elementType: 'button', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-calendar' })], onclick: showSelectionPanel })
+    let gotoCalendatButton = createElement({ elementType: 'button', title: 'Go to calendar', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-calendar' })], onclick: showSelectionPanel })
     let mainScheduleListTitle = createElement({ elementType: 'div', class: 'mainScheduleListTitle', textContent: 'Scheduled Events' })
     let allEventsBtn = createElement({ elementType: 'button', class: 'allEventsBtn', textContent: 'Show All', onclick: () => { socket.emit('initialFillCalendar', {}) } })
     let newEventBtn = createElement({
-      elementType: 'button', class: 'allEventsBtn', textContent: 'New + ', onclick: () => {
+      elementType: 'button', title: 'Create a new event', class: 'allEventsBtn', textContent: 'New + ', onclick: () => {
         // show a popup to create a new event
 
         let submitButton = createElement({ elementType: 'button', textContent: 'Create Event' })
@@ -5759,7 +5762,7 @@ let functionalityOptionsArray = [
         let sheduleTimeInFull = createElement({ elementType: 'div', class: 'scheduleTimeInFull', textContent: startTime + ' - ' + endTime })
         let organizer = userForAttendanceList(owner, [
           {
-            element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }),
+            element: createElement({ elementType: 'button', title: 'Audio call to the Event organizer', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }),
             functionCall: () => { call(owner.userID, true, false, false, false, null) }
           }
         ])
@@ -5772,15 +5775,15 @@ let functionalityOptionsArray = [
         let eventTopSection = createElement({
           elementType: 'div', class: 'eventTopSection', childrenArray: [
             headerTimeDiv,
-            createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: joinEvent }),
+            createElement({ elementType: 'button',title: 'Join the event/meeting online', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: joinEvent }),
             createElement({
               elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-right' })], onclick: () => {
                 scheduleDetailsSection.textContent = '';
-                let eventDetailsBackButton = createElement({ elementType: 'button', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-left' })], onclick: showMainScheduleList })
-                let eventDetailsJoinButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: joinEvent })
-                let eventDetailsTitle = createElement({ elementType: 'div', class: 'eventDetailsTitle', textContent: title })
+                let eventDetailsBackButton = createElement({ elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-left' })], onclick: showMainScheduleList })
+                let eventDetailsJoinButton = createElement({ elementType: 'button', title: 'Join the event/meeting online', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: joinEvent })
+                let eventDetailsTitle = createElement({ elementType: 'div',title: title, class: 'eventDetailsTitle', textContent: title })
                 let deleteEventButton = createElement({
-                  elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })], onclick: () => {
+                  elementType: 'button', title: 'Delete Event',childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })], onclick: () => {
                     // -------------------- Deleting event - on popup;
                     let question = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Are you sure you want to delete this event?' })
 
@@ -5875,7 +5878,7 @@ let functionalityOptionsArray = [
                 )
                 // organizer
                 let eventDetailsOrganizerTitle = createElement({ elementType: 'div', textContent: 'Event Organizer: ' })
-                let eventDetailsOrganizer = userForAttendanceList(owner, [{ element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }), functionCall: () => { call(owner.userID, true, false, false, false, null) } }])
+                let eventDetailsOrganizer = userForAttendanceList(owner, [{ element: createElement({ elementType: 'button', title: 'Initiate call with event organizer', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }), functionCall: () => { call(owner.userID, true, false, false, false, null) } }])
                 let eventDetailsOrganizerContainer = createElement({ elementType: 'div', class: 'detailBlock', childrenArray: [eventDetailsOrganizerTitle, eventDetailsOrganizer] })
                 eventDetailsContenArray.push(eventDetailsOrganizerContainer)
                 // participant
@@ -5893,7 +5896,7 @@ let functionalityOptionsArray = [
                   if (participant.attending == 2) { attendanceClass = 'bx bxs-user-check'; attendanceTitle = 'Attending' }
                   return userForAttendanceList(participant.userInfo, [
                     { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: attendanceClass })], title: attendanceTitle }), functionCall: () => { } },
-                    { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }), functionCall: () => { call(participant.userInfo.userID, true, false, false, false, null) } }
+                    { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }), title: 'Initiate call with user', functionCall: () => { call(participant.userInfo.userID, true, false, false, false, null) } }
                   ])
                 })
                 let participantsWrapper = createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: eventDetailsInvitedUsers })
