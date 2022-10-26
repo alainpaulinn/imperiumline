@@ -4205,7 +4205,8 @@ let functionalityOptionsArray = [
       rightPanel.clearAllMessages();
       leftPanel.clearAttendanceList()
       sidepanelElements[2].triggerButton.parentElement.parentElement.remove(); // remove the ongoing call button
-      displayAppSection(previousDisplayedSreen) // display the previously displayed screen
+      if(displayAppSection == 2)displayAppSection(previousDisplayedSreen) // if the call hang up while we are on the screen call, jump to the previous screen
+      else{} // else, remain on the same screen
     }
     function createRightPartPanel() {
       let participantsCount = 0;
