@@ -3051,7 +3051,7 @@ body {
 }
 .c-ongoing_call_panel .call-container .availableScreens .screenItem:hover {
   background-color: var(--notification);
-  color: var(--hoverColor);
+  color: var(--lightText);
 }
 .c-ongoing_call_panel .call-container .availableScreens .screenItem.screen {
   border-radius: 5px;
@@ -3764,6 +3764,7 @@ body {
   background: var(--focusAreaBackgroundColor);
   border-radius: 15px;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+  width: 100%;
   overflow: hidden;
   flex-shrink: 0;
 }
