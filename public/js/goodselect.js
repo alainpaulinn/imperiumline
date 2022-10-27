@@ -14,7 +14,7 @@ const goodselect = ($parentElement, options) => {
         $container = document.createElement('div')
         $container.classList.add('goodselect')
         $container.setAttribute("tabindex", 0)
-
+        
         $selectedValue = document.createElement('div')
         $selectedValue.classList.add('selected-value')
         $selectedValue.style.width = $selectorWidth;
@@ -42,6 +42,8 @@ const goodselect = ($parentElement, options) => {
         $container.append($selectedValue)
         $container.prepend($list)
         $list.append(...$optionsElements)
+
+        $parentElement.goodselect = $selectedValue
     }
 
     const setSelectedOption = (selectedOptionId, isInitialSelect = false) => {
@@ -63,7 +65,7 @@ const goodselect = ($parentElement, options) => {
             $selectedValue.innerText = selectedOption.name;
             if (!isInitialSelect) options.onOptionChange(selectedOption);
         }
-
+        // $parentElement.goodselect = $selectedValue
 
     }
 

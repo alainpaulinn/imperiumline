@@ -6,7 +6,7 @@
   --secondaryBackground: rgb(6, 9, 14);
   --tertiaryBackground: rgb(0, 0, 0);
   --notification: rgb(0, 48, 97);
-  --warning-bg: rgb(255, 212, 212);
+  --warning-bg: rgb(180, 0, 0);
   --borderRadius: 15px;
   --receivedMessageBg: var(--primaryBackground);
   --sentMessageBg: var(--notification);
@@ -4427,6 +4427,10 @@ body {
 
 .full-height {
   height: 100%;
+}
+
+.errorField {
+  background-color: var(--warning-bg) !important;
 }
 
 .progress {

@@ -4205,8 +4205,8 @@ let functionalityOptionsArray = [
       rightPanel.clearAllMessages();
       leftPanel.clearAttendanceList()
       sidepanelElements[2].triggerButton.parentElement.parentElement.remove(); // remove the ongoing call button
-      if(displayedScreen == 2)displayAppSection(previousDisplayedSreen) // if the call hang up while we are on the screen call, jump to the previous screen
-      else{} // else, remain on the same screen
+      if (displayedScreen == 2) displayAppSection(previousDisplayedSreen) // if the call hang up while we are on the screen call, jump to the previous screen
+      else { } // else, remain on the same screen
     }
     function createRightPartPanel() {
       let participantsCount = 0;
@@ -5415,14 +5415,16 @@ let functionalityOptionsArray = [
 
         let newEventCreation = {}
         // default values
-        newEventCreation.occurrence = 1
+        newEventCreation.title = ''
+        newEventCreation.occurrence = null
         newEventCreation.startRecurrenceDate = formatDate(new Date()).substring(0, 10)
         newEventCreation.endRecurrenceDate = formatDate(new Date()).substring(0, 10)
-        newEventCreation.type = 1
-        newEventCreation.oneTimeDate = formatDate(new Date()).substring(0, 5)
-        newEventCreation.startTime = formatDate(new Date()).substring(-3, 10)
-        newEventCreation.endTime = formatDate(new Date()).substring(-3, 10)
+        newEventCreation.type = null
+        newEventCreation.oneTimeDate = ""//formatDate(new Date()).substring(0, 10) "" to prevent submit if incomplete
+        newEventCreation.startTime = '12:45:00'
+        newEventCreation.endTime = '14:45:00'
         newEventCreation.inviteList = []
+        newEventCreation.recurrenceType = null
         // title
         let titleInput = createElement({ elementType: 'input', class: 'textField', name: 'title', type: 'text', placeHolder: 'Title' })
         let titleBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [titleInput] })
@@ -5432,28 +5434,30 @@ let functionalityOptionsArray = [
         let eventTypeBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [eventType] })
         goodselect(eventType, {
           availableOptions: [{ id: 1, name: "Meeting" }, { id: 2, name: "Task" }],
-          placeHolder: "Meeting Type",
+          // selectedOptionId: 1,
+          placeHolder: "Event Type",
           selectorWidth: '100%',
           onOptionChange: (option) => { option == null ? newEventCreation.type : newEventCreation.type = option.id }
         });
         // start - end time
-        let timeEventStartTimeInput = createElement({ elementType: 'input', class: 'flex-1', id: 'timeEventStartTimeInput', placeHolder: 'Start Time' })
-        let timeEventEndTimeInput = createElement({ elementType: 'input', class: 'flex-1', id: 'timeEventEndTimeInput', placeHolder: 'End Time' })
+        let timeEventStartTimeInput = createElement({ elementType: 'input', title: 'Start time', class: 'flex-1', id: 'timeEventStartTimeInput', placeHolder: 'Start Time' })
+        let timeEventEndTimeInput = createElement({ elementType: 'input', title: 'End time', class: 'flex-1', id: 'timeEventEndTimeInput', placeHolder: 'End Time' })
         let timeStartEndDiv = createElement({ elementType: 'div', class: 'onTimeStartEndDiv flex flex-Wrap flex-gap-1-rem full-width', childrenArray: [timeEventStartTimeInput, timeEventEndTimeInput] })
         let timeStartEndBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [timeStartEndDiv] })
-        let recurrenceInput = createElement({ elementType: 'div', class: 'recurrenceInput full-width' })
+        let recurrenceInput = createElement({ elementType: 'div', class: 'recurrenceInput full-width', title: 'Recurrence', })
         let recurrenceBlock = createElement({ elementType: 'div', class: 'editBlock flex-column', childrenArray: [recurrenceInput] })
-        let oneTimeEventDateInput = createElement({ elementType: 'input', id: 'oneTimeEventDateInput', textContent: 'One time Event Date', class: 'full-width' })
-        let recurrenceStartDateInput = createElement({ elementType: 'input', id: 'recurrenceStartDateInput', textContent: 'Recurrence Start Date', class: 'flex-1' })
-        let recurrenceEndDateInput = createElement({ elementType: 'input', id: 'recurrenceEndDateInput', textContent: 'Recurrence End Date', class: 'flex-1' })
+        let oneTimeEventDateInput = createElement({ elementType: 'input', id: 'oneTimeEventDateInput', title: 'One time event name', placeholder: 'One time Event Date', class: 'full-width' })
+        let recurrenceStartDateInput = createElement({ elementType: 'input', id: 'recurrenceStartDateInput', title: 'Recurrence start date', placeholder: 'Recurrence Start Date', class: 'flex-1' })
+        let recurrenceEndDateInput = createElement({ elementType: 'input', id: 'recurrenceEndDateInput', title: 'Recurrence end date', placeholder: 'Recurrence End Date', class: 'flex-1' })
         let recurrenceDatesDiv = createElement({ elementType: 'div', class: 'recurrenceDatesDiv flex flex-Wrap flex-gap-1-rem full-width', childrenArray: [recurrenceStartDateInput, recurrenceEndDateInput] })
 
         //recurrence type
-        let recurrenceTypeInput = createElement({ elementType: 'div', class: 'recurrenceTypeInput full-width' })
+        let recurrenceTypeInput = createElement({ elementType: 'div', class: 'recurrenceTypeInput full-width', title: 'Recurrence type', })
         let recurrenceTypeBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [recurrenceTypeInput] })
         goodselect(recurrenceTypeInput, {
           availableOptions: [{ id: 1, name: "Every Day" }, { id: 2, name: "Every Week" }, { id: 3, name: "Monday - Friday" }, { id: 4, name: "Weekend" }],
           placeHolder: "Recurrence Type",
+          // selectedOptionId: 2,
           selectorWidth: '100%',
           onOptionChange: (option) => {
             if (option == null) { newEventCreation.recurrenceType = null; return; }
@@ -5464,6 +5468,7 @@ let functionalityOptionsArray = [
         goodselect(recurrenceInput, {
           availableOptions: [{ id: 1, name: "One Time" }, { id: 2, name: "Repetitive (Regular)" }],
           placeHolder: "Event Ocurrence",
+          // selectedOptionId: 2,
           selectorWidth: '100%',
           onOptionChange: (option) => {
             if (option == null) { newEventCreation.occurrence = option; return; }
@@ -5493,7 +5498,7 @@ let functionalityOptionsArray = [
                 enableTime: false,
                 noCalendar: false,
                 dateFormat: "Y-m-d",
-                //defaultDate: "13:30",
+                defaultDate: newEventCreation.startRecurrenceDate,
                 onChange: function (selectedDates, dateStr, instance) {
                   newEventCreation.startRecurrenceDate = dateStr;
                 }
@@ -5504,7 +5509,7 @@ let functionalityOptionsArray = [
                 enableTime: false,
                 noCalendar: false,
                 dateFormat: "Y-m-d",
-                //defaultDate: "13:30",
+                defaultDate: newEventCreation.endRecurrenceDate,
                 onChange: function (selectedDates, dateStr, instance) {
                   newEventCreation.endRecurrenceDate = dateStr;
                 }
@@ -5512,6 +5517,7 @@ let functionalityOptionsArray = [
             }
           }
         })
+        let mandatorySeparatorBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: '*Above fields are mandatory' })
         let contextInput = createElement({ elementType: 'input', class: 'textField', name: 'context', type: 'text', placeHolder: 'Context' })
         let contextBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [contextInput] })
         let locationInput = createElement({ elementType: 'input', class: 'textField', name: 'location', type: 'text', placeHolder: 'Location' })
@@ -5580,6 +5586,7 @@ let functionalityOptionsArray = [
           eventTypeBlock,
           timeStartEndBlock,
           recurrenceBlock,
+          mandatorySeparatorBlock,
           contextBlock,
           locationBlock,
           linkBlock,
@@ -5591,59 +5598,72 @@ let functionalityOptionsArray = [
           resultsUsersDiv]
         let actions = [
           {
-            element: submitButton, functionCall: () => {
-              function returnEmptyString(stringArray) {
-                let emptyStringsArr = []
-                for (let i = 0; i < stringArray.length; i++) {
-                  const string = stringArray[i];
-                  console.log('string', string)
-                  if (string?.trim() != '') { }
-                  else emptyStringsArr.push(string)
-                }
-                return emptyStringsArr
-              }
-              let inviteList, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate
-              title = titleInput.value.trim()
-              newEventCreation.title = title
-              eventLocation = locationInput.value.trim() // not obligatory
-              newEventCreation.eventLocation = eventLocation
-              context = contextInput.value.trim()
-              newEventCreation.context = context
-              activityLink = linkInput.value.trim() // not obligatory
-              newEventCreation.activityLink = activityLink
-              details = detailsInput.value.trim() // not obligatory
-              newEventCreation.details = details
-
-
-              let emptyValues = returnEmptyString([title,
-                context,
-                newEventCreation.startTime,
-                newEventCreation.endTime,
-                // newEventCreation.recurrenceType,
-                // newEventCreation.occurrence,
-                newEventCreation.startRecurrenceDate,
-                newEventCreation.endRecurrenceDate,
-                // newEventCreation.type,
-                newEventCreation.oneTimeDate]
-              )
-              if (emptyValues.length > 0) console.log('not full', newEventCreation)
-              else console.log('full', newEventCreation)
-              newEventCreation.inviteList = [...new Set(newEventCreation.inviteList)] // ensure there are no duplicates
-              socket.emit('newEventCreation', newEventCreation)
-            }
+            element: submitButton, functionCall: () => { }
           }
         ]
+        let screenPopup;
+        let faultyFieldsArray = []
+        let allFields = [titleInput, eventType, timeEventStartTimeInput, timeEventEndTimeInput, recurrenceInput, oneTimeEventDateInput, recurrenceStartDateInput, recurrenceEndDateInput, recurrenceTypeInput]
+        function closeIfOkay() {
+          faultyFieldsArray = []
+          newEventCreation.title = titleInput.value
+          newEventCreation.linkInput = linkInput.value
+          newEventCreation.locationInput = locationInput.value
+          newEventCreation.contextInput = contextInput.value
+
+          // let wrongValue = false
+
+          if (newEventCreation.title.trim() == '') faultyFieldsArray.push(titleInput)
+          if (newEventCreation.type != 1 && newEventCreation.type != 2) faultyFieldsArray.push(eventType)
+          if (newEventCreation.startTime.trim() == '') faultyFieldsArray.push(timeEventStartTimeInput)
+          if (newEventCreation.endTime.trim() == '') faultyFieldsArray.push(timeEventEndTimeInput)
+
+          // occurence check
+          if (newEventCreation.occurrence != 1 && newEventCreation.occurrence != 2) faultyFieldsArray.push(recurrenceInput)
+          if (newEventCreation.occurrence == 1) {
+            if (newEventCreation.oneTimeDate.trim() == "") faultyFieldsArray.push(oneTimeEventDateInput)
+          }
+          if (newEventCreation.occurrence == 2) {
+            if (newEventCreation.startRecurrenceDate.trim() == "") faultyFieldsArray.push(recurrenceStartDateInput)
+            if (newEventCreation.endRecurrenceDate.trim() == "") faultyFieldsArray.push(recurrenceEndDateInput)
+            if (newEventCreation.recurrenceType == null) faultyFieldsArray.push(recurrenceTypeInput)
+          }
+
+          if (faultyFieldsArray.length == 0) {
+            console.log('full', newEventCreation)
+            newEventCreation.inviteList = [...new Set(newEventCreation.inviteList)] // ensure there are no duplicates
+            socket.emit('newEventCreation', newEventCreation)
+            screenPopup.closePopup()
+          }
+          else {
+            console.log("some wrong values")
+            allFields.forEach(field => {
+              if(field.goodselect) field.goodselect.classList.remove("errorField")
+              else field.classList.remove("errorField")
+            })
+            faultyFieldsArray.forEach(field => {
+              if(field.goodselect) field.goodselect.classList.add("errorField")
+              else field.classList.add("errorField")
+            })
+          }
+        }
         let constraints = { icon, title, contentElementsArray, actions }
         createInScreenPopup(constraints).then(editPopup => {
-          submitButton.addEventListener('click', editPopup.closePopup);
+          screenPopup = editPopup
+          submitButton.addEventListener('click', closeIfOkay);
           // prepare date elements
+          let minTime
+          let maxTime
           flatpickr("#timeEventStartTimeInput", {
             time_24hr: true,
             enableTime: true,
             noCalendar: true,
             dateFormat: "H:i",
+            defaultDate: "12:45",
+            maxTime: maxTime || "23:59",
             onChange: function (selectedDates, dateStr, instance) {
               newEventCreation.startTime = dateStr + ":00";
+              minTime = dateStr;
             }
           });
 
@@ -5652,8 +5672,11 @@ let functionalityOptionsArray = [
             enableTime: true,
             noCalendar: true,
             dateFormat: "H:i",
+            defaultDate: "14:45",
+            minTime: minTime || "00:00",
             onChange: function (selectedDates, dateStr, instance) {
               newEventCreation.startTime = dateStr + ":00";
+              maxTime = dateStr;
             }
           });
         })
