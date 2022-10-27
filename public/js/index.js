@@ -5785,7 +5785,7 @@ let functionalityOptionsArray = [
         let scheduleHeader = createElement({
           elementType: 'div', class: 'scheduleHeader', childrenArray: [
             createElement({ elementType: 'div', class: 'scheduleTitle', textContent: title + '    ' }),
-            createElement({ elementType: 'div', class: 'scheduleContext', textContent: "♦" + context || '' }),
+            createElement({ elementType: 'div', class: 'scheduleContext', textContent: context || '' }),
           ]
         })
         let scheduleBody = createElement({ elementType: 'div', class: 'scheduleBody', textContent: details })
