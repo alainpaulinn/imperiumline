@@ -909,8 +909,8 @@ io.on('connection', (socket) => {
             for (let j = 0; j < connectedUsers.length; j++) {
               const connectedUser = connectedUsers[j];
               if (connectedUser.id == invite) {
-                socket.to(connectedUser.socket.id).emit('updateCalendar', await getEvents(id, lastYear, nextYear));
-                socket.to(connectedUser.socket.id).emit('initialFillCalendar', await getEvents(id, lastYear, nextYear));
+                socket.to(connectedUser.socket.id).emit('updateCalendar', await getEvents(connectedUser.id, lastYear, nextYear));
+                socket.to(connectedUser.socket.id).emit('initialFillCalendar', await getEvents(connectedUser.id, lastYear, nextYear));
               }
             }
           }

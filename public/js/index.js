@@ -5933,11 +5933,11 @@ let functionalityOptionsArray = [
                 let eventDetailsInvitedContainer = createElement({ elementType: 'div', class: 'detailBlock', childrenArray: [eventDetailsInvitedTitle, participantsWrapper] })
                 eventDetailsContenArray.push(eventDetailsInvitedContainer)
                 // details
-                if (details.trim() != '') eventDetailsContenArray.push(
+                if (details != null) eventDetailsContenArray.push(
                   createElement({
                     elementType: 'div', class: 'detailBlock', childrenArray: [
                       createElement({ elementType: 'div', textContent: 'Details:' }),
-                      createElement({ elementType: 'div', textContent: details }),
+                      createElement({ elementType: 'div', textContent: details || '' }),
                     ]
                   })
                 )
