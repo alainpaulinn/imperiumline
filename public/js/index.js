@@ -5880,7 +5880,7 @@ let functionalityOptionsArray = [
                   })
                 )
                 // context
-                if (context.trim() != '') eventDetailsContenArray.push(
+                if (context != null) eventDetailsContenArray.push(
                   createElement({
                     elementType: 'div', class: 'detailBlock', childrenArray: [
                       createElement({ elementType: 'div', textContent: 'Context:' }),
@@ -5889,7 +5889,7 @@ let functionalityOptionsArray = [
                   })
                 )
                 // link
-                if (activityLink.trim() != '') eventDetailsContenArray.push(
+                if (activityLink != null) eventDetailsContenArray.push(
                   createElement({
                     elementType: 'div', class: 'detailBlock', childrenArray: [
                       createElement({ elementType: 'div', textContent: 'Link:' }),
@@ -5898,7 +5898,7 @@ let functionalityOptionsArray = [
                   })
                 )
                 // location
-                if (eventLocation.trim() != '') eventDetailsContenArray.push(
+                if (eventLocation != null) eventDetailsContenArray.push(
                   createElement({
                     elementType: 'div', class: 'detailBlock', childrenArray: [
                       createElement({ elementType: 'div', textContent: 'Location:' }),
