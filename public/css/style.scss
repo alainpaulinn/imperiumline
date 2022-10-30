@@ -6043,13 +6043,11 @@ body {
 
   .popdown{
     width: 100%;
-    left: 0;
   }
-
 
 }
 
-@media (max-width: 1200px) { // normally max 1500 for Tablets
+@media (max-width: 1500px) { // normally max 1200 for Tablets
   .tabletHiddenElement {
     display: none !important;
   }
