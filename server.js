@@ -951,17 +951,29 @@ io.on('connection', (socket) => {
         let todayYear = today.getFullYear()
         let lastYear = new Date(); lastYear.setFullYear(todayYear - 1)
         let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)
-        foundEvent.Participants.forEach(async (participant) => {
+        let eventsToSend = await getEvents(id, lastYear, nextYear);
+        socket.emit('notificationUpdateCalendar', eventsToSend)
+        socket.emit('initialFillCalendar', eventsToSend)
+
+        // foundEvent.Participants.forEach(async (participant) => {})
+        for (let i = 0; i < foundEvent.Participants.length; i++) {
+          const participant = foundEvent.Participants[i];
           for (let j = 0; j < connectedUsers.length; j++) {
             const connectedUser = connectedUsers[j];
             if (connectedUser.id == participant.userInfo.userID) {
-              let lastYear = new Date(); lastYear.setFullYear(todayYear - 1)
-              let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)      
-              socket.to(connectedUser.socket.id).emit('notificationUpdateCalendar', await getEvents(connectedUsers.id, lastYear, nextYear));
-              socket.to(connectedUser.socket.id).emit('initialFillCalendar', await getEvents(connectedUsers.id, lastYear, nextYear))
+              let _today = new Date()
+              let _todayYear = _today.getFullYear()
+              let _lastYear = new Date(); _lastYear.setFullYear(_todayYear - 1)
+              let _nextYear = new Date(); _nextYear.setFullYear(_todayYear + 1)
+              let _eventsToSend = await getEvents(connectedUser.id, _lastYear, _nextYear)
+              socket.to(connectedUser.socket.id).emit('notificationUpdateCalendar', _eventsToSend);
+              socket.to(connectedUser.socket.id).emit('initialFillCalendar', _eventsToSend)
+
+              console.log('event object', _eventsToSend, _todayYear, connectedUser.id, _lastYear, _nextYear)
             }
           }
-        })
+        }
+
       }
       else {
         socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while deleting the event' }])

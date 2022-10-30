@@ -5046,7 +5046,8 @@ let functionalityOptionsArray = [
     }
     defaultClosebtn.addEventListener('click', removePopup)
     inScreenPanel.closePopup = removePopup
-    openPopupDiv = inScreenPanel
+    inScreenPanel.discardButton = defaultClosebtn // will serve to do soething if the popup is discarded
+    openPopupDiv = inScreenPanel // keeep in memory which popup is open
     return inScreenPanel
   }
 
@@ -5294,6 +5295,7 @@ let functionalityOptionsArray = [
   let eventSectionObject = createCalendarEventSection()
   socket.on('notificationUpdateCalendar', (calendarEventObj => {
     calendarObject = calendarEventObj
+    console.log('loaded object', calendarObject)
     eventSectionObject.renderCalendar()
     // generate a notification if an update happens
     let notification = displayNotification({
@@ -5316,19 +5318,8 @@ let functionalityOptionsArray = [
   }))
   socket.on('initialFillCalendar', (calendarEventObj => {
     calendarObject = calendarEventObj
-    if (selectedCalendarDate != null) {
-      for (const key in calendarEventObj) {
-        if (Object.hasOwnProperty.call(calendarEventObj, key)) {
-          const dayEventsArray = calendarEventObj[key];
-          if (key + '' == selectedCalendarDate) {
-            if (dayEventsArray.length > 0) {
-              eventSectionObject.displayDayOnlyOnSchedule(key, dayEventsArray)
-            }
-          }
-        }
-      }
-    }
-    else {
+    if (selectedCalendarDate == null) { // if we are on an all events screen
+      console.log('loaded object - else', calendarObject)
       let deleteOldEvents = true;
       for (const key in calendarEventObj) {
         if (Object.hasOwnProperty.call(calendarEventObj, key)) {
@@ -5336,6 +5327,19 @@ let functionalityOptionsArray = [
           if (dayEventsArray.length > 0) {
             eventSectionObject.addDayOnScheduleList(key, dayEventsArray, deleteOldEvents)
             deleteOldEvents = false; // done in order to clear the container before filling
+          }
+        }
+      }
+    }
+    else { // if we are on a specific day events page
+      console.log('loaded object - null', calendarObject)
+      for (const key in calendarEventObj) {
+        if (Object.hasOwnProperty.call(calendarEventObj, key)) {
+          const dayEventsArray = calendarEventObj[key];
+          if (key + '' == selectedCalendarDate) {
+            if (dayEventsArray.length > 0) {
+              eventSectionObject.displayDayOnlyOnSchedule(key, dayEventsArray)
+            }
           }
         }
       }
@@ -5352,6 +5356,7 @@ let functionalityOptionsArray = [
     for (const key in eventObj) {
       if (Object.hasOwnProperty.call(eventObj, key)) {
         const dayEventsArray = eventObj[key];
+        selectedCalendarDate = eventObj[key];
         eventSectionObject.displayDayOnlyOnSchedule(key, dayEventsArray)
       }
     }
@@ -5624,7 +5629,7 @@ let functionalityOptionsArray = [
         let screenPopup;
         let faultyFieldsArray = []
         let allFields = [titleInput, eventType, timeEventStartTimeInput, timeEventEndTimeInput, recurrenceInput, oneTimeEventDateInput, recurrenceStartDateInput, recurrenceEndDateInput, recurrenceTypeInput]
-        function closeIfOkay() {
+        function closeIfOkay() { // validation of fields before submitting
           faultyFieldsArray = []
           newEventCreation.title = titleInput.value
           newEventCreation.linkInput = linkInput.value
@@ -5699,6 +5704,9 @@ let functionalityOptionsArray = [
               maxTime = dateStr;
             }
           });
+          editPopup.discardButton.addEventListener('click', ()=>{
+            newEventCreation.inviteList = []
+          })
         })
       }
     })
