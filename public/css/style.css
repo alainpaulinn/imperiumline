@@ -309,6 +309,7 @@ body {
   max-width: calc(100% - 2rem);
   z-index: 3;
   max-width: 80%;
+  min-width: 70%;
 }
 .inScreenPanel.visible {
   visibility: visible;
@@ -4819,7 +4820,7 @@ body {
   cursor: pointer;
 }
 
-@media (max-width: 450px) {
+@media (max-width: 900px) {
   .c-app {
     max-height: 100%;
   }
@@ -4875,6 +4876,9 @@ body {
     min-width: 100%;
     width: 100%;
     max-height: calc(100% - 30px - 3rem);
+  }
+  .c-app .inScreenPanel {
+    min-width: 90%;
   }
   .c-openchat__box__info {
     margin-bottom: 61.2px;

@@ -404,6 +404,7 @@ body {
   max-width: calc(100% - 2rem);
   z-index: 3;
   max-width: 80%;
+  min-width: 70%;
 
   &.visible {
     visibility: visible;
@@ -5822,7 +5823,7 @@ body {
 }
 
 
-@media (max-width: 450px) {
+@media (max-width: 900px) { // normally max 450 for mobile
   .c-app {
     max-height: 100%;
 
@@ -5889,6 +5890,9 @@ body {
           max-height: calc(100% - 30px - 3rem);
         }
       }
+    }
+    .inScreenPanel{
+      min-width: 90%;
     }
   }
 
@@ -6045,7 +6049,7 @@ body {
 
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1200px) { // normally max 1500 for Tablets
   .tabletHiddenElement {
     display: none !important;
   }
