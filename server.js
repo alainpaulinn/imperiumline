@@ -898,26 +898,26 @@ io.on('connection', (socket) => {
           inviteList.forEach(invite => { insertEventParticipant(EventInsertResult.insertId, invite) })
           insertEventParticipant(EventInsertResult.insertId, id)
           let today = new Date()
-          let lastYear = new Date()
-          lastYear.setFullYear(today.getFullYear() - 1)
-          let nextYear = new Date()
-          nextYear.setFullYear(today.getFullYear() + 1)
+          let todayYear = today.getFullYear()
+          let lastYear = new Date(); lastYear.setFullYear(todayYear - 1)
+          let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)
           let eventsToSend = await getEvents(id, lastYear, nextYear);
-          socket.emit('updateCalendar', eventsToSend)
+          socket.emit('notificationUpdateCalendar', eventsToSend)
+          socket.emit('initialFillCalendar', eventsToSend)
           for (let i = 0; i < inviteList.length; i++) {
-            const invite = inviteList[i];
             for (let j = 0; j < connectedUsers.length; j++) {
-              const connectedUser = connectedUsers[j];
-              if (connectedUser.id == invite) {
-                socket.to(connectedUser.socket.id).emit('updateCalendar', await getEvents(connectedUser.id, lastYear, nextYear));
-                socket.to(connectedUser.socket.id).emit('initialFillCalendar', await getEvents(connectedUser.id, lastYear, nextYear));
+              if (connectedUsers[j].id == inviteList[i]) {
+                let lastYear = new Date(); lastYear.setFullYear(todayYear - 1)
+                let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)
+                let userCalendar = await getEvents(connectedUsers[j].id, lastYear, nextYear)
+                socket.to(connectedUsers[j].socket.id).emit('notificationUpdateCalendar', userCalendar);
+                socket.to(connectedUsers[j].socket.id).emit('initialFillCalendar', userCalendar);
               }
             }
           }
         }
       )
     })
-
 
     socket.on('dayEvents', async dateReceived => {
       let initialDate = new Date(dateReceived)
@@ -943,23 +943,21 @@ io.on('connection', (socket) => {
         return;
       }
       if (foundEvent.owner.userID == id) {
-
-
         db.query("DELETE FROM `events` where eventId = ?", [eventId], async (err, result) => { })
         socket.emit('serverFeedback', [{ type: 'positive', message: 'the event was deleted successfully' }])
         console.log('event found')
 
         let today = new Date()
-        let lastYear = new Date()
-        lastYear.setFullYear(today.getFullYear() - 1)
-        let nextYear = new Date()
-        nextYear.setFullYear(today.getFullYear() + 1)
-
+        let todayYear = today.getFullYear()
+        let lastYear = new Date(); lastYear.setFullYear(todayYear - 1)
+        let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)
         foundEvent.Participants.forEach(async (participant) => {
           for (let j = 0; j < connectedUsers.length; j++) {
             const connectedUser = connectedUsers[j];
             if (connectedUser.id == participant.userInfo.userID) {
-              socket.to(connectedUser.socket.id).emit('updateCalendar', await getEvents(connectedUsers.id, lastYear, nextYear));
+              let lastYear = new Date(); lastYear.setFullYear(todayYear - 1)
+              let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)      
+              socket.to(connectedUser.socket.id).emit('notificationUpdateCalendar', await getEvents(connectedUsers.id, lastYear, nextYear));
               socket.to(connectedUser.socket.id).emit('initialFillCalendar', await getEvents(connectedUsers.id, lastYear, nextYear))
             }
           }
@@ -1434,7 +1432,13 @@ function deleteGroupProfilePicture(roomID) {
     if (err) return console.log(err)
   })
 }
-
+let today = new Date()
+let lastYear = new Date()
+lastYear.setFullYear(today.getFullYear() - 1)
+let nextYear = new Date()
+nextYear.setFullYear(today.getFullYear() + 1)
+getEvents(3, lastYear, nextYear).then(console.log)
+// console.log(_events)
 function getEvents(userId, initalDate, endDate) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `eventId`, `participantId`, `attending` FROM `eventparticipants` WHERE `participantId` = ?',

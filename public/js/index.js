@@ -5290,8 +5290,9 @@ let functionalityOptionsArray = [
   ////////////// EVENTS SCHEDULER //////////////////////
   let calendarObject = {}
   let displayedCalendarDays = []
+  let selectedCalendarDate = null;
   let eventSectionObject = createCalendarEventSection()
-  socket.on('updateCalendar', (calendarEventObj => {
+  socket.on('notificationUpdateCalendar', (calendarEventObj => {
     calendarObject = calendarEventObj
     eventSectionObject.renderCalendar()
     // generate a notification if an update happens
@@ -5309,19 +5310,33 @@ let functionalityOptionsArray = [
         onHide: () => { console.log('Notification Hidden') },
         onEnd: () => { console.log('Notification Ended') },
       },
-      delay: 5000,
+      delay: 30000,
       tone: 'notification'
     })
   }))
   socket.on('initialFillCalendar', (calendarEventObj => {
     calendarObject = calendarEventObj
-    let deleteOldEvents = true;
-    for (const key in calendarEventObj) {
-      if (Object.hasOwnProperty.call(calendarEventObj, key)) {
-        const dayEventsArray = calendarEventObj[key];
-        if (dayEventsArray.length > 0) {
-          eventSectionObject.addDayOnScheduleList(key, dayEventsArray, deleteOldEvents)
-          deleteOldEvents = false; // done in order to clear the container before filling
+    if (selectedCalendarDate != null) {
+      for (const key in calendarEventObj) {
+        if (Object.hasOwnProperty.call(calendarEventObj, key)) {
+          const dayEventsArray = calendarEventObj[key];
+          if (key + '' == selectedCalendarDate) {
+            if (dayEventsArray.length > 0) {
+              eventSectionObject.displayDayOnlyOnSchedule(key, dayEventsArray)
+            }
+          }
+        }
+      }
+    }
+    else {
+      let deleteOldEvents = true;
+      for (const key in calendarEventObj) {
+        if (Object.hasOwnProperty.call(calendarEventObj, key)) {
+          const dayEventsArray = calendarEventObj[key];
+          if (dayEventsArray.length > 0) {
+            eventSectionObject.addDayOnScheduleList(key, dayEventsArray, deleteOldEvents)
+            deleteOldEvents = false; // done in order to clear the container before filling
+          }
         }
       }
     }
@@ -5406,7 +5421,12 @@ let functionalityOptionsArray = [
     // main schedule List
     let gotoCalendatButton = createElement({ elementType: 'button', title: 'Go to calendar', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-calendar' })], onclick: showSelectionPanel })
     let mainScheduleListTitle = createElement({ elementType: 'div', class: 'mainScheduleListTitle', textContent: 'Scheduled Events' })
-    let allEventsBtn = createElement({ elementType: 'button', class: 'allEventsBtn', textContent: 'Show All', onclick: () => { socket.emit('initialFillCalendar', {}) } })
+    let allEventsBtn = createElement({
+      elementType: 'button', class: 'allEventsBtn', textContent: 'Show All', onclick: () => {
+        selectedCalendarDate == null
+        socket.emit('initialFillCalendar', {})
+      }
+    })
     let newEventBtn = createElement({
       elementType: 'button', title: 'Create a new event', class: 'allEventsBtn', textContent: 'New + ', onclick: () => {
         // show a popup to create a new event
@@ -5638,11 +5658,11 @@ let functionalityOptionsArray = [
           else {
             console.log("some wrong values")
             allFields.forEach(field => {
-              if(field.goodselect) field.goodselect.classList.remove("errorField")
+              if (field.goodselect) field.goodselect.classList.remove("errorField")
               else field.classList.remove("errorField")
             })
             faultyFieldsArray.forEach(field => {
-              if(field.goodselect) field.goodselect.classList.add("errorField")
+              if (field.goodselect) field.goodselect.classList.add("errorField")
               else field.classList.add("errorField")
             })
           }
@@ -5740,6 +5760,7 @@ let functionalityOptionsArray = [
               let ckickDateCheck = date;
               ckickDateCheck.setDate(day);
               socket.emit('dayEvents', dateYYYYMMDD_ISO)
+              selectedCalendarDate = dateYYYYMMDD_ISO
               showMainScheduleList()
             }
           })
@@ -5769,6 +5790,7 @@ let functionalityOptionsArray = [
 
     function displayDayOnlyOnSchedule(key, dayEventsArray) {
       eventsContainer.textContent = ''
+      selectedCalendarDate = key
       mainScheduleListTitle.textContent = 'Scheduled Events on ' + new Date(key).toString('YYYY-MM-dd').substring(0, 16)
       if (dayEventsArray.length > 0) eventsContainer.appendChild(makeDay(key, dayEventsArray))
       else eventsContainer.appendChild(
