@@ -1,4 +1,5 @@
 //Get data from the chatsFromDataServer
+let eventReminderBefore = 1000 * 60 * 5 //remin me events 5(default) minutes before they happen
 var socket = io();
 let displayedScreen = 0; // 0: chats, 1: call log, 2: ongoig call, 3: calendar, 4: admin panel
 let previousDisplayedSreen = 0; // for memorizing the previous screen
@@ -4838,6 +4839,7 @@ let functionalityOptionsArray = [
     console.log('corespondantId', corespondantId)
     socket.emit('makeChat', corespondantId)
     displayAppSection(0); // display messages section
+    showChatContent()
   }
 
   function initiateCall(initiationInfo) {
@@ -5216,7 +5218,7 @@ let functionalityOptionsArray = [
         elementType: 'div', class: 'universalCallButtons', childrenArray: [
           createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })], onclick: () => { initiateChat(userInfo.userID) } }),
           createElement({ elementType: 'button', title: 'Incitiate audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(userInfo.userID, true, false, false, false, null) } }),
-          createElement({ elementType: 'button', title: 'Initate video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userInfo.userID, true, true, false, false, null) } })
+          createElement({ elementType: 'button', title: 'Initiate video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userInfo.userID, true, true, false, false, null) } })
         ]
       })
       userSecondaryInfo.prepend(universalCallButtons)
@@ -5350,6 +5352,7 @@ let functionalityOptionsArray = [
   socket.on('fillCalendar', (calendarEventObj => {
     calendarObject = calendarEventObj
     eventSectionObject.renderCalendar()
+    console.log('fillCalendar', calendarObject)
   }))
 
   socket.on('dayEvents', (eventObj => {
@@ -5704,7 +5707,7 @@ let functionalityOptionsArray = [
               maxTime = dateStr;
             }
           });
-          editPopup.discardButton.addEventListener('click', ()=>{
+          editPopup.discardButton.addEventListener('click', () => {
             newEventCreation.inviteList = []
           })
         })
@@ -5994,4 +5997,196 @@ let functionalityOptionsArray = [
       renderCalendar: renderCalendar
     }
   }
+
+  let alreadyReminded = []
+  let justStarted = []
+  function checkToRemind() {
+    // calendarObject
+    for (const key in calendarObject) {
+      if (Object.hasOwnProperty.call(calendarObject, key)) {
+        const dayEventsArray = calendarObject[key];
+        let todaysDatedate = new Date;
+        let todaysDatedateISO = todaysDatedate.toISOString().substring(0, 10)
+        if (key + '' == todaysDatedateISO) {
+          for (let i = 0; i < dayEventsArray.length; i++) {
+            const dayEvent = dayEventsArray[i];
+            const currentDate = new Date();
+            const eventStartDateTime = new Date(todaysDatedateISO + ' ' + dayEvent.startTime)
+            let timeDIff = currentDate - eventStartDateTime;
+            console.log('Curr time', currentDate.toISOString(), 'Event time', eventStartDateTime.toISOString(), 'time difference', timeDIff)
+            
+            // console.log()
+            // if (!alreadyReminded.includes(dayEvent.eventId)) {}
+            if (timeDIff > eventReminderBefore && timeDIff > 0 && !alreadyReminded.includes(dayEvent.eventId)) { // if the timer is less that 5 minutes
+              // generate a notification if Time is up
+              let typeText = dayEvent.type == 1 ? 'Meeting' : 'Task'
+              let notificationDuration = 60 * 1000 * 3 //3 minutes
+              let notification = displayNotification({
+                title: { iconClass: 'bx bxs-calendar-event', titleText: 'A ' + typeText + ' is coming soon' },
+                body: {
+                  shortOrImage: { shortOrImagType: 'image', shortOrImagContent: '/images/calendar.png' },
+                  bodyContent: 'A ' + typeText + ' under the title of "'+ dayEvent.title +'" happening soon in ' + eventReminderBefore / 60000 + ' minutes'
+                },
+                actions: [
+                  { type: 'confirm', displayText: 'Join Event', actionFunction: () => { displayAppSection(3) } }
+                ],
+                obligatoryActions: {
+                  onDisplay: () => { console.log('Notification Displayed') },
+                  onHide: () => { console.log('Notification Hidden') },
+                  onEnd: () => { console.log('Notification Ended') },
+                },
+                delay: notificationDuration,
+                tone: 'notification'
+              })
+              alreadyReminded.push(dayEvent.eventId)
+              console.log("reminded Event",dayEvent.eventId)
+            }
+          } // loop through the array
+        }
+      }
+    }
+    console.log("___")
+  }
+
+  setInterval(function () {
+    checkToRemind();
+  }, 1000);
+
+  // // generate a notification if an update happens
+  // let notification = displayNotification({
+  //   title: { iconClass: 'bx bxs-door-open', titleText: 'Welcome' },
+  //   body: {
+  //     shortOrImage: { shortOrImagType: 'image', shortOrImagContent: '/images/calendar.png' },
+  //     bodyContent: 'Some event changes happened to your calendar click on "Open Calendar" to check changes.'
+  //   },
+  //   actions: [
+  //     { type: 'confirm', displayText: 'Open Calendar', actionFunction: () => { displayAppSection(3) } }
+  //   ],
+  //   obligatoryActions: {
+  //     onDisplay: () => { console.log('Notification Displayed') },
+  //     onHide: () => { console.log('Notification Hidden') },
+  //     onEnd: () => { console.log('Notification Ended') },
+  //   },
+  //   delay: 30000,
+  //   tone: 'notification'
+  // })
 })(functionalityOptionsArray);
+let todaysDatedate = new Date('2015-3-25 12:45:00');
+console.log("_________________FDSDFSDF__________________-", todaysDatedate.toISOString('YYY-MM-dd'))//.substring(0, 10))
+/*
+{
+  "eventId": 36,
+  "owner": {
+      "email": "nope2@email.com",
+      "userID": 4,
+      "name": "no user 2",
+      "surname": "Hai",
+      "profilePicture": null,
+      "cover": null,
+      "role": "Early app test user",
+      "company": {
+          "id": 1,
+          "name": "Test company",
+          "description": "This is the initial company to test if the application works well",
+          "logo": null,
+          "cover": null
+      },
+      "status": "online"
+  },
+  "title": "oiuytrdfcvvb",
+  "eventLocation": null,
+  "context": null,
+  "activityLink": null,
+  "details": null,
+  "startTime": "12:45:00",
+  "endTime": "14:45:00",
+  "occurrence": 2,
+  "recurrenceType": 1,
+  "startRecurrenceDate": "2022-10-04",
+  "endRecurrenceDate": "2022-10-27",
+  "type": 1,
+  "oneTimeDate": "",
+  "Participants": [
+      {
+          "userInfo": {
+              "email": "nope@email.com",
+              "userID": 3,
+              "name": "no",
+              "surname": "user",
+              "profilePicture": null,
+              "cover": null,
+              "role": "Early app test user",
+              "company": {
+                  "id": 1,
+                  "name": "Test company",
+                  "description": "This is the initial company to test if the application works well",
+                  "logo": null,
+                  "cover": null
+              },
+              "status": "offline"
+          },
+          "attending": 2
+      },
+      {
+          "userInfo": {
+              "email": "userjohn@email.com",
+              "userID": 2,
+              "name": "User2",
+              "surname": "John",
+              "profilePicture": null,
+              "cover": null,
+              "role": "Central Branding Director",
+              "company": {
+                  "id": 1,
+                  "name": "Test company",
+                  "description": "This is the initial company to test if the application works well",
+                  "logo": null,
+                  "cover": null
+              },
+              "status": "offline"
+          },
+          "attending": 2
+      },
+      {
+          "userInfo": {
+              "email": "test1email@gmail.com",
+              "userID": 1,
+              "name": "Alain Paulin",
+              "surname": "Niyonkuru",
+              "profilePicture": null,
+              "cover": null,
+              "role": "Early app test user",
+              "company": {
+                  "id": 1,
+                  "name": "Test company",
+                  "description": "This is the initial company to test if the application works well",
+                  "logo": null,
+                  "cover": null
+              },
+              "status": "offline"
+          },
+          "attending": 2
+      },
+      {
+          "userInfo": {
+              "email": "nope2@email.com",
+              "userID": 4,
+              "name": "no user 2",
+              "surname": "Hai",
+              "profilePicture": null,
+              "cover": null,
+              "role": "Early app test user",
+              "company": {
+                  "id": 1,
+                  "name": "Test company",
+                  "description": "This is the initial company to test if the application works well",
+                  "logo": null,
+                  "cover": null
+              },
+              "status": "online"
+          },
+          "attending": 2
+      }
+  ]
+}
+*/

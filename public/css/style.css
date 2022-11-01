@@ -4804,6 +4804,7 @@ body {
   border: 1px solid var(--notification);
   width: 40px;
   min-width: 40px;
+  max-width: 40px;
   height: 40px;
   border-radius: 15px;
   text-transform: uppercase;
