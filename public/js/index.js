@@ -5662,6 +5662,7 @@ let functionalityOptionsArray = [
             newEventCreation.inviteList = [...new Set(newEventCreation.inviteList)] // ensure there are no duplicates
             socket.emit('newEventCreation', newEventCreation)
             screenPopup.closePopup()
+            newEventCreation.inviteList = []
           }
           else {
             console.log("some wrong values")
@@ -5682,7 +5683,7 @@ let functionalityOptionsArray = [
           // prepare date elements
           let minTime
           let maxTime
-          flatpickr("#timeEventStartTimeInput", {
+          let minObj = flatpickr("#timeEventStartTimeInput", {
             time_24hr: true,
             enableTime: true,
             noCalendar: true,
@@ -5703,7 +5704,7 @@ let functionalityOptionsArray = [
             defaultDate: "14:45",
             minTime: minTime || "00:00",
             onChange: function (selectedDates, dateStr, instance) {
-              newEventCreation.startTime = dateStr + ":00";
+              newEventCreation.endTime = dateStr + ":00";
               maxTime = dateStr;
             }
           });
@@ -5796,7 +5797,7 @@ let functionalityOptionsArray = [
         let distanceb = Math.abs(diffdate - new Date(b.date));
         return distancea - distanceb; // sort a before b when the distance is smaller
       });
-      displayedCalendarDays[0].dayDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+      if(displayedCalendarDays.length > 0) displayedCalendarDays[0].dayDiv.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
     function displayDayOnlyOnSchedule(key, dayEventsArray) {
@@ -5843,7 +5844,7 @@ let functionalityOptionsArray = [
               elementType: 'button', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-right' })], onclick: () => {
                 scheduleDetailsSection.textContent = '';
                 let eventDetailsBackButton = createElement({ elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'div', class: 'bx bx-chevron-left' })], onclick: showMainScheduleList })
-                let eventDetailsJoinButton = createElement({ elementType: 'button', title: 'Join the event/meeting online', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: joinEvent })
+                let eventDetailsJoinButton = createElement({ elementType: 'button', title: 'Join the event/meeting online', childrenArray: [createElement({ elementType: 'div', class: 'bx bxs-phone' })], onclick: () => { showMainScheduleList(); joinEvent() } })
                 let eventDetailsTitle = createElement({ elementType: 'div', title: title, class: 'eventDetailsTitle', textContent: title })
                 let deleteEventButton = createElement({
                   elementType: 'button', title: 'Delete Event', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-trash-alt' })], onclick: () => {
@@ -5859,7 +5860,8 @@ let functionalityOptionsArray = [
                       { element: cancelButton, functionCall: () => { } },
                       {
                         element: deleteButton, functionCall: () => {
-                          socket.emit('deleteEvent', eventId)
+                          socket.emit('deleteEvent', eventId);
+                          showMainScheduleList();
                         }
                       }
                     ]
@@ -5999,7 +6001,6 @@ let functionalityOptionsArray = [
   }
 
   let alreadyReminded = []
-  let justStarted = []
   function checkToRemind() {
     // calendarObject
     for (const key in calendarObject) {
@@ -6008,16 +6009,14 @@ let functionalityOptionsArray = [
         let todaysDatedate = new Date;
         let todaysDatedateISO = todaysDatedate.toISOString().substring(0, 10)
         if (key + '' == todaysDatedateISO) {
-          for (let i = 0; i < dayEventsArray.length; i++) {
+          for (let i = 0; i < dayEventsArray.length; i++) { // loop through the day events array
             const dayEvent = dayEventsArray[i];
             const currentDate = new Date();
             const eventStartDateTime = new Date(todaysDatedateISO + ' ' + dayEvent.startTime)
-            let timeDIff = currentDate - eventStartDateTime;
+            let timeDIff = eventStartDateTime - currentDate;
             console.log('Curr time', currentDate.toISOString(), 'Event time', eventStartDateTime.toISOString(), 'time difference', timeDIff)
-            
-            // console.log()
-            // if (!alreadyReminded.includes(dayEvent.eventId)) {}
-            if (timeDIff > eventReminderBefore && timeDIff > 0 && !alreadyReminded.includes(dayEvent.eventId)) { // if the timer is less that 5 minutes
+
+            if (eventReminderBefore > timeDIff && timeDIff > 0 && !alreadyReminded.includes(dayEvent.eventId)) { // if the timer is less that 5 minutes
               // generate a notification if Time is up
               let typeText = dayEvent.type == 1 ? 'Meeting' : 'Task'
               let notificationDuration = 60 * 1000 * 3 //3 minutes
@@ -6025,10 +6024,11 @@ let functionalityOptionsArray = [
                 title: { iconClass: 'bx bxs-calendar-event', titleText: 'A ' + typeText + ' is coming soon' },
                 body: {
                   shortOrImage: { shortOrImagType: 'image', shortOrImagContent: '/images/calendar.png' },
-                  bodyContent: 'A ' + typeText + ' under the title of "'+ dayEvent.title +'" happening soon in ' + eventReminderBefore / 60000 + ' minutes'
+                  bodyContent: 'A ' + typeText + ' under the title of "' + dayEvent.title + '" happening soon in less than ' + eventReminderBefore / 60000 + ' minute' + (eventReminderBefore / 60000 == 1 ? '' : 's')
                 },
                 actions: [
-                  { type: 'confirm', displayText: 'Join Event', actionFunction: () => { displayAppSection(3) } }
+                  { type: 'confirm', displayText: 'Open calendar', actionFunction: () => { displayAppSection(3) } },
+                  { type: 'confirm', displayText: 'Join Online', actionFunction: () => { call(dayEvent.eventId, true, false, false, false, 'joinEvent') } },
                 ],
                 obligatoryActions: {
                   onDisplay: () => { console.log('Notification Displayed') },
@@ -6039,9 +6039,9 @@ let functionalityOptionsArray = [
                 tone: 'notification'
               })
               alreadyReminded.push(dayEvent.eventId)
-              console.log("reminded Event",dayEvent.eventId)
+              console.log("reminded Event", dayEvent.eventId)
             }
-          } // loop through the array
+          } 
         }
       }
     }

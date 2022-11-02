@@ -589,51 +589,65 @@ io.on('connection', (socket) => {
       if (group === false) groupPresentation = 0;
 
 
-
+      let givenTitle, eventId;
 
       console.log('previousCallId', previousCallId)
       if (previousCallId == 'joinEvent') {
         let eventId = callTo
         let givenTitle = await getEventTitle(eventId)
-        console.log('Happenned')
-        let eventParticipants = await getEventParticipants(eventId)
-        let eventParticipantUserInfos = eventParticipants.map((participant) => participant.userInfo)
-        initiateCall(eventParticipantUserInfos, givenTitle)
+
+        let previousCalls = await findRecentEventCalls(eventId)
+        if (previousCalls != null) {
+          // returns: `id`, `callUniqueId`, `initiatorId`, `destinationId`, `destinationType`, `initialtionTime`, `endTime`, `callChatId`, `eventId`, `callTitle`
+          let mostRecentCallUnniqueID = previousCalls[0].callUniqueId
+          choseIfRejoinOrNew(mostRecentCallUnniqueID, givenTitle, eventId, false)
+        }
+        else {
+          let eventParticipants = await getEventParticipants(eventId)
+          let eventParticipantUserInfos = eventParticipants.map((participant) => participant.userInfo)
+          initiateCall(eventParticipantUserInfos, givenTitle || 'Untitled Call', eventId, false)
+        }
+
         return; // exit the function and do ot analyze further
       }
 
       //call from individual call buttons(outside callog and outside chat)
       else if (group === false && fromChat === false) {
         let oneToCall = await getUserInfo(callTo);
-        initiateCall([oneToCall, await getUserInfo(id)]);
+        initiateCall([oneToCall, await getUserInfo(id)], givenTitle, eventId, true);
         return; // exit the function
       }
 
       switch (chatPresentation) {
         case 0:  //call from Chat
           let groupMembersToCall = await getRoomParticipantArray(callTo)
-          initiateCall(groupMembersToCall)
+          initiateCall(groupMembersToCall, givenTitle, eventId, true)
           break;
         case 1: //call from callogs
-          let stillOnCallUsers = await getOnCallPeopleByStatus(callTo, 1)
-          let allExistingCallGroupMembersToCall = await getCallParticipants(callTo)
-          if (stillOnCallUsers.length > 0) {
-            rejoinCall(allExistingCallGroupMembersToCall, callTo)
-          }
-          else {
-            initiateCall(allExistingCallGroupMembersToCall)
-          }
+          choseIfRejoinOrNew(callTo, givenTitle, eventId, true)
           break;
         default:
           let thisUser = await getUserInfo(id)
-          initiateCall([thisUser])
+          initiateCall([thisUser], givenTitle, eventId, true)
+          // socket.emit('serverFeedback', [{ type: 'negative', message: 'You can not call yourself, or groups where you are the only participant' }])
           break;
       }
-      async function initiateCall(groupMembersToCall, givenTitle) {
+
+      async function choseIfRejoinOrNew(previousCallID, givenTitle, eventId, notifyCallees) {
+        let stillOnCallUsers = await getOnCallPeopleByStatus(previousCallID, 1)
+        let allExistingCallGroupMembersToCall = await getCallParticipants(previousCallID)
+        if (stillOnCallUsers.length > 0) {
+          rejoinCall(allExistingCallGroupMembersToCall, previousCallID, notifyCallees)
+        }
+        else {
+          initiateCall(allExistingCallGroupMembersToCall, givenTitle, eventId, notifyCallees)
+        }
+      }
+      async function initiateCall(groupMembersToCall, givenTitle, eventId, notifyCallees) {
         let callTitle = givenTitle ? givenTitle : 'Untitled Call'
         let callUniqueId = makeid(20)
-        let insertedCallId = await logToDatabaseNewCall(callUniqueId, id, callTo, groupPresentation, null, chatPresentation, callTitle)
-        if (insertedCallId == null) {
+        let insertedCallId = await logToDatabaseNewCall(callUniqueId, id, callTo, groupPresentation, null, chatPresentation, eventId || null, callTitle)
+        if (!insertedCallId) {
           socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while trying to perform the call' }])
           console.log('An error occurred while trying to perform the call')
           return; // exit the function if there was an error to register the call
@@ -649,15 +663,17 @@ io.on('connection', (socket) => {
           for (let j = 0; j < connectedUsers.length; j++) {
             console.log("connectedUsers", connectedUsers[j].id)
             if (groupMembersToCall[i].userID == connectedUsers[j].id && groupMembersToCall[i].userID != id) { //&& groupMembersToCall[i].userID != id will eliminate my other onnected computers from reciving my call
-              socket.to(connectedUsers[j].socket.id).emit('incomingCall', {
-                callUniqueId: callUniqueId,
-                callType: video == true ? "video" : "audio",
-                caller: await getUserInfo(id),
-                allUsers: groupMembersToCall,
-                myInfo: await getUserInfo(connectedUsers[j].id),
-                callTitle: callTitle,
-                callStage: 'initial'
-              });
+              if (notifyCallees == true) {
+                socket.to(connectedUsers[j].socket.id).emit('incomingCall', {
+                  callUniqueId: callUniqueId,
+                  callType: video == true ? "video" : "audio",
+                  caller: await getUserInfo(id),
+                  allUsers: groupMembersToCall,
+                  myInfo: await getUserInfo(connectedUsers[j].id),
+                  callTitle: callTitle,
+                  callStage: 'initial'
+                });
+              }
               console.log("--->connectedUser identified", connectedUsers[j].id)
               groupMembersToCall_fullInfo.push({ peerId: connectedUsers[j].callId, userProfileIdentifier: groupMembersToCall[i] })
               connectedUsers[j].socket.join(callUniqueId + '');
@@ -1591,6 +1607,7 @@ function getEventDetails(givenEventId) {
         if (myEventResults.length < 1) {
           console.log("no event found with that Id");
           resolve(undefined)
+          return;
         }
         let { eventId, ownerId, title, eventLocation, context, activityLink, details, startTime, endTime, occurrence, recurrenceType, startRecurrenceDate, endRecurrenceDate, type, oneTimeDate } = myEventResults[0];
         var _myEventResults = {
@@ -1647,7 +1664,7 @@ function getEventParticipants(givenEventId) {
 function getEventTitle(givenEventId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `eventId`, `ownerId`, `title` FROM `events` WHERE `eventId` = ?', [givenEventId], async (err, events) => {
-      if (err) console.log(err)
+      if (err) { resolve(null); return console.log(err); }
       if (events.length < 1) resolve(null)
       else resolve(events[0].title)
     })
@@ -1676,10 +1693,10 @@ const setCallAsMissed = (userId, callUniqueId) => {
     })
 }
 
-function logToDatabaseNewCall(callUniqueId, id, callTo, groupPresentation, endTime, chatPresentation, callTitle) {
+function logToDatabaseNewCall(callUniqueId, id, callTo, groupPresentation, endTime, chatPresentation, eventId, callTitle) {
   return new Promise(function (resolve, reject) {
-    db.query("INSERT INTO `calls`(`callUniqueId`, `initiatorId`, `destinationId`, `destinationType`, `endTime`, `callChatId`, `callTitle`) VALUES (?,?,?,?,?,?,?)",
-      [callUniqueId, id, callTo, groupPresentation, endTime, chatPresentation, callTitle ? callTitle : null], async (err, callInserted) => {
+    db.query("INSERT INTO `calls`(`callUniqueId`, `initiatorId`, `destinationId`, `destinationType`, `endTime`, `callChatId`, `eventId`, `callTitle`) VALUES (?,?,?,?,?,?,?,?)",
+      [callUniqueId, id, callTo, groupPresentation, endTime, chatPresentation, eventId || null, callTitle || null], async (err, callInserted) => {
         if (err) {
           console.log("Unable to register the call in Database", err)
           resolve(null)
@@ -1691,10 +1708,30 @@ function logToDatabaseNewCall(callUniqueId, id, callTo, groupPresentation, endTi
     )
   })
 }
+
+function findRecentEventCalls(eventId) {
+  return new Promise(function (resolve, reject) {
+    db.query("SELECT `id`, `callUniqueId`, `initiatorId`, `destinationId`, `destinationType`, `initialtionTime`, `endTime`, `callChatId`, `eventId`, `callTitle` FROM `calls` WHERE `eventId` = ? ORDER BY `initialtionTime` DESC",
+      [eventId], async (err, previousCalls) => {
+        if (err) {
+          console.log("Unable to register the call in Database", err)
+          resolve(null)
+        }
+        else if (previousCalls.length < 1) {
+          console.log("No previous calls found", err)
+          resolve(null)
+        }
+        else {
+          resolve(previousCalls)
+        }
+      }
+    )
+  })
+}
 function checkCallAccess(userId, callUniqueId) {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `callUniqueId`, `callId`, `participantId`, `stillParticipating`, `initiatorId`, `startDate`, `missed` FROM `callparticipants` WHERE `callUniqueId` = ? AND `participantId` = ?', [callUniqueId, userId], async (err, myCallResults) => {
-      if (err) return console.log(err)
+      if (err) { resolve(false); return console.log(err) }
       if (myCallResults.length > 0) {
         resolve(true)
       } else {

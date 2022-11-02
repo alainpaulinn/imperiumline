@@ -88,6 +88,7 @@ CREATE TABLE `calls` (
   `initialtionTime` datetime NOT NULL DEFAULT current_timestamp(),
   `endTime` datetime DEFAULT NULL,
   `callChatId` int(11) DEFAULT NULL,
+  `eventId` INT DEFAULT NULL,
   `callTitle` TEXT NULL DEFAULT NULL,
    PRIMARY KEY (`id`),
    FOREIGN KEY (`initiatorId`) REFERENCES user(`id`) ON DELETE SET NULL
