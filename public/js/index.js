@@ -695,7 +695,7 @@ let functionalityOptionsArray = [
     if (superAdmin.isSuperAdmin == true || admin.isAdmin == true) {
       let adminPanel = createElement({ elementType: 'section', class: 'c-time-admin_panel' })
       let adminOption = {
-        functionalityId: 5,
+        functionalityId: 6,
         panel: adminPanel,
         redirect: "/action",
         title: "Admin",
