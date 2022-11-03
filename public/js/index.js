@@ -33,13 +33,14 @@ let body = document.getElementsByTagName('body')[0]
 let openProfileDiv;
 let openPopupDiv;
 /////////////////////SIDEPANEL SWITCH///////////////////////////
+let document_title = document.getElementsByTagName("title")[0]
 let appWrapper = document.getElementById("appWrapper")
 let messages_panel = document.getElementById("messages_panel")
 let call_log_panel = document.getElementById("call_log_panel")
 let ongoing_call_panel = document.getElementById("ongoing_call_panel")
 let time_scheduling_panel = document.getElementById("time-scheduling_panel")
+let all_users_panel = document.getElementById("all_users_panel")
 let work_shift_panel = document.getElementById("work_shifts_Panel")
-let document_title = document.getElementsByTagName("title")[0]
 
 // messages elements declaration
 let open_chat_box = document.querySelector(".c-openchat")
@@ -71,6 +72,13 @@ let functionalityOptionsArray = [
     panel: time_scheduling_panel,
     title: "Calendar",
     icon: "bx bxs-calendar",
+    subMenu: []
+  },
+  {
+    functionalityId: 5,
+    panel: all_users_panel,
+    title: "All Users",
+    icon: "bx bxs-group",
     subMenu: []
   }
 ];
@@ -6052,24 +6060,13 @@ let functionalityOptionsArray = [
     checkToRemind();
   }, 1000);
 
-  // // generate a notification if an update happens
-  // let notification = displayNotification({
-  //   title: { iconClass: 'bx bxs-door-open', titleText: 'Welcome' },
-  //   body: {
-  //     shortOrImage: { shortOrImagType: 'image', shortOrImagContent: '/images/calendar.png' },
-  //     bodyContent: 'Some event changes happened to your calendar click on "Open Calendar" to check changes.'
-  //   },
-  //   actions: [
-  //     { type: 'confirm', displayText: 'Open Calendar', actionFunction: () => { displayAppSection(3) } }
-  //   ],
-  //   obligatoryActions: {
-  //     onDisplay: () => { console.log('Notification Displayed') },
-  //     onHide: () => { console.log('Notification Hidden') },
-  //     onEnd: () => { console.log('Notification Ended') },
-  //   },
-  //   delay: 30000,
-  //   tone: 'notification'
-  // })
+  // All Users Section
+  let favHeader = createElement({elementType: 'h1', class:'header', textContent: 'Favorites'})
+  let allUsersFavourites = createElement({ elementType: 'div', class: 'allUsersFavourites', childrenArray:[favHeader]})
+  let mainHeader = createElement({elementType: 'h1', class:'header', textContent: 'All Users in Organization'})
+  let allUsersMain = createElement({ elementType: 'div', class: 'allUsersMain', childrenArray:[mainHeader]})
+  all_users_panel.appendChild(allUsersFavourites)
+  all_users_panel.appendChild(allUsersMain)
 })(functionalityOptionsArray);
 let todaysDatedate = new Date('2015-3-25 12:45:00');
 console.log("_________________FDSDFSDF__________________-", todaysDatedate.toISOString('YYY-MM-dd'))//.substring(0, 10))

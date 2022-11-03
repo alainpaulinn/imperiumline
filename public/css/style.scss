@@ -60,7 +60,7 @@ $white: rgb(255, 255, 255);
   --hoverColor: rgb(0, 48, 97);
 
   --audioCallCover: var(--focusAreaBackgroundColor);
-  
+
   --transparentBg: rgba(255, 255, 255, 0.5)
 }
 
@@ -218,10 +218,10 @@ body {
     border-radius: $borderRadius;
     background-color: var(--primaryBackground);
 
-    &.shadow{
+    &.shadow {
       box-shadow: 0px 0px 17px -7px var(--lightText);
     }
-    
+
     &--spacer {
       margin-top: 1.5rem;
     }
@@ -523,10 +523,11 @@ body {
         width: 100%;
       }
 
-      .listMember{
+      .listMember {
         padding: 0rem;
         width: 100%;
-        button{
+
+        button {
           max-width: 8rem;
           justify-content: center;
           gap: 1rem;
@@ -892,7 +893,7 @@ body {
         border-radius: $borderRadius;
         // border: 1px solid var(--lightText);
         border: none;
-        
+
         color: var(--lightText);
       }
     }
@@ -1283,7 +1284,7 @@ body {
   }
 
   .detailsPopupDiv {
-    
+
     width: 100%;
     border-radius: $borderRadius;
     height: 0;
@@ -1302,6 +1303,7 @@ body {
       display: flex;
       width: 100%;
       gap: 0.5rem;
+
       input {
         flex: 1;
         color: var(--lightText);
@@ -2375,6 +2377,50 @@ body {
   flex: 1;
 }
 
+.c-all_users_panel {
+  color: var(--lightText);
+  display: none;
+  flex-direction: row;
+  flex: 1;
+  background-color: var(--primaryBackground);
+  max-width: 100%;
+  max-height: 100%;
+
+  .header {
+    border-bottom: 1px solid var(--primaryBackground);
+    padding: 1rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 3px 3px 10px -2px rgba(0, 0, 0, 0.5);
+
+    font-size: 2rem;
+  }
+
+  .allUsersFavourites {
+    flex-basis: 40%;
+    height: calc(100vh - 2rem);
+    background-color: var(--secondaryBackground);
+    border-radius: 15px;
+    margin: 1rem 0rem 1rem 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .allUsersMain {
+    height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
+    flex-basis: 60%;
+    background-color: var(--secondaryBackground);
+    margin: 1rem;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+
+}
+
 .c-messages_panel {
   display: flex;
   flex: 1;
@@ -3252,7 +3298,8 @@ body {
 
           &:hover {
             color: var(--hoverColor);
-            p{
+
+            p {
               color: var(--hoverColor);
             }
           }
@@ -3553,7 +3600,7 @@ body {
           height: 50px;
           border-radius: $borderRadius;
           text-transform: uppercase;
-          
+
           display: flex;
           justify-content: center;
           -ms-flex-align: center;
@@ -3563,7 +3610,8 @@ body {
           box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
           object-fit: cover;
         }
-        .audioCallCoverName{
+
+        .audioCallCoverName {
           color: var(--lightText);
         }
 
@@ -5345,21 +5393,24 @@ body {
   display: none !important;
 }
 
-.flex{
+.flex {
   display: flex;
 }
-.flex-center-x{
+
+.flex-center-x {
   justify-content: center;
 }
-.flex-center-y{
+
+.flex-center-y {
   align-items: center;
 }
-.full-height{
+
+.full-height {
   height: 100%;
 }
 
-.errorField{
-  background-color: var(--warning-bg)!important;
+.errorField {
+  background-color: var(--warning-bg) !important;
 }
 
 //------Horizoontal progressBar
@@ -5824,7 +5875,9 @@ body {
 }
 
 
-@media (max-width: 900px) { // normally max 450 for mobile
+@media (max-width: 900px) {
+
+  // normally max 450 for mobile
   .c-app {
     max-height: 100%;
 
@@ -5892,7 +5945,8 @@ body {
         }
       }
     }
-    .inScreenPanel{
+
+    .inScreenPanel {
       min-width: 90%;
     }
   }
@@ -6042,13 +6096,15 @@ body {
     display: none !important;
   }
 
-  .popdown{
+  .popdown {
     width: 100%;
   }
 
 }
 
-@media (max-width: 1500px) { // normally max 1200 for Tablets
+@media (max-width: 1500px) {
+
+  // normally max 1200 for Tablets
   .tabletHiddenElement {
     display: none !important;
   }
@@ -6163,8 +6219,8 @@ body {
       }
     }
   }
-  
-  .inScreenPanel{
+
+  .inScreenPanel {
     max-width: 50%;
   }
 }

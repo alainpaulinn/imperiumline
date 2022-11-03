@@ -1960,6 +1960,45 @@ body {
   flex: 1;
 }
 
+.c-all_users_panel {
+  color: var(--lightText);
+  display: none;
+  flex-direction: row;
+  flex: 1;
+  background-color: var(--primaryBackground);
+  max-width: 100%;
+  max-height: 100%;
+}
+.c-all_users_panel .header {
+  border-bottom: 1px solid var(--primaryBackground);
+  padding: 1rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 3px 3px 10px -2px rgba(0, 0, 0, 0.5);
+  font-size: 2rem;
+}
+.c-all_users_panel .allUsersFavourites {
+  flex-basis: 40%;
+  height: calc(100vh - 2rem);
+  background-color: var(--secondaryBackground);
+  border-radius: 15px;
+  margin: 1rem 0rem 1rem 1rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.c-all_users_panel .allUsersMain {
+  height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
+  flex-basis: 60%;
+  background-color: var(--secondaryBackground);
+  margin: 1rem;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
 .c-messages_panel {
   display: flex;
   flex: 1;
