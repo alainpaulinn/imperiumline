@@ -83,7 +83,7 @@ CREATE TABLE `calls` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `callUniqueId` text NOT NULL,
   `initiatorId` int(11) NULL,
-  `destinationId` int(11) NOT NULL,
+  `destinationId` TEXT NOT NULL,
   `destinationType` int(11) NOT NULL,
   `initialtionTime` datetime NOT NULL DEFAULT current_timestamp(),
   `endTime` datetime DEFAULT NULL,

@@ -644,11 +644,9 @@ io.on('connection', (socket) => {
         }
       }
       async function initiateCall(groupMembersToCall, givenTitle, eventId, notifyCallees) {
-        let _groupPresentation = groupPresentation
-        if(groupPresentation != 0 || groupPresentation != 1) _groupPresentation = 2;
         let callTitle = givenTitle ? givenTitle : 'Untitled Call'
         let callUniqueId = makeid(20)
-        let insertedCallId = await logToDatabaseNewCall(callUniqueId, id, callTo, _groupPresentation, null, chatPresentation, eventId || null, callTitle)
+        let insertedCallId = await logToDatabaseNewCall(callUniqueId, id, callTo, groupPresentation, null, chatPresentation, eventId || null, callTitle)
         if (!insertedCallId) {
           socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while trying to perform the call' }])
           console.log('An error occurred while trying to perform the call')
