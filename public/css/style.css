@@ -2001,6 +2001,10 @@ body {
   border-radius: 15px;
   overflow: hidden;
 }
+.c-all_users_panel .content {
+  overflow-y: auto;
+  margin: 1rem;
+}
 
 .c-messages_panel {
   display: flex;

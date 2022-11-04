@@ -209,6 +209,7 @@ io.on('connection', (socket) => {
       let serverFeedback =  await removeFavourite(id, favoriteID)
       if(serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while removing the favorite.' }])
       //fill favorites and friends
+      console.log('Removing favorite', serverFeedback)
       socket.emit('favoriteUsers', await getUserFavorites(id))
       socket.emit('allUsers', await getCompanyUsers(company_id))
 
@@ -2748,7 +2749,7 @@ function getUserFavorites(userID) {
       }
       let foundUsers = []
       for (let i = 0; i < users.length; i++) {
-        const userID = users[i].id;
+        const userID = users[i].favUser;
         foundUsers.push(await getUserInfo(userID))
       }
       resolve(foundUsers)
