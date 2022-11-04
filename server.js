@@ -98,19 +98,12 @@ io.on('connection', (socket) => {
       socket.emit('myId', myInformation);
       db.query('SELECT `id`, `userID`, `roomID`, `dateGotAccess`, room.chatID, room.name, room.type, room.profilePicture, room.creationDate, room.lastActionDate FROM `participants` LEFT JOIN room ON room.chatID = participants.roomID WHERE participants.userID = ? ORDER BY `room`.`lastActionDate` DESC', [id], async (err, mychatResults) => {
         if (err) return console.log(err)
-        // mychatResults.forEach(async myChat => {
-        //   let roomID = myChat.roomID + '';
-        //   socket.join(roomID)
-        //   socket.emit('displayChat', await getRoomInfo(roomID, id))
-        // });
         let roomInfos = []
         for (let i = 0; i < mychatResults.length; i++) {
           const myChat = mychatResults[i];
           socket.join(myChat.roomID + '')
           roomInfos.push(await getRoomInfo(myChat.roomID, id))
         }
-        console.log('roomInfos', roomInfos)
-
         socket.emit('displayChat', roomInfos)
       })
       //send call log to the connected user
@@ -128,6 +121,11 @@ io.on('connection', (socket) => {
       let endDate = new Date()
       let dateEvents = await getEvents(id, initialDate, endDate)
       socket.emit('dayEvents', dateEvents)
+
+      //fill favorites and friends
+      socket.emit('favoriteUsers', await getUserFavorites(id))
+      socket.emit('allUsers', await getCompanyUsers(company_id))
+
     })
     // prepare to receive files
     // Make an instance of SocketIOFileUpload and listen on this socket:
@@ -199,6 +197,23 @@ io.on('connection', (socket) => {
     socket.on("deleteProfilePicture", () => {
       deleteProfilePicture(id)
     })
+
+    socket.on('addFavourite', async (favoriteID) => {
+      let serverFeedback =  await addFavourite(id, favoriteID)
+      if(serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while Adding the favorite.' }])
+      //fill favorites and friends
+      socket.emit('favoriteUsers', await getUserFavorites(id))
+      socket.emit('allUsers', await getCompanyUsers(company_id))
+    })
+    socket.on('removeFavourite', async (favoriteID) => {
+      let serverFeedback =  await removeFavourite(id, favoriteID)
+      if(serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while removing the favorite.' }])
+      //fill favorites and friends
+      socket.emit('favoriteUsers', await getUserFavorites(id))
+      socket.emit('allUsers', await getCompanyUsers(company_id))
+
+    })
+
     socket.on("chatProfilePictureDelete", async (roomID) => {
       let groupMembers = await getRoomParticipantArray(roomID)
       let thisParticipant = groupMembers.find(participant => participant.userID === id)
@@ -2724,6 +2739,46 @@ function searchSuperAdmins(searchTerm) {
   })
 }
 
+function getUserFavorites(userID) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `favOwner`, `favUser` FROM `favouriteusers` WHERE `favOwner` = ?', [userID], async (err, users) => {
+      if (err) {
+        console.error(err);
+        resolve([]);
+      }
+      let foundUsers = []
+      for (let i = 0; i < users.length; i++) {
+        const userID = users[i].id;
+        foundUsers.push(await getUserInfo(userID))
+      }
+      resolve(foundUsers)
+    })
+  })
+}
+function addFavourite(favOwnerID, favoriteID) {
+  return new Promise(function (resolve, reject) {
+    db.query('REPLACE INTO `favouriteusers`(`favOwner`, `favUser`) VALUES (?,?)', [favOwnerID, favoriteID], async (err, users) => {
+      if (err) {
+        console.error(err);
+        resolve({ type: 'negative', message: 'An error occurred while adding the user to favorites.' });
+        return
+      }
+      resolve({ type: 'positive', message: 'Favorite added successfully.'})
+    })
+  })
+}
+function removeFavourite(favOwnerID, favoriteID) {
+  return new Promise(function (resolve, reject) {
+    db.query('DELETE FROM `favouriteusers` WHERE `favOwner` = ? AND `favUser` = ?', [favOwnerID, favoriteID], async (err, users) => {
+      if (err) {
+        console.error(err);
+        resolve({ type: 'negative', message: 'An error occurred while removing the user from favorites.' });
+        return
+      }
+      resolve({ type: 'positive', message: 'Favorite removed successfully.'})
+    })
+  })
+}
 
 server.listen(port, () => {
   console.log(`listening on Port number ${port}`);

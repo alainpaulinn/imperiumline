@@ -78,7 +78,7 @@ let functionalityOptionsArray = [
     functionalityId: 5,
     panel: all_users_panel,
     title: "All Users",
-    icon: "bx bxs-group",
+    icon: "bx bxs-star",
     subMenu: []
   }
 ];
@@ -5805,7 +5805,7 @@ let functionalityOptionsArray = [
         let distanceb = Math.abs(diffdate - new Date(b.date));
         return distancea - distanceb; // sort a before b when the distance is smaller
       });
-      if(displayedCalendarDays.length > 0) displayedCalendarDays[0].dayDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (displayedCalendarDays.length > 0) displayedCalendarDays[0].dayDiv.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
     function displayDayOnlyOnSchedule(key, dayEventsArray) {
@@ -6049,7 +6049,7 @@ let functionalityOptionsArray = [
               alreadyReminded.push(dayEvent.eventId)
               console.log("reminded Event", dayEvent.eventId)
             }
-          } 
+          }
         }
       }
     }
@@ -6061,12 +6061,60 @@ let functionalityOptionsArray = [
   }, 1000);
 
   // All Users Section
-  let favHeader = createElement({elementType: 'h1', class:'header', textContent: 'Favorites'})
-  let allUsersFavourites = createElement({ elementType: 'div', class: 'allUsersFavourites', childrenArray:[favHeader]})
-  let mainHeader = createElement({elementType: 'h1', class:'header', textContent: 'All Users in Organization'})
-  let allUsersMain = createElement({ elementType: 'div', class: 'allUsersMain', childrenArray:[mainHeader]})
+  let favouritesIcon = createElement({ elementType: 'i', class: 'bx bxs-star' })
+  let titleText = createElement({ elementType: 'p', textContent: 'Favourites' })
+  let favHeader = createElement({ elementType: 'div', class: 'header', childrenArray: [favouritesIcon, titleText] })
+  let favContent = createElement({ elementType: 'div', class: 'content' })
+  let allUsersFavourites = createElement({ elementType: 'div', class: 'allUsersFavourites', childrenArray: [favHeader, favContent] })
+
+  let mainI = createElement({ elementType: 'i', class: 'bx bxs-group' })
+  let mainP = createElement({ elementType: 'p', textContent: 'All Users in Organization' })
+  let mainHeader = createElement({ elementType: 'div', class: 'header', childrenArray: [mainI, mainP] })
+  let mainContent = createElement({ elementType: 'div', class: 'content' })
+  let allUsersMain = createElement({ elementType: 'div', class: 'allUsersMain', childrenArray: [mainHeader, mainContent] })
   all_users_panel.appendChild(allUsersFavourites)
   all_users_panel.appendChild(allUsersMain)
+
+  socket.on('favoriteUsers', (users) => {
+    favContent.textContent = ''
+    if (users.length < 1) return favContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'You have not created any favorites yet \n Select ✰ button on any user in All users section to add them here' }));
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      let messageButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+      let callButton = createElement({ elementType: 'button', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let favButton = createElement({ elementType: 'button', title: 'Remove from favorites', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
+
+      let actions = [
+        { element: messageButton, functionCall: () => { initiateChat(user.userID) } },
+        { element: callButton, functionCall: () => { call(user.userID, true, false, false, false, null); showCallListSection(); } },
+        { element: videoButton, functionCall: () => { call(user.userID, true, true, false, false, null); showCallListSection(); } },
+        { element: favButton, functionCall: () => { socket.emit('removeFavourite', user.userID) } },
+      ]
+      let userDiv = userForAttendanceList(user, actions)
+      favContent.appendChild(userDiv)
+    }
+  })
+  socket.on('allUsers', (users) => {
+    mainContent.textContent = ''
+    if (users.length < 1) return mainContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users in your organization' }));
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      let messageButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+      let callButton = createElement({ elementType: 'button', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let favButton = createElement({ elementType: 'button', title: 'Add to favorites', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-star' })] })
+
+      let actions = [
+        { element: messageButton, functionCall: () => { initiateChat(user.userID) } },
+        { element: callButton, functionCall: () => { call(user.userID, true, false, false, false, null); showCallListSection(); } },
+        { element: videoButton, functionCall: () => { call(user.userID, true, true, false, false, null); showCallListSection(); } },
+        { element: favButton, functionCall: () => { socket.emit('addFavourite', user.userID) } },
+      ]
+      let userDiv = userForAttendanceList(user, actions)
+      mainContent.appendChild(userDiv)
+    }
+  })
 })(functionalityOptionsArray);
 let todaysDatedate = new Date('2015-3-25 12:45:00');
 console.log("_________________FDSDFSDF__________________-", todaysDatedate.toISOString('YYY-MM-dd'))//.substring(0, 10))

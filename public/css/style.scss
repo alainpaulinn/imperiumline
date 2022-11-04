@@ -2388,13 +2388,16 @@ body {
 
   .header {
     border-bottom: 1px solid var(--primaryBackground);
-    padding: 1rem 1rem;
+    padding: 1rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     box-shadow: 3px 3px 10px -2px rgba(0, 0, 0, 0.5);
+    gap: 1rem;
 
-    font-size: 2rem;
+    p,i{
+      font-size: 2rem;
+      font-weight: bold;
+    }
   }
 
   .allUsersFavourites {
@@ -6098,6 +6101,20 @@ body {
 
   .popdown {
     width: 100%;
+  }
+
+  .c-all_users_panel{
+    flex-direction: column;
+    padding-top: calc(30px + 3rem);
+    width: 100%;
+    .allUsersFavourites{
+      height: none;
+      margin: 1rem;
+    }
+    .allUsersMain{
+      height: none;
+      margin: 1rem;
+    }
   }
 
 }

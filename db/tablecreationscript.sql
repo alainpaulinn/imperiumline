@@ -56,6 +56,16 @@ CREATE TABLE `user` (
   FOREIGN KEY (`company_id`) REFERENCES companies(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `favouriteusers` ( 
+  `id` INT NOT NULL AUTO_INCREMENT , 
+  `favOwner` INT NOT NULL , 
+  `favUser` INT NOT NULL , 
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`favOwner`) REFERENCES user(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`favUser`) REFERENCES user(`id`) ON DELETE CASCADE,
+  UNIQUE KEY `favOwner` (`favOwner`,`favUser`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `admins` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `company_id` int(11) NOT NULL,
