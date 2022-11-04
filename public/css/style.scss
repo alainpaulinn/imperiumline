@@ -4037,6 +4037,7 @@ body {
   }
 }
 
+
 .importantButton {
   color: var(--lightText);
   border-radius: $borderRadius;
@@ -6098,6 +6099,10 @@ body {
   // generic classification
   .mobileButton {
     display: flex !important;
+  }
+
+  .desktopButton{
+    display: none !important;
   }
 
   .mobileHiddenElement {

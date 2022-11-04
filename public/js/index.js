@@ -6080,9 +6080,9 @@ let functionalityOptionsArray = [
     if (users.length < 1) return favContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'You have not created any favorites yet \n Select ✰ button on any user in All users section to add them here' }));
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
-      let messageButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-      let callButton = createElement({ elementType: 'button', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-      let videoButton = createElement({ elementType: 'button', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let messageButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+      let callButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
       let favButton = createElement({ elementType: 'button', title: 'Remove from favorites', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
 
       let actions = [
@@ -6100,9 +6100,9 @@ let functionalityOptionsArray = [
     if (users.length < 1) return mainContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users in your organization' }));
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
-      let messageButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-      let callButton = createElement({ elementType: 'button', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-      let videoButton = createElement({ elementType: 'button', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let messageButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
+      let callButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
       let favButton = createElement({ elementType: 'button', title: 'Add to favorites', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-star' })] })
 
       let actions = [

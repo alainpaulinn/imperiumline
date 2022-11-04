@@ -5040,6 +5040,9 @@ body {
   .mobileButton {
     display: flex !important;
   }
+  .desktopButton {
+    display: none !important;
+  }
   .mobileHiddenElement {
     display: none !important;
   }
