@@ -566,7 +566,7 @@ let functionalityOptionsArray = [
         }
       })
       let videoAgainButton = createElement({
-        elementType: 'button', title: 'Call again with video', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => {
+        elementType: 'button', class:'desktopButton', title: 'Call again with video', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => {
           call(logUpdate.callUniqueId, true, true, true, false, logUpdate.callId)
         }
       })
@@ -2385,7 +2385,7 @@ let functionalityOptionsArray = [
         if (selectedChat_name == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
         else chatTitleText = selectedChat_name;
         let groupCallButton = createElement({ elementType: 'button', title: 'Call conversation members by audio', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(roomID, true, false, false, true, null) } })
-        let groupVideoButton = createElement({ elementType: 'button', title: 'Call conversation members by audio', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(roomID, true, false, false, true, null) } })
+        let groupVideoButton = createElement({ elementType: 'button', class:'desktopButton', title: 'Call conversation members by video', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(roomID, true, false, false, true, null) } })
         let groupMoreButton = createElement({
           elementType: 'button', title: 'Show more about the conversation', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
             showChatDetails();
@@ -5226,7 +5226,7 @@ let functionalityOptionsArray = [
         elementType: 'div', class: 'universalCallButtons', childrenArray: [
           createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })], onclick: () => { initiateChat(userInfo.userID) } }),
           createElement({ elementType: 'button', title: 'Incitiate audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(userInfo.userID, true, false, false, false, null) } }),
-          createElement({ elementType: 'button', title: 'Initiate video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userInfo.userID, true, true, false, false, null) } })
+          createElement({ elementType: 'button', class:'desktopButton', title: 'Initiate video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userInfo.userID, true, true, false, false, null) } })
         ]
       })
       userSecondaryInfo.prepend(universalCallButtons)
