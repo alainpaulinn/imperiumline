@@ -2422,6 +2422,16 @@ body {
     overflow: hidden;
   }
 
+  .allUsersSearch{
+    padding: 1rem;
+    margin: 1rem;
+    background-color: var(--tertiaryBackground);
+    border-radius: var(--borderRadius);
+    outline: none;
+    color: var(--lightText);
+    border: none;
+  }
+
   .content{
     overflow-y: auto;
     margin: 1rem;
@@ -5819,6 +5829,10 @@ body {
               .listMember {
                 flex: 1;
               }
+            }
+
+            .delegatedByText{
+              padding: 0 1rem;
             }
 
             .userCompanyDiv {

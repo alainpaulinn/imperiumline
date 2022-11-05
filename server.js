@@ -212,7 +212,15 @@ io.on('connection', (socket) => {
       console.log('Removing favorite', serverFeedback)
       socket.emit('favoriteUsers', await getUserFavorites(id))
       socket.emit('allUsers', await getCompanyUsers(company_id))
-
+    })
+    socket.on('searchAllUsersFavorites', async (searchterm) => {
+      // let serverFeedback =  await removeFavourite(id, favoriteID)
+      // if(serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while removing the favorite.' }])
+      let users = await searchUsers(searchterm, id, company_id, true, 15)
+      //fill favorites and friends
+      // console.log('Removing favorite', serverFeedback)
+      // socket.emit('favoriteUsers', await getUserFavorites(id))
+      socket.emit('searchedAllUsers', users)
     })
 
     socket.on("chatProfilePictureDelete", async (roomID) => {
@@ -935,7 +943,7 @@ io.on('connection', (socket) => {
           let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)
           let eventsToSend = await getEvents(id, lastYear, nextYear);
           socket.emit('notificationUpdateCalendar', eventsToSend)
-          socket.emit('initialFillCalendar', eventsToSend)
+          socket.emit('updateCalendarWithSelectedDay', eventsToSend)
           for (let i = 0; i < inviteList.length; i++) {
             for (let j = 0; j < connectedUsers.length; j++) {
               if (connectedUsers[j].id == inviteList[i]) {
@@ -943,7 +951,7 @@ io.on('connection', (socket) => {
                 let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)
                 let userCalendar = await getEvents(connectedUsers[j].id, lastYear, nextYear)
                 socket.to(connectedUsers[j].socket.id).emit('notificationUpdateCalendar', userCalendar);
-                socket.to(connectedUsers[j].socket.id).emit('initialFillCalendar', userCalendar);
+                socket.to(connectedUsers[j].socket.id).emit('updateCalendarWithSelectedDay', userCalendar);
               }
             }
           }
@@ -958,14 +966,14 @@ io.on('connection', (socket) => {
       socket.emit('dayEvents', dateEvents)
     })
 
-    socket.on('initialFillCalendar', async (dateReceived) => {
-      let today = new Date()
-      let lastYear = new Date()
-      lastYear.setFullYear(today.getFullYear() - 1)
-      let nextYear = new Date()
-      nextYear.setFullYear(today.getFullYear() + 1)
-      socket.emit('initialFillCalendar', await getEvents(id, lastYear, nextYear))
-    })
+    // socket.on('updateCalendarWithSelectedDay', async (dateReceived) => {
+    //   let today = new Date()
+    //   let lastYear = new Date()
+    //   lastYear.setFullYear(today.getFullYear() - 1)
+    //   let nextYear = new Date()
+    //   nextYear.setFullYear(today.getFullYear() + 1)
+    //   socket.emit('updateCalendarWithSelectedDay', await getEvents(id, lastYear, nextYear))
+    // })
 
     socket.on('deleteEvent', async (eventId) => {
       let foundEvent = await getEventDetails(eventId)
@@ -985,7 +993,7 @@ io.on('connection', (socket) => {
         let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)
         let eventsToSend = await getEvents(id, lastYear, nextYear);
         socket.emit('notificationUpdateCalendar', eventsToSend)
-        socket.emit('initialFillCalendar', eventsToSend)
+        socket.emit('updateCalendarWithSelectedDay', eventsToSend)
 
         // foundEvent.Participants.forEach(async (participant) => {})
         for (let i = 0; i < foundEvent.Participants.length; i++) {
@@ -999,7 +1007,7 @@ io.on('connection', (socket) => {
               let _nextYear = new Date(); _nextYear.setFullYear(_todayYear + 1)
               let _eventsToSend = await getEvents(connectedUser.id, _lastYear, _nextYear)
               socket.to(connectedUser.socket.id).emit('notificationUpdateCalendar', _eventsToSend);
-              socket.to(connectedUser.socket.id).emit('initialFillCalendar', _eventsToSend)
+              socket.to(connectedUser.socket.id).emit('updateCalendarWithSelectedDay', _eventsToSend)
 
               console.log('event object', _eventsToSend, _todayYear, connectedUser.id, _lastYear, _nextYear)
             }

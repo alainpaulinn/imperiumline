@@ -2001,6 +2001,15 @@ body {
   border-radius: 15px;
   overflow: hidden;
 }
+.c-all_users_panel .allUsersSearch {
+  padding: 1rem;
+  margin: 1rem;
+  background-color: var(--tertiaryBackground);
+  border-radius: var(--borderRadius);
+  outline: none;
+  color: var(--lightText);
+  border: none;
+}
 .c-all_users_panel .content {
   overflow-y: auto;
   margin: 1rem;
@@ -4815,6 +4824,9 @@ body {
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer .delegatedByDiv .listMember {
   flex: 1;
+}
+.c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer .delegatedByText {
+  padding: 0 1rem;
 }
 .c-time-admin_panel .central-Options .adminPanelMainContent .managementDiv .managementDivBody .adminContainer .userCompanyDiv {
   display: flex;

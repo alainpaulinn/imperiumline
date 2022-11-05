@@ -566,7 +566,7 @@ let functionalityOptionsArray = [
         }
       })
       let videoAgainButton = createElement({
-        elementType: 'button', class:'desktopButton', title: 'Call again with video', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => {
+        elementType: 'button', class: 'desktopButton', title: 'Call again with video', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => {
           call(logUpdate.callUniqueId, true, true, true, false, logUpdate.callId)
         }
       })
@@ -940,12 +940,11 @@ let functionalityOptionsArray = [
                 { element: DoneByMessageButton, functionCall: () => { initiateChat(done_by.userID) } },
                 { element: DoneByCallButton, functionCall: () => { call(done_by.userID, true, false, false, false, null) } }
               ]
-
+              let delegatedByText = createElement({ elementType: 'div', class: 'delegatedByText', textContent: 'Delegated by:' })
               let delegatedByDiv = createElement({
                 elementType: 'div', class: 'delegatedByDiv', childrenArray: [
-                  createElement({ elementType: 'div', class: 'delegatedByLabel', textContent: 'Delegated by:' }),
                   userForAttendanceList(done_by, DoneByActions),
-                  createElement({ elementType: 'div', class: 'delegatedByLabel', textContent: 'On: ' + done }),
+                  createElement({ elementType: 'div', class: 'delegatedByLabel desktopButton', textContent: 'Date: ' + done }),
                 ]
               })
               let userCompanyDiv = createElement({
@@ -955,7 +954,7 @@ let functionalityOptionsArray = [
               })
 
               // finally
-              let adminContainer = createElement({ elementType: 'div', class: 'adminContainer', childrenArray: [userCompanyDiv, delegatedByDiv] })
+              let adminContainer = createElement({ elementType: 'div', class: 'adminContainer', childrenArray: [userCompanyDiv, delegatedByText, delegatedByDiv] })
               return adminContainer
             })
             return contentElements
@@ -1010,12 +1009,12 @@ let functionalityOptionsArray = [
                 { element: DoneByMessageButton, functionCall: () => { initiateChat(done_by.userID) } },
                 { element: DoneByCallButton, functionCall: () => { call(done_by.userID, true, false, false, false, null) } }
               ]
-
+              let delegatedByText = createElement({ elementType: 'div', class: 'delegatedByText', textContent: 'Delegated by:' })
               let delegatedByDiv = createElement({
                 elementType: 'div', class: 'delegatedByDiv', childrenArray: [
-                  createElement({ elementType: 'div', class: 'delegatedByLabel', textContent: 'Delegated by:' }),
+
                   userForAttendanceList(done_by, DoneByActions),
-                  createElement({ elementType: 'div', class: 'delegatedByLabel', textContent: 'On: ' + done }),
+                  createElement({ elementType: 'div', class: 'delegatedByLabel desktopButton', textContent: 'Date: ' + done }),
                 ]
               })
 
@@ -1023,6 +1022,7 @@ let functionalityOptionsArray = [
               let adminContainer = createElement({
                 elementType: 'div', class: 'adminContainer', childrenArray: [
                   userForAttendanceList(admin, actions),
+                  delegatedByText,
                   delegatedByDiv
                 ]
               })
@@ -1078,74 +1078,79 @@ let functionalityOptionsArray = [
             let icon = 'bx bxs-check-shield'
             let title = 'Manage Admins'
             let headerSearchDiv = createElement({ elementType: 'input', textContent: title, placeHolder: 'Search - ' + title })
-            let actionsPerItem = [{
-              actionIcon: 'bx bxs-user-plus', actionFunction: () => {
+            let actionsPerItem = [
+              {
+                actionIcon: 'bx bxs-user-plus', actionTitle: 'Create new Admin User', actionFunction: () => {
 
-                // -------------------- Creating a new admin - on popup;
-                let questionBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please select the Company for which you want to make an Admin.' })
+                  // -------------------- Creating a new admin - on popup;
+                  let questionBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please select the Company for which you want to make an Admin.' })
 
-                let chooseLabel = createElement({ elementType: 'label', for: 'choose' + 'chooseNew', textContent: 'choose' })
-                let chooseInput = createElement({ elementType: 'button', id: 'choose' + 'chooseNew', placeHolder: 'choose', title: 'choose' })
-                let chooseBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chooseLabel, chooseInput] })
+                  let chooseLabel = createElement({ elementType: 'label', for: 'choose' + 'chooseNew', textContent: 'choose' })
+                  let chooseInput = createElement({ elementType: 'button', id: 'choose' + 'chooseNew', placeHolder: 'choose', title: 'choose' })
+                  let chooseBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chooseLabel, chooseInput] })
 
-                let nameLabel = createElement({ elementType: 'label', for: 'name' + 'chooseNew', textContent: 'Name' })
-                let nameInput = createElement({ elementType: 'input', id: 'name' + 'chooseNew', placeHolder: 'Name' })
-                let nameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [nameLabel, nameInput] })
+                  let nameLabel = createElement({ elementType: 'label', for: 'name' + 'chooseNew', textContent: 'Name' })
+                  let nameInput = createElement({ elementType: 'input', id: 'name' + 'chooseNew', placeHolder: 'Name' })
+                  let nameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [nameLabel, nameInput] })
 
-                let surnameLabel = createElement({ elementType: 'label', for: 'surname' + 'chooseNew', textContent: 'Surname' })
-                let surnameInput = createElement({ elementType: 'input', id: 'surname' + 'chooseNew', placeHolder: 'Surname' })
-                let surnameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [surnameLabel, surnameInput] })
+                  let surnameLabel = createElement({ elementType: 'label', for: 'surname' + 'chooseNew', textContent: 'Surname' })
+                  let surnameInput = createElement({ elementType: 'input', id: 'surname' + 'chooseNew', placeHolder: 'Surname' })
+                  let surnameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [surnameLabel, surnameInput] })
 
-                let emailLabel = createElement({ elementType: 'label', for: 'email' + 'chooseNew', textContent: 'email' })
-                let emailInput = createElement({ elementType: 'input', id: 'email' + 'chooseNew', placeHolder: 'email' })
-                let emailBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [emailLabel, emailInput] })
+                  let emailLabel = createElement({ elementType: 'label', for: 'email' + 'chooseNew', textContent: 'email' })
+                  let emailInput = createElement({ elementType: 'input', id: 'email' + 'chooseNew', placeHolder: 'email' })
+                  let emailBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [emailLabel, emailInput] })
 
-                let roleBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'The Position will automatically be set to the Company Administrator.' })
+                  let roleBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'The Position will automatically be set to the Company Administrator.' })
 
-                let passwordLabel = createElement({ elementType: 'label', for: 'password' + 'chooseNew', textContent: 'Password' })
-                let passwordInput = createElement({ elementType: 'input', id: 'password' + 'chooseNew', placeHolder: 'Password' })
-                let passwordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [passwordLabel, passwordInput] })
+                  let passwordLabel = createElement({ elementType: 'label', for: 'password' + 'chooseNew', textContent: 'Password' })
+                  let passwordInput = createElement({ elementType: 'input', id: 'password' + 'chooseNew', placeHolder: 'Password' })
+                  let passwordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [passwordLabel, passwordInput] })
 
-                let submitButton = createElement({ elementType: 'button', class: 'editBlockButtons', textContent: 'Create Admin', title: 'Create Admin' })
-                submitButton.disabled = true;
+                  let submitButton = createElement({ elementType: 'button', class: 'editBlockButtons', textContent: 'Create Admin', title: 'Create Admin' })
+                  submitButton.disabled = true;
 
-                let selectedCompanyId;
-                goodselect(chooseInput, {
-                  availableOptions: savedCompanies,
-                  placeHolder: "Select Company",
-                  selectorWidth: "100%",
-                  onOptionChange: (option) => {
-                    if (option != null) {
-                      submitButton.disabled = false;
-                      selectedCompanyId = option.id
+                  let selectedCompanyId;
+                  goodselect(chooseInput, {
+                    availableOptions: savedCompanies,
+                    placeHolder: "Select Company",
+                    selectorWidth: "100%",
+                    onOptionChange: (option) => {
+                      if (option != null) {
+                        submitButton.disabled = false;
+                        selectedCompanyId = option.id
+                      }
+                      else {
+                        submitButton.disabled = true;
+                      }
                     }
-                    else {
-                      submitButton.disabled = true;
+                  })
+
+                  let icon = 'bx bxs-user-plus'
+                  let title = 'Create administrator Account'
+                  let contentElementsArray = [questionBlock, chooseBlock, nameBlock, surnameBlock, emailBlock, roleBlock, passwordBlock]
+                  let actions = [
+                    {
+                      element: submitButton, functionCall: () => {
+                        socket.emit('superManageCreateAdmin', { companyId: selectedCompanyId, adminName: nameInput.value, adminSurname: surnameInput.value, adminEmail: emailInput.value, adminPassword: passwordInput.value })
+                        console.log('superManageCreateAdmin', { companyId: selectedCompanyId, adminName: nameInput.value, adminSurname: surnameInput.value, adminEmail: emailInput.value, adminPassword: passwordInput.value })
+                      }
                     }
-                  }
-                })
+                  ]
+                  let constraints = { icon, title, contentElementsArray, actions }
+                  createInScreenPopup(constraints).then(editPopup => {
 
-                let icon = 'bx bxs-user-plus'
-                let title = 'Create administrator Account'
-                let contentElementsArray = [questionBlock, chooseBlock, nameBlock, surnameBlock, emailBlock, roleBlock, passwordBlock]
-                let actions = [
-                  {
-                    element: submitButton, functionCall: () => {
-                      socket.emit('superManageCreateAdmin', { companyId: selectedCompanyId, adminName: nameInput.value, adminSurname: surnameInput.value, adminEmail: emailInput.value, adminPassword: passwordInput.value })
-                      console.log('superManageCreateAdmin', { companyId: selectedCompanyId, adminName: nameInput.value, adminSurname: surnameInput.value, adminEmail: emailInput.value, adminPassword: passwordInput.value })
-                    }
-                  }
-                ]
-                let constraints = { icon, title, contentElementsArray, actions }
-                createInScreenPopup(constraints).then(editPopup => {
+                    submitButton.addEventListener('click', () => {
+                      editPopup.closePopup();
+                    });
+                  })
 
-                  submitButton.addEventListener('click', () => {
-                    editPopup.closePopup();
-                  });
-                })
-
+                }
+              },
+              {
+                actionIcon: 'bx bxs-shield-plus', actionTitle: 'Make an existing user a primary admin', actionFunction: () => { }
               }
-            }]
+            ]
 
             let contentElements = SuperAdmin_createAdminMgtBodyElements(admins)
             headerSearchDiv.addEventListener('input', () => {
@@ -1162,77 +1167,84 @@ let functionalityOptionsArray = [
             let icon = 'bx bxs-check-shield'
             let title = 'Manage Super Admins'
             let headerSearchDiv = createElement({ elementType: 'input', textContent: title, placeHolder: 'Search - ' + title })
-            let actionsPerItem = [{
-              actionIcon: 'bx bxs-user-plus', actionFunction: () => {
+            let actionsPerItem = [
+              {
+                actionIcon: 'bx bxs-user-plus', actionTitle: 'Create new Super Admin User', actionFunction: () => {
 
-                // -------------------- Creating a new admin - on popup;
-                let questionBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please select the Company for which you want to make an Admin.' })
+                  // -------------------- Creating a new admin - on popup;
+                  let questionBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please select the Company for which you want to make an Admin.' })
 
-                let chooseLabel = createElement({ elementType: 'label', for: 'choose' + 'chooseNew', textContent: 'choose' })
-                let chooseInput = createElement({ elementType: 'button', id: 'choose' + 'chooseNew', placeHolder: 'choose', title: 'choose' })
-                let chooseBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chooseLabel, chooseInput] })
+                  let chooseLabel = createElement({ elementType: 'label', for: 'choose' + 'chooseNew', textContent: 'choose' })
+                  let chooseInput = createElement({ elementType: 'button', id: 'choose' + 'chooseNew', placeHolder: 'choose', title: 'choose' })
+                  let chooseBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chooseLabel, chooseInput] })
 
-                let nameLabel = createElement({ elementType: 'label', for: 'name' + 'chooseNew', textContent: 'Name' })
-                let nameInput = createElement({ elementType: 'input', id: 'name' + 'chooseNew', placeHolder: 'Name' })
-                let nameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [nameLabel, nameInput] })
+                  let nameLabel = createElement({ elementType: 'label', for: 'name' + 'chooseNew', textContent: 'Name' })
+                  let nameInput = createElement({ elementType: 'input', id: 'name' + 'chooseNew', placeHolder: 'Name' })
+                  let nameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [nameLabel, nameInput] })
 
-                let surnameLabel = createElement({ elementType: 'label', for: 'surname' + 'chooseNew', textContent: 'Surname' })
-                let surnameInput = createElement({ elementType: 'input', id: 'surname' + 'chooseNew', placeHolder: 'Surname' })
-                let surnameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [surnameLabel, surnameInput] })
+                  let surnameLabel = createElement({ elementType: 'label', for: 'surname' + 'chooseNew', textContent: 'Surname' })
+                  let surnameInput = createElement({ elementType: 'input', id: 'surname' + 'chooseNew', placeHolder: 'Surname' })
+                  let surnameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [surnameLabel, surnameInput] })
 
-                let emailLabel = createElement({ elementType: 'label', for: 'email' + 'chooseNew', textContent: 'email' })
-                let emailInput = createElement({ elementType: 'input', id: 'email' + 'chooseNew', placeHolder: 'email' })
-                let emailBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [emailLabel, emailInput] })
+                  let emailLabel = createElement({ elementType: 'label', for: 'email' + 'chooseNew', textContent: 'email' })
+                  let emailInput = createElement({ elementType: 'input', id: 'email' + 'chooseNew', placeHolder: 'email' })
+                  let emailBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [emailLabel, emailInput] })
 
-                let roleBlock = createElement({
-                  elementType: 'div', class: 'editBlock',
-                  textContent: 'The Position will automatically be set to the Company Administrator.'
-                })
+                  let roleBlock = createElement({
+                    elementType: 'div', class: 'editBlock',
+                    textContent: 'The Position will automatically be set to the Company Administrator.'
+                  })
 
-                let passwordLabel = createElement({ elementType: 'label', for: 'password' + 'chooseNew', textContent: 'Password' })
-                let passwordInput = createElement({ elementType: 'input', id: 'password' + 'chooseNew', placeHolder: 'Password' })
-                let passwordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [passwordLabel, passwordInput] })
+                  let passwordLabel = createElement({ elementType: 'label', for: 'password' + 'chooseNew', textContent: 'Password' })
+                  let passwordInput = createElement({ elementType: 'input', id: 'password' + 'chooseNew', placeHolder: 'Password' })
+                  let passwordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [passwordLabel, passwordInput] })
 
-                let submitButton = createElement({ elementType: 'button', class: 'editBlockButtons', textContent: 'Create Admin', title: 'Create Admin' })
-                submitButton.disabled = true;
+                  let submitButton = createElement({ elementType: 'button', class: 'editBlockButtons', textContent: 'Create Admin', title: 'Create Admin' })
+                  submitButton.disabled = true;
 
-                let selectedCompanyId;
-                goodselect(chooseInput, {
-                  availableOptions: savedCompanies,
-                  placeHolder: "Select Company",
-                  selectorWidth: "100%",
-                  onOptionChange: (option) => {
-                    if (option != null) {
-                      submitButton.disabled = false;
-                      selectedCompanyId = option.id
+                  let selectedCompanyId;
+                  goodselect(chooseInput, {
+                    availableOptions: savedCompanies,
+                    placeHolder: "Select Company",
+                    selectorWidth: "100%",
+                    onOptionChange: (option) => {
+                      if (option != null) {
+                        submitButton.disabled = false;
+                        selectedCompanyId = option.id
+                      }
+                      else {
+                        submitButton.disabled = true;
+                      }
                     }
-                    else {
-                      submitButton.disabled = true;
+                  })
+
+                  let icon = 'bx bxs-user-plus'
+                  let title = 'Create Super Admin Account'
+                  let contentElementsArray = [questionBlock, chooseBlock, nameBlock, surnameBlock, emailBlock, roleBlock, passwordBlock]
+                  let actions = [
+                    {
+                      element: submitButton, functionCall: () => {
+                        socket.emit('superManageCreateSuperAdmin', { companyId: selectedCompanyId, adminName: nameInput.value, adminSurname: surnameInput.value, adminEmail: emailInput.value, adminPassword: passwordInput.value })
+                        console.log('superManageCreateSuperAdmin', { companyId: selectedCompanyId, adminName: nameInput.value, adminSurname: surnameInput.value, adminEmail: emailInput.value, adminPassword: passwordInput.value })
+                      }
                     }
-                  }
-                })
+                  ]
+                  let constraints = { icon, title, contentElementsArray, actions }
+                  createInScreenPopup(constraints).then(editPopup => {
 
-                let icon = 'bx bxs-user-plus'
-                let title = 'Create Super Admin Account'
-                let contentElementsArray = [questionBlock, chooseBlock, nameBlock, surnameBlock, emailBlock, roleBlock, passwordBlock]
-                let actions = [
-                  {
-                    element: submitButton, functionCall: () => {
-                      socket.emit('superManageCreateSuperAdmin', { companyId: selectedCompanyId, adminName: nameInput.value, adminSurname: surnameInput.value, adminEmail: emailInput.value, adminPassword: passwordInput.value })
-                      console.log('superManageCreateSuperAdmin', { companyId: selectedCompanyId, adminName: nameInput.value, adminSurname: surnameInput.value, adminEmail: emailInput.value, adminPassword: passwordInput.value })
-                    }
-                  }
-                ]
-                let constraints = { icon, title, contentElementsArray, actions }
-                createInScreenPopup(constraints).then(editPopup => {
+                    submitButton.addEventListener('click', () => {
+                      editPopup.closePopup();
+                    });
+                  })
 
-                  submitButton.addEventListener('click', () => {
-                    editPopup.closePopup();
-                  });
-                })
-
+                }
+              },
+              {
+                actionIcon: 'bx bxs-shield-plus', actionTitle: 'Make an existing user a super admin', actionFunction: () => {
+                  
+                }
               }
-            }]
+            ]
             let contentElements = SuperAdmin_createSuperAdminsMgtBodyElement(superAdmins)
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('superManageSuperAdminsSearch', { searchTerm: headerSearchDiv.value });
@@ -1295,6 +1307,7 @@ let functionalityOptionsArray = [
 
             let actionButtonArray = actionsPerItem.map(action => {
               let actionButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: action.actionIcon })], onclick: action.actionFunction })
+              if(action.actionTitle) actionButton.title = action.actionTitle;
               return actionButton
             })
             let actionButtonsDiv = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: actionButtonArray })
@@ -1512,11 +1525,12 @@ let functionalityOptionsArray = [
                 { element: DoneByCallButton, functionCall: () => { call(done_by.userID, true, false, false, false, null) } }
               ]
 
+              let delegatedByText = createElement({ elementType: 'div', class: 'delegatedByText', textContent: 'Delegated by:' })
               let delegatedByDiv = createElement({
                 elementType: 'div', class: 'delegatedByDiv', childrenArray: [
-                  createElement({ elementType: 'div', class: 'delegatedByLabel', textContent: 'Delegated by:' }),
+
                   userForAttendanceList(done_by, DoneByActions),
-                  createElement({ elementType: 'div', class: 'delegatedByLabel', textContent: 'On: ' + done }),
+                  createElement({ elementType: 'div', class: 'delegatedByLabel desktopButton', textContent: 'Date: ' + done }),
                 ]
               })
 
@@ -1524,6 +1538,7 @@ let functionalityOptionsArray = [
               let adminContainer = createElement({
                 elementType: 'div', class: 'adminContainer', childrenArray: [
                   userForAttendanceList(admin, actions),
+                  delegatedByText,
                   delegatedByDiv
                 ]
               })
@@ -1803,7 +1818,7 @@ let functionalityOptionsArray = [
 
           function createmgtPanel(ConfigObj) {
             let { icon, title, headerSearchDiv, actionsPerItem, contentElements } = ConfigObj
-            // actionsPerItem is an array of {actionIcon, actionFunction}
+            // actionsPerItem is an array of {actionIcon, actionTitle, actionFunction}
             managementDiv.textContent = ''
             let geaderText = createElement({
               elementType: 'div', class: 'headerText', childrenArray: [
@@ -1814,6 +1829,7 @@ let functionalityOptionsArray = [
 
             let actionButtonArray = actionsPerItem.map(action => {
               let actionButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: action.actionIcon })], onclick: action.actionFunction })
+              if(action.actionTitle) actionButton.title = action.actionTitle;
               return actionButton
             })
             let actionButtonsDiv = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: actionButtonArray })
@@ -2385,7 +2401,7 @@ let functionalityOptionsArray = [
         if (selectedChat_name == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
         else chatTitleText = selectedChat_name;
         let groupCallButton = createElement({ elementType: 'button', title: 'Call conversation members by audio', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(roomID, true, false, false, true, null) } })
-        let groupVideoButton = createElement({ elementType: 'button', class:'desktopButton', title: 'Call conversation members by video', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(roomID, true, false, false, true, null) } })
+        let groupVideoButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Call conversation members by video', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(roomID, true, false, false, true, null) } })
         let groupMoreButton = createElement({
           elementType: 'button', title: 'Show more about the conversation', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
             showChatDetails();
@@ -2876,7 +2892,7 @@ let functionalityOptionsArray = [
     searchPeople.forEach(userInfo => {
       let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
       let audioButton = createElement({ elementType: 'button', title: 'Initiate audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-      let videoButton = createElement({ elementType: 'button', title: 'Initiate video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let videoButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
       let actions = [
         { element: chatButton, functionCall: () => { initiateChat(userInfo.userID) } },
         { element: audioButton, functionCall: () => { call(userInfo.userID, true, false, false, false, null) } },
@@ -5226,7 +5242,7 @@ let functionalityOptionsArray = [
         elementType: 'div', class: 'universalCallButtons', childrenArray: [
           createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })], onclick: () => { initiateChat(userInfo.userID) } }),
           createElement({ elementType: 'button', title: 'Incitiate audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(userInfo.userID, true, false, false, false, null) } }),
-          createElement({ elementType: 'button', class:'desktopButton', title: 'Initiate video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userInfo.userID, true, true, false, false, null) } })
+          createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })], onclick: () => { call(userInfo.userID, true, true, false, false, null) } })
         ]
       })
       userSecondaryInfo.prepend(universalCallButtons)
@@ -5326,29 +5342,16 @@ let functionalityOptionsArray = [
       tone: 'notification'
     })
   }))
-  socket.on('initialFillCalendar', (calendarEventObj => {
+  socket.on('updateCalendarWithSelectedDay', (calendarEventObj => {
     calendarObject = calendarEventObj
-    if (selectedCalendarDate == null) { // if we are on an all events screen
-      console.log('loaded object - else', calendarObject)
-      let deleteOldEvents = true;
-      for (const key in calendarEventObj) {
-        if (Object.hasOwnProperty.call(calendarEventObj, key)) {
-          const dayEventsArray = calendarEventObj[key];
-          if (dayEventsArray.length > 0) {
-            eventSectionObject.addDayOnScheduleList(key, dayEventsArray, deleteOldEvents)
-            deleteOldEvents = false; // done in order to clear the container before filling
-          }
-        }
-      }
-    }
-    else { // if we are on a specific day events page
-      console.log('loaded object - null', calendarObject)
+    if (selectedCalendarDate != null) { // if we are on an all events screen
       for (const key in calendarEventObj) {
         if (Object.hasOwnProperty.call(calendarEventObj, key)) {
           const dayEventsArray = calendarEventObj[key];
           if (key + '' == selectedCalendarDate) {
             if (dayEventsArray.length > 0) {
               eventSectionObject.displayDayOnlyOnSchedule(key, dayEventsArray)
+
             }
           }
         }
@@ -5437,14 +5440,9 @@ let functionalityOptionsArray = [
     // main schedule List
     let gotoCalendatButton = createElement({ elementType: 'button', title: 'Go to calendar', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-calendar' })], onclick: showSelectionPanel })
     let mainScheduleListTitle = createElement({ elementType: 'div', class: 'mainScheduleListTitle', textContent: 'Scheduled Events' })
-    let allEventsBtn = createElement({
-      elementType: 'button', class: 'allEventsBtn', textContent: 'Show All', onclick: () => {
-        selectedCalendarDate == null
-        socket.emit('initialFillCalendar', {})
-      }
-    })
+
     let newEventBtn = createElement({
-      elementType: 'button', title: 'Create a new event', class: 'allEventsBtn', textContent: 'New + ', onclick: () => {
+      elementType: 'button', title: 'Create a new event', class: 'allEventsBtn', textContent: 'Create a New event ', onclick: () => {
         // show a popup to create a new event
 
         let submitButton = createElement({ elementType: 'button', textContent: 'Create Event' })
@@ -5723,11 +5721,14 @@ let functionalityOptionsArray = [
       }
     })
 
-    let ListHeader = createElement({ elementType: 'div', class: 'listHeader', childrenArray: [gotoCalendatButton, mainScheduleListTitle, allEventsBtn, newEventBtn] })
+    let ListHeader = createElement({ elementType: 'div', class: 'listHeader', childrenArray: [gotoCalendatButton, mainScheduleListTitle, newEventBtn] })
 
     let eventsContainer = createElement({ elementType: 'div', class: 'eventsContainer', childrenArray: [] })
     let mainScheduleList = createElement({ elementType: 'div', class: 'mainScheduleList', childrenArray: [ListHeader, eventsContainer] })
-    let scheduleDetailsSection = createElement({ elementType: 'div', class: 'scheduleDetailsSection mobileHiddenElement tabletHiddenElement', childrenArray: [createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any event to see its more details here' })] })
+    let scheduleDetailsSection = createElement({
+      elementType: 'div', class: 'scheduleDetailsSection mobileHiddenElement tabletHiddenElement',
+      childrenArray: [createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any event to see its more details here' })]
+    })
     let schedule_container = createElement({ elementType: 'div', class: 'schedule-container', childrenArray: [selectionPanel, mainScheduleList, scheduleDetailsSection] })
     time_scheduling_panel.append(schedule_container)
 
@@ -5816,6 +5817,9 @@ let functionalityOptionsArray = [
       else eventsContainer.appendChild(
         createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No Event scheduled on ' + new Date(key).toString('YYYY-MM-dd').substring(0, 16) })
       )
+      showMainScheduleList() // display the main schedule list if we are on tablet or mobile
+      scheduleDetailsSection.textContent = '' // clear the already displayed event
+      scheduleDetailsSection.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any event to see its more details here' }))
     }
 
     function makeDay(dayKey, dayEventsArray) {
@@ -5832,7 +5836,7 @@ let functionalityOptionsArray = [
         })
         let scheduleBody = createElement({ elementType: 'div', class: 'scheduleBody', textContent: details })
         let sheduleTimeInFull = createElement({ elementType: 'div', class: 'scheduleTimeInFull', textContent: startTime + ' - ' + endTime })
-        let organizer = userForAttendanceList(owner, [
+        let organizer = userForAttendanceList(owner, owner.userID == mySavedID ? [] : [
           {
             element: createElement({ elementType: 'button', title: 'Audio call to the Event organizer', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }),
             functionCall: () => { call(owner.userID, true, false, false, false, null) }
@@ -6070,8 +6074,10 @@ let functionalityOptionsArray = [
   let mainI = createElement({ elementType: 'i', class: 'bx bxs-group' })
   let mainP = createElement({ elementType: 'p', textContent: 'All Users in Organization' })
   let mainHeader = createElement({ elementType: 'div', class: 'header', childrenArray: [mainI, mainP] })
+  let allUsersSearch = createElement({ elementType: 'input', class: 'allUsersSearch', type: 'text', placeHolder: 'Search any user in your organization' })
   let mainContent = createElement({ elementType: 'div', class: 'content' })
-  let allUsersMain = createElement({ elementType: 'div', class: 'allUsersMain', childrenArray: [mainHeader, mainContent] })
+  let allUsersMain = createElement({ elementType: 'div', class: 'allUsersMain', childrenArray: [mainHeader, allUsersSearch, mainContent] })
+  allUsersSearch.addEventListener('input', () => { socket.emit('searchAllUsersFavorites', allUsersSearch.value) })
   all_users_panel.appendChild(allUsersFavourites)
   all_users_panel.appendChild(allUsersMain)
 
@@ -6091,13 +6097,21 @@ let functionalityOptionsArray = [
         { element: videoButton, functionCall: () => { call(user.userID, true, true, false, false, null); showCallListSection(); } },
         { element: favButton, functionCall: () => { socket.emit('removeFavourite', user.userID) } },
       ]
+      if (user.userID == mySavedID) actions = [];
       let userDiv = userForAttendanceList(user, actions)
       favContent.appendChild(userDiv)
     }
   })
   socket.on('allUsers', (users) => {
+    displayAllUsers(users, false)
+  })
+  socket.on('searchedAllUsers', (users) => {
+    displayAllUsers(users, true)
+  })
+  function displayAllUsers(users, fromSearch) {
     mainContent.textContent = ''
-    if (users.length < 1) return mainContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users in your organization' }));
+    if (users.length < 1 && fromSearch == false) return mainContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users in your organization' }));
+    if (users.length < 1 && fromSearch == true) return mainContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No such users found in your organization' }));
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
       let messageButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
@@ -6111,10 +6125,11 @@ let functionalityOptionsArray = [
         { element: videoButton, functionCall: () => { call(user.userID, true, true, false, false, null); showCallListSection(); } },
         { element: favButton, functionCall: () => { socket.emit('addFavourite', user.userID) } },
       ]
+      if (user.userID == mySavedID) actions = [];
       let userDiv = userForAttendanceList(user, actions)
       mainContent.appendChild(userDiv)
     }
-  })
+  }
 })(functionalityOptionsArray);
 let todaysDatedate = new Date('2015-3-25 12:45:00');
 console.log("_________________FDSDFSDF__________________-", todaysDatedate.toISOString('YYY-MM-dd'))//.substring(0, 10))
