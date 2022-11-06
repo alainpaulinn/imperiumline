@@ -199,27 +199,22 @@ io.on('connection', (socket) => {
     })
 
     socket.on('addFavourite', async (favoriteID) => {
-      let serverFeedback =  await addFavourite(id, favoriteID)
-      if(serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while Adding the favorite.' }])
+      let serverFeedback = await addFavourite(id, favoriteID)
+      if (serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while Adding the favorite.' }])
       //fill favorites and friends
       socket.emit('favoriteUsers', await getUserFavorites(id))
       socket.emit('allUsers', await getCompanyUsers(company_id))
     })
     socket.on('removeFavourite', async (favoriteID) => {
-      let serverFeedback =  await removeFavourite(id, favoriteID)
-      if(serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while removing the favorite.' }])
+      let serverFeedback = await removeFavourite(id, favoriteID)
+      if (serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while removing the favorite.' }])
       //fill favorites and friends
       console.log('Removing favorite', serverFeedback)
       socket.emit('favoriteUsers', await getUserFavorites(id))
       socket.emit('allUsers', await getCompanyUsers(company_id))
     })
     socket.on('searchAllUsersFavorites', async (searchterm) => {
-      // let serverFeedback =  await removeFavourite(id, favoriteID)
-      // if(serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while removing the favorite.' }])
       let users = await searchUsers(searchterm, id, company_id, true, 15)
-      //fill favorites and friends
-      // console.log('Removing favorite', serverFeedback)
-      // socket.emit('favoriteUsers', await getUserFavorites(id))
       socket.emit('searchedAllUsers', users)
     })
 
@@ -1211,7 +1206,11 @@ io.on('connection', (socket) => {
     socket.on('superManageAdmins', async () => {
       let adminAccess = await getSuperadminAccess(id);
       if (adminAccess != true) return console.log('user: ' + id + ' is not admin, hence cannot get Admin requestSuperAdminNumbers info')
-      socket.emit('superManageAdmins', await getAllPrimaryAdmins())
+      socket.emit('superManageAdmins', {
+        admins: await getAllPrimaryAdmins(),
+        allUsers: await getAllimperiumlineUsers(),
+        allcompanies: await getAllCompanies(),
+      })
     })
     socket.on('superManageSuperAdmins', async () => {
       let adminAccess = await getSuperadminAccess(id);
@@ -2528,6 +2527,20 @@ function getAllPrimaryAdmins() {
     })
   })
 }
+function getAllimperiumlineUsers() {
+  return new Promise((resolve, reject) => {
+    db.query('SELECT `id` FROM `user`ORDER BY name ASC, surname ASC', [], async (err, rows) => {
+      if (err) reject(err)
+      resolve(
+        Promise.all(
+          rows.map(async user => {
+            return await getUserInfo(user.id)
+          })
+        )
+      )
+    })
+  })
+}
 function getAllSuperAdmins() {
   return new Promise((resolve, reject) => {
     db.query('SELECT `id`, `admin_id`, `done_by`, `registration_date` FROM `superadmins`', [], async (err, rows) => {
@@ -2772,7 +2785,7 @@ function addFavourite(favOwnerID, favoriteID) {
         resolve({ type: 'negative', message: 'An error occurred while adding the user to favorites.' });
         return
       }
-      resolve({ type: 'positive', message: 'Favorite added successfully.'})
+      resolve({ type: 'positive', message: 'Favorite added successfully.' })
     })
   })
 }
@@ -2784,7 +2797,7 @@ function removeFavourite(favOwnerID, favoriteID) {
         resolve({ type: 'negative', message: 'An error occurred while removing the user from favorites.' });
         return
       }
-      resolve({ type: 'positive', message: 'Favorite removed successfully.'})
+      resolve({ type: 'positive', message: 'Favorite removed successfully.' })
     })
   })
 }

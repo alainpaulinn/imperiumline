@@ -14,7 +14,7 @@ const goodselect = ($parentElement, options) => {
         $container = document.createElement('div')
         $container.classList.add('goodselect')
         $container.setAttribute("tabindex", 0)
-        
+
         $selectedValue = document.createElement('div')
         $selectedValue.classList.add('selected-value')
         $selectedValue.style.width = $selectorWidth;
@@ -59,7 +59,7 @@ const goodselect = ($parentElement, options) => {
         if (selectedOption == undefined) {
             $selectedValue.innerText = placeholder;
             if (!isInitialSelect) options.onOptionChange(selectedOption);
-            console.warn('The indicated selectedOption:',selectedOptionId ,' was not found, thus the placeholder was shown instead')
+            console.warn('The indicated selectedOption:', selectedOptionId, ' was not found, thus the placeholder was shown instead')
         }
         else {
             $selectedValue.innerText = selectedOption.name;
@@ -88,4 +88,6 @@ const goodselect = ($parentElement, options) => {
     setupDomElement();
     setSelectedOption(options.selectedOptionId, true);
     initializeListeners();
+
+    return { refreshComponents: setupDomElement }
 }

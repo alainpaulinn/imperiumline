@@ -659,6 +659,10 @@ let functionalityOptionsArray = [
     window.location.href = destination;
   });
   socket.on('serverFeedback', function (feedback) {
+    displayServerError(feedback)
+  })
+
+  function displayServerError(feedback) {
     let contentElementsArray = feedback.map(feedbackObj => {
       let type = feedbackObj.type == 'positive' ? 'Success' : 'Failure'
       let blockClass = feedbackObj.type == 'positive' ? 'positiveFeedback' : 'negativeFeedback'
@@ -677,7 +681,7 @@ let functionalityOptionsArray = [
     createInScreenPopup(constraints).then(editPopup => {
       okButton.addEventListener('click', editPopup.closePopup)
     })
-  })
+  }
 
   socket.on('myId', function (myInformation) {
     if (myInfoReceived == true) return;
@@ -1071,10 +1075,20 @@ let functionalityOptionsArray = [
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
           })
-          socket.on('superManageAdmins', admins => {
+          socket.on('superManageAdmins', result => {
+            let admins = result.admins
+            let allILUsers = result.allUsers.map(user => {
+              return {
+                userID: user.userID,
+                id: user.userID,
+                name: user.name + ' ' + user.surname,
+                company: user.company
+              }
+            })
+            let allcompanies = result.allcompanies
             console.log('superManageAdmins', admins)
             savedAdmins = admins
-
+            // let allUsers = 
             let icon = 'bx bxs-check-shield'
             let title = 'Manage Admins'
             let headerSearchDiv = createElement({ elementType: 'input', textContent: title, placeHolder: 'Search - ' + title })
@@ -1112,7 +1126,7 @@ let functionalityOptionsArray = [
 
                   let selectedCompanyId;
                   goodselect(chooseInput, {
-                    availableOptions: savedCompanies,
+                    availableOptions: allcompanies,
                     placeHolder: "Select Company",
                     selectorWidth: "100%",
                     onOptionChange: (option) => {
@@ -1147,9 +1161,80 @@ let functionalityOptionsArray = [
 
                 }
               },
-              {
-                actionIcon: 'bx bxs-shield-plus', actionTitle: 'Make an existing user a primary admin', actionFunction: () => { }
-              }
+              /*{
+                actionIcon: 'bx bxs-shield-plus', actionTitle: 'Make an existing user a primary admin', actionFunction: () => {
+                  let questionBlock_company = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please select the Company for which you want to make a primary Admin.' })
+
+                  let chooseLabel_company = createElement({ elementType: 'label', for: 'choose' + 'chooseNew_company', textContent: 'choose' })
+                  let chooseInput_company = createElement({ elementType: 'button', id: 'choose' + 'chooseNew_company', placeHolder: 'choose', title: 'choose' })
+                  let chooseBlock_company = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chooseLabel_company, chooseInput_company] })
+
+                  let questionBlock_user = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please select the Company for which you want to make a primary Admin.' })
+                  let chooseLabel_user = createElement({ elementType: 'label', for: 'choose' + 'chooseNew_user', textContent: 'choose' })
+                  let chooseInput_user = createElement({ elementType: 'button', id: 'choose' + 'chooseNew_user', placeHolder: 'choose', title: 'choose' })
+                  let chooseBlock_user = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chooseLabel_user, chooseInput_user] })
+
+                  let chosenCompany
+                  let inputUserObj = goodselect(chooseInput_user, {
+                    availableOptions: allILUsers.filter(user => { if (user.company.id == chosenCompany) { return user } }),
+                    placeHolder: "Select company User to make primary admin",
+                    selectorWidth: "100%",
+                    onOptionChange: (option) => {
+                      if (option != null) {
+                        let confirmButton = createElement({
+                          elementType: 'button', id: 'choose' + 'chooseNew_user', placeHolder: 'choose', title: 'choose', onclick: () => {
+                            console.log('finally clicked')
+                          }
+                        })
+                        let chooseBlock_confirm = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [confirmButton] })
+                        chooseBlock_user.after(chooseBlock_confirm)
+                      }
+                      else {
+                        chooseBlock_confirm.remove()
+                      }
+                    }
+                  })
+
+                  goodselect(chooseInput_company, {
+                    availableOptions: allcompanies,
+                    placeHolder: "Select Company",
+                    selectorWidth: "100%",
+                    onOptionChange: (option) => {
+                      if (option != null) {
+                        chosenCompany = option.id
+                        inputUserObj.refreshComponents()
+                        chooseBlock_company.after(questionBlock_user)
+                        questionBlock_user.after(chooseBlock_user)
+                      }
+                      else {
+                        questionBlock_user.remove()
+                        chooseBlock_user.remove()
+                      }
+                    }
+                  })
+
+
+
+                  let icon = 'bx bxs-shield-plus'
+                  let title = 'Make a user a primary admin'
+                  let contentElementsArray = [questionBlock_company, chooseBlock_company]
+                  let actions = [
+                    // {
+                    //   element: submitButton, functionCall: () => {
+                    //     socket.emit('superManageCreateAdmin', { companyId: selectedCompanyId, adminName: nameInput.value, adminSurname: surnameInput.value, adminEmail: emailInput.value, adminPassword: passwordInput.value })
+                    //     console.log('superManageCreateAdmin', { companyId: selectedCompanyId, adminName: nameInput.value, adminSurname: surnameInput.value, adminEmail: emailInput.value, adminPassword: passwordInput.value })
+                    //   }
+                    // }
+                  ]
+                  let constraints = { icon, title, contentElementsArray, actions }
+                  createInScreenPopup(constraints).then(editPopup => {
+
+                    // submitButton.addEventListener('click', () => {
+                    //   editPopup.closePopup();
+                    // });
+                  })
+                }
+              }*/
             ]
 
             let contentElements = SuperAdmin_createAdminMgtBodyElements(admins)
@@ -1239,11 +1324,62 @@ let functionalityOptionsArray = [
 
                 }
               },
-              {
+              /*{
                 actionIcon: 'bx bxs-shield-plus', actionTitle: 'Make an existing user a super admin', actionFunction: () => {
-                  
+                  let questionBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Please select the user you want to make a super Admin.' })
+
+                  let chooseLabel = createElement({ elementType: 'label', for: 'choose' + 'chooseNew', textContent: 'choose' })
+                  let chooseInput = createElement({ elementType: 'button', id: 'choose' + 'chooseNew', placeHolder: 'choose', title: 'choose' })
+                  let chooseBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chooseLabel, chooseInput] })
+
+                  let roleBlock = createElement({
+                    elementType: 'div', class: 'editBlock',
+                    textContent: 'The Position will automatically be set to the Company Administrator.'
+                  })
+
+                  let passwordLabel = createElement({ elementType: 'label', for: 'password' + 'chooseNew', textContent: 'Password' })
+                  let passwordInput = createElement({ elementType: 'input', id: 'password' + 'chooseNew', placeHolder: 'Password' })
+                  let passwordBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [passwordLabel, passwordInput] })
+
+                  let submitButton = createElement({ elementType: 'button', class: 'editBlockButtons', textContent: 'Create Admin', title: 'Make Super Admin' })
+                  submitButton.disabled = true;
+
+                  let selectedCompanyId;
+                  goodselect(chooseInput, {
+                    availableOptions: savedCompanies,
+                    placeHolder: "Select Company",
+                    selectorWidth: "100%",
+                    onOptionChange: (option) => {
+                      if (option != null) {
+                        submitButton.disabled = false;
+                        selectedCompanyId = option.id
+                      }
+                      else {
+                        submitButton.disabled = true;
+                      }
+                    }
+                  })
+
+                  let icon = 'bx bxs-user-plus'
+                  let title = 'Create Super Admin Account'
+                  let contentElementsArray = [questionBlock, chooseBlock, nameBlock, surnameBlock, emailBlock, roleBlock, passwordBlock]
+                  let actions = [
+                    {
+                      element: submitButton, functionCall: () => {
+                        socket.emit('superManageCreateSuperAdmin', { companyId: selectedCompanyId, adminName: nameInput.value, adminSurname: surnameInput.value, adminEmail: emailInput.value, adminPassword: passwordInput.value })
+                        console.log('superManageCreateSuperAdmin', { companyId: selectedCompanyId, adminName: nameInput.value, adminSurname: surnameInput.value, adminEmail: emailInput.value, adminPassword: passwordInput.value })
+                      }
+                    }
+                  ]
+                  let constraints = { icon, title, contentElementsArray, actions }
+                  createInScreenPopup(constraints).then(editPopup => {
+
+                    submitButton.addEventListener('click', () => {
+                      editPopup.closePopup();
+                    });
+                  })
                 }
-              }
+              }*/
             ]
             let contentElements = SuperAdmin_createSuperAdminsMgtBodyElement(superAdmins)
             headerSearchDiv.addEventListener('input', () => {
@@ -1307,7 +1443,7 @@ let functionalityOptionsArray = [
 
             let actionButtonArray = actionsPerItem.map(action => {
               let actionButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: action.actionIcon })], onclick: action.actionFunction })
-              if(action.actionTitle) actionButton.title = action.actionTitle;
+              if (action.actionTitle) actionButton.title = action.actionTitle;
               return actionButton
             })
             let actionButtonsDiv = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: actionButtonArray })
@@ -1747,7 +1883,7 @@ let functionalityOptionsArray = [
             managementDivBodyStored.textContent = ''
             let resultElements = createAdminMgtBodyElements(admins)
             resultElements.forEach(element => managementDivBodyStored.append(element))
-            if (users.length < 1) { managementDivBodyStored.textContent = 'No Admin found with such criteria' }
+            if (admins.length < 1) { managementDivBodyStored.textContent = 'No Admin found with such criteria' }
           })
           socket.on('managePositions', positions => {
             companyPositions = positions
@@ -1829,7 +1965,7 @@ let functionalityOptionsArray = [
 
             let actionButtonArray = actionsPerItem.map(action => {
               let actionButton = createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: action.actionIcon })], onclick: action.actionFunction })
-              if(action.actionTitle) actionButton.title = action.actionTitle;
+              if (action.actionTitle) actionButton.title = action.actionTitle;
               return actionButton
             })
             let actionButtonsDiv = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: actionButtonArray })
@@ -1866,8 +2002,8 @@ let functionalityOptionsArray = [
                 let companyDescription = createElement({ elementType: 'div', class: 'companyDescription', textContent: option.description })
                 let companyNameDescription = createElement({ elementType: 'div', class: 'companyNameDescription', childrenArray: [companyName, companyDescription] })
                 let companyInfoDiv = createElement({ elementType: 'div', class: 'companyInfoDiv', childrenArray: [backButton, companyProfilePic, companyNameDescription] })
-                let editButton = createElement({ elementType: 'button', title: 'Edit company', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
-                let universalButtons = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [editButton] })
+                // let editButton = createElement({ elementType: 'button', title: 'Edit company', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+                let universalButtons = createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [/*editButton*/] })
                 let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv, universalButtons] })
                 socket.emit('requestAdminNumbers', option.id)
                 numbersDiv.textContent = '';
@@ -3293,7 +3429,12 @@ let functionalityOptionsArray = [
           }
         })
         //create Cover waiting
-        videoCoverDiv = videoConnectingScreen(prepareVideoCoverDiv(allUsers, caller, 'Dialling...', awaitedUserDivs))
+        let videoCoverPrepObj = prepareVideoCoverDiv(allUsers, caller, 'Dialling...', awaitedUserDivs)
+        if(videoCoverPrepObj.isSuccess == false) {
+          stopWaitingTone()
+          return
+        };
+        videoCoverDiv = videoConnectingScreen(videoCoverPrepObj)
         mainVideoDiv.prepend(videoCoverDiv.videoCoverDiv)
 
         let { closeVideoBtn, HangUpBtn, muteMicrophoneBtn } = videoCoverDiv.controls
@@ -3737,6 +3878,13 @@ let functionalityOptionsArray = [
       callees = allUsers.filter(user => { return user.userID != caller.userID })
       console.log(allUsers)
       firstCallee = callees[0]
+      if (firstCallee == undefined){
+        let feedback = [{ type: 'negative', message: 'Sorry, you cannot make a call where you are the only participant' }]
+        displayServerError(feedback);
+        leaveCall();
+        // notificationStop()
+        return { isSuccess: false }
+      }
       displayInitials = isGroup == true ? 'Grp' : firstCallee.name.charAt(0) + firstCallee.surname.charAt(0)
       profilePicture = isGroup == true ? '/private/profiles/group.jpeg' : firstCallee.profilePicture
 
@@ -3747,7 +3895,8 @@ let functionalityOptionsArray = [
         profilePicture: profilePicture,
         screenMessage: reason,
         spinner: true,
-        videoConnectingControls: true
+        videoConnectingControls: true,
+        isSuccess: true,
       }
     }
     function saveLocalMediaStream(type, stream) {
@@ -4857,6 +5006,10 @@ let functionalityOptionsArray = [
   }
 
   function call(callTo, audio, video, group, fromChat, previousCallId) {
+    if(window.navigator.onLine == false) {
+      stopWaitingTone()
+      return showOfflineError();
+    }
     initiateCall({ callTo, audio, video, group, fromChat, previousCallId })
   }
   function initiateChat(corespondantId) {
@@ -6026,7 +6179,6 @@ let functionalityOptionsArray = [
             const currentDate = new Date();
             const eventStartDateTime = new Date(todaysDatedateISO + ' ' + dayEvent.startTime)
             let timeDIff = eventStartDateTime - currentDate;
-            console.log('Curr time', currentDate.toISOString(), 'Event time', eventStartDateTime.toISOString(), 'time difference', timeDIff)
 
             if (eventReminderBefore > timeDIff && timeDIff > 0 && !alreadyReminded.includes(dayEvent.eventId)) { // if the timer is less that 5 minutes
               // generate a notification if Time is up
@@ -6057,7 +6209,6 @@ let functionalityOptionsArray = [
         }
       }
     }
-    console.log("___")
   }
 
   setInterval(function () {
@@ -6130,9 +6281,22 @@ let functionalityOptionsArray = [
       mainContent.appendChild(userDiv)
     }
   }
+
+  window.addEventListener('online', showBackOnlineSuccess);
+  window.addEventListener('offline', showOfflineError);
+
+  function showOfflineError(){
+    // leaveCall();
+    let feedback = [{ type: 'negative', message: 'Sorry, Your navigator is offline. in this situation you can neither make calls, send messages nor join meetins. Please try to solve the internet issue in order to continue enjoying Imperium Line.' }]
+    displayServerError(feedback)
+  }
+  function showBackOnlineSuccess(){
+    let feedback = [{ type: 'positive', message: 'You are back online! You can now perform calls, send messages and call on Imperium Line ' }]
+    displayServerError(feedback)  }
+
 })(functionalityOptionsArray);
-let todaysDatedate = new Date('2015-3-25 12:45:00');
-console.log("_________________FDSDFSDF__________________-", todaysDatedate.toISOString('YYY-MM-dd'))//.substring(0, 10))
+
+
 /*
 {
   "eventId": 36,
