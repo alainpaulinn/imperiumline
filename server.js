@@ -28,7 +28,7 @@ const handlebars = require('express-handlebars').create({
 app.engine('hbs', handlebars.engine);
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, "views"));
-//app.set('partials', 'views/partials')
+//app.set('partials', 'views/partials') //this is done by default
 
 db.connect((err) => {
   if (err) {
@@ -49,9 +49,9 @@ const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET,
   saveUninitialized: false,
   cookie: {
-    MaxAge: 1000 * 60 * 60 * 24 * 7, //one week max
+    MaxAge: 1000 * 60 * 60 * 24 * 1, //one day max
     sameSite: 'strict',
-    secure: false, // TODO: This value has tobe true in Production environment and the application has to have HTTPS enabled
+    secure: false, // TODO: This value has to be true in Production environment and the application has to have HTTPS enabled
     httpOnly: true,
   }
 })
