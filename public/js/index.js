@@ -152,16 +152,6 @@ let functionalityOptionsArray = [
   let silenceActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [silenceCheckBox, createElement({ elementType: 'label', for: 'toggle2' })] })
 
   // choose Audio/video output
-  let cameraLabel = createElement({ elementType: 'p', textContent: "Cameras: " })
-  let videoInputSelection = createElement({ elementType: 'div' })
-  let microphoneLabel = createElement({ elementType: 'p', textContent: "Microphone: " })
-  let audioInputSelection = createElement({ elementType: 'div' })
-  let speakerLabel = createElement({ elementType: 'p', textContent: "Speaker: " })
-  let audioOutputSelection = createElement({ elementType: 'div' })
-  let importantInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions is required to access available devices" })
-  let importantInfoMore = createElement({ elementType: 'div', textContent: "*After the changes are savec, click on the 'Done button, or the 'x' button' and refresh the page" })
-
-  let doneButton = createElement({ elementType: 'button', textContent: 'Done', title: 'Close' })
 
   let availableDevices = { videoInput: [], audioInput: [], audioOutput: [] }
   let chosenDevices = { videoInput: null, audioInput: null, audioOutput: null }
@@ -170,95 +160,139 @@ let functionalityOptionsArray = [
     localStorage.setItem('chosenDevices', JSON.stringify(chosenDevices));
     console.log('chosenDevices', JSON.parse(localStorage.getItem('chosenDevices')));
   }
-  navigator.mediaDevices.enumerateDevices().then(devices => {
-    console.log(devices)
-    devices.forEach(device => {
-      if (device.kind == 'videoinput') { availableDevices.videoInput.push(device) }
-      if (device.kind == 'audioinput') { availableDevices.audioInput.push(device) }
-      if (device.kind == 'audiooutput') { availableDevices.audioOutput.push(device) }
+
+  function launchsuccessfull() {
+    let cameraLabel = createElement({ elementType: 'p', textContent: "Cameras: " })
+    let videoInputSelection = createElement({ elementType: 'div' })
+    let microphoneLabel = createElement({ elementType: 'p', textContent: "Microphone: " })
+    let audioInputSelection = createElement({ elementType: 'div' })
+    let speakerLabel = createElement({ elementType: 'p', textContent: "Speaker: " })
+    let audioOutputSelection = createElement({ elementType: 'div' })
+    let unsupportedInfo = createElement({ elementType: 'div', textContent: "*No browser yet supports microphone and speaker choice. This means that the application will use the microphone and speaker chosen by your operating system. \n This functionality will work as soon as the browsers suport this feature." })
+    let importantInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions is required to access available devices" })
+    let importantInfoMore = createElement({ elementType: 'div', textContent: "*After the changes are saved, click on the 'Done button, or the 'x' button' and refresh the page" })
+
+    let doneButton = createElement({ elementType: 'button', textContent: 'Done', title: 'Close' })
+
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      console.log(devices)
+      availableDevices = { videoInput: [], audioInput: [], audioOutput: [] } //reset all the saved media devices
+      devices.forEach(device => {
+        if (device.kind == 'videoinput') { availableDevices.videoInput.push(device) }
+        if (device.kind == 'audioinput') { availableDevices.audioInput.push(device) }
+        if (device.kind == 'audiooutput') { availableDevices.audioOutput.push(device) }
+      });
+      function chooseSelection(deviceType) {
+        let foundDevice
+        switch (deviceType) {
+          case 'videoinput':
+            // choose which videoinput to use
+            let videoInputDeviceChoice1 = chosenDevices.videoInput;
+            let videoInputDeviceChoice2 = availableDevices.videoInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
+            let videoInputDeviceChoice3 = availableDevices.videoInput[0]
+            foundDevice = findNonNullNonUndefined([videoInputDeviceChoice1, videoInputDeviceChoice2, videoInputDeviceChoice3]);
+            break;
+          case 'audioinput':
+            // choose which audioinput to use
+            let audioInputDeviceChoice1 = chosenDevices.audioInput;
+            let audioInputDeviceChoice2 = availableDevices.audioInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
+            let audioInputDeviceChoice3 = availableDevices.audioInput[0]
+            foundDevice = findNonNullNonUndefined([audioInputDeviceChoice1, audioInputDeviceChoice2, audioInputDeviceChoice3]);
+            break;
+          case 'audiooutput':
+            // choose which audioOutput to use
+            let audioOutputDeviceChoice1 = chosenDevices.audioOutput;
+            let audioOutputDeviceChoice2 = availableDevices.audioOutput.find(device => { return device.deviceId.toLowerCase().includes('default') })
+            let audioOutputDeviceChoice3 = availableDevices.audioOutput[0]
+            foundDevice = findNonNullNonUndefined([audioOutputDeviceChoice1, audioOutputDeviceChoice2, audioOutputDeviceChoice3]);
+            break;
+        }
+        if (foundDevice == null) foundDevice = { id: null, name: null, deviceId: null, groupId: null, kind: null, label: null }
+        return foundDevice;
+      }
+
+      console.log('chooseSelection(videoinput)', chooseSelection('videoinput'))
+      console.log('chooseSelection(audioinput)', chooseSelection('audioinput'))
+      console.log('chooseSelection(audiooutput)', chooseSelection('audiooutput'))
+      function populateDropDowns() {
+        let availableVideoInputOptions = addIndexAndLabelAsName(availableDevices.videoInput)
+        goodselect(videoInputSelection, {
+          availableOptions: availableVideoInputOptions,
+          placeHolder: "Select Camera",
+          selectorWidth: "100%",
+          marginRight: '0rem',
+          selectedOptionId: availableVideoInputOptions.findIndex(device => device.deviceId == chooseSelection('videoinput').deviceId),
+          onOptionChange: (option) => {
+            chosenDevices.videoInput = option
+            savePreferedDevices()
+          }
+        })
+        let availableAudioInputOptions = addIndexAndLabelAsName(availableDevices.audioInput)
+        goodselect(audioInputSelection, {
+          availableOptions: availableAudioInputOptions,
+          placeHolder: "Select Microphone",
+          selectorWidth: "100%",
+          marginRight: '0rem',
+          selectedOptionId: availableAudioInputOptions.findIndex(device => device.deviceId == chooseSelection('audioinput').deviceId),
+          onOptionChange: (option) => {
+            chosenDevices.audioInput = option
+            savePreferedDevices()
+          }
+        })
+
+        let availableAudioOutputOptions = addIndexAndLabelAsName(availableDevices.audioOutput)
+        goodselect(audioOutputSelection, {
+          availableOptions: availableAudioOutputOptions,
+          placeHolder: "Select Speaker",
+          selectorWidth: "100%",
+          marginRight: '0rem',
+          selectedOptionId: availableAudioOutputOptions.findIndex(device => device.deviceId == chooseSelection('audiooutput').deviceId),
+          onOptionChange: (option) => {
+            chosenDevices.audioOutput = option
+            savePreferedDevices()
+          }
+        })
+      }
+      populateDropDowns()
     });
-    function chooseSelection(deviceType) {
-      let foundDevice
-      switch (deviceType) {
-        case 'videoinput':
-          // choose which videoinput to use
-          let videoInputDeviceChoice1 = chosenDevices.videoInput;
-          let videoInputDeviceChoice2 = availableDevices.videoInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
-          let videoInputDeviceChoice3 = availableDevices.videoInput[0]
-          foundDevice = findNonNullNonUndefined([videoInputDeviceChoice1, videoInputDeviceChoice2, videoInputDeviceChoice3]);
-          break;
-        case 'audioinput':
-          // choose which audioinput to use
-          let audioInputDeviceChoice1 = chosenDevices.audioInput;
-          let audioInputDeviceChoice2 = availableDevices.audioInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
-          let audioInputDeviceChoice3 = availableDevices.audioInput[0]
-          foundDevice = findNonNullNonUndefined([audioInputDeviceChoice1, audioInputDeviceChoice2, audioInputDeviceChoice3]);
-          break;
-        case 'audiooutput':
-          // choose which audioOutput to use
-          let audioOutputDeviceChoice1 = chosenDevices.audioOutput;
-          let audioOutputDeviceChoice2 = availableDevices.audioOutput.find(device => { return device.deviceId.toLowerCase().includes('default') })
-          let audioOutputDeviceChoice3 = availableDevices.audioOutput[0]
-          foundDevice = findNonNullNonUndefined([audioOutputDeviceChoice1, audioOutputDeviceChoice2, audioOutputDeviceChoice3]);
-          break;
-      }
-      if (foundDevice == null) foundDevice = { id: null, name: null, deviceId: null, groupId: null, kind: null, label: null }
-      return foundDevice;
+
+    createInScreenPopup({
+      icon: 'bx bx-devices',
+      title: "Choose Media Devices",
+      contentElementsArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, unsupportedInfo, importantInfo, importantInfoMore],
+      actions: [{ element: doneButton, functionCall: () => { console.log("Done") } }]
+    }).then(devicePopForm => { doneButton.addEventListener("click", devicePopForm.closePopup) })
+  }
+
+  async function launchMediaDeviceChoice() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      /* use the stream */
+      launchsuccessfull()
+      stream.getVideoTracks().forEach(track => track.stop()); //immediately close all trseams// the objective was to get media devices and the list
+    } catch (err) {
+      /* handle the error */
+      console.log(err)
+      launchfail()
     }
+  }
 
-    console.log('chooseSelection(videoinput)', chooseSelection('videoinput'))
-    console.log('chooseSelection(audioinput)', chooseSelection('audioinput'))
-    console.log('chooseSelection(audiooutput)', chooseSelection('audiooutput'))
+  function launchfail() {
+    let mediaRefusedInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions were refused or there is no media devices available. Media access Permissions are required to access available devices. Please give manually the permissions in your browser, or resolve the media devices issue and press the following button to try again." })
+    let tryagainButton = createElement({ elementType: 'button', class: 'editBlockButtons', textContent: 'Try again.', title: 'Try again', onclick: launchMediaDeviceChoice })
+    let retrySetion = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [tryagainButton] })
+    let closeButton = createElement({ elementType: 'button', textContent: 'Close', title: 'Close' })
 
-    let availableVideoInputOptions = addIndexAndLabelAsName(availableDevices.videoInput)
-    goodselect(videoInputSelection, {
-      availableOptions: availableVideoInputOptions,
-      placeHolder: "Select Camera",
-      selectorWidth: "100%",
-      marginRight: '0rem',
-      selectedOptionId: availableVideoInputOptions.findIndex(device => device.deviceId == chooseSelection('videoinput').deviceId),
-      onOptionChange: (option) => {
-        chosenDevices.videoInput = option
-        savePreferedDevices()
-      }
-    })
-    let availableAudioInputOptions = addIndexAndLabelAsName(availableDevices.audioInput)
-    goodselect(audioInputSelection, {
-      availableOptions: availableAudioInputOptions,
-      placeHolder: "Select Microphone",
-      selectorWidth: "100%",
-      marginRight: '0rem',
-      selectedOptionId: availableAudioInputOptions.findIndex(device => device.deviceId == chooseSelection('audioinput').deviceId),
-      onOptionChange: (option) => {
-        chosenDevices.audioInput = option
-        savePreferedDevices()
-      }
-    })
+    createInScreenPopup({
+      icon: 'bx bx-devices',
+      title: "Choose Media Devices",
+      contentElementsArray: [mediaRefusedInfo, retrySetion],
+      actions: [{ element: closeButton, functionCall: () => { console.log("Done") } }]
+    }).then(devicePopForm => { closeButton.addEventListener("click", devicePopForm.closePopup) })
+  }
 
-    let availableAudioOutputOptions = addIndexAndLabelAsName(availableDevices.audioOutput)
-    goodselect(audioOutputSelection, {
-      availableOptions: availableAudioOutputOptions,
-      placeHolder: "Select Speaker",
-      selectorWidth: "100%",
-      marginRight: '0rem',
-      selectedOptionId: availableAudioOutputOptions.findIndex(device => device.deviceId == chooseSelection('audiooutput').deviceId),
-      onOptionChange: (option) => {
-        chosenDevices.audioOutput = option
-        savePreferedDevices()
-      }
-    })
-  });
-  let audioVideoInOutBtn = createElement({
-    elementType: 'button', class: 'importantButton', textContent: 'Choose', title: 'Choose', onclick: () => {
-      createInScreenPopup({
-        icon: 'bx bx-devices',
-        title: "Choose Media Devices",
-        contentElementsArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, importantInfo, importantInfoMore],
-        actions: [{ element: doneButton, functionCall: () => { console.log("Done") } }]
-      })
-        .then(devicePopForm => { doneButton.addEventListener("click", devicePopForm.closePopup) })
-    }
-  })
+
+  let audioVideoInOutBtn = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Choose', title: 'Choose', onclick: launchMediaDeviceChoice })
   // logout form
   let logoutForm = createElement({ elementType: 'form', action: "/auth/logout", method: "post", childrenArray: [createElement({ elementType: 'input', type: 'text', name: 'logout', hidden: "true" })] })
   let logoutButton = createElement({ elementType: 'button', class: 'importantButton', title: 'Logout', textContent: 'Logout', onclick: () => { logoutForm.submit(); } })
@@ -3430,7 +3464,7 @@ let functionalityOptionsArray = [
         })
         //create Cover waiting
         let videoCoverPrepObj = prepareVideoCoverDiv(allUsers, caller, 'Dialling...', awaitedUserDivs)
-        if(videoCoverPrepObj.isSuccess == false) {
+        if (videoCoverPrepObj.isSuccess == false) {
           stopWaitingTone()
           return
         };
@@ -3878,7 +3912,7 @@ let functionalityOptionsArray = [
       callees = allUsers.filter(user => { return user.userID != caller.userID })
       console.log(allUsers)
       firstCallee = callees[0]
-      if (firstCallee == undefined){
+      if (firstCallee == undefined) {
         let feedback = [{ type: 'negative', message: 'Sorry, you cannot make a call where you are the only participant' }]
         displayServerError(feedback);
         leaveCall();
@@ -5006,7 +5040,7 @@ let functionalityOptionsArray = [
   }
 
   function call(callTo, audio, video, group, fromChat, previousCallId) {
-    if(window.navigator.onLine == false) {
+    if (window.navigator.onLine == false) {
       stopWaitingTone()
       return showOfflineError();
     }
@@ -6285,14 +6319,15 @@ let functionalityOptionsArray = [
   window.addEventListener('online', showBackOnlineSuccess);
   window.addEventListener('offline', showOfflineError);
 
-  function showOfflineError(){
+  function showOfflineError() {
     // leaveCall();
     let feedback = [{ type: 'negative', message: 'Sorry, Your navigator is offline. in this situation you can neither make calls, send messages nor join meetins. Please try to solve the internet issue in order to continue enjoying Imperium Line.' }]
     displayServerError(feedback)
   }
-  function showBackOnlineSuccess(){
+  function showBackOnlineSuccess() {
     let feedback = [{ type: 'positive', message: 'You are back online! You can now perform calls, send messages and call on Imperium Line ' }]
-    displayServerError(feedback)  }
+    displayServerError(feedback)
+  }
 
 })(functionalityOptionsArray);
 
