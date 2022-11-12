@@ -281,7 +281,7 @@ let functionalityOptionsArray = [
     let mediaRefusedInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions were refused or there is no media devices available. Media access Permissions are required to access available devices. Please give manually the permissions in your browser, or resolve the media devices issue and press the following button to try again." })
     let tryagainButton = createElement({ elementType: 'button', class: 'editBlockButtons', textContent: 'Try again.', title: 'Try again', onclick: launchMediaDeviceChoice })
     let retrySetion = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [tryagainButton] })
-    let closeButton = createElement({ elementType: 'button', textContent: 'Close', title: 'Close' })
+    let closeButton = createElement({ elementType: 'button', textContent: 'Cancel', title: 'Cancel' })
 
     createInScreenPopup({
       icon: 'bx bx-devices',
@@ -5947,6 +5947,7 @@ let functionalityOptionsArray = [
       const prevLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
       const totalMonthDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
       const startWeekDay = new Date(date.getFullYear(), date.getMonth(), 0).getDay();
+      let displayedMonthDates = []
       calendarDays.textContent = '';
       let totalCalendarDay = 6 * 7;
       for (let i = 0; i < totalCalendarDay; i++) {
@@ -5962,16 +5963,28 @@ let functionalityOptionsArray = [
           let dateYYYYMMDD_ISO = formatDate(date).substring(0, 10)
           console.log('dateYYYYMMDD_ISO', dateYYYYMMDD_ISO)
           let contentClass = 'noMeaning';
+          let selectedClass = selectedCalendarDate == dateYYYYMMDD_ISO ? 'selected-day' : '';
           if (calendarObject[dateYYYYMMDD_ISO]) contentClass = calendarObject[dateYYYYMMDD_ISO].length > 0 ? 'contentDay' : 'noMeaning';
           let dayDiv = createElement({
-            elementType: 'div', class: contentClass + ' ' + dayClass, textContent: day + '', onclick: () => {
+            elementType: 'div', class: contentClass + ' ' + dayClass , textContent: day + '', onclick: () => {
               let ckickDateCheck = date;
               ckickDateCheck.setDate(day);
               socket.emit('dayEvents', dateYYYYMMDD_ISO)
               selectedCalendarDate = dateYYYYMMDD_ISO
               showMainScheduleList()
+
+              for (let i = 0; i < displayedMonthDates.length; i++) {
+                const displayedMonthDate = displayedMonthDates[i];
+                displayedMonthDate.dayElement.classList.remove('selected-day')
+                let clickedDate = new Date(displayedMonthDate.date)
+                if (
+                  formatDate(clickedDate).substring(0, 10) != formatDate(new Date).substring(0, 10)
+                  && dateYYYYMMDD_ISO == formatDate(clickedDate).substring(0, 10)
+                ) displayedMonthDate.dayElement.classList.add('selected-day')
+              }
             }
           })
+          displayedMonthDates.push({ date: dateYYYYMMDD_ISO, dayElement: dayDiv })
           calendarDays.appendChild(dayDiv)
         } else { // adding next month days
           let dayDiv = createElement({ elementType: 'div', class: 'padding-day', textContent: (day - totalMonthDay) + "" })

@@ -4821,8 +4821,13 @@ body {
       }
 
       .selected-day {
-        border: 1px solid var(--lightText);
         border-radius: $borderRadius;
+        background-color: var(--primaryBackground);
+        color: var(--hoverColor);
+        border-radius: $borderRadius;
+        transition: 0.1s;
+        cursor: pointer;
+        box-shadow: inset 0px 0px 0px 1.5px var(--notification);
       }
 
       .calendar-toolbar>[class$="month-btn"]:hover,

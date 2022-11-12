@@ -3994,8 +3994,13 @@ body {
        user-select: none;
 }
 .schedule-container .selectionPanel .card .selected-day {
-  border: 1px solid var(--lightText);
   border-radius: 15px;
+  background-color: var(--primaryBackground);
+  color: var(--hoverColor);
+  border-radius: 15px;
+  transition: 0.1s;
+  cursor: pointer;
+  box-shadow: inset 0px 0px 0px 1.5px var(--notification);
 }
 .schedule-container .selectionPanel .card .calendar-toolbar > [class$=month-btn]:hover,
 .schedule-container .selectionPanel .card .month-day:hover,
