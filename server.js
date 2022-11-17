@@ -978,36 +978,39 @@ io.on('connection', (socket) => {
         return;
       }
       if (foundEvent.owner.userID == id) {
-        db.query("DELETE FROM `events` where eventId = ?", [eventId], async (err, result) => { })
-        socket.emit('serverFeedback', [{ type: 'positive', message: 'the event was deleted successfully' }])
         console.log('event found')
+        db.query("DELETE FROM `events` where eventId = ?", [eventId], async (err, result) => {
+          if (!err) socket.emit('serverFeedback', [{ type: 'positive', message: 'the event was deleted successfully' }])
+          else (console.log('An error occurred while deleting the event'))
 
-        let today = new Date()
-        let todayYear = today.getFullYear()
-        let lastYear = new Date(); lastYear.setFullYear(todayYear - 1)
-        let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)
-        let eventsToSend = await getEvents(id, lastYear, nextYear);
-        socket.emit('notificationUpdateCalendar', eventsToSend)
-        socket.emit('updateCalendarWithSelectedDay', eventsToSend)
+          let today = new Date()
+          let todayYear = today.getFullYear()
+          let lastYear = new Date(); lastYear.setFullYear(todayYear - 1)
+          let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)
+          let eventsToSend = await getEvents(id, lastYear, nextYear);
+          socket.emit('notificationUpdateCalendar', eventsToSend)
+          socket.emit('updateCalendarWithSelectedDay', eventsToSend)
 
-        // foundEvent.Participants.forEach(async (participant) => {})
-        for (let i = 0; i < foundEvent.Participants.length; i++) {
-          const participant = foundEvent.Participants[i];
-          for (let j = 0; j < connectedUsers.length; j++) {
-            const connectedUser = connectedUsers[j];
-            if (connectedUser.id == participant.userInfo.userID) {
-              let _today = new Date()
-              let _todayYear = _today.getFullYear()
-              let _lastYear = new Date(); _lastYear.setFullYear(_todayYear - 1)
-              let _nextYear = new Date(); _nextYear.setFullYear(_todayYear + 1)
-              let _eventsToSend = await getEvents(connectedUser.id, _lastYear, _nextYear)
-              socket.to(connectedUser.socket.id).emit('notificationUpdateCalendar', _eventsToSend);
-              socket.to(connectedUser.socket.id).emit('updateCalendarWithSelectedDay', _eventsToSend)
+          // foundEvent.Participants.forEach(async (participant) => {})
+          for (let i = 0; i < foundEvent.Participants.length; i++) {
+            const participant = foundEvent.Participants[i];
+            for (let j = 0; j < connectedUsers.length; j++) {
+              const connectedUser = connectedUsers[j];
+              if (connectedUser.id == participant.userInfo.userID) {
+                let _today = new Date()
+                let _todayYear = _today.getFullYear()
+                let _lastYear = new Date(); _lastYear.setFullYear(_todayYear - 1)
+                let _nextYear = new Date(); _nextYear.setFullYear(_todayYear + 1)
+                let _eventsToSend = await getEvents(connectedUser.id, _lastYear, _nextYear)
+                socket.to(connectedUser.socket.id).emit('notificationUpdateCalendar', _eventsToSend);
+                socket.to(connectedUser.socket.id).emit('updateCalendarWithSelectedDay', _eventsToSend)
 
-              console.log('event object', _eventsToSend, _todayYear, connectedUser.id, _lastYear, _nextYear)
+                console.log('event object', _eventsToSend, _todayYear, connectedUser.id, _lastYear, _nextYear)
+              }
             }
           }
-        }
+        })
+
 
       }
       else {

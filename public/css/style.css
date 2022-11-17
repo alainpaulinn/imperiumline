@@ -1609,7 +1609,7 @@ body {
   font-size: 18px;
 }
 .typingBox .chat-options:hover {
-  color: var(--hoverColor);
+  color: var(--lightText);
 }
 /** This is the css of the input **/
 .w-input-container {

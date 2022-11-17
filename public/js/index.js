@@ -5531,15 +5531,17 @@ let functionalityOptionsArray = [
   }))
   socket.on('updateCalendarWithSelectedDay', (calendarEventObj => {
     calendarObject = calendarEventObj
+    console.log('selectedCalendarDate', selectedCalendarDate)
     if (selectedCalendarDate != null) { // if we are on an all events screen
       for (const key in calendarEventObj) {
         if (Object.hasOwnProperty.call(calendarEventObj, key)) {
           const dayEventsArray = calendarEventObj[key];
           if (key + '' == selectedCalendarDate) {
-            if (dayEventsArray.length > 0) {
+            // if (dayEventsArray.length > 0) {
+              console.log('happened', dayEventsArray)
               eventSectionObject.displayDayOnlyOnSchedule(key, dayEventsArray)
 
-            }
+            // }
           }
         }
       }
@@ -5963,10 +5965,14 @@ let functionalityOptionsArray = [
           let dateYYYYMMDD_ISO = formatDate(date).substring(0, 10)
           console.log('dateYYYYMMDD_ISO', dateYYYYMMDD_ISO)
           let contentClass = 'noMeaning';
-          let selectedClass = selectedCalendarDate == dateYYYYMMDD_ISO ? 'selected-day' : '';
+          let selectedDayClass = selectedCalendarDate == dateYYYYMMDD_ISO? 'selected-day' : '';
           if (calendarObject[dateYYYYMMDD_ISO]) contentClass = calendarObject[dateYYYYMMDD_ISO].length > 0 ? 'contentDay' : 'noMeaning';
+          
+          let loadedDayClasses = [contentClass, dayClass];
+          if(selectedDayClass != '') loadedDayClasses.push(selectedDayClass)
+          console.log('loadedDayClasses', loadedDayClasses)
           let dayDiv = createElement({
-            elementType: 'div', class: contentClass + ' ' + dayClass , textContent: day + '', onclick: () => {
+            elementType: 'div', class: loadedDayClasses.join(" "), textContent: day + '', onclick: () => {
               let ckickDateCheck = date;
               ckickDateCheck.setDate(day);
               socket.emit('dayEvents', dateYYYYMMDD_ISO)
@@ -6172,7 +6178,7 @@ let functionalityOptionsArray = [
                   if (participant.attending == 1) { attendanceClass = 'bx bxs-user-minus'; attendanceTitle = 'Attendance not sure' }
                   if (participant.attending == 2) { attendanceClass = 'bx bxs-user-check'; attendanceTitle = 'Attending' }
                   return userForAttendanceList(participant.userInfo, [
-                    { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: attendanceClass })], title: attendanceTitle }), functionCall: () => { } },
+                    // { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: attendanceClass })], title: attendanceTitle }), functionCall: () => { } },
                     { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }), title: 'Initiate call with user', functionCall: () => { call(participant.userInfo.userID, true, false, false, false, null) } }
                   ])
                 })
