@@ -51,7 +51,7 @@ const sessionMiddleware = session({
   cookie: {
     MaxAge: 1000 * 60 * 60 * 24 * 7, //one week max
     sameSite: 'strict',
-    secure: false, // TODO: This value has tobe true in Production environment and the application has to have HTTPS enabled
+    secure: true, // TODO: This value has tobe true in Production environment and the application has to have HTTPS enabled
     httpOnly: true,
   }
 })
