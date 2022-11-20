@@ -33,6 +33,9 @@ app.use(helmet.frameguard({ action: 'deny' })); // X Frame Options http header p
 app.use(helmet.noSniff());
 app.use(helmet.ieNoOpen());
 app.use(helmet.xssFilter());
+const xXssProtection = require("x-xss-protection");
+// Set "X-XSS-Protection: 0"
+app.use(xXssProtection());
 
 const http = require('http');
 const server = http.createServer(app);
