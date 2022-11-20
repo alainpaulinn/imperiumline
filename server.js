@@ -21,6 +21,7 @@ app.use(
       imgSrc: [selfLink],
       fontSrc: [selfLink, ...fontSrcUrls],
     },
+    referrerPolicy: { policy: "no-referrer" }
   })
 );
 const ninetyDaysInSeconds = 5184000 // 90 * 24 * 60 * 60
@@ -33,6 +34,7 @@ app.use(helmet.frameguard({ action: 'deny' })); // X Frame Options http header p
 app.use(helmet.noSniff());
 app.use(helmet.ieNoOpen());
 app.use(helmet.xssFilter());
+
 // const xXssProtection = require("x-xss-protection");
 // app.use(xXssProtection()); // Set "X-XSS-Protection: 0"
 
