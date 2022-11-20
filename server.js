@@ -32,6 +32,7 @@ app.use(helmet.hsts({
 app.use(helmet.frameguard({ action: 'deny' })); // X Frame Options http header prevents our website to be framed into another or vice versa
 app.use(helmet.noSniff());
 app.use(helmet.ieNoOpen());
+app.use(helmet.xssFilter());
 
 const http = require('http');
 const server = http.createServer(app);
