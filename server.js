@@ -1,6 +1,29 @@
+const scriptSrcUrls = [] // here we keep a list of our external scripts
+const styleSrcUrls = ["'unsafe-inline'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"] // here we keep a list of our external styles
+const fontSrcUrls = ["https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://fonts.gstatic.com"] // here we keep a list of our external fonts
+const connectSrcUrls = ["wss://*.imperiumline.com", "https://*.imperiumline.com"] // here we keep a list of our external connections
+
+const selfLink = "'self'"
+
 const path = require('path');
 const express = require('express');
-const app = express();
+const helmet = require('helmet');
+const app = express(); // app.use(helmet())
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: [selfLink],
+      connectSrc: [selfLink, ...connectSrcUrls],
+      scriptSrc: [selfLink, ...scriptSrcUrls],
+      styleSrc: [selfLink, ...styleSrcUrls],
+      workerSrc: [selfLink],
+      objectSrc: [selfLink],
+      imgSrc: [selfLink],
+      fontSrc: [selfLink, ...fontSrcUrls],
+    },
+  })
+);
+
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
@@ -51,7 +74,7 @@ const sessionMiddleware = session({
   cookie: {
     MaxAge: 1000 * 60 * 60 * 24 * 7, //one week max
     sameSite: 'strict',
-    secure: true, // TODO: This value has tobe true in Production environment and the application has to have HTTPS enabled
+    secure: false, // TODO: This value has tobe true in Production environment and the application has to have HTTPS enabled
     httpOnly: true,
   }
 })
