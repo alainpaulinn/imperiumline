@@ -34,6 +34,8 @@ app.use(helmet.frameguard({ action: 'deny' })); // X Frame Options http header p
 app.use(helmet.noSniff());
 app.use(helmet.ieNoOpen());
 app.use(helmet.xssFilter());
+app.use(helmet.hidePoweredBy()); // Removes the X-Powered-By header if it was set.
+
 
 // const xXssProtection = require("x-xss-protection");
 // app.use(xXssProtection()); // Set "X-XSS-Protection: 0"
