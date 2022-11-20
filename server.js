@@ -432,7 +432,7 @@ io.on('connection', (socket) => {
       console.log("found users", foundUsers)
       for (let i = 0; i < foundUsers.length; i++) {
         for (let j = 0; j < groupMembers.length; j++) {
-          if (foundUsers[i]?.userID === groupMembers[j].userID) foundUsers.splice(i, 1);
+          if (foundUsers[i].userID === groupMembers[j].userID) foundUsers.splice(i, 1);
         }
       }
       socket.emit('addRoomParticipantsSearch', foundUsers)
