@@ -30,7 +30,7 @@ router.get('/admin', redirectToHome, (req, res) => { res.render('admin') });
 
 router.get('/sitemap.xml', (req, res) => { res.send('sitemap.xml') }); // allow google and search engines to check and map my site for easy discoverability
 // router.get('/robots.txt', (req, res) => { res.send('robots.txt') }); // allow google and search engines to check and map my site for easy discoverability
-router.get('/.well-known/security.txt', (req, res) => { res.send('/.well-known/security.txt') }); // allow ethical hackers to be able to reach out to me if they find any security issues
+router.get('/security.txt', (req, res) => { res.send('/.well-known/security.txt') }); // allow ethical hackers to be able to reach out to me if they find any security issues
 
 router.get('/profiles*', function (req, res) {
   console.log(req.session.userId)
