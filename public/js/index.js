@@ -686,7 +686,7 @@ let functionalityOptionsArray = [
       list_call_section_content.append(call_log)
     })
   })
-  $(".pill").click(function () { $(this).toggleClass("selectedPill"); });
+  // document.querySelectorAll(".pill").forEach( pill => pill.toggleClass("selectedPill"))
   // })()
   // initial important events to listen to
   socket.on('redirect', function (destination) {
