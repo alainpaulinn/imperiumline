@@ -23,6 +23,15 @@ app.use(
     },
   })
 );
+const ninetyDaysInSeconds = 5184000 // 90 * 24 * 60 * 60
+app.use(helmet.hsts({
+  maxAge: ninetyDaysInSeconds,
+  includeSubdomains: true,
+  preload: true
+})) //Strict Transport Security tells the browser to never again visit our website on http during the period mentioned
+app.use(helmet.frameguard({ action: 'deny' })); // X Frame Options http header prevents our website to be framed into another or vice versa
+app.use(helmet.noSniff());
+app.use(helmet.ieNoOpen());
 
 const http = require('http');
 const server = http.createServer(app);
