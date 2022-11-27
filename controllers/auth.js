@@ -158,6 +158,7 @@ exports.logout = (req, res) => {
     }
 }
 exports.recovery = (req, res) => {
+    console.log(req.body)
     const { email } = req.body;
     db.query('SELECT name, surname, email FROM user WHERE email = ?', [email], async (err, result) => {
         if (err) {
