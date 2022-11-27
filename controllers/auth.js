@@ -187,17 +187,17 @@ exports.recovery = (req, res) => {
 async function sendEmail(emails, surname, name, subject, text, html) {
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
-        host: "email.imperiumline.com",
-        port: 25,
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
         secure: false, // upgrade later with STARTTLS
         auth: {
-            user: "app@imperiumline.com",
-            pass: "wPe3V^vF893k8Y+z",
+            user: process.env.SMTP_USERNAME,
+            pass: process.env.SMTP_PASSWORD,
         },
         tls: {
             // do not fail on invalid certs
             rejectUnauthorized: false,
-            servername: "imperiumline.com"
+            servername: process.env.SMTP_HOSTNAME
         }
     });
 
