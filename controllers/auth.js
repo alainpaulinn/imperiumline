@@ -2,6 +2,7 @@ const mysql = require('mysql');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const pwValidator = require('./pwValidator');
+const nodemailer = require("nodemailer");
 
 //const exphbs = require('express-handlebars')
 //var ejs = require('ejs');
@@ -63,12 +64,12 @@ exports.register = (req, res) => {
 
         else if (!pwValidator.validate(password)) {
             return res.render('signUp', {
-                register_message_failure: 'The specified password does not meet the minimum requirements for a secure password.  Minimum length 8, Maximum length 100, Must have uppercase letters, Must have lowercase letters, Must have at least 2 digits, Should not have spaces, Must not include common known things or places easily guessable passwords', 
+                register_message_failure: 'The specified password does not meet the minimum requirements for a secure password.  Minimum length 8, Maximum length 100, Must have uppercase letters, Must have lowercase letters, Must have at least 2 digits, Should not have spaces, Must not include common known things or places easily guessable passwords',
                 register_name: name,
                 register_surname: surname,
                 register_email: email
             })
-          }
+        }
 
         let hashed_salted_password = await bcrypt.hash(password, 10);
         //now register the user in the DB
@@ -155,4 +156,59 @@ exports.logout = (req, res) => {
             email: email
         })
     }
+}
+exports.recovery = (req, res) => {
+    const { email } = req.body;
+    // db.query('SELECT name, surname, email FROM user WHERE email = ?', [email], async (err, result) => {
+    //     if (err) {
+    //         console.log(err);
+    //         return;
+    //     }
+    //     if (result.length <= 0) {
+
+    //     }
+
+    //     else {
+    // sendEmail(result[0].email, result[0].name, result[0].surname).then(console.log())
+    //     }
+    // })
+    let emails = [result[0].email]
+    let name = result[0].name
+    let surname = result[0].surname
+    let subject = "Password reset link"
+    let text = "Hello To you all"
+    let html = `<b>Hello ${name} ${surname}</b>`
+    sendEmail(emails, surname, name, subject, text, html)
+    res.render('recovery', {
+        recovery_message_success: `Thank you for taking the recovery action, If your email and account exists in our database, on your email (${email})you will receive a password reset link. PLEASE CHECK ALSO THE SPAM FOLDER. If you have not yet received the link wait 5 and try again.`,
+    })
+}
+
+async function sendEmail(emails, surname, name, subject, text, html) {
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+        host: "email.imperiumline.com",
+        port: 25,
+        secure: false, // upgrade later with STARTTLS
+        auth: {
+            user: "app@imperiumline.com",
+            pass: "wPe3V^vF893k8Y+z",
+        },
+        tls: {
+            // do not fail on invalid certs
+            rejectUnauthorized: false,
+            servername: "imperiumline.com"
+        }
+    });
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+        from: '"Imperium Line" <app@imperiumline.com>', // sender address
+        to: emails.join(", "), // list of receivers
+        subject: subject, // Subject line
+        text: text, // plain text body
+        html: html, // html body
+    });
+
+    console.log("Message sent: %s", info);
 }

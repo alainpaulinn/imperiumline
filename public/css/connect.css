@@ -444,6 +444,7 @@ body {
   gap: 1rem;
   margin: 1rem;
   z-index: 1;
+  color: var(--lightText);
 }
 .notifications .notification {
   display: flex;
@@ -454,6 +455,7 @@ body {
   width: 100%;
   overflow: hidden;
   flex-shrink: 0;
+  background: var(--focusAreaBackgroundColor);
 }
 .notifications .notification .notificationTitle {
   display: flex;
@@ -498,11 +500,11 @@ body {
   cursor: pointer;
 }
 .notifications .notification .notificationActions .normal {
-  background-color: rgb(235, 240, 246);
+  background-color: var(--primaryBackground);
   color: var(--lightText);
 }
 .notifications .notification .notificationActions .confirm {
-  background-color: rgb(0, 48, 97);
+  background-color: var(--notification);
   color: var(--lightText);
 }
 .notifications .notification .notificationProgressBar {

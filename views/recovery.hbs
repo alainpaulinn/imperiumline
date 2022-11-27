@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/connect.css">
+    <link rel="stylesheet" href="/css/connectBackground.css">
+    <script src="/js/handlebars.js"></script>
+    <title>Imperium Line - Recovery</title>
+</head>
+
+<body class="dark">
+    <div class="background">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="wrapper">
+        <div class="login-register">
+            <div class="content-container">
+                <section class="appIntro">
+                    <H1>Recover your Imperium&nbsp;Line account</H1>
+                    <p>
+                        Imperium Line is a private messaging function between two or more people. It enables unlimited
+                        number of voice and video private or group calls.
+                    </p>
+                </section>
+                <section class="wrapper">
+                    <div class="formTopSection">
+                        <div class="heading">
+                            <h1 class="text text-large">Recover</h1>
+                            <p class="text text-normal">Already have an account? <span><a href="/connect"
+                                        class="text text-links">Log in</a></span>
+                            </p>
+                            <p class="text text-normal">New user? <span><a href="/signUp" class="text text-links">Create
+                                        an
+                                        account</a></span>
+                            </p>
+                        </div>
+                        <div class="switch"><input id="themeToggler" type="checkbox"><label for="themeToggler"></label>
+                        </div>
+                    </div>
+
+                    <form name="login" class="form" action="/auth/recovery" method="POST">
+                        <div class="error-control">
+                            {{>recovery_messages}}
+                        </div>
+
+                        <div class="input-control">
+                            <label for="email" class="input-label" hidden>Email</label>
+                            <input id="email" type="email" name="register_email" value="{{email}}" placeholder="Email"
+                                class="input-field" required autocomplete="off"/>
+                        </div>
+
+                        <div class="input-control">
+                            <input type="submit" name="submit" class="input-submit" value="Recover">
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="footer">
+        <a href="mailto:alainpaulinn@gmail.com">Contact Us</a>
+        <a href="/download/windows">
+            <p>Windows</p><i class='bx bxl-windows'></i>
+        </a>
+        <a href="/download/mac">
+            <p>Mac</p><i class='bx bxl-apple'></i>
+        </a>
+        <a href="/download/linux">
+            <p>Linux</p><i>🐧</i>
+        </a>
+    </div>
+    <div class="notifications" id="notificationsDiv">
+    </div>
+    {{!-- <script src="/js/jquery.min.js"></script> --}}
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/connect.js"></script>
+</body>
+
+</html>

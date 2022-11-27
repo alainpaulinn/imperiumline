@@ -552,6 +552,7 @@ body {
   gap: 1rem;
   margin: 1rem;
   z-index: 1;
+  color: var(--lightText);
 
   .notification {
     display: flex;
@@ -562,6 +563,7 @@ body {
     width: 100%;
     overflow: hidden;
     flex-shrink: 0;
+    background: var(--focusAreaBackgroundColor);
 
     .notificationTitle {
       display: flex;
@@ -608,15 +610,16 @@ body {
         border: none;
         outline: none;
         cursor: pointer;
+
       }
 
       .normal {
-        background-color: $sidepanel;
+        background-color: var(--primaryBackground);
         color: var(--lightText);
       }
 
       .confirm {
-        background-color: $notification;
+        background-color: var(--notification);
         color: var(--lightText);
       }
 
