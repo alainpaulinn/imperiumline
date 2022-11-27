@@ -164,8 +164,8 @@ exports.recovery = (req, res) => {
             console.log(err);
             return;
         }
-        if (result.length <= 0) {
-
+        else if (result.length <= 0) {
+            console.log('recovery email does not exist', email)
         }
 
         else {
@@ -175,16 +175,17 @@ exports.recovery = (req, res) => {
             let subject = "Password reset link"
             let text = "Hello To you all"
             let html = `<b>Hello ${name} ${surname}</b>`
-            sendEmail(emails, surname, name, subject, text, html)
+            sendEmail(emails, subject, text, html)
+            console.log('recovery email sent')
         }
     })
 
     res.render('recovery', {
-        recovery_message_success: `Thank you for taking the recovery action, If your email and account exists in our database, on your email (${email})you will receive a password reset link. PLEASE CHECK ALSO THE SPAM FOLDER. If you have not yet received the link wait 5 and try again.`,
+        recovery_message_success: `Thank you for taking the recovery action, If your email and account exists in our database, on your email (${email}) you will receive a password reset link. PLEASE CHECK ALSO THE SPAM FOLDER. If you have not yet received the link wait 5 and try again.`,
     })
 }
 
-async function sendEmail(emails, surname, name, subject, text, html) {
+async function sendEmail(emails, subject, text, html) {
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
