@@ -159,26 +159,26 @@ exports.logout = (req, res) => {
 }
 exports.recovery = (req, res) => {
     const { email } = req.body;
-    // db.query('SELECT name, surname, email FROM user WHERE email = ?', [email], async (err, result) => {
-    //     if (err) {
-    //         console.log(err);
-    //         return;
-    //     }
-    //     if (result.length <= 0) {
+    db.query('SELECT name, surname, email FROM user WHERE email = ?', [email], async (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        if (result.length <= 0) {
 
-    //     }
+        }
 
-    //     else {
-    // sendEmail(result[0].email, result[0].name, result[0].surname).then(console.log())
-    //     }
-    // })
-    let emails = [result[0].email]
-    let name = result[0].name
-    let surname = result[0].surname
-    let subject = "Password reset link"
-    let text = "Hello To you all"
-    let html = `<b>Hello ${name} ${surname}</b>`
-    sendEmail(emails, surname, name, subject, text, html)
+        else {
+            let emails = [result[0].email]
+            let name = result[0].name
+            let surname = result[0].surname
+            let subject = "Password reset link"
+            let text = "Hello To you all"
+            let html = `<b>Hello ${name} ${surname}</b>`
+            sendEmail(emails, surname, name, subject, text, html)
+        }
+    })
+
     res.render('recovery', {
         recovery_message_success: `Thank you for taking the recovery action, If your email and account exists in our database, on your email (${email})you will receive a password reset link. PLEASE CHECK ALSO THE SPAM FOLDER. If you have not yet received the link wait 5 and try again.`,
     })
