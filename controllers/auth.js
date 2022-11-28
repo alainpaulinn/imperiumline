@@ -160,7 +160,7 @@ exports.logout = (req, res) => {
 exports.recovery = (req, res) => {
     console.log(req.body)
     const { email } = req.body;
-    db.query('SELECT name, surname, email FROM user WHERE email = ?', [email], async (err, result) => {
+    db.query('SELECT id, name, surname, email FROM user WHERE email = ?', [email], async (err, result) => {
         if (err) {
             console.log(err);
             return;
@@ -170,19 +170,32 @@ exports.recovery = (req, res) => {
         }
 
         else {
-            let emails = [result[0].email]
-            let name = result[0].name
-            let surname = result[0].surname
-            let subject = "Password reset link"
-            let text = "Hello To you all"
-            let html = `<b>Hello ${name} ${surname}</b>`
-            sendEmail(emails, subject, text, html)
-            console.log('recovery email sent')
+            try {
+                let emails = [result[0].email]
+                let name = result[0].name
+                let surname = result[0].surname
+                let subject = "Password reset link"
+                let text = "Hello To you all"
+                let html = `<b>Hello ${name} ${surname}</b>`
+                let info = await sendEmail(emails, subject, text, html)
+                console.log('recovery email sent', info)
+                if(info.messageId){
+                    let link = info.messageId.split('@')[0]
+                    db.query('UPDATE `pwrecoverylinks` SET `isexpired` = 1 WHERE `userID` IS ?', [userID], async (err, InsertResult) => {}) // expire all previous links
+                    db.query('INSERT INTO `pwrecoverylinks`(`userID`, `link`, `isexpired`) VALUES (?,?,?)', [userID, link, 0], async (err, InsertResult) => {
+
+                    })
+                }
+                
+                
+            } catch (error) {
+
+            }
         }
     })
 
     res.render('recovery', {
-        recovery_message_success: `Thank you for taking the recovery action, If your email and account exists in our database, on your email (${email}) you will receive a password reset link. PLEASE CHECK ALSO THE SPAM FOLDER. If you have not yet received the link wait 5 and try again.`,
+        recovery_message_success: `Thank you for taking the recovery action, If your email and account exists in our database, on the provided email (${email}) you will receive a password reset link. PLEASE CHECK ALSO THE SPAM FOLDER. If you have not yet received the link wait 30min and try again.`,
     })
 }
 
@@ -196,8 +209,7 @@ async function sendEmail(emails, subject, text, html) {
             user: process.env.SMTP_USERNAME,
             pass: process.env.SMTP_PASSWORD,
         },
-        tls: {
-            // do not fail on invalid certs
+        tls: { // do not fail on invalid certs
             rejectUnauthorized: false,
             servername: process.env.SMTP_HOSTNAME
         }
@@ -213,4 +225,5 @@ async function sendEmail(emails, subject, text, html) {
     });
 
     console.log("Message sent: %s", info);
+    return info;
 }
