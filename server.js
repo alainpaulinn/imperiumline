@@ -857,6 +857,8 @@ io.on('connection', (socket) => {
       let { myPeerId, callUniqueId, callType, callStage } = data;
       console.log('user ', id, ' has joined the call ', callUniqueId, ' and requests to be called')
 
+      saveAndSendStatus(id, 'onCall')
+
       let thisCallparticipants = await getCallParticipants(callUniqueId) //get all people who are allowed in this call
       let thisUsershouldbeinthiscall = false
       for (var i = 0; i < thisCallparticipants.length; i++) { //For security purposes check if the answered person should be able to answer this call
@@ -883,7 +885,7 @@ io.on('connection', (socket) => {
         }
       }
 
-      saveAndSendStatus(id, 'onCall')
+      
     })
 
     socket.on('callNotAnswered', async callUniqueId => {
