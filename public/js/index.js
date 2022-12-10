@@ -2404,8 +2404,8 @@ let functionalityOptionsArray = [
       createProfilePopup(userInfo);
     })
 
-    socket.on('userProfilePictureChange', changeInfo =>{
-      if(changeInfo.userID == userInfo.userID){
+    socket.on('userProfilePictureChange', changeInfo => {
+      if (changeInfo.userID == userInfo.userID) {
         userInfo.profilePicture = changeInfo.path
         let newPP = createProfilePicContent(userInfo.profilePicture)
         profilePicContent.replaceWith(newPP)
@@ -2413,8 +2413,8 @@ let functionalityOptionsArray = [
       }
     })
 
-    socket.on('onlineStatusChange', changeInfo =>{
-      if(changeInfo.userID == userInfo.userID){
+    socket.on('onlineStatusChange', changeInfo => {
+      if (changeInfo.userID == userInfo.userID) {
         userInfo.status = changeInfo.status
         let newOnlineStatus = createElement({ elementType: 'div', class: 'onlineStatus ' + userInfo.status })
         onlineStatus.replaceWith(newOnlineStatus)
@@ -2422,7 +2422,7 @@ let functionalityOptionsArray = [
       }
     })
 
-    function createProfilePicContent(path){
+    function createProfilePicContent(path) {
       let profilePicContent;
       if (path == null) profilePicContent = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
       else profilePicContent = createElement({ elementType: 'img', class: 'memberProfilePicture', src: path })
@@ -3530,6 +3530,7 @@ let functionalityOptionsArray = [
         determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
 
         if (initiatedCallInfo.callStage == 'rejoin') socket.emit('readyForRejoin', { ...initiatedCallInfo, peerId: myPeerId });
+        socket.emit("setOnlineStatus", "onCall")
       }, (err) => { alert('Failed to get local media stream', err); });
     })
     // -------------------------------------
@@ -4325,10 +4326,20 @@ let functionalityOptionsArray = [
     })
 
     socket.on('userLeftCall', userInfo => {
+      if (userInfo.userID == mySavedID) leaveCall()
       removePeer(userInfo.userID)
       console.log('userLeftCall', userInfo.userID)
       leftPanel.updateUserStatus(userInfo, 'absent')
+      stopWaitingTone()
     })
+
+    socket.on('exitAllCalls', () => {
+      leaveCall()
+      console.log('exitAllCalls')
+      stopWaitingTone()
+    })
+
+
 
     socket.on('stoppedScreenSharing', disconnectionInfo => {
       let { userID, callUniqueId } = disconnectionInfo;
@@ -4440,6 +4451,9 @@ let functionalityOptionsArray = [
       sidepanelElements[2].triggerButton.parentElement.parentElement.remove(); // remove the ongoing call button
       if (displayedScreen == 2) displayAppSection(previousDisplayedSreen) // if the call hang up while we are on the screen call, jump to the previous screen
       else { } // else, remain on the same screen
+
+      socket.emit("setOnlineStatus") // reset the online status
+      stopWaitingTone()
     }
     function createRightPartPanel() {
       let participantsCount = 0;
@@ -5511,10 +5525,10 @@ let functionalityOptionsArray = [
 
   // this deletes the cookie on exit if the user has chosed one time connection
   // this also preents ome from disconnecting
-  window.onbeforeunload = function () {
-    deleteAllCookies()
-    return 'Are you sure you want to leave?';
-  };
+  // window.onbeforeunload = function () {
+  //   deleteAllCookies()
+  //   return 'Are you sure you want to leave?';
+  // };
   function deleteAllCookies() {
     var cookies = document.cookie.split(";");
 

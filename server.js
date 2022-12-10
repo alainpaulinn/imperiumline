@@ -165,7 +165,7 @@ io.on('connection', (socket) => {
       socket.emit('favoriteUsers', await getUserFavorites(id))
       socket.emit('allUsers', await getCompanyUsers(company_id))
 
-      io.emit('onlineStatusChange', {userID: id, status: 'online'});
+      io.emit('onlineStatusChange', { userID: id, status: 'online' });
 
     })
     // prepare to receive files
@@ -237,6 +237,39 @@ io.on('connection', (socket) => {
     })
     socket.on("deleteProfilePicture", () => {
       deleteProfilePicture(id)
+    })
+
+    socket.on("setOnlineStatus", (status) => {
+      switch (status) {
+        case 'offline':
+          io.emit('onlineStatusChange', { userID: id, status: status });
+          registeStatus(id, status)
+          break;
+        case 'online':
+          io.emit('onlineStatusChange', { userID: id, status: status });
+          registeStatus(id, status)
+          break;
+        case 'onCall':
+          io.emit('onlineStatusChange', { userID: id, status: status });
+          registeStatus(id, status)
+          break;
+
+        default:
+          let resultantStatus = 'offline';
+          for (let i = 0; i < connectedUsers.length; i++) {
+            if (connectedUsers[i].id == id) resultantStatus = 'online';
+          }
+          io.emit('onlineStatusChange', { userID: id, status: resultantStatus });
+          registeStatus(id, resultantStatus)
+          break;
+      }
+
+      function registeStatus(userID, newStatus) {
+        for (let i = 0; i < connectedUsers.length; i++) {
+          if (connectedUsers[i].id == userID) connectedUsers[i].status = newStatus;
+        }
+      }
+
     })
 
     socket.on('addFavourite', async (favoriteID) => {
@@ -610,6 +643,8 @@ io.on('connection', (socket) => {
     })
 
     async function leaveAllPreviousCalls() {
+      io.emit('onlineStatusChange', {userID: id, status: "online"});
+      
       // check if this user is already on another call, and end that call before starting a new one
       let currentOngoingCalls = await getStillParticipatingCalls(id)
       for (let c = 0; c < currentOngoingCalls.length; c++) {
@@ -625,6 +660,10 @@ io.on('connection', (socket) => {
             if (connectedUsers[i].id == thisCallparticipants[j].userID) {
               // connectedUsers[i].socket.emit
               socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
+
+            }
+            if (connectedUsers[i].id == id) {
+              socket.to(connectedUsers[i].socket.id).emit('exitAllCalls')
             }
           }
         }
@@ -745,6 +784,7 @@ io.on('connection', (socket) => {
         let callInitiationInfo = { callUniqueId, callType: _calltype, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall, callTitle: callTitle, callStage: 'initial' }
         socket.emit('prepareCallingOthers', callInitiationInfo);
         console.log('callInitiationInfo2', callInitiationInfo)
+
       }
 
       async function rejoinCall(groupMembersToCall, previousCallId) {
@@ -1453,8 +1493,12 @@ io.on('connection', (socket) => {
       connectedUsers = _connectedUsers;
       console.log("connectedUsers", connectedUsers)
 
-      io.emit('onlineStatusChange', {userID: id, status: 'offline'});
+      let currentConnections = connectedUsers.filter (({id}) => id === id).length
+      console.log("currentConnections", currentConnections)
+      io.emit('onlineStatusChange', { userID: id, status: 'offline' });
     });
+
+    // function checkifOnCall
 
     function informAllUserLeft(leftUser, callUniqueId) { }
   }
