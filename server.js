@@ -242,16 +242,13 @@ io.on('connection', (socket) => {
     socket.on("setOnlineStatus", (status) => {
       switch (status) {
         case 'offline':
-          io.emit('onlineStatusChange', { userID: id, status: status });
-          registeStatus(id, status)
+          saveAndSendStatus(id, status)
           break;
         case 'online':
-          io.emit('onlineStatusChange', { userID: id, status: status });
-          registeStatus(id, status)
+          saveAndSendStatus(id, status)
           break;
         case 'onCall':
-          io.emit('onlineStatusChange', { userID: id, status: status });
-          registeStatus(id, status)
+          saveAndSendStatus(id, status)
           break;
 
         default:
@@ -259,18 +256,25 @@ io.on('connection', (socket) => {
           for (let i = 0; i < connectedUsers.length; i++) {
             if (connectedUsers[i].id == id) resultantStatus = 'online';
           }
-          io.emit('onlineStatusChange', { userID: id, status: resultantStatus });
-          registeStatus(id, resultantStatus)
+          saveAndSendStatus(id, resultantStatus)
           break;
       }
-
-      function registeStatus(userID, newStatus) {
-        for (let i = 0; i < connectedUsers.length; i++) {
-          if (connectedUsers[i].id == userID) connectedUsers[i].status = newStatus;
-        }
-      }
-
     })
+
+    function registeStatus(userID, newStatus) {
+      for (let i = 0; i < connectedUsers.length; i++) {
+        if (connectedUsers[i].id == userID) connectedUsers[i].status = newStatus;
+      }
+    }
+
+    function myStatusToAll(status){
+      io.emit('onlineStatusChange', { userID: id, status: status });
+    }
+
+    function saveAndSendStatus(id, status){
+      registeStatus(id, status)
+      myStatusToAll(status)
+    }
 
     socket.on('addFavourite', async (favoriteID) => {
       let serverFeedback = await addFavourite(id, favoriteID)
@@ -643,8 +647,7 @@ io.on('connection', (socket) => {
     })
 
     async function leaveAllPreviousCalls() {
-      io.emit('onlineStatusChange', {userID: id, status: "online"});
-      
+     
       // check if this user is already on another call, and end that call before starting a new one
       let currentOngoingCalls = await getStillParticipatingCalls(id)
       for (let c = 0; c < currentOngoingCalls.length; c++) {
@@ -879,6 +882,8 @@ io.on('connection', (socket) => {
           }
         }
       }
+
+      saveAndSendStatus(id, 'onCall')
     })
 
     socket.on('callNotAnswered', async callUniqueId => {
@@ -920,6 +925,8 @@ io.on('connection', (socket) => {
         }
       }
       socket.emit('updateCallLog', await getCallLog(id));
+
+      saveAndSendStatus(id, 'online')
 
     })
     // search to add new users to call
