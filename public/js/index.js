@@ -4339,7 +4339,9 @@ let functionalityOptionsArray = [
       stopWaitingTone()
     })
 
-
+    socket.on('confirmStatus', (status) => {
+      socket.emit('setOnlineStatus', status)
+    })
 
     socket.on('stoppedScreenSharing', disconnectionInfo => {
       let { userID, callUniqueId } = disconnectionInfo;

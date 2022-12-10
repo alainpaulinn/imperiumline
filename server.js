@@ -881,11 +881,13 @@ io.on('connection', (socket) => {
           if (connectedUsers[i].id == thisCallparticipants[j].userID) {
             // connectedUsers[i].socket.emit
             socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
+            socket.to(connectedUsers[i].socket.id).emit('confirmStatus', 'onCall');
+
           }
         }
       }
 
-      
+      saveAndSendStatus(id, 'onCall')
     })
 
     socket.on('callNotAnswered', async callUniqueId => {
