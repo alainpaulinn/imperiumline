@@ -794,42 +794,6 @@ body {
   left: -5px;
   opacity: 1;
 }
-.c-chats__link div:first-of-type {
-  flex-basis: 10%;
-}
-.c-chats__link div:first-of-type img {
-  -o-object-fit: cover;
-     object-fit: cover;
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-}
-.c-chats__link div:first-of-type div {
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
-}
-.c-chats__link div:last-of-type {
-  flex-basis: 75%;
-}
 .c-chats__title {
   font-size: 14px;
   color: var(--lightText);
@@ -1234,21 +1198,6 @@ body {
 
 .message-group-received > div:last-child {
   flex-grow: 1;
-}
-
-.message-group-received > div:first-child > .memberProfilePicture {
-  border-radius: 15px;
-  width: 25px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  background: var(--notification);
-  color: var(--lightText);
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
 }
 
 .message-received {
@@ -2053,24 +2002,6 @@ body {
   align-items: center;
   height: 100%;
 }
-.c-call_log_panel .callSearchSection .searchResultsDiv .listMember .memberProfilePicture {
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  transition: all 0.4s;
-  flex-shrink: 0;
-  -o-object-fit: cover;
-     object-fit: cover;
-  cursor: pointer;
-}
 .c-call_log_panel .callSearchSection .searchResultsDiv .listMember .memberNameRole {
   display: flex;
   flex-direction: column;
@@ -2535,25 +2466,6 @@ body {
   height: 100%;
   color: var(--lightText);
 }
-.c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberProfilePicture {
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  transition: all 0.4s;
-  flex-shrink: 0;
-  -o-object-fit: cover;
-     object-fit: cover;
-  cursor: pointer;
-}
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole {
   display: flex;
   flex-direction: column;
@@ -2609,25 +2521,6 @@ body {
   gap: 1rem;
   align-items: center;
   height: 100%;
-}
-.c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberProfilePicture {
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  transition: all 0.4s;
-  flex-shrink: 0;
-  -o-object-fit: cover;
-     object-fit: cover;
-  cursor: pointer;
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole {
   display: flex;
@@ -2823,25 +2716,6 @@ body {
   align-items: center;
   border-radius: 15px;
   margin-bottom: 0.5rem;
-}
-.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberProfilePicture {
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  transition: all 0.4s;
-  flex-shrink: 0;
-  -o-object-fit: cover;
-     object-fit: cover;
-  cursor: pointer;
 }
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberNameRole {
   display: flex;
@@ -3702,25 +3576,6 @@ body {
   align-items: center;
   border-radius: 15px;
   color: var(--lightText);
-}
-.videoCoverDiv .calleesDiv .listMember .memberProfilePicture {
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  transition: all 0.4s;
-  flex-shrink: 0;
-  -o-object-fit: cover;
-     object-fit: cover;
-  cursor: pointer;
 }
 .videoCoverDiv .calleesDiv .listMember .memberNameRole {
   display: flex;
@@ -4861,6 +4716,37 @@ body {
 .c-time-admin_panel .central-Options .adminPanelMainContent .adminFunctionOption {
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
   border-radius: 15px;
+}
+
+.identifier {
+  border: 1px solid var(--notification);
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  height: 40px;
+  border-radius: 15px;
+  text-transform: uppercase;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.identifier .onlineStatus {
+  width: 10px;
+  height: 10px;
+  border-radius: 15px;
+  position: absolute;
+  right: -1px;
+  top: -1px;
+}
+.identifier .onlineStatus.online {
+  background-color: green;
+}
+.identifier .onlineStatus.onCall {
+  background-color: red;
+}
+.identifier .onlineStatus.offline {
+  background-color: gray;
 }
 
 .memberProfilePicture {

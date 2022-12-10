@@ -165,6 +165,8 @@ io.on('connection', (socket) => {
       socket.emit('favoriteUsers', await getUserFavorites(id))
       socket.emit('allUsers', await getCompanyUsers(company_id))
 
+      io.emit('onlineStatusChange', {userID: id, status: 'online'});
+
     })
     // prepare to receive files
     // Make an instance of SocketIOFileUpload and listen on this socket:
@@ -1450,6 +1452,8 @@ io.on('connection', (socket) => {
       });
       connectedUsers = _connectedUsers;
       console.log("connectedUsers", connectedUsers)
+
+      io.emit('onlineStatusChange', {userID: id, status: 'offline'});
     });
 
     function informAllUserLeft(leftUser, callUniqueId) { }

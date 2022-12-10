@@ -2396,13 +2396,38 @@ let functionalityOptionsArray = [
   }
   function makeProfilePicture(userInfo) {
     let { userID, name, surname, role, profilePicture, status } = userInfo
-    let memberProfilePicture;
-    if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture })
-
+    let onlineStatus = createElement({ elementType: 'div', class: 'onlineStatus ' + userInfo.status })
+    let profilePicContent = createProfilePicContent(userInfo.profilePicture)
+    let areaContent = [profilePicContent, onlineStatus]
+    let memberProfilePicture = createElement({ elementType: 'div', class: 'identifier', childrenArray: areaContent })
     memberProfilePicture.addEventListener('click', () => {
       createProfilePopup(userInfo);
     })
+
+    socket.on('userProfilePictureChange', changeInfo =>{
+      if(changeInfo.userID == userInfo.userID){
+        userInfo.profilePicture = changeInfo.path
+        let newPP = createProfilePicContent(userInfo.profilePicture)
+        profilePicContent.replaceWith(newPP)
+        profilePicContent = newPP;
+      }
+    })
+
+    socket.on('onlineStatusChange', changeInfo =>{
+      if(changeInfo.userID == userInfo.userID){
+        userInfo.status = changeInfo.status
+        let newOnlineStatus = createElement({ elementType: 'div', class: 'onlineStatus ' + userInfo.status })
+        onlineStatus.replaceWith(newOnlineStatus)
+        onlineStatus = newOnlineStatus;
+      }
+    })
+
+    function createProfilePicContent(path){
+      let profilePicContent;
+      if (path == null) profilePicContent = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+      else profilePicContent = createElement({ elementType: 'img', class: 'memberProfilePicture', src: path })
+      return profilePicContent;
+    }
     return memberProfilePicture;
   }
 
@@ -5538,8 +5563,8 @@ let functionalityOptionsArray = [
           const dayEventsArray = calendarEventObj[key];
           if (key + '' == selectedCalendarDate) {
             // if (dayEventsArray.length > 0) {
-              console.log('happened', dayEventsArray)
-              eventSectionObject.displayDayOnlyOnSchedule(key, dayEventsArray)
+            console.log('happened', dayEventsArray)
+            eventSectionObject.displayDayOnlyOnSchedule(key, dayEventsArray)
 
             // }
           }
@@ -5965,11 +5990,11 @@ let functionalityOptionsArray = [
           let dateYYYYMMDD_ISO = formatDate(date).substring(0, 10)
           console.log('dateYYYYMMDD_ISO', dateYYYYMMDD_ISO)
           let contentClass = 'noMeaning';
-          let selectedDayClass = selectedCalendarDate == dateYYYYMMDD_ISO? 'selected-day' : '';
+          let selectedDayClass = selectedCalendarDate == dateYYYYMMDD_ISO ? 'selected-day' : '';
           if (calendarObject[dateYYYYMMDD_ISO]) contentClass = calendarObject[dateYYYYMMDD_ISO].length > 0 ? 'contentDay' : 'noMeaning';
-          
+
           let loadedDayClasses = [contentClass, dayClass];
-          if(selectedDayClass != '') loadedDayClasses.push(selectedDayClass)
+          if (selectedDayClass != '') loadedDayClasses.push(selectedDayClass)
           console.log('loadedDayClasses', loadedDayClasses)
           let dayDiv = createElement({
             elementType: 'div', class: loadedDayClasses.join(" "), textContent: day + '', onclick: () => {

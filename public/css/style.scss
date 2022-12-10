@@ -995,47 +995,47 @@ body {
 
     }
 
-    div:first-of-type {
-      flex-basis: 10%;
+    // div:first-of-type {
+    //   flex-basis: 10%;
 
-      img {
-        object-fit: cover;
-        border: 1px solid var(--notification);
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
-        //display: block;
-        border-radius: $borderRadius;
+    //   img {
+    //     object-fit: cover;
+    //     border: 1px solid var(--notification);
+    //     width: 40px;
+    //     height: 40px;
+    //     margin-right: 10px;
+    //     //display: block;
+    //     border-radius: $borderRadius;
 
-        text-transform: uppercase;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: var(--lightText);
-        background-color: var(--notification);
+    //     text-transform: uppercase;
+    //     display: flex;
+    //     justify-content: center;
+    //     align-items: center;
+    //     color: var(--lightText);
+    //     background-color: var(--notification);
 
-        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-      }
+    //     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+    //   }
 
-      div {
-        border: 1px solid var(--notification);
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
-        border-radius: $borderRadius;
-        text-transform: uppercase;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: var(--lightText);
-        background-color: var(--notification);
-        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
-      }
-    }
+    //   div {
+    //     border: 1px solid var(--notification);
+    //     width: 40px;
+    //     height: 40px;
+    //     margin-right: 10px;
+    //     border-radius: $borderRadius;
+    //     text-transform: uppercase;
+    //     display: flex;
+    //     justify-content: center;
+    //     align-items: center;
+    //     color: var(--lightText);
+    //     background-color: var(--notification);
+    //     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
+    //   }
+    // }
 
-    div:last-of-type {
-      flex-basis: 75%;
-    }
+    // div:last-of-type {
+    //   flex-basis: 75%;
+    // }
   }
 
   &__title {
@@ -1526,20 +1526,20 @@ body {
   flex-grow: 1;
 }
 
-.message-group-received>div:first-child>.memberProfilePicture {
-  border-radius: $borderRadius;
-  // height: 25px;
-  width: 25px;
-  object-fit: cover;
-  background: var(--notification);
-  color: var(--lightText);
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-}
+// .message-group-received>div:first-child>.memberProfilePicture {
+//   border-radius: $borderRadius;
+//   // height: 25px;
+//   width: 25px;
+//   object-fit: cover;
+//   background: var(--notification);
+//   color: var(--lightText);
+//   text-transform: uppercase;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   cursor: pointer;
+//   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+// }
 
 
 .message-received {
@@ -2478,25 +2478,25 @@ body {
         height: 100%;
 
 
-        .memberProfilePicture {
-          border: 1px solid var(--notification);
-          width: 40px;
-          height: 40px;
-          border-radius: $borderRadius;
-          text-transform: uppercase;
-          display: -webkit-box;
-          display: -ms-flexbox;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          color: var(--lightText);
-          background-color: var(--notification);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-          transition: all 0.4s;
-          flex-shrink: 0;
-          object-fit: cover;
-          cursor: pointer;
-        }
+        // .memberProfilePicture {
+        //   border: 1px solid var(--notification);
+        //   width: 40px;
+        //   height: 40px;
+        //   border-radius: $borderRadius;
+        //   text-transform: uppercase;
+        //   display: -webkit-box;
+        //   display: -ms-flexbox;
+        //   display: flex;
+        //   justify-content: center;
+        //   align-items: center;
+        //   color: var(--lightText);
+        //   background-color: var(--notification);
+        //   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+        //   transition: all 0.4s;
+        //   flex-shrink: 0;
+        //   object-fit: cover;
+        //   cursor: pointer;
+        // }
 
         .memberNameRole {
           display: flex;
@@ -3075,24 +3075,24 @@ body {
           height: 100%;
           color: var(--lightText);
 
-          .memberProfilePicture {
-            border: 1px solid var(--notification);
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
-            border-radius: $borderRadius;
-            text-transform: uppercase;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--lightText);
-            background-color: var(--notification);
-            box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-            transition: all 0.4s;
-            flex-shrink: 0;
-            object-fit: cover;
-            cursor: pointer;
-          }
+          // .memberProfilePicture {
+          //   border: 1px solid var(--notification);
+          //   width: 40px;
+          //   height: 40px;
+          //   margin-right: 10px;
+          //   border-radius: $borderRadius;
+          //   text-transform: uppercase;
+          //   display: flex;
+          //   justify-content: center;
+          //   align-items: center;
+          //   color: var(--lightText);
+          //   background-color: var(--notification);
+          //   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          //   transition: all 0.4s;
+          //   flex-shrink: 0;
+          //   object-fit: cover;
+          //   cursor: pointer;
+          // }
 
           .memberNameRole {
             display: flex;
@@ -3163,26 +3163,26 @@ body {
           height: 100%;
 
 
-          .memberProfilePicture {
-            border: 1px solid var(--notification);
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
-            border-radius: $borderRadius;
-            text-transform: uppercase;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--lightText);
-            background-color: var(--notification);
-            box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-            transition: all 0.4s;
-            flex-shrink: 0;
-            object-fit: cover;
-            cursor: pointer;
-          }
+          // .memberProfilePicture {
+          //   border: 1px solid var(--notification);
+          //   width: 40px;
+          //   height: 40px;
+          //   margin-right: 10px;
+          //   border-radius: $borderRadius;
+          //   text-transform: uppercase;
+          //   display: -webkit-box;
+          //   display: -ms-flexbox;
+          //   display: flex;
+          //   justify-content: center;
+          //   align-items: center;
+          //   color: var(--lightText);
+          //   background-color: var(--notification);
+          //   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          //   transition: all 0.4s;
+          //   flex-shrink: 0;
+          //   object-fit: cover;
+          //   cursor: pointer;
+          // }
 
           .memberNameRole {
             display: flex;
@@ -3411,24 +3411,24 @@ body {
               border-radius: $borderRadius;
               margin-bottom: .5rem;
 
-              .memberProfilePicture {
-                border: 1px solid var(--notification);
-                width: 40px;
-                height: 40px;
-                margin-right: 10px;
-                border-radius: $borderRadius;
-                text-transform: uppercase;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: var(--lightText);
-                background-color: var(--notification);
-                box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-                transition: all 0.4s;
-                flex-shrink: 0;
-                object-fit: cover;
-                cursor: pointer;
-              }
+              // .memberProfilePicture {
+              //   border: 1px solid var(--notification);
+              //   width: 40px;
+              //   height: 40px;
+              //   margin-right: 10px;
+              //   border-radius: $borderRadius;
+              //   text-transform: uppercase;
+              //   display: flex;
+              //   justify-content: center;
+              //   align-items: center;
+              //   color: var(--lightText);
+              //   background-color: var(--notification);
+              //   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+              //   transition: all 0.4s;
+              //   flex-shrink: 0;
+              //   object-fit: cover;
+              //   cursor: pointer;
+              // }
 
               .memberNameRole {
                 display: flex;
@@ -4463,24 +4463,24 @@ body {
       color: var(--lightText);
       // margin-bottom: .5rem;
 
-      .memberProfilePicture {
-        border: 1px solid var(--notification);
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
-        border-radius: $borderRadius;
-        text-transform: uppercase;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: var(--lightText);
-        background-color: var(--notification);
-        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-        transition: all 0.4s;
-        flex-shrink: 0;
-        object-fit: cover;
-        cursor: pointer;
-      }
+      // .memberProfilePicture {
+      //   border: 1px solid var(--notification);
+      //   width: 40px;
+      //   height: 40px;
+      //   margin-right: 10px;
+      //   border-radius: $borderRadius;
+      //   text-transform: uppercase;
+      //   display: flex;
+      //   justify-content: center;
+      //   align-items: center;
+      //   color: var(--lightText);
+      //   background-color: var(--notification);
+      //   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+      //   transition: all 0.4s;
+      //   flex-shrink: 0;
+      //   object-fit: cover;
+      //   cursor: pointer;
+      // }
 
       .memberNameRole {
         display: flex;
@@ -5878,6 +5878,40 @@ body {
         border-radius: $borderRadius;
 
       }
+    }
+  }
+}
+
+.identifier{
+  border: 1px solid var(--notification);
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  height: 40px;
+  border-radius: $borderRadius;
+  text-transform: uppercase;
+
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  .onlineStatus{
+    width: 10px;
+    height: 10px;
+    border-radius: $borderRadius;
+
+    position: absolute;
+    right: -1px;
+    top: -1px;
+    &.online{
+      background-color: green;
+    }
+    &.onCall{
+      background-color: red;
+    }
+    &.offline{
+      background-color: gray;
     }
   }
 }
