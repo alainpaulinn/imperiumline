@@ -4698,16 +4698,30 @@ let functionalityOptionsArray = [
             socket.on('onlineStatusChange', changeInfo => {
               if (allUsersArray[i].userID == changeInfo.userID) {
                 allUsersArray[i].status = changeInfo.userID // keep and save the ne value
-                if(changeInfo.status == 'online'){
+                if (changeInfo.status == 'online') {
 
+                  let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+                  let ringButton = createElement({ elementType: 'button', title: 'The user is now online, you can ring now.', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ring now' })] })
+                  let actions = [
+                    {
+                      element: ringButton, functionCall: () => {
+                        console.log('Ring user', allUsersArray[i].userID);
+                        socket.emit('ringAgain', { userID: allUsersArray[i].userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
+                      }
+                    },
+                    { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
+                  ]
+                  let presenceDiv = userForAttendanceList(allUsersArray[i], actions)
+                  updateComponentsArrayItem(allUsersArray[i].userID, { userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'online' })
                 }
-                if(changeInfo.status == 'offline'){
-                  
+                if (changeInfo.status == 'offline') {
+                  let presenceDiv = createOfflineElement()
+                  updateComponentsArrayItem(allUsersArray[i].userID, { userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
                 }
               }
             })
 
-            function createOfflineElement(){
+            function createOfflineElement() {
               let offlineButton = createElement({ elementType: 'button', title: 'User is offline', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
               let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
               let actions = [
@@ -4718,7 +4732,7 @@ let functionalityOptionsArray = [
               return presenceDiv
             }
 
-            function createOnlineElement(){
+            function createOnlineElement() {
               let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
               let ringButton = createElement({ elementType: 'button', title: 'Phone is ringing', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
               let actions = [
@@ -4729,10 +4743,10 @@ let functionalityOptionsArray = [
               return presenceDiv
             }
 
-            function updateComponentsArrayItem(){
-              for (let i = 0; i < array.length; i++) {
-                const element = array[i];
-                
+            function updateComponentsArrayItem(userIdToChange, itemValue) {
+              for (let i = 0; i < componentsArray.length; i++) {
+                if (componentsArray[i].userInfo.userID = userIdToChange) componentsArray[i] = itemValue
+
               }
             }
           }
@@ -4814,7 +4828,7 @@ let functionalityOptionsArray = [
                   { element: offlineButton, functionCall: () => { } },
                   {
                     element: callAgainButton, functionCall: () => {
-                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
+                      ringAgain()
                       updateButtonContent(callAgainButton, 'ringing')
                       console.log('ring again user', userInfo.userID)
                     }
@@ -4830,7 +4844,7 @@ let functionalityOptionsArray = [
                 actions = [
                   {
                     element: callAgainButton, functionCall: () => {
-                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
+                      ringAgain()
                       updateButtonContent(callAgainButton, 'ringing')
                       console.log('ring again user', userInfo.userID)
                     }
@@ -4848,7 +4862,7 @@ let functionalityOptionsArray = [
                   { element: notAnsweredButton, functionCall: () => { } },
                   {
                     element: callAgainButton, functionCall: () => {
-                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
+                      ringAgain()
                       updateButtonContent(callAgainButton, 'ringing')
                       console.log('ring again user', userInfo.userID)
                     }
@@ -4860,6 +4874,9 @@ let functionalityOptionsArray = [
                 break;
               default:
                 break;
+            }
+            function ringAgain() {
+              socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
             }
           }
         }
