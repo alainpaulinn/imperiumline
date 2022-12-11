@@ -2413,6 +2413,12 @@ let functionalityOptionsArray = [
       }
     })
 
+    socket.on('userCoverPictureChange', changeInfo => {
+      if (changeInfo.userID == userInfo.userID) {
+        userInfo.coverPicture = changeInfo.path
+      }
+    })
+
     socket.on('onlineStatusChange', changeInfo => {
       if (changeInfo.userID == userInfo.userID) {
         userInfo.status = changeInfo.status
@@ -3530,7 +3536,7 @@ let functionalityOptionsArray = [
         determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
 
         if (initiatedCallInfo.callStage == 'rejoin') socket.emit('readyForRejoin', { ...initiatedCallInfo, peerId: myPeerId });
-        socket.emit("setOnlineStatus", "onCall")
+        // socket.emit("setOnlineStatus", "onCall")
       }, (err) => { alert('Failed to get local media stream', err); });
     })
     // -------------------------------------
@@ -4700,31 +4706,33 @@ let functionalityOptionsArray = [
               componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'ringing' })
             }
             socket.on('onlineStatusChange', changeInfo => {
-              if (allUsersArray[i].userID == changeInfo.userID) {
-                allUsersArray[i].status = changeInfo.userID // keep and save the ne value
-                if (changeInfo.status == 'online') {
+              console.log('happened')
+              // if (allUsersArray[i].userID == changeInfo.userID) {
+                
+              //   allUsersArray[i].status = changeInfo.userID // keep and save the ne value
+              //   if (changeInfo.status == 'online') {
 
-                  let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
-                  let ringButton = createElement({ elementType: 'button', title: 'The user is now online, you can ring now.', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ring now' })] })
-                  let actions = [
-                    {
-                      element: ringButton, functionCall: () => {
-                        console.log('Ring user', allUsersArray[i].userID);
-                        socket.emit('ringAgain', { userID: allUsersArray[i].userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
-                      }
-                    },
-                    { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
-                  ]
-                  let newpresenceDiv = userForAttendanceList(allUsersArray[i], actions)
-                  presenceDiv.replaceWith(newpresenceDiv)
-                  updateComponentsArrayItem(allUsersArray[i].userID, { userInfo: allUsersArray[i], presenceDiv: newpresenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'online' })
-                }
-                if (changeInfo.status == 'offline') {
-                  let newpresenceDiv = createOfflineElement()
-                  presenceDiv.replaceWith(newpresenceDiv)
-                  updateComponentsArrayItem(allUsersArray[i].userID, { userInfo: allUsersArray[i], presenceDiv: newpresenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
-                }
-              }
+              //     let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+              //     let ringButton = createElement({ elementType: 'button', title: 'The user is now online, you can ring now.', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ring now' })] })
+              //     let actions = [
+              //       {
+              //         element: ringButton, functionCall: () => {
+              //           console.log('Ring user', allUsersArray[i].userID);
+              //           socket.emit('ringAgain', { userID: allUsersArray[i].userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
+              //         }
+              //       },
+              //       { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
+              //     ]
+              //     let newpresenceDiv = userForAttendanceList(allUsersArray[i], actions)
+              //     presenceDiv.replaceWith(newpresenceDiv)
+              //     updateComponentsArrayItem(allUsersArray[i].userID, { userInfo: allUsersArray[i], presenceDiv: newpresenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'online' })
+              //   }
+              //   if (changeInfo.status == 'offline') {
+              //     let newpresenceDiv = createOfflineElement()
+              //     presenceDiv.replaceWith(newpresenceDiv)
+              //     updateComponentsArrayItem(allUsersArray[i].userID, { userInfo: allUsersArray[i], presenceDiv: newpresenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
+              //   }
+              // }
             })
 
             function createOfflineElement() {

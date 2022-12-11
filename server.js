@@ -165,8 +165,11 @@ io.on('connection', (socket) => {
       socket.emit('favoriteUsers', await getUserFavorites(id))
       socket.emit('allUsers', await getCompanyUsers(company_id))
 
-      io.emit('onlineStatusChange', { userID: id, status: 'online' });
-
+      let oncallUserFound = false
+      for (let i = 0; i < connectedUsers.length; i++) {
+        if (connectedUsers[i].id == id && connectedUsers[i].status == 'onCall') oncallUserFound = true
+      }
+      if (!oncallUserFound) saveAndSendStatus(id, 'online')
     })
     // prepare to receive files
     // Make an instance of SocketIOFileUpload and listen on this socket:
@@ -203,17 +206,19 @@ io.on('connection', (socket) => {
     });
 
     // Do something when a file is saved:
-    uploader.on("saved", (event) => {
+    uploader.on("saved", async (event) => {
       // event.file.clientDetail.name = event.file.name;
       let fileName = makeid(25)
       switch (event.file.meta.fileRole) {
         case 'profilePicture':
           fs.renameSync('private/profiles/' + event.file.name, 'private/profiles/' + fileName);
           updateDBProfilePicture(id, 'private/profiles/' + fileName)
+          sendNewProfilePicture(await getDBProfilePicture(id))
           break;
         case 'coverPicture':
           fs.renameSync('private/cover/' + event.file.name, 'private/cover/' + fileName);
           updateDBCoverPicture(id, 'private/cover/' + fileName)
+          sendNewCoverPicture(await getDBCoverPicture(id))
           break;
         case 'groupProfilePicture':
           let picturePath = 'private/profiles/' + fileName
@@ -267,13 +272,20 @@ io.on('connection', (socket) => {
       }
     }
 
-    function myStatusToAll(status){
+    function myStatusToAll(status) {
       io.emit('onlineStatusChange', { userID: id, status: status });
     }
 
-    function saveAndSendStatus(id, status){
+    function saveAndSendStatus(id, status) {
       registeStatus(id, status)
       myStatusToAll(status)
+    }
+
+    function sendNewProfilePicture(profilePicture){
+      io.emit('userProfilePictureChange', { userID: id, path: profilePicture });
+    }
+    function sendNewCoverPicture(coverPicture){
+      io.emit('userCoverPictureChange', { userID: id, path: coverPicture });
     }
 
     socket.on('addFavourite', async (favoriteID) => {
@@ -647,7 +659,7 @@ io.on('connection', (socket) => {
     })
 
     async function leaveAllPreviousCalls() {
-     
+
       // check if this user is already on another call, and end that call before starting a new one
       let currentOngoingCalls = await getStillParticipatingCalls(id)
       for (let c = 0; c < currentOngoingCalls.length; c++) {
@@ -1504,7 +1516,7 @@ io.on('connection', (socket) => {
       connectedUsers = _connectedUsers;
       console.log("connectedUsers", connectedUsers)
 
-      let currentConnections = connectedUsers.filter (({id}) => id === id).length
+      let currentConnections = connectedUsers.filter(({ id }) => id === id).length
       console.log("currentConnections", currentConnections)
       io.emit('onlineStatusChange', { userID: id, status: 'offline' });
     });
@@ -1554,6 +1566,42 @@ function createNewGroupChat(groupName) {
     })
   })
 }
+
+function getDBCoverPicture(userID) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `coverPicture` FROM `user` WHERE  `user`.`id` = ?', [fileName, userID], async (err, _myEvents) => {
+      if (err) {
+        resolve(null)
+        return console.log(err)
+      }
+      else if (_myEvents.length < 1) {
+        resolve(null)
+        return console.log("Unable to find cover picture for user: " + userID + " user does not exist")
+      }
+      else{
+        resolve(_myEvents[0].coverPicture)
+      }
+    })
+  })
+}
+function getDBProfilePicture(userID) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `profilePicture` FROM `user` WHERE  `user`.`id` = ?', [userID], async (err, _myEvents) => {
+      if (err) {
+        resolve(null)
+        return console.log(err)
+      }
+      else if (_myEvents.length < 1) {
+        resolve(null)
+        return console.log("Unable to find profile picture for user: " + userID + " user does not exist")
+      }
+      else{
+        resolve(_myEvents[0].profilePicture)
+      }
+    })
+  })
+}
+
 function updateDBCoverPicture(userID, fileName) {
   db.query('UPDATE `user` SET `coverPicture` = ? WHERE `user`.`id` = ?', [fileName, userID], async (err, _myEvents) => {
     if (err) return console.log(err)
