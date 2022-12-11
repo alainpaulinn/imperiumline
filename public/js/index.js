@@ -4687,12 +4687,16 @@ let functionalityOptionsArray = [
 
             let statusButton;
 
+            let presenceDiv;
+
             if (allUsersArray[i].status == 'offline') {
-              let presenceDiv = createOfflineElement()
+              // let 
+              presenceDiv = createOfflineElement()
               componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
             }
             else {
-              let presenceDiv = createOnlineElement()
+              // let 
+              presenceDiv = createOnlineElement()
               componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'ringing' })
             }
             socket.on('onlineStatusChange', changeInfo => {
@@ -4711,12 +4715,14 @@ let functionalityOptionsArray = [
                     },
                     { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
                   ]
-                  let presenceDiv = userForAttendanceList(allUsersArray[i], actions)
-                  updateComponentsArrayItem(allUsersArray[i].userID, { userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'online' })
+                  let newpresenceDiv = userForAttendanceList(allUsersArray[i], actions)
+                  presenceDiv.replaceWith(newpresenceDiv)
+                  updateComponentsArrayItem(allUsersArray[i].userID, { userInfo: allUsersArray[i], presenceDiv: newpresenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'online' })
                 }
                 if (changeInfo.status == 'offline') {
-                  let presenceDiv = createOfflineElement()
-                  updateComponentsArrayItem(allUsersArray[i].userID, { userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
+                  let newpresenceDiv = createOfflineElement()
+                  presenceDiv.replaceWith(newpresenceDiv)
+                  updateComponentsArrayItem(allUsersArray[i].userID, { userInfo: allUsersArray[i], presenceDiv: newpresenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
                 }
               }
             })
