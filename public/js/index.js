@@ -4675,6 +4675,15 @@ let functionalityOptionsArray = [
       }
 
       let componentsArray = allUsersArray.map(user => generateUserActions(user))
+
+      socket.on('onlineStatusChange', changeInfo => {
+        for (let i = 0; i < componentsArray.length; i++) {
+          const component = componentsArray[i];
+          if(componentsArray[i].userInfo.userID == changeInfo.userID){
+            componentsArray[i].userInfo.status = changeInfo.status
+          }     
+        }
+      })
       
       refreshAttendaceList()
       updateNumbers()
@@ -4711,7 +4720,7 @@ let functionalityOptionsArray = [
       function refreshAttendaceList() {
         absentMembersDiv.textContent = ''
         presentMembersDiv.textContent = ''
-        componentsArray = allUsersArray.map(user => generateUserActions(user))
+        
         for (let i = 0; i < componentsArray.length; i++) {
           switch (componentsArray[i].onCallStatus) {
             case 'present':
