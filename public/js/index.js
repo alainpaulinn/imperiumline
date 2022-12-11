@@ -4677,15 +4677,6 @@ let functionalityOptionsArray = [
 
       let componentsArray = allUsersArray.map(user => generateUserActions(user))
 
-      // socket.on('onlineStatusChange', changeInfo => {
-      //   for (let i = 0; i < componentsArray.length; i++) {
-      //     const component = componentsArray[i];
-      //     if(componentsArray[i].userInfo.userID == changeInfo.userID){
-      //       componentsArray[i].userInfo.status = changeInfo.status
-      //     }     
-      //   }
-      // })
-      
       refreshAttendaceList()
       updateNumbers()
 
@@ -4693,7 +4684,30 @@ let functionalityOptionsArray = [
         let currentUsers = componentsArray.map(component => { return component.userInfo.userID })
         for (let i = 0; i < allUsersArray.length; i++) {
           if (!currentUsers.includes(allUsersArray[i].userID)) {
+
+            let statusButton;
+
             if (allUsersArray[i].status == 'offline') {
+              let presenceDiv = createOfflineElement()
+              componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
+            }
+            else {
+              let presenceDiv = createOnlineElement()
+              componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'ringing' })
+            }
+            socket.on('onlineStatusChange', changeInfo => {
+              if (allUsersArray[i].userID == changeInfo.userID) {
+                allUsersArray[i].status = changeInfo.userID // keep and save the ne value
+                if(changeInfo.status == 'online'){
+
+                }
+                if(changeInfo.status == 'offline'){
+                  
+                }
+              }
+            })
+
+            function createOfflineElement(){
               let offlineButton = createElement({ elementType: 'button', title: 'User is offline', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
               let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
               let actions = [
@@ -4701,9 +4715,10 @@ let functionalityOptionsArray = [
                 { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
               ]
               let presenceDiv = userForAttendanceList(allUsersArray[i], actions)
-              componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
+              return presenceDiv
             }
-            else {
+
+            function createOnlineElement(){
               let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
               let ringButton = createElement({ elementType: 'button', title: 'Phone is ringing', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
               let actions = [
@@ -4711,7 +4726,14 @@ let functionalityOptionsArray = [
                 { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
               ]
               let presenceDiv = userForAttendanceList(allUsersArray[i], actions)
-              componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'ringing' })
+              return presenceDiv
+            }
+
+            function updateComponentsArrayItem(){
+              for (let i = 0; i < array.length; i++) {
+                const element = array[i];
+                
+              }
             }
           }
         }
@@ -4721,7 +4743,7 @@ let functionalityOptionsArray = [
       function refreshAttendaceList() {
         absentMembersDiv.textContent = ''
         presentMembersDiv.textContent = ''
-        
+
         for (let i = 0; i < componentsArray.length; i++) {
           switch (componentsArray[i].onCallStatus) {
             case 'present':
