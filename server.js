@@ -869,7 +869,7 @@ io.on('connection', (socket) => {
       leaveAllPreviousCalls()// make sure that the user is not on another call
 
       socket.emit('updateAllParticipantsList', thisCallparticipants) // this is because if someone answers this call, while the called has added other users, the caller will not have a list
-      socket.to(callUniqueId + '-allAnswered-sockets', thisCallparticipants)
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('updateAllParticipantsList', thisCallparticipants)
       //inform all users who accepted the call- to call me
       socket.to(callUniqueId + '-allAnswered-sockets').emit('connectUser', { peerId: myPeerId, userInfo: await getUserInfo(id), callType, callStage });
       setUserCallStatus(id, callUniqueId, 'onCall') // set this user to in-call status
