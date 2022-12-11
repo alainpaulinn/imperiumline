@@ -1569,7 +1569,7 @@ function createNewGroupChat(groupName) {
 
 function getDBCoverPicture(userID) {
   return new Promise(function (resolve, reject) {
-    db.query('SELECT `coverPicture` FROM `user` WHERE  `user`.`id` = ?', [fileName, userID], async (err, _myEvents) => {
+    db.query('SELECT `coverPicture` FROM `user` WHERE  `user`.`id` = ?', [userID], async (err, _myEvents) => {
       if (err) {
         resolve(null)
         return console.log(err)
