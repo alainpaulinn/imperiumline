@@ -4675,6 +4675,7 @@ let functionalityOptionsArray = [
       }
 
       let componentsArray = allUsersArray.map(user => generateUserActions(user))
+      
       refreshAttendaceList()
       updateNumbers()
 
@@ -4710,6 +4711,7 @@ let functionalityOptionsArray = [
       function refreshAttendaceList() {
         absentMembersDiv.textContent = ''
         presentMembersDiv.textContent = ''
+        updateComponentsArray()
         for (let i = 0; i < componentsArray.length; i++) {
           switch (componentsArray[i].onCallStatus) {
             case 'present':
