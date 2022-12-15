@@ -3144,6 +3144,7 @@ let functionalityOptionsArray = [
     ]
   })
   newGroupChatBtn.addEventListener("click", () => {
+    createNewPeer();
     let groupNameInputLabel = createElement({ elementType: 'div', for: 'groupNameInput', class: 'editBlock', textContent: 'Type Here the name of the group conversation, and leave it empty if you do not want to set the name. the name and profile picture can be set later' })
     let groupNameInput = createElement({ elementType: 'input', id: 'groupNameInput', class: 'textField', name: 'groupName', type: 'text', placeHolder: 'Group Name' })
     let groupNameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [groupNameInput] })
@@ -3338,7 +3339,7 @@ let functionalityOptionsArray = [
   /////////////////////////////////CALL LOG END//////////////////////
 
   let secondaryVideosDiv = document.getElementById('secondaryVideosDiv')
-  const myPeer = new Peer(undefined, {
+  let peerOptions = {
     host: 'peer.imperiumline.com',
     secure: true,
     config: {
@@ -3365,7 +3366,12 @@ let functionalityOptionsArray = [
       ],
       sdpSemantics: "unified-plan"
     }
-  })
+  }
+  let myPeer = new Peer(undefined, peerOptions)
+
+  function createNewPeer(){
+    myPeer = new Peer(undefined, peerOptions)
+  }
 
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
   //ringtone preparation
@@ -3826,6 +3832,9 @@ let functionalityOptionsArray = [
         removePeer(userInfo.userID)
         leftPanel.updateUserStatus(userInfo, 'absent')
       })
+      call.on('error', (err) => {
+        console.log('Peer connection Error', err);
+      });
       participants.push(participant) // push the participant to the Array
       rightPanel.setParticipantsCount(participants.length)
       rightPanel.messagesBox.addMessage({ userInfo: participant.userInfo, content: '', time: new Date() }, 'join')
