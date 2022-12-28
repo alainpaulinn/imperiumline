@@ -4355,10 +4355,6 @@ let functionalityOptionsArray = [
       stopWaitingTone()
     })
 
-    socket.on('confirmStatus', (status) => {
-      socket.emit('setOnlineStatus', status)
-    })
-
     socket.on('stoppedScreenSharing', disconnectionInfo => {
       let { userID, callUniqueId } = disconnectionInfo;
       // close all of the the videos of the person qho quit

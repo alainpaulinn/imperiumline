@@ -252,9 +252,9 @@ io.on('connection', (socket) => {
         case 'online':
           saveAndSendStatus(id, status)
           break;
-        case 'onCall':
-          saveAndSendStatus(id, status)
-          break;
+        // case 'onCall':
+        //   saveAndSendStatus(id, status)
+        //   break;
 
         default:
           let resultantStatus = 'offline';
@@ -869,7 +869,7 @@ io.on('connection', (socket) => {
       let { myPeerId, callUniqueId, callType, callStage } = data;
       console.log('user ', id, ' has joined the call ', callUniqueId, ' and requests to be called')
 
-      saveAndSendStatus(id, 'onCall')
+      // saveAndSendStatus(id, 'onCall')
 
       let thisCallparticipants = await getCallParticipants(callUniqueId) //get all people who are allowed in this call
       let thisUsershouldbeinthiscall = false
@@ -893,13 +893,13 @@ io.on('connection', (socket) => {
           if (connectedUsers[i].id == thisCallparticipants[j].userID) {
             // connectedUsers[i].socket.emit
             socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
-            socket.to(connectedUsers[i].socket.id).emit('confirmStatus', 'onCall');
+            // socket.to(connectedUsers[i].socket.id).emit('confirmStatus', 'onCall');
 
           }
         }
       }
 
-      saveAndSendStatus(id, 'onCall')
+      // saveAndSendStatus(id, 'onCall')
     })
 
     socket.on('callNotAnswered', async callUniqueId => {
