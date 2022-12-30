@@ -225,7 +225,7 @@ io.on('connection', (socket) => {
           let roomID = event.file.meta.roomID
           fs.renameSync('private/profiles/' + event.file.name, picturePath);
           updateDBGroupPicture(roomID, picturePath)
-          io.sockets.in(roomID + '').emit('chatProfilePictureChange', { profilePicture: picturePath, roomID: roomID });
+          io.sockets.in(roomID + '').emit('groupPictureChange', { path: picturePath, roomID: roomID });
           socket.emit('serverFeedback', [{ type: 'positive', message: 'the group profile picture was changed successfully.' }])
           break;
       }
@@ -281,10 +281,10 @@ io.on('connection', (socket) => {
       myStatusToAll(status)
     }
 
-    function sendNewProfilePicture(profilePicture){
+    function sendNewProfilePicture(profilePicture) {
       io.emit('userProfilePictureChange', { userID: id, path: profilePicture });
     }
-    function sendNewCoverPicture(coverPicture){
+    function sendNewCoverPicture(coverPicture) {
       io.emit('userCoverPictureChange', { userID: id, path: coverPicture });
     }
 
@@ -314,7 +314,7 @@ io.on('connection', (socket) => {
       if (thisParticipant == undefined) return console.log('this user cannot delete conversation profile picture because he is not part of the group')
 
       deleteGroupProfilePicture(roomID)
-      io.sockets.in(roomID + '').emit('chatProfilePictureChange', { profilePicture: 'private/profiles/group.jpeg', roomID: roomID })
+      io.sockets.in(roomID + '').emit('groupPictureChange', { profilePicture: 'private/profiles/group.jpeg', roomID: roomID })
       socket.emit('serverFeedback', [{ type: 'positive', message: 'Group chat profile picture removed successfully.' }])
     })
     //-----------------------------------
@@ -590,6 +590,22 @@ io.on('connection', (socket) => {
       })
     })
 
+    socket.on('requestChatDetails', async roomID => {
+      let groupMembers = await getRoomParticipantArray(roomID)
+      let thisParticipant = groupMembers.find(participant => participant.userID === id)
+      if (thisParticipant == undefined) {
+        socket.emit('requestChatDetails', {
+          allowed: false
+        })
+        return console.log('this user cannot view chat detaails of the conversation because he is not part of the group')
+      }
+      else{
+        socket.emit('requestChatDetails', {
+          allowed: true, ...await getChatFullInfo(roomID, id)
+        })
+      }
+
+    })
 
 
     socket.on('messageReaction', (reactionIdentifiers) => {
@@ -1578,7 +1594,7 @@ function getDBCoverPicture(userID) {
         resolve(null)
         return console.log("Unable to find cover picture for user: " + userID + " user does not exist")
       }
-      else{
+      else {
         resolve(_myEvents[0].coverPicture)
       }
     })
@@ -1595,7 +1611,7 @@ function getDBProfilePicture(userID) {
         resolve(null)
         return console.log("Unable to find profile picture for user: " + userID + " user does not exist")
       }
-      else{
+      else {
         resolve(_myEvents[0].profilePicture)
       }
     })

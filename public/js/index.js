@@ -796,7 +796,7 @@ let functionalityOptionsArray = [
           })
 
           // early define the numbers Div
-          let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })] })
+          let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createSpinner()] })
 
           let companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: 'favicon.ico' })
           let backButton = createElement({
@@ -825,7 +825,7 @@ let functionalityOptionsArray = [
                 manageButton.addEventListener('click', () => {
                   socket.emit('superManageCompanies')
                   managementDiv.textContent = '';
-                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                  managementDiv.append(createSpinner()) // create Spinner
                 })
 
               }
@@ -835,7 +835,7 @@ let functionalityOptionsArray = [
                 manageButton.addEventListener('click', () => {
                   socket.emit('superManageAdmins')
                   managementDiv.textContent = '';
-                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                  managementDiv.append(createSpinner()) // create Spinner
                 })
               }
               if (number.title == 'Super Admins') {
@@ -844,7 +844,7 @@ let functionalityOptionsArray = [
                 manageButton.addEventListener('click', () => {
                   socket.emit('superManageSuperAdmins')
                   managementDiv.textContent = '';
-                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                  managementDiv.append(createSpinner()) // create Spinner
                 })
               }
 
@@ -859,7 +859,7 @@ let functionalityOptionsArray = [
             contentPanel.textContent = ''
             contentPanel.append(Header, adminPanelMainContent)
             numbersDiv.textContent = ''
-            numbersDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+            numbersDiv.append(createSpinner()) // create Spinner
             socket.emit('requestSuperAdminNumbers')
             showControlPanel();
           })
@@ -1104,7 +1104,7 @@ let functionalityOptionsArray = [
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('superManageSearchCreateCompany', { searchTerm: headerSearchDiv.value });
               managementDivBodyStored.textContent = ''
-              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+              managementDivBodyStored.append(createSpinner()) // create Spinner  
             })
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
@@ -1275,7 +1275,7 @@ let functionalityOptionsArray = [
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('superManageAdminsSearch', { searchTerm: headerSearchDiv.value });
               managementDivBodyStored.textContent = ''
-              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+              managementDivBodyStored.append(createSpinner()) // create Spinner  
             })
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
@@ -1419,7 +1419,7 @@ let functionalityOptionsArray = [
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('superManageSuperAdminsSearch', { searchTerm: headerSearchDiv.value });
               managementDivBodyStored.textContent = ''
-              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+              managementDivBodyStored.append(createSpinner()) // create Spinner  
             })
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
@@ -1497,7 +1497,7 @@ let functionalityOptionsArray = [
           let companyAdmins;
           let managementDivBodyStored // store the di in order to update it in case of a change
           let companyAdminButton = createElement({ elementType: 'button', class: 'responsibilityOptionDropDown', })
-          let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })] }) // create Spinner
+          let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createSpinner()] }) // create Spinner
           let managementDiv = createElement({
             elementType: 'div', class: 'managementDiv', childrenArray: [
               createElement({ elementType: 'div', class: 'managementDivTemporary', textContent: "Select any of the above clickable options to manage" })
@@ -1517,7 +1517,7 @@ let functionalityOptionsArray = [
                 manageButton.addEventListener('click', () => {
                   socket.emit('manageUsers', selectedCompanyID)
                   managementDiv.textContent = '';
-                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                  managementDiv.append(createSpinner()) // create Spinner
                 })
               }
               if (number.title == 'Admins') {
@@ -1526,7 +1526,7 @@ let functionalityOptionsArray = [
                 manageButton.addEventListener('click', () => {
                   socket.emit('manageAdmins', selectedCompanyID)
                   managementDiv.textContent = '';
-                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                  managementDiv.append(createSpinner()) // create Spinner
                 })
               }
               if (number.title == 'Positions') {
@@ -1535,7 +1535,7 @@ let functionalityOptionsArray = [
                 manageButton.addEventListener('click', () => {
                   socket.emit('managePositions', selectedCompanyID)
                   managementDiv.textContent = '';
-                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                  managementDiv.append(createSpinner()) // create Spinner
                 })
               }
               let numberOption = createElement({ elementType: 'div', class: 'numberOption', childrenArray: childrenArray })
@@ -1839,7 +1839,7 @@ let functionalityOptionsArray = [
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('manageUsersSearch', { searchTerm: headerSearchDiv.value, companyId: selectedCompanyID });
               managementDivBodyStored.textContent = ''
-              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+              managementDivBodyStored.append(createSpinner()) // create Spinner  
             })
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
@@ -1907,7 +1907,7 @@ let functionalityOptionsArray = [
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('manageAdminsSearch', { searchTerm: headerSearchDiv.value, companyId: selectedCompanyID });
               managementDivBodyStored.textContent = ''
-              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+              managementDivBodyStored.append(createSpinner()) // create Spinner  
             })
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
@@ -1958,7 +1958,7 @@ let functionalityOptionsArray = [
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('managePositionSearch', { searchTerm: headerSearchDiv.value, companyId: selectedCompanyID });
               managementDivBodyStored.textContent = ''
-              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+              managementDivBodyStored.append(createSpinner()) // create Spinner  
             })
 
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
@@ -2041,7 +2041,7 @@ let functionalityOptionsArray = [
                 let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv, universalButtons] })
                 socket.emit('requestAdminNumbers', option.id)
                 numbersDiv.textContent = '';
-                numbersDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                numbersDiv.append(createSpinner()) // create Spinner
                 let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray: [numbersDiv, managementDiv] })
                 contentPanel.append(Header, adminPanelMainContent);
                 showControlPanel();
@@ -2055,20 +2055,10 @@ let functionalityOptionsArray = [
       }
     }
   });
-  // })(functionalityOptionsArray);
-  // function showMessagesPanel() {
-  //   displayAppSection(0);
-  //   displayedScreen = 0
-  // }
+
   function showCallHistoryPanel() {
     displayAppSection(1);
   }
-  // function displayAppSection(2) {
-  //   displayAppSection(2);
-  // }
-  // function displayAppSection(3) {
-  //   displayAppSection(3);
-  // }
 
   function displayAppSection(sectionIndex) {
     if (sectionIndex != displayedScreen) { // if there is a change in screens displayed
@@ -2102,7 +2092,7 @@ let functionalityOptionsArray = [
 
   chatDetails_panel.clearPanel = () => {
     chatDetails_panel.textContent = '';
-    chatDetails_panel.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any Convesation to see its more details here' }));
+    chatDetails_panel.appendChild(createDummyElement('Select > button on any Convesation to see its more details here'));
   }
 
   function showChatList() {
@@ -2344,8 +2334,7 @@ let functionalityOptionsArray = [
         if (mySavedID == lastmessage.from.userID) { writenBy = "Me: "; }
         else if (mySavedID == lastmessage.from.id == 0) { writenBy = '' }
         else { writenBy = lastmessage.from.name + ": "; }
-        if (profilePicture == null) { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
-        else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
+        imageContainer = makeGroupPicture(chat)
         if (roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
         else chatTitleText = roomName;
         break;
@@ -2360,7 +2349,7 @@ let functionalityOptionsArray = [
     let chatListItem = createElement({ elementType: 'li', class: 'c-chats__list', childrenArray: [chatListButton] })
     chatListItem.addEventListener('click', () => {
       open_chat_box.textContent = ''
-      open_chat_box.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // append spinner for waiting server response
+      open_chat_box.append(createSpinner()) // append spinner for waiting server response
       requestChatContent(roomID)
       markChatAsOpened(roomID)
     })
@@ -2437,11 +2426,31 @@ let functionalityOptionsArray = [
     return memberProfilePicture;
   }
 
+  function makeGroupPicture(groupInfo) {
+    //profilePicture, roomID
+    let imageContainer = createProfilePicContent(groupInfo.profilePicture)
+    socket.on('groupPictureChange', changeInfo => {
+      // roomID, path
+      if (changeInfo.roomID == groupInfo.roomID) {
+        groupInfo.profilePicture = changeInfo.path
+        let newImgContainer = createProfilePicContent(groupInfo.profilePicture)
+        imageContainer.replaceWith(newImgContainer)
+        imageContainer = newImgContainer
+      }
+    })
+
+    function createProfilePicContent(path) {
+      return createElement({ elementType: 'img', class: 'memberProfilePicture', src: path == null ? '/private/profiles/group.jpeg' : path })
+    }
+    return imageContainer;
+  }
+
   document.getElementById("newChat").addEventListener("click", () => {
     newChatSearchToogle()
     var searchField = document.getElementById('searchField')
     searchField.focus();
   })
+
   let typingBox
   let selectedChat_TitleDiv;
   let selectedChat_profilePicture;
@@ -2472,18 +2481,6 @@ let functionalityOptionsArray = [
       if (selectedChat_details_HeaderTitle) selectedChat_details_HeaderTitle.textContent = 'Group chat: ' + roomName
       if (selectedChat_details_changeTitle) selectedChat_details_changeTitle.textContent = roomName
     }
-  });
-
-  socket.on('chatProfilePictureChange', function ({ profilePicture, roomID }) {
-    for (let i = 0; i < availableChats.length; i++) {
-      if (availableChats[i].roomID == roomID) {
-        availableChats[i].conversationButton.updateGroupProfilePicture(profilePicture)
-      }
-    }
-    if (selectedChatId != roomID) return; // escape if this is happening to a non displayed chat
-    console.log("happenned")
-    if (selectedChat_profilePicture) selectedChat_profilePicture.src = profilePicture
-    if (selectedChat_details_profilePic_changeDiv) selectedChat_details_profilePic_changeDiv.src = profilePicture
   });
 
   function generateParticipantsDiv(givenUsers, roomID, removeButtonBool) {
@@ -2559,7 +2556,7 @@ let functionalityOptionsArray = [
     let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = roomInfo
     selectedChat_usersArray = users
     selectedChat_name = roomName
-    selectedChat_profilePic_src = profilePicture
+
     chatDetails_panel.clearPanel();
     displayedMessages = []
     selectedChatId = roomID
@@ -2581,7 +2578,7 @@ let functionalityOptionsArray = [
           {
             element: moreButton, functionCall: () => {
               showChatDetails();
-              fillInChatDetails();
+              requestChatDetails(roomID);
             }
           }
         ]
@@ -2597,8 +2594,7 @@ let functionalityOptionsArray = [
         }
         break;
       case 1:
-        if (profilePicture == null) { selectedChat_profilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
-        else { selectedChat_profilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: selectedChat_profilePic_src }) }
+        selectedChat_profilePicture = makeGroupPicture(roomInfo)
         if (selectedChat_name == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
         else chatTitleText = selectedChat_name;
         let groupCallButton = createElement({ elementType: 'button', title: 'Call conversation members by audio', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(roomID, true, false, false, true, null) } })
@@ -2606,7 +2602,7 @@ let functionalityOptionsArray = [
         let groupMoreButton = createElement({
           elementType: 'button', title: 'Show more about the conversation', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
             showChatDetails();
-            fillInChatDetails();
+            requestChatDetails(roomID);
           }
         })
         selectedChat_TitleDiv = createElement({ elementType: 'p', class: 'c-openchat__box__name', textContent: chatTitleText })
@@ -2676,31 +2672,90 @@ let functionalityOptionsArray = [
       taggedMessages = [];
     }
 
-    function fillInChatDetails() {
+    function requestChatDetails(chatID) {
+      socket.emit('requestChatDetails', chatID)
+      
+
       chatDetails_panel.textContent = '';
       let backButton = createElement({
         elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
         onclick: showChatContent
       })
-      let chatName = selectedChat_name == null ? '(No name)' : selectedChat_name;
-      selectedChat_details_HeaderTitle = createElement({ elementType: 'div', class: 'chatType', textContent: type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName })
-      let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton, selectedChat_details_HeaderTitle] })
+      let detailsChatNameTitle = createElement({ elementType: 'div', class: 'chatType', childrenArray:[createSpinner()] })
+      let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton, detailsChatNameTitle] })
+      let openChatDetailsContenDiv = createElement({ elementType: 'div', class: 'openChatDetailsContenDiv', childrenArray: [createSpinner()] })
+      chatDetails_panel.appendChild(openedChatDetailsTopSection)
+      chatDetails_panel.appendChild(openChatDetailsContenDiv)
+
+    }
+
+    socket.once('requestChatDetails', (chatDetails) => {
+      console.log(chatDetails)
+      if (chatDetails.roomInfo.chatID != selectedChatId) return;
+      if (chatDetails.allowed == false) {
+        chatDetails_panel.textContent = '';
+        chatDetails_panel.appendChild(createDummyElement('You are not allowed to view this informtion because you are no longer part of the conversation'))
+      }
+      chatDetails_panel.textContent = '';
+      let backButton = createElement({
+        elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
+        onclick: showChatContent
+      })
+      // messagesArray, roomInfo
+
+      function makeChatname(realValue) {
+        let chatName = realValue == null ? '(No name)' : realValue;
+        return chatName
+      }
+      let chatName = makeChatname(chatDetails.roomInfo.roomName)
+      let detailsChatNameTitle = createElement({ elementType: 'div', class: 'chatType', textContent: chatDetails.roomInfo.type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName })
+
+      socket.on('chatNameChange', (changeDetails) => {
+        //{roomID, roomName}
+        if (changeDetails.roomID != chatDetails.roomInfo.roomID) return;
+        chatName = makeChatname(changeDetails.chatName)
+        detailsChatNameTitle.textContent = chatDetails.roomInfo.type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName
+      })
+
+      let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton, detailsChatNameTitle] })
 
       let detailsArray = []
 
-      selectedChat_details_participantsDivWrapper = createElement({
+      let participantsDivWrapper = createElement({
         elementType: 'div', class: 'detailBlock', childrenArray: [
           createElement({ elementType: 'div', textContent: 'Chat Participants' }),
-          createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(selectedChat_usersArray, roomID, type == 1) })
+          createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(chatDetails.roomInfo.users, chatDetails.roomInfo.roomID, chatDetails.roomInfo.type == 1) })
         ]
       })
-      detailsArray.push(selectedChat_details_participantsDivWrapper)
 
-      if (type == 1) {
+      // updateCurrentUsers //and users in the conversation
+      socket.on('chatUsersChange', changeDetails => {
+        if (changeDetails.roomID != chatDetails.roomInfo.roomID) return;
+        // let { chatUsers, roomID } = changeDetails
+        if (selectedChatId != changeDetails.roomID) return; // escape if this is happening to a non displayed chat
+        let newParticipantsBlock = createElement({
+          elementType: 'div', class: 'detailBlock', childrenArray: [
+            createElement({ elementType: 'div', textContent: 'Chat Participants' }),
+            createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(changeDetails.chatUsers, chatDetails.roomInfo.roomID, true) })
+          ]
+        })
+        participantsDivWrapper.replaceWith(newParticipantsBlock)
+        participantsDivWrapper = newParticipantsBlock
+        chatDetails.roomInfo.users = changeDetails.chatUsers
+        // update usersCount on details screen
+        let newUsersCount = createElement({ elementType: 'div', class: '', textContent: chatUsers.length + ' Particiants' })
+        selectedChat_details_userCountDiv?.replaceWith(newUsersCount)
+        selectedChat_details_userCountDiv = newUsersCount
+        // it will also trigger chat name change for group chats without names on the server side
+      })
+
+      detailsArray.push(participantsDivWrapper)
+
+      if (chatDetails.roomInfo.type == 1) {
         let userSearchInput = createElement({ elementType: 'input', placeHolder: 'Search person' })
         let popupBody = createElement({
           elementType: 'div', class: 'popupBody', childrenArray: [
-            createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Type to search for users to add to the conversation' })
+            createDummyElement('Type to search for users to add to the conversation')
           ]
         })
         let addParticipantPopupDiv = createElement({
@@ -2715,14 +2770,14 @@ let functionalityOptionsArray = [
           ]
         })
         userSearchInput.addEventListener('input', () => {
-          socket.emit('addRoomParticipantsSearch', { roomID: roomID, searchText: userSearchInput.value })
-          console.log('addRoomParticipantsSearch', { roomID: roomID, searchText: userSearchInput.value })
+          socket.emit('addRoomParticipantsSearch', { roomID: chatDetails.roomInfo.roomID, searchText: userSearchInput.value })
+          console.log('addRoomParticipantsSearch', { roomID: chatDetails.roomInfo.roomID, searchText: userSearchInput.value })
         })
         socket.on('addRoomParticipantsSearch', (foundUsers) => {
           popupBody.textContent = ''
           console.log(foundUsers)
           if (foundUsers.length < 1) {
-            popupBody.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No user found with such criteria' }))
+            popupBody.appendChild(createDummyElement('No user found with such criteria'))
           }
           else {
             let foundPantsDivs = foundUsers.map(user => {
@@ -2748,13 +2803,21 @@ let functionalityOptionsArray = [
           }
         })
 
-        selectedChat_details_userCountDiv = createElement({ elementType: 'div', class: '', textContent: selectedChat_usersArray.length + ' Particiants' })
+        let userCountDiv = createElement({ elementType: 'div', class: '', textContent: chatDetails.roomInfo.users.length + ' Particiants' })
+        socket.on('chatUsersChange', changeDetails => {
+          if (changeDetails.roomID != chatDetails.roomInfo.roomID) return;
+          // let { chatUsers, roomID } = changeDetails
+          if (selectedChatId != changeDetails.roomID) return; // escape if this is happening to a non displayed chat
+          // update usersCount on details screen
+          userCountDiv.textContent = changeDetails.chatUsers.length + ' Particiants'
+        })
+
         let addParticipantsButton = createElement({
           elementType: 'div', class: 'detailBlock', childrenArray: [
             createElement({ elementType: 'div', textContent: 'Chat Participants' }),
             createElement({
               elementType: 'button', class: 'subDetailBlock', childrenArray: [
-                selectedChat_details_userCountDiv,
+                userCountDiv,
                 createElement({
                   elementType: 'button', textContent: 'Add Participants', onclick: () => {
                     hideSearchBoxToggle()
@@ -2771,21 +2834,22 @@ let functionalityOptionsArray = [
         }
         detailsArray.push(addParticipantsButton)
 
-
-
-        //
-
-        selectedChat_details_changeTitle = createElement({ elementType: 'div', class: 'conversationName', textContent: chatName })
+        let chatNameDiv = createElement({ elementType: 'div', class: 'conversationName', textContent: chatName })
+        socket.on('chatNameChange', (changeDetails) => {
+          if (changeDetails.roomID != chatDetails.roomInfo.chatID) return;
+          chatNameDiv.textContent = makeChatname(changeDetails.roomName)
+          chatDetails.roomInfo.roomName = changeDetails.roomName
+        })
         let chatnameBlock = createElement({
           elementType: 'div', class: 'detailBlock', childrenArray: [
             createElement({ elementType: 'div', textContent: 'Group Name:' }),
             createElement({
               elementType: 'div', class: 'subDetailBlock', childrenArray: [
-                selectedChat_details_changeTitle,
+                chatNameDiv,
                 createElement({
                   elementType: 'button', textContent: 'Change', onclick: () => {
                     let icon, title, contentElementsArray, actions;
-                    let notificationBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: '*Leave the field empty if you want to delete the donversation name' })
+                    let notificationBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: '*Leave the field empty if you want to delete the conversation name' })
                     let chatNameLabel = createElement({ elementType: 'label', for: 'chatName', textContent: 'Chat name' })
                     let chatNameInput = createElement({ elementType: 'input', id: 'chatName' + 'chooseNew', placeHolder: 'Chat name', value: selectedChat_name == null ? '' : selectedChat_name })
                     let chatNameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chatNameLabel, chatNameInput] })
@@ -2821,7 +2885,14 @@ let functionalityOptionsArray = [
         // change picture
 
         let srclink = selectedChat_profilePic_src == null ? '/private/profiles/group.jpeg' : selectedChat_profilePic_src
-        selectedChat_details_profilePic_changeDiv = createElement({ elementType: 'img', class: 'largeImage', src: srclink })
+        let detailsProfilePicture = createElement({ elementType: 'img', class: 'largeImage', src: srclink })
+        socket.on('groupPictureChange', changeInfo => {
+          // roomID, path
+          if (changeInfo.roomID == chatDetails.roomInfo.chatID) return;
+          chatDetails.roomInfo.profilePicture = changeInfo.path
+          detailsProfilePicture.src = changeInfo.path == null ? '/private/profiles/group.jpeg' : changeInfo.path
+        })
+
         let groupPictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'groupPictureInputElement', class: 'hidden', accept: "image/*" })
         let selectgroupPictureBtn = createElement({ elementType: 'label', for: 'groupPictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
 
@@ -2831,7 +2902,7 @@ let functionalityOptionsArray = [
         let changePicBlock = createElement({
           elementType: 'div', class: 'detailBlock', childrenArray: [
             createElement({ elementType: 'div', textContent: 'Group profile Picture:' }),
-            createElement({ elementType: 'div', class: 'subDetailBlock', childrenArray: [createElement({ elementType: 'div', childrenArray: [selectedChat_details_profilePic_changeDiv] }), groupPictureInputElement, selectgroupPictureBtn, defaultButton] }),
+            createElement({ elementType: 'div', class: 'subDetailBlock', childrenArray: [createElement({ elementType: 'div', childrenArray: [detailsProfilePicture] }), groupPictureInputElement, selectgroupPictureBtn, defaultButton] }),
             progressBarBlock,
           ]
         })
@@ -2840,33 +2911,19 @@ let functionalityOptionsArray = [
         var groupProfilePictureUploader = new SocketIOFileUpload(socket);
         groupProfilePictureUploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
         groupProfilePictureUploader.listenOnInput(groupPictureInputElement);
-        // Do something on start progress:
         groupProfilePictureUploader.addEventListener("start", function (event) {
           event.file.meta.fileRole = "groupProfilePicture";
           event.file.meta.roomID = roomID;
           groupPicProgressBar.classList.add('visible');
           progressBarBlock.classList.remove('hidden');
         });
-        // Do something on upload progress:
         groupProfilePictureUploader.addEventListener("progress", function (event) {
           var percent = (event.bytesLoaded / event.file.size) * 100;
           groupPicProgressBar.setPercentage(percent.toFixed(2))
-          console.log("File is", percent.toFixed(2), "percent loaded");
         });
-        // Do something when a file is uploaded:
         groupProfilePictureUploader.addEventListener("complete", function (event) {
-          // console.log("complete", event.detail.name);
           groupPicProgressBar.classList.remove('visible');
-          console.log("profilePhoto", event);
-          selectedChat_details_profilePic_changeDiv.src = 'private/profiles/' + event.detail.name
-          profilePicture = 'private/profiles/' + event.detail.name
-          selectedChat_profilePic_src = 'private/profiles/' + event.detail.name
           progressBarBlock.classList.add('hidden');
-          for (let i = 0; i < availableChats.length; i++) {
-            if (availableChats[i].roomID == roomID) {
-              availableChats[i].conversationButton.updateGroupProfilePicture('private/profiles/' + event.detail.name)
-            }
-          }
         });
 
         detailsArray.push(changePicBlock);
@@ -2874,8 +2931,218 @@ let functionalityOptionsArray = [
       let openChatDetailsContenDiv = createElement({ elementType: 'div', class: 'openChatDetailsContenDiv', childrenArray: detailsArray })
       chatDetails_panel.appendChild(openedChatDetailsTopSection)
       chatDetails_panel.appendChild(openChatDetailsContenDiv)
+    })
 
-    }
+    // function fillInChatDetails(chatID) {
+    //   socket.emit('requestChatDetails', chatID)
+    //   chatDetails_panel.textContent = '';
+
+    //   let backButton = createElement({
+    //     elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
+    //     onclick: showChatContent
+    //   })
+    //   selectedChat_details_HeaderTitle = createSpinner()
+
+
+    //   let chatName = selectedChat_name == null ? '(No name)' : selectedChat_name;
+    //   createElement({ elementType: 'div', class: 'chatType', textContent: type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName })
+    //   let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton, selectedChat_details_HeaderTitle] })
+
+    //   let detailsArray = []
+
+    //   selectedChat_details_participantsDivWrapper = createElement({
+    //     elementType: 'div', class: 'detailBlock', childrenArray: [
+    //       createElement({ elementType: 'div', textContent: 'Chat Participants' }),
+    //       createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(selectedChat_usersArray, roomID, type == 1) })
+    //     ]
+    //   })
+    //   detailsArray.push(selectedChat_details_participantsDivWrapper)
+
+    //   if (type == 1) {
+    //     let userSearchInput = createElement({ elementType: 'input', placeHolder: 'Search person' })
+    //     let popupBody = createElement({
+    //       elementType: 'div', class: 'popupBody', childrenArray: [
+    //         createDummyElement('Type to search for users to add to the conversation')
+    //       ]
+    //     })
+    //     let addParticipantPopupDiv = createElement({
+    //       elementType: 'div', class: 'detailsPopupDiv', childrenArray: [
+    //         createElement({
+    //           elementType: 'div', class: 'popupHeader', childrenArray: [
+    //             userSearchInput,
+    //             createElement({ elementType: 'button', textContent: 'Done', onclick: hideSearchBoxToggle })
+    //           ]
+    //         }),
+    //         popupBody
+    //       ]
+    //     })
+    //     userSearchInput.addEventListener('input', () => {
+    //       socket.emit('addRoomParticipantsSearch', { roomID: roomID, searchText: userSearchInput.value })
+    //       console.log('addRoomParticipantsSearch', { roomID: roomID, searchText: userSearchInput.value })
+    //     })
+    //     socket.on('addRoomParticipantsSearch', (foundUsers) => {
+    //       popupBody.textContent = ''
+    //       console.log(foundUsers)
+    //       if (foundUsers.length < 1) {
+    //         popupBody.appendChild(createDummyElement('No user found with such criteria'))
+    //       }
+    //       else {
+    //         let foundPantsDivs = foundUsers.map(user => {
+    //           let addButton = createElement({ elementType: 'button', title: 'Add user', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-plus' })] })
+    //           let actions = [
+    //             {
+    //               element: addButton, functionCall: () => {
+    //                 socket.emit('addUserToRoom', { userID: user.userID, roomID: roomID })
+    //                 console.log('addUserToRoom', { userID: user.userID, roomID: roomID })
+    //                 removeUserDiv()
+    //               }
+    //             }
+    //           ]
+    //           let userdiv = userForAttendanceList(user, actions)
+    //           function removeUserDiv() {
+    //             userdiv.remove()
+    //           }
+    //           return userdiv
+    //         })
+    //         popupBody.appendChild(
+    //           createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: foundPantsDivs })
+    //         )
+    //       }
+    //     })
+
+    //     selectedChat_details_userCountDiv = createElement({ elementType: 'div', class: '', textContent: selectedChat_usersArray.length + ' Particiants' })
+    //     let addParticipantsButton = createElement({
+    //       elementType: 'div', class: 'detailBlock', childrenArray: [
+    //         createElement({ elementType: 'div', textContent: 'Chat Participants' }),
+    //         createElement({
+    //           elementType: 'button', class: 'subDetailBlock', childrenArray: [
+    //             selectedChat_details_userCountDiv,
+    //             createElement({
+    //               elementType: 'button', textContent: 'Add Participants', onclick: () => {
+    //                 hideSearchBoxToggle()
+    //                 userSearchInput.focus()
+    //               }
+    //             })
+    //           ]
+    //         }),
+    //         addParticipantPopupDiv
+    //       ]
+    //     })
+    //     function hideSearchBoxToggle() {
+    //       addParticipantPopupDiv.classList.toggle('visible');
+    //     }
+    //     detailsArray.push(addParticipantsButton)
+
+
+
+    //     //
+
+    //     selectedChat_details_changeTitle = createElement({ elementType: 'div', class: 'conversationName', textContent: chatName })
+    //     let chatnameBlock = createElement({
+    //       elementType: 'div', class: 'detailBlock', childrenArray: [
+    //         createElement({ elementType: 'div', textContent: 'Group Name:' }),
+    //         createElement({
+    //           elementType: 'div', class: 'subDetailBlock', childrenArray: [
+    //             selectedChat_details_changeTitle,
+    //             createElement({
+    //               elementType: 'button', textContent: 'Change', onclick: () => {
+    //                 let icon, title, contentElementsArray, actions;
+    //                 let notificationBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: '*Leave the field empty if you want to delete the donversation name' })
+    //                 let chatNameLabel = createElement({ elementType: 'label', for: 'chatName', textContent: 'Chat name' })
+    //                 let chatNameInput = createElement({ elementType: 'input', id: 'chatName' + 'chooseNew', placeHolder: 'Chat name', value: selectedChat_name == null ? '' : selectedChat_name })
+    //                 let chatNameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chatNameLabel, chatNameInput] })
+    //                 icon = 'bx bxs-edit-alt'
+    //                 title = 'Change chat name'
+    //                 contentElementsArray = [chatNameBlock, notificationBlock]
+    //                 let cancelButton = createElement({ elementType: 'button', textContent: 'Cancel' })
+    //                 let confirmButton = createElement({ elementType: 'button', textContent: 'Save' })
+    //                 actions = [
+    //                   {
+    //                     element: confirmButton, functionCall: () => {
+    //                       let sendvalue = chatNameInput.value.trim()
+    //                       if (sendvalue == '') sendvalue = null
+    //                       socket.emit('changeRoomName', { roomName: sendvalue, roomID: roomID })
+    //                     }
+    //                   },
+    //                   { element: cancelButton, functionCall: () => { } }
+    //                 ]
+    //                 let constraints = { icon, title, contentElementsArray, actions }
+    //                 // actions is an array of a button and a function of what it does
+    //                 createInScreenPopup(constraints).then(editPopup => {
+    //                   cancelButton.addEventListener('click', editPopup.closePopup);
+    //                   confirmButton.addEventListener('click', editPopup.closePopup);
+    //                 })
+
+    //               }
+    //             })
+    //           ]
+    //         })
+    //       ]
+    //     })
+    //     detailsArray.push(chatnameBlock)
+    //     // change picture
+
+    //     let srclink = selectedChat_profilePic_src == null ? '/private/profiles/group.jpeg' : selectedChat_profilePic_src
+    //     selectedChat_details_profilePic_changeDiv = createElement({ elementType: 'img', class: 'largeImage', src: srclink })
+    //     let groupPictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'groupPictureInputElement', class: 'hidden', accept: "image/*" })
+    //     let selectgroupPictureBtn = createElement({ elementType: 'label', for: 'groupPictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
+
+    //     let defaultButton = createElement({ elementType: 'button', textContent: 'Default', onclick: () => { socket.emit('chatProfilePictureDelete', roomID) } })
+    //     let groupPicProgressBar = createBarLoader()
+    //     let progressBarBlock = createElement({ elementType: 'div', class: 'subDetailBlock hidden', childrenArray: [groupPicProgressBar] })
+    //     let changePicBlock = createElement({
+    //       elementType: 'div', class: 'detailBlock', childrenArray: [
+    //         createElement({ elementType: 'div', textContent: 'Group profile Picture:' }),
+    //         createElement({ elementType: 'div', class: 'subDetailBlock', childrenArray: [createElement({ elementType: 'div', childrenArray: [selectedChat_details_profilePic_changeDiv] }), groupPictureInputElement, selectgroupPictureBtn, defaultButton] }),
+    //         progressBarBlock,
+    //       ]
+    //     })
+
+    //     // listen to coverPhotoUpload
+    //     var groupProfilePictureUploader = new SocketIOFileUpload(socket);
+    //     groupProfilePictureUploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
+    //     groupProfilePictureUploader.listenOnInput(groupPictureInputElement);
+    //     // Do something on start progress:
+    //     groupProfilePictureUploader.addEventListener("start", function (event) {
+    //       event.file.meta.fileRole = "groupProfilePicture";
+    //       event.file.meta.roomID = roomID;
+    //       groupPicProgressBar.classList.add('visible');
+    //       progressBarBlock.classList.remove('hidden');
+    //     });
+    //     // Do something on upload progress:
+    //     groupProfilePictureUploader.addEventListener("progress", function (event) {
+    //       var percent = (event.bytesLoaded / event.file.size) * 100;
+    //       groupPicProgressBar.setPercentage(percent.toFixed(2))
+    //       console.log("File is", percent.toFixed(2), "percent loaded");
+    //     });
+    //     // Do something when a file is uploaded:
+    //     groupProfilePictureUploader.addEventListener("complete", function (event) {
+    //       // console.log("complete", event.detail.name);
+    //       groupPicProgressBar.classList.remove('visible');
+    //       selectedChat_details_profilePic_changeDiv.src = 'private/profiles/' + event.detail.name
+    //       profilePicture = 'private/profiles/' + event.detail.name
+    //       selectedChat_profilePic_src = 'private/profiles/' + event.detail.name
+    //       progressBarBlock.classList.add('hidden');
+
+    //     });
+
+    //     socket.once('groupPictureChange', changeInfo => {
+    //       // roomID, path
+    //       if (changeInfo.roomID == roomInfo.roomID) {
+    //         roomInfo.profilePicture = changeInfo.path
+    //         profilePicture = changeInfo.path
+    //         selectedChat_details_profilePic_changeDiv.src = roomInfo.profilePicture
+    //         selectedChat_details_profilePic_changeDiv.src = profilePicture
+    //       }
+    //     })
+
+    //     detailsArray.push(changePicBlock);
+    //   }
+    //   let openChatDetailsContenDiv = createElement({ elementType: 'div', class: 'openChatDetailsContenDiv', childrenArray: detailsArray })
+    //   chatDetails_panel.appendChild(openedChatDetailsTopSection)
+    //   chatDetails_panel.appendChild(openChatDetailsContenDiv)
+
+    // }
   }
 
   function addMessageToChat(message, myID) {
@@ -3041,7 +3308,7 @@ let functionalityOptionsArray = [
       chatContainer.textContent = ''
       chatContainer.append(createElement({
         elementType: 'div', class: 'flex flex-center-y flex-center-x full-height', childrenArray: [
-          createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No conversations found with given criteria.' })
+          createDummyElement('No conversations found with given criteria.')
         ]
       }))
     }
@@ -3140,7 +3407,7 @@ let functionalityOptionsArray = [
   let selectedUsersDiv = createElement({ elementType: 'div', class: 'editBlock flex-column' })
   let resultsUsersDiv = createElement({
     elementType: 'div', class: 'editBlock flex-column', childrenArray: [
-      createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Search for users to add in the box above, the results will appear here.' })
+      createDummyElement('Search for users to add in the box above, the results will appear here.')
     ]
   })
   newGroupChatBtn.addEventListener("click", () => {
@@ -3193,7 +3460,7 @@ let functionalityOptionsArray = [
     if (!resultsUsersDiv) return
     resultsUsersDiv.textContent = ''
     if (users.length < 1) {
-      return resultsUsersDiv.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users found with the given criteria' }))
+      return resultsUsersDiv.appendChild(createDummyElement('No users found with the given criteria'))
     }
 
     users.forEach(user => {
@@ -3369,7 +3636,7 @@ let functionalityOptionsArray = [
   }
   let myPeer = new Peer(undefined, peerOptions)
 
-  function createNewPeer(){
+  function createNewPeer() {
     myPeer = new Peer(undefined, peerOptions)
   }
 
@@ -4713,7 +4980,7 @@ let functionalityOptionsArray = [
             socket.on('onlineStatusChange', changeInfo => {
               console.log('happened')
               // if (allUsersArray[i].userID == changeInfo.userID) {
-                
+
               //   allUsersArray[i].status = changeInfo.userID // keep and save the ne value
               //   if (changeInfo.status == 'online') {
 
@@ -5187,7 +5454,7 @@ let functionalityOptionsArray = [
     if (constraints.profilePicture != null) { caleeProfilePicture = createElement({ elementType: 'img', class: 'caleeProfilePicture', src: constraints.profilePicture }) }
     else caleeProfilePicture = createElement({ elementType: 'div', class: 'caleeProfilePicture', textContent: constraints.displayInitials })
     let activity = createElement({ elementType: 'div', class: 'activity', textContent: constraints.screenMessage })
-    let spinnerDiv = createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })
+    let spinnerDiv = createSpinner()
     let calleesDiv = createElement({ elementType: 'div', class: 'calleesDiv', childrenArray: awaitedUserDivs.map(awaitedUserDiv => awaitedUserDiv.div) })
     let videoCoverDiv
     if (spinner == true) videoCoverDiv = createElement({ elementType: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, spinnerDiv, calleesDiv] })
@@ -5595,6 +5862,16 @@ let functionalityOptionsArray = [
     return progress
   }
 
+  function createSpinner() {
+    let spinner = createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })
+    return spinner
+  }
+
+  function createDummyElement(message) {
+    let dummyElement = createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: message })
+    return dummyElement;
+  }
+
   // this deletes the cookie on exit if the user has chosed one time connection
   // this also preents ome from disconnecting
   // window.onbeforeunload = function () {
@@ -5869,7 +6146,7 @@ let functionalityOptionsArray = [
         let searchresultIntroBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Search results:' })
         let resultsUsersDiv = createElement({
           elementType: 'div', class: 'editBlock flex-column', childrenArray: [
-            createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Search for users to invite in the box above, the results will appear here.' })
+            createDummyElement('Search for users to invite in the box above, the results will appear here.')
           ]
         })
 
@@ -5909,7 +6186,7 @@ let functionalityOptionsArray = [
             return userDiv
           }
           for (let i = 0; i < usersResult.length; i++) if (newEventCreation.inviteList.includes(usersResult[i].userID)) usersResult.splice(i, 1)
-          if (usersResult.length < 1) return resultsUsersDiv.append(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users found with given criteria.' }))
+          if (usersResult.length < 1) return resultsUsersDiv.append(createDummyElement('No users found with given criteria.'))
           for (let i = 0; i < usersResult.length; i++) resultsUsersDiv.appendChild(createSearchResutDiv(usersResult[i]))
         })
 
@@ -6027,7 +6304,7 @@ let functionalityOptionsArray = [
     let mainScheduleList = createElement({ elementType: 'div', class: 'mainScheduleList', childrenArray: [ListHeader, eventsContainer] })
     let scheduleDetailsSection = createElement({
       elementType: 'div', class: 'scheduleDetailsSection mobileHiddenElement tabletHiddenElement',
-      childrenArray: [createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any event to see its more details here' })]
+      childrenArray: [createDummyElement('Select > button on any event to see its more details here')]
     })
     let schedule_container = createElement({ elementType: 'div', class: 'schedule-container', childrenArray: [selectionPanel, mainScheduleList, scheduleDetailsSection] })
     time_scheduling_panel.append(schedule_container)
@@ -6131,12 +6408,11 @@ let functionalityOptionsArray = [
       selectedCalendarDate = key
       mainScheduleListTitle.textContent = 'Scheduled Events on ' + new Date(key).toString('YYYY-MM-dd').substring(0, 16)
       if (dayEventsArray.length > 0) eventsContainer.appendChild(makeDay(key, dayEventsArray))
-      else eventsContainer.appendChild(
-        createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No Event scheduled on ' + new Date(key).toString('YYYY-MM-dd').substring(0, 16) })
+      else eventsContainer.appendChild(createDummyElement('No Event scheduled on ' + new Date(key).toString('YYYY-MM-dd').substring(0, 16))
       )
       showMainScheduleList() // display the main schedule list if we are on tablet or mobile
       scheduleDetailsSection.textContent = '' // clear the already displayed event
-      scheduleDetailsSection.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any event to see its more details here' }))
+      scheduleDetailsSection.appendChild(createDummyElement('Select > button on any event to see its more details here'))
     }
 
     function makeDay(dayKey, dayEventsArray) {
@@ -6398,7 +6674,7 @@ let functionalityOptionsArray = [
 
   socket.on('favoriteUsers', (users) => {
     favContent.textContent = ''
-    if (users.length < 1) return favContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'You have not created any favorites yet \n Select ✰ button on any user in All users section to add them here' }));
+    if (users.length < 1) return favContent.appendChild(createDummyElement('You have not created any favorites yet \n Select ✰ button on any user in All users section to add them here'));
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
       let messageButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
@@ -6425,8 +6701,8 @@ let functionalityOptionsArray = [
   })
   function displayAllUsers(users, fromSearch) {
     mainContent.textContent = ''
-    if (users.length < 1 && fromSearch == false) return mainContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users in your organization' }));
-    if (users.length < 1 && fromSearch == true) return mainContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No such users found in your organization' }));
+    if (users.length < 1 && fromSearch == false) return mainContent.appendChild(createDummyElement('No users in your organization'));
+    if (users.length < 1 && fromSearch == true) return mainContent.appendChild(createDummyElement('No such users found in your organization'));
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
       let messageButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
