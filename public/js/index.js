@@ -2106,6 +2106,7 @@ let functionalityOptionsArray = [
     chatContent_panel.classList.remove('mobileHiddenElement')
     chatDetails_panel.classList.add('mobileHiddenElement')
     chatDetails_panel.classList.add('tabletHiddenElement')
+    
   }
 
   function showChatDetails() {
@@ -2542,7 +2543,10 @@ let functionalityOptionsArray = [
     let { roomID, userID } = changeDetails
     for (let i = 0; i < availableChats.length; i++) {
       if (availableChats[i].roomID == roomID) {
-        availableChats[i].conversationButton.kickedOut()
+        try {
+          showChatContent()
+          availableChats[i]?.conversationButton?.kickedOut()
+        } catch (error) { console.log(error)}
       }
     }
     if (selectedChatId != roomID) return; // escape if this is happening to a non displayed chat
@@ -2689,18 +2693,26 @@ let functionalityOptionsArray = [
 
     }
 
-    socket.once('requestChatDetails', (chatDetails) => {
+    socket.on('requestChatDetails', (chatDetails) => {
+      
       console.log(chatDetails)
-      if (chatDetails.roomInfo.chatID != selectedChatId) return;
-      if (chatDetails.allowed == false) {
-        chatDetails_panel.textContent = '';
-        chatDetails_panel.appendChild(createDummyElement('You are not allowed to view this informtion because you are no longer part of the conversation'))
-      }
-      chatDetails_panel.textContent = '';
       let backButton = createElement({
         elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
         onclick: showChatContent
       })
+      if (chatDetails.allowed == false) {
+        chatDetails_panel.textContent = '';
+        let warning = createDummyElement('You are not allowed to view this informtion because you are no longer part of the conversation')
+        let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton] })
+        let openChatDetailsContenDiv = createElement({ elementType: 'div', class: 'openChatDetailsContenDiv', childrenArray: [warning] })
+        chatDetails_panel.appendChild(openedChatDetailsTopSection)
+        chatDetails_panel.appendChild(openChatDetailsContenDiv)
+        return;
+      }
+      if(!chatDetails.roomInfo) return;
+      if (chatDetails.roomInfo.roomID != selectedChatId) return;
+      
+      chatDetails_panel.textContent = '';
       // messagesArray, roomInfo
 
       function makeChatname(realValue) {
@@ -2743,7 +2755,7 @@ let functionalityOptionsArray = [
         participantsDivWrapper = newParticipantsBlock
         chatDetails.roomInfo.users = changeDetails.chatUsers
         // update usersCount on details screen
-        let newUsersCount = createElement({ elementType: 'div', class: '', textContent: chatUsers.length + ' Particiants' })
+        let newUsersCount = createElement({ elementType: 'div', class: '', textContent: changeDetails.chatUsers.length + ' Particiants' })
         selectedChat_details_userCountDiv?.replaceWith(newUsersCount)
         selectedChat_details_userCountDiv = newUsersCount
         // it will also trigger chat name change for group chats without names on the server side
@@ -2836,7 +2848,7 @@ let functionalityOptionsArray = [
 
         let chatNameDiv = createElement({ elementType: 'div', class: 'conversationName', textContent: chatName })
         socket.on('chatNameChange', (changeDetails) => {
-          if (changeDetails.roomID != chatDetails.roomInfo.chatID) return;
+          if (changeDetails.roomID != chatDetails.roomInfo.roomID) return;
           chatNameDiv.textContent = makeChatname(changeDetails.roomName)
           chatDetails.roomInfo.roomName = changeDetails.roomName
         })
@@ -2884,11 +2896,11 @@ let functionalityOptionsArray = [
         detailsArray.push(chatnameBlock)
         // change picture
 
-        let srclink = selectedChat_profilePic_src == null ? '/private/profiles/group.jpeg' : selectedChat_profilePic_src
+        let srclink = chatDetails.roomInfo.profilePicture == null ? '/private/profiles/group.jpeg' : chatDetails.roomInfo.profilePicture
         let detailsProfilePicture = createElement({ elementType: 'img', class: 'largeImage', src: srclink })
         socket.on('groupPictureChange', changeInfo => {
           // roomID, path
-          if (changeInfo.roomID == chatDetails.roomInfo.chatID) return;
+          if (changeInfo.roomID != chatDetails.roomInfo.roomID) return;
           chatDetails.roomInfo.profilePicture = changeInfo.path
           detailsProfilePicture.src = changeInfo.path == null ? '/private/profiles/group.jpeg' : changeInfo.path
         })

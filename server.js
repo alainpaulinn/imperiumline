@@ -27,7 +27,7 @@ app.use(
 const ninetyDaysInSeconds = 5184000 // 90 * 24 * 60 * 60
 app.use(helmet.hsts({
   maxAge: ninetyDaysInSeconds,
-  includeSubdomains: true,
+  includeSubDomains: true,
   preload: true
 })) //Strict Transport Security tells the browser to never again visit our website on http during the period mentioned
 app.use(helmet.frameguard({ action: 'deny' })); // X Frame Options http header prevents our website to be framed into another or vice versa
@@ -495,14 +495,16 @@ io.on('connection', (socket) => {
     socket.on('addRoomParticipantsSearch', async (changeDetails) => {
       let { roomID, searchText } = changeDetails
       let groupMembers = await getRoomParticipantArray(roomID)
+      console.log(searchText, id, company_id, false, 15)
       let foundUsers = await searchUsers(searchText, id, company_id, false, 15)
+      let usersToPassOn = []
       console.log("found users", foundUsers)
       for (let i = 0; i < foundUsers.length; i++) {
-        for (let j = 0; j < groupMembers.length; j++) {
-          if (foundUsers[i].userID === groupMembers[j].userID) foundUsers.splice(i, 1);
+        if(groupMembers.filter(user => user.userID == foundUsers[i].userID).length == 0){
+          usersToPassOn.push(foundUsers[i])
         }
       }
-      socket.emit('addRoomParticipantsSearch', foundUsers)
+      socket.emit('addRoomParticipantsSearch', usersToPassOn)
     })
 
     socket.on('createNewGroupChatSearch', async (searchText) => {
@@ -599,7 +601,7 @@ io.on('connection', (socket) => {
         })
         return console.log('this user cannot view chat detaails of the conversation because he is not part of the group')
       }
-      else{
+      else {
         socket.emit('requestChatDetails', {
           allowed: true, ...await getChatFullInfo(roomID, id)
         })
@@ -1566,6 +1568,29 @@ function formatDate(unfDate) {
   return fDate;
 }
 
+//receives arrays and makes union of them based on a defined property and its value
+// function xorOperationOnArrays(property, value, ...args) {
+//   let resultantArray = [];
+//   let resultValues = []
+//   for (var i = 0; i < args.length; i++) { //allarrays = args
+//     console.log('args............................................', property, args[i]);
+//     for (let j = 0; j < args[i].length; j++) { //1 array = args[i][j]
+//       const array = args[i][j];
+//       for (let k = 0; k < args[i][j].length; k++) { //object = args[i][j][k];
+//         const object = args[i][j][k];
+//         if(object[property] === value && !resultValues.contains(object[property])) {
+//           resultValues.push(object[property])
+//           resultantArray.push(object)
+//         } 
+//       }
+//     }
+//   }
+//   return resultantArray
+// }
+// xorOperationOnArrays(
+//   'userID', 3
+// )
+
 function addUserToRoom(userID, roomID) {
   return new Promise(function (resolve, reject) {
     db.query("INSERT IGNORE INTO `participants`(`userID`, `roomID`) VALUES (?,?)", [userID, roomID], async (err, result) => {
@@ -1648,12 +1673,12 @@ function deleteGroupProfilePicture(roomID) {
     if (err) return console.log(err)
   })
 }
-let today = new Date()
-let lastYear = new Date()
-lastYear.setFullYear(today.getFullYear() - 1)
-let nextYear = new Date()
-nextYear.setFullYear(today.getFullYear() + 1)
-getEvents(3, lastYear, nextYear).then(console.log)
+// let today = new Date()
+// let lastYear = new Date()
+// lastYear.setFullYear(today.getFullYear() - 1)
+// let nextYear = new Date()
+// nextYear.setFullYear(today.getFullYear() + 1)
+// getEvents(3, lastYear, nextYear).then(console.log)
 // console.log(_events)
 function getEvents(userId, initalDate, endDate) {
   return new Promise(function (resolve, reject) {
