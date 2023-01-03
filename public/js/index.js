@@ -2725,7 +2725,7 @@ let functionalityOptionsArray = [
       socket.on('chatNameChange', (changeDetails) => {
         //{roomID, roomName}
         if (changeDetails.roomID != chatDetails.roomInfo.roomID) return;
-        chatName = makeChatname(changeDetails.chatName)
+        chatName = makeChatname(changeDetails.roomName)
         detailsChatNameTitle.textContent = chatDetails.roomInfo.type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName
       })
 
