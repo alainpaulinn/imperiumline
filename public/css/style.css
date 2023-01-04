@@ -4205,6 +4205,28 @@ body {
   border-radius: 15px;
   border: 3px solid var(--tertiaryBackground);
 }
+.mainCentralProfileDiv .userDataDiv .userProfileDiv .offlineIndicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 30px;
+  width: 30px;
+  aspect-ratio: 1;
+  background-color: grey;
+  border-radius: 15px;
+  border: 3px solid var(--tertiaryBackground);
+}
+.mainCentralProfileDiv .userDataDiv .userProfileDiv .onCallIndicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 30px;
+  width: 30px;
+  aspect-ratio: 1;
+  background-color: red;
+  border-radius: 15px;
+  border: 3px solid var(--tertiaryBackground);
+}
 .mainCentralProfileDiv .userDataDiv .userProfileDiv .photoActions {
   position: absolute;
   bottom: 0;

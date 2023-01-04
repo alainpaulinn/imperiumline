@@ -466,9 +466,13 @@ io.on('connection', (socket) => {
           socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while changing the group name.' }])
         }
         else {
-          // if(roomName == null || roomName?.trim == ''){
-          //   changeDetails.roomName = groupMembers.map(user => user.name + ' ' + user.surname).join();
-          // }
+          if(roomName == null || roomName == ''){
+            changeDetails.roomName = groupMembers.map(user => user.name + ' ' + user.surname).join(', '); 
+            changeDetails.madeUp = true; // indicates that we sent a list of users as group name
+          }
+          else{
+            changeDetails.madeUp = false; // indicates that we sent the real group name
+          }
           io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
           socket.emit('serverFeedback', [{ type: 'positive', message: 'the group name was changed successfully.' }])
         }
@@ -561,8 +565,8 @@ io.on('connection', (socket) => {
           }
         }
         let chatDetails = await getChatRoomBasicInfo(roomID)
-        let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(), roomID: roomID }
-        if (chatDetails.type == 1 && chatDetails.name == null) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
+        let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(', '), roomID: roomID, madeUp: true } // madeup = true indicates that we sent a list of users as group name
+        if (chatDetails.type == 1 && (chatDetails.name == null || chatDetails.name == '')) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
       }
     })
 
@@ -586,8 +590,8 @@ io.on('connection', (socket) => {
             }
           }
           let chatDetails = await getChatRoomBasicInfo(roomID)
-          let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(), roomID: roomID }
-          if (chatDetails.type == 1 && chatDetails.name == null) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
+          let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(', '), roomID: roomID, madeUp: true } // madeup = true indicates that we sent a list of users as group name
+          if (chatDetails.type == 1 && (chatDetails.name == null || chatDetails.name == '')) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
         }
       })
     })

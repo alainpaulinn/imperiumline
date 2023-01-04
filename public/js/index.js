@@ -2106,7 +2106,7 @@ let functionalityOptionsArray = [
     chatContent_panel.classList.remove('mobileHiddenElement')
     chatDetails_panel.classList.add('mobileHiddenElement')
     chatDetails_panel.classList.add('tabletHiddenElement')
-    
+
   }
 
   function showChatDetails() {
@@ -2356,8 +2356,7 @@ let functionalityOptionsArray = [
     })
     if (type == 1) {
       chatListItem.updatetitle = (_title) => {
-        let _titleText = _title == null ? users.map(user => user.name + ' ' + user.surname).join(', ') : _title;
-        let _chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: _titleText });
+        let _chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: _title });
         chatTitle.replaceWith(_chatTitle);
         chatTitle = _chatTitle;
       }
@@ -2390,8 +2389,10 @@ let functionalityOptionsArray = [
     let profilePicContent = createProfilePicContent(userInfo.profilePicture)
     let areaContent = [profilePicContent, onlineStatus]
     let memberProfilePicture = createElement({ elementType: 'div', class: 'identifier', childrenArray: areaContent })
+
+    let openedProfile
     memberProfilePicture.addEventListener('click', () => {
-      createProfilePopup(userInfo);
+      openedProfile = createProfilePopup(userInfo);
     })
 
     socket.on('userProfilePictureChange', changeInfo => {
@@ -2415,6 +2416,7 @@ let functionalityOptionsArray = [
         let newOnlineStatus = createElement({ elementType: 'div', class: 'onlineStatus ' + userInfo.status })
         onlineStatus.replaceWith(newOnlineStatus)
         onlineStatus = newOnlineStatus;
+        if(openedProfile) openedProfile.updateStatus(changeInfo.status)
       }
     })
 
@@ -2546,7 +2548,7 @@ let functionalityOptionsArray = [
         try {
           showChatContent()
           availableChats[i]?.conversationButton?.kickedOut()
-        } catch (error) { console.log(error)}
+        } catch (error) { console.log(error) }
       }
     }
     if (selectedChatId != roomID) return; // escape if this is happening to a non displayed chat
@@ -2678,14 +2680,14 @@ let functionalityOptionsArray = [
 
     function requestChatDetails(chatID) {
       socket.emit('requestChatDetails', chatID)
-      
+
 
       chatDetails_panel.textContent = '';
       let backButton = createElement({
         elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
         onclick: showChatContent
       })
-      let detailsChatNameTitle = createElement({ elementType: 'div', class: 'chatType', childrenArray:[createSpinner()] })
+      let detailsChatNameTitle = createElement({ elementType: 'div', class: 'chatType', childrenArray: [createSpinner()] })
       let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton, detailsChatNameTitle] })
       let openChatDetailsContenDiv = createElement({ elementType: 'div', class: 'openChatDetailsContenDiv', childrenArray: [createSpinner()] })
       chatDetails_panel.appendChild(openedChatDetailsTopSection)
@@ -2694,7 +2696,7 @@ let functionalityOptionsArray = [
     }
 
     socket.on('requestChatDetails', (chatDetails) => {
-      
+
       console.log(chatDetails)
       let backButton = createElement({
         elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
@@ -2709,9 +2711,9 @@ let functionalityOptionsArray = [
         chatDetails_panel.appendChild(openChatDetailsContenDiv)
         return;
       }
-      if(!chatDetails.roomInfo) return;
+      if (!chatDetails.roomInfo) return;
       if (chatDetails.roomInfo.roomID != selectedChatId) return;
-      
+
       chatDetails_panel.textContent = '';
       // messagesArray, roomInfo
 
@@ -2723,9 +2725,9 @@ let functionalityOptionsArray = [
       let detailsChatNameTitle = createElement({ elementType: 'div', class: 'chatType', textContent: chatDetails.roomInfo.type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName })
 
       socket.on('chatNameChange', (changeDetails) => {
-        //{roomID, roomName}
+        //{roomID, roomName, madeUp}
         if (changeDetails.roomID != chatDetails.roomInfo.roomID) return;
-        chatName = makeChatname(changeDetails.roomName)
+        chatName = changeDetails.madeUp == true ? '(No name)' : changeDetails.roomName
         detailsChatNameTitle.textContent = chatDetails.roomInfo.type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName
       })
 
@@ -2849,8 +2851,8 @@ let functionalityOptionsArray = [
         let chatNameDiv = createElement({ elementType: 'div', class: 'conversationName', textContent: chatName })
         socket.on('chatNameChange', (changeDetails) => {
           if (changeDetails.roomID != chatDetails.roomInfo.roomID) return;
-          chatNameDiv.textContent = makeChatname(changeDetails.roomName)
-          chatDetails.roomInfo.roomName = changeDetails.roomName
+          chatNameDiv.textContent = changeDetails.madeUp == true ? '(No name)' : changeDetails.roomName
+          chatDetails.roomInfo.roomName = changeDetails.madeUp == true ? null : changeDetails.roomName
         })
         let chatnameBlock = createElement({
           elementType: 'div', class: 'detailBlock', childrenArray: [
@@ -2863,7 +2865,7 @@ let functionalityOptionsArray = [
                     let icon, title, contentElementsArray, actions;
                     let notificationBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: '*Leave the field empty if you want to delete the conversation name' })
                     let chatNameLabel = createElement({ elementType: 'label', for: 'chatName', textContent: 'Chat name' })
-                    let chatNameInput = createElement({ elementType: 'input', id: 'chatName' + 'chooseNew', placeHolder: 'Chat name', value: selectedChat_name == null ? '' : selectedChat_name })
+                    let chatNameInput = createElement({ elementType: 'input', id: 'chatName' + 'chooseNew', placeHolder: 'Chat name', value: chatDetails.roomInfo.roomName == null ? '' : chatDetails.roomInfo.roomName })
                     let chatNameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chatNameLabel, chatNameInput] })
                     icon = 'bx bxs-edit-alt'
                     title = 'Change chat name'
@@ -5672,10 +5674,30 @@ let functionalityOptionsArray = [
     else { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: userInfo.profilePicture }) }
 
     let userProfileDiv = createElement({ elementType: 'div', class: 'userProfileDiv', childrenArray: [profilePicture] })
-    // if user is online
-    if (userInfo.status != 'offline') {
-      let onlineIndicator = createElement({ elementType: 'div', class: 'onlineIndicator' })
-      userProfileDiv.append(onlineIndicator)
+
+    let statusIndicator = createIndicator(userInfo.status)
+    function createIndicator(status){
+      let _indicator
+      switch (status) {
+        case 'online':
+          _indicator = createElement({ elementType: 'div', class: 'onlineIndicator' })
+          break;
+        case 'offline':
+          _indicator = createElement({ elementType: 'div', class: 'offlineIndicator' })
+          break;
+        default:
+          _indicator = createElement({ elementType: 'div', class: 'offlineIndicator' })
+          break;
+      }
+      return _indicator
+    }
+    
+    userProfileDiv.append(statusIndicator)
+
+    function updateStatus(status){
+      let newStatusIndicator = createIndicator(status)
+      statusIndicator.replaceWith(newStatusIndicator)
+      statusIndicator = newStatusIndicator
     }
 
     // userPrimaryInfo
@@ -5839,6 +5861,7 @@ let functionalityOptionsArray = [
     }
     closeButton.addEventListener('click', closePopup)
     mainCentralProfileDiv.closePopup = closePopup
+    mainCentralProfileDiv.updateStatus = updateStatus
     openProfileDiv = mainCentralProfileDiv;
     return mainCentralProfileDiv
   }

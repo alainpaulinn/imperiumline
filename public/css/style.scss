@@ -5264,6 +5264,28 @@ body {
         border-radius: $borderRadius;
         border: 3px solid var(--tertiaryBackground);
       }
+      .offlineIndicator {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 30px;
+        width: 30px;
+        aspect-ratio: 1;
+        background-color: grey;
+        border-radius: $borderRadius;
+        border: 3px solid var(--tertiaryBackground);
+      }
+      .onCallIndicator {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 30px;
+        width: 30px;
+        aspect-ratio: 1;
+        background-color: red;
+        border-radius: $borderRadius;
+        border: 3px solid var(--tertiaryBackground);
+      }
 
       .photoActions {
         position: absolute;
