@@ -2391,8 +2391,8 @@ let functionalityOptionsArray = [
     let memberProfilePicture = createElement({ elementType: 'div', class: 'identifier', childrenArray: areaContent })
 
     let openedProfile
-    memberProfilePicture.addEventListener('click', () => {
-      openedProfile = createProfilePopup(userInfo);
+    memberProfilePicture.addEventListener('click', async () => {
+      openedProfile = await createProfilePopup(userInfo);
     })
 
     socket.on('userProfilePictureChange', changeInfo => {
@@ -2401,12 +2401,15 @@ let functionalityOptionsArray = [
         let newPP = createProfilePicContent(userInfo.profilePicture)
         profilePicContent.replaceWith(newPP)
         profilePicContent = newPP;
+
+        if (openedProfile) openedProfile.updateProfilePicture(changeInfo.path)
       }
     })
 
     socket.on('userCoverPictureChange', changeInfo => {
       if (changeInfo.userID == userInfo.userID) {
-        userInfo.coverPicture = changeInfo.path
+        userInfo.cover = changeInfo.path
+        if (openedProfile) openedProfile.updateCoverPicture(changeInfo.path)
       }
     })
 
@@ -2416,7 +2419,7 @@ let functionalityOptionsArray = [
         let newOnlineStatus = createElement({ elementType: 'div', class: 'onlineStatus ' + userInfo.status })
         onlineStatus.replaceWith(newOnlineStatus)
         onlineStatus = newOnlineStatus;
-        if(openedProfile) openedProfile.updateStatus(changeInfo.status)
+        if (openedProfile) openedProfile.updateStatus(changeInfo.status)
       }
     })
 
@@ -5660,23 +5663,18 @@ let functionalityOptionsArray = [
     // delete the existing Div
     if (openProfileDiv) openProfileDiv.closePopup()
     //coverPhotoDiv
-    let coverPhoto;
-    if (userInfo.cover == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' }) }
-    else { coverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: userInfo.cover }) }
+    let coverPhoto = createCoverPictureElement(userInfo.cover)
     // close div button
     let closeButton = createElement({ elementType: 'button', title: 'Close', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
     let photoActionClose = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [closeButton] })
     let coverPhotoActions = createElement({ elementType: 'div', class: 'photoActions', childrenArray: [photoActionClose] })
     let coverPhotoDiv = createElement({ elementType: 'div', class: 'coverPhotoDiv', childrenArray: [coverPhoto, coverPhotoActions] })
 
-    let profilePicture;
-    if (userInfo.profilePicture == null) { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) }) }
-    else { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: userInfo.profilePicture }) }
-
+    let profilePicture = createProfilePictureElement(userInfo.profilePicture)
     let userProfileDiv = createElement({ elementType: 'div', class: 'userProfileDiv', childrenArray: [profilePicture] })
 
     let statusIndicator = createIndicator(userInfo.status)
-    function createIndicator(status){
+    function createIndicator(status) {
       let _indicator
       switch (status) {
         case 'online':
@@ -5691,14 +5689,7 @@ let functionalityOptionsArray = [
       }
       return _indicator
     }
-    
     userProfileDiv.append(statusIndicator)
-
-    function updateStatus(status){
-      let newStatusIndicator = createIndicator(status)
-      statusIndicator.replaceWith(newStatusIndicator)
-      statusIndicator = newStatusIndicator
-    }
 
     // userPrimaryInfo
     let name = createElement({ elementType: 'div', class: 'name', textContent: userInfo.name + ' ' + userInfo.surname })
@@ -5764,11 +5755,11 @@ let functionalityOptionsArray = [
       coverPictureUploader.addEventListener("complete", function (event) {
         // console.log("complete", event.detail.name);
         coverPicProgressBar.classList.remove('visible');
-        console.log("coverPhoto", event);
-        let newCoverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: 'private/cover/' + event.detail.name })
+        console.log("file upload done", event);
+        /* let newCoverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: 'private/cover/' + event.detail.name })
         coverPhoto.after(newCoverPhoto);
         coverPhoto.remove();
-        coverPhoto = newCoverPhoto;
+        coverPhoto = newCoverPhoto; */
       });
 
 
@@ -5805,18 +5796,18 @@ let functionalityOptionsArray = [
       profilePictureUploader.addEventListener("progress", function (event) {
         var percent = (event.bytesLoaded / event.file.size) * 100;
         circleLoader.setPercentage(percent.toFixed(2))
-        console.log("File is", percent.toFixed(2), "percent loaded");
+        console.log("File is", percent.toFixed(2), "percent uploaded");
       });
       // Do something when a file is uploaded:
       profilePictureUploader.addEventListener("complete", function (event) {
         // console.log("complete", event.detail.name);
         circleLoader.classList.remove('visible');
-        console.log("profilePhoto", event);
+        console.log("file upload done", event);
+        /*
         let newProfilePhoto = createElement({ elementType: 'img', class: 'profilePicture', src: 'private/profiles/' + event.detail.name })
-
         profilePicture.after(newProfilePhoto);
         profilePicture.remove();
-        profilePicture = newProfilePhoto;
+        profilePicture = newProfilePhoto;*/
       });
 
       coverDeleteBtn.addEventListener('click', () => {
@@ -5859,9 +5850,44 @@ let functionalityOptionsArray = [
       await new Promise(resolve => setTimeout(resolve, 3000))
       mainCentralProfileDiv.remove()
     }
+
+    function updateStatus(status) {
+      let newStatusIndicator = createIndicator(status)
+      statusIndicator.replaceWith(newStatusIndicator)
+      statusIndicator = newStatusIndicator
+    }
+
+    function updateProfilePicture(picturePath) {
+      let newProfilePicture = createProfilePictureElement(picturePath)
+      profilePicture.replaceWith(newProfilePicture)
+      profilePicture = newProfilePicture
+    }
+    function updateCoverPicture(picturePath) {
+      let newCoverPicture = createCoverPictureElement(picturePath)
+      coverPhoto.replaceWith(newCoverPicture)
+      newCoverPicture = newCoverPicture
+    }
+
+    function createProfilePictureElement(picturePath) {
+      let profilePicture;
+      if (picturePath == null) { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) }) }
+      else { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: picturePath }) }
+      return profilePicture;
+    }
+
+    function createCoverPictureElement(picturePath) {
+      let coverPhoto;
+      if (picturePath == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' }) }
+      else { coverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: picturePath }) }
+      return coverPhoto;
+    }
+
+
     closeButton.addEventListener('click', closePopup)
     mainCentralProfileDiv.closePopup = closePopup
     mainCentralProfileDiv.updateStatus = updateStatus
+    mainCentralProfileDiv.updateProfilePicture = updateProfilePicture
+    mainCentralProfileDiv.updateCoverPicture = updateCoverPicture
     openProfileDiv = mainCentralProfileDiv;
     return mainCentralProfileDiv
   }
