@@ -2687,6 +2687,7 @@ let functionalityOptionsArray = [
         emojiPicherIsOpen = false;
       }
       else {
+        createNewEmijiPickerBox()
         typingBox.after(emojiPickerBox)
         emojiPicherIsOpen = true;
       }
