@@ -25,6 +25,16 @@ let deletedUser = {
   profilePicture: null,
   status: 'offline'
 }// to be used in case we have a deleted user
+
+let emojiPickerOptions = {
+  // onEmojiSelect: console.log,
+  skin: 6,
+  perLine: 40,
+  onClickOutside: () => { },
+  theme: 'auto', //light, dark
+  skinTonePosition: 'preview',
+}
+
 let openChatInfo;
 let availableChats = [];
 let searchedChats = [];
@@ -371,11 +381,6 @@ let functionalityOptionsArray = [
       icon: "bx bxs-user-circle",
       subMenu: [
         {
-          text: "Quit the app",
-          icon: "bx bx-log-out-circle",
-          actions: [{ element: logoutButton }, { element: logoutForm }]
-        },
-        {
           text: "View profile",
           icon: "bx bxs-user-detail",
           actions: [{ element: viewProfileButton }]
@@ -385,6 +390,11 @@ let functionalityOptionsArray = [
           icon: "bx bxs-edit-alt",
           actions: [{ element: changePasswordButton }]
         },
+        {
+          text: "Quit the app",
+          icon: "bx bx-log-out-circle",
+          actions: [{ element: logoutButton }, { element: logoutForm }]
+        }
       ]
     },
   ];
@@ -728,7 +738,10 @@ let functionalityOptionsArray = [
     mySavedID = userInfo.userID;
     myName = userInfo.name;
     Mysurname = userInfo.surname;
-    viewProfileButton.addEventListener('click', function () { createProfilePopup(userInfo) })
+    // viewProfileButton.addEventListener('click', function () { createProfilePopup(userInfo) })
+    let newViewProfileButton = makeProfilePicture(userInfo)
+    viewProfileButton.replaceWith(newViewProfileButton)
+    viewProfileButton = newViewProfileButton;
 
     if (superAdmin.isSuperAdmin == true || admin.isAdmin == true) {
       let adminPanel = createElement({ elementType: 'section', class: 'c-time-admin_panel' })
@@ -2635,8 +2648,35 @@ let functionalityOptionsArray = [
     let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
     inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
     let sendMessageButton = createElement({ elementType: 'button', title: 'Send message', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
-    typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [/* emojiButton, attachButton, */ inputContainer, sendMessageButton] })
-    let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox] })
+    typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [emojiButton, /*attachButton, */ inputContainer, sendMessageButton] })
+    
+    emojiPickerOptions.onEmojiSelect = (selectedEmoji)=>{
+      let textcontent = document.createTextNode(selectedEmoji.native);
+      inputText.appendChild(textcontent)
+      console.log(inputText);
+    }
+    
+    let emojiPickerBox = new EmojiMart.Picker(emojiPickerOptions)
+    emojiPickerBox.style.width = '100%'; // emojiPickerBox.style.height = '50px';
+    function makeithappen(){
+      console.log(typingBox.offsetWidth);
+      console.log(typingBox.offsetHeight);
+      emojiPickerOptions.perLine = Math.round(typingBox.offsetWidth / 37.68); 
+      let newEmojiPickerBox = new EmojiMart.Picker(emojiPickerOptions);
+      emojiPickerBox.replaceWith(newEmojiPickerBox);
+      emojiPickerBox = newEmojiPickerBox;
+    }
+    new ResizeObserver(makeithappen).observe(typingBox);
+    emojiPickerOptions.onClickOutside = () => {
+      emojiPickerBox.style.display = 'none';
+    }
+
+    emojiButton.addEventListener('click', ()=>{
+      emojiPickerBox.classList.contains('emojiPickerBox')
+      emojiPickerBox.style.display = 'none';
+    })
+
+    let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox, emojiPickerBox] })
     open_chat_box.textContent = '';
     open_chat_box.append(chatBox)
     openchat__box__info.textContent = '' // ensure that no element is inside the message container
@@ -4780,7 +4820,7 @@ let functionalityOptionsArray = [
       let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
       let inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
       let Message = createElement({ elementType: 'button', class: 'chat-options', title: 'Send Message', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
-      let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [iconButton, inputContainer, Message] })
+      let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [inputContainer, Message] })
 
       let callMessagingDiv = createElement({ elementType: 'div', class: 'callMessagingDiv hideDivAside', childrenArray: [c_openchat__box__info, typingBox] })
 
@@ -5530,7 +5570,7 @@ let functionalityOptionsArray = [
       notificationTone = new Audio('/private/audio/imperiumLineCall.mp3'); notificationTone.play()
       notificationTone.addEventListener('ended', function () { this.currentTime = 0; this.play(); }, false);
     }
-    const notificationStop = () => { if (notificationTone) { notificationTone.currentTime = 0; notificationTone.pause(); notification.remove() } }
+    const notificationStop = () => { if (notificationTone) { notificationTone.currentTime = 0; notificationTone.pause(); notification.remove(); } }
 
     dismissbutton.addEventListener('click', () => { notificationStop(); onHide(); })
     setTimeout(() => { notificationStop(); onEnd(); }, delay);
@@ -6916,3 +6956,10 @@ let functionalityOptionsArray = [
   ]
 }
 */
+// let button = document.createElement('button')
+// button = new EmojiMart.Picker(emojiPickerOptions)
+// button.style.width = '100%';
+// // button.style.height = '50px';
+// button.style.backgroundColor = 'red';
+// document.body.appendChild(button)
+// console.log(button)
