@@ -270,23 +270,14 @@ body {
     &__link {
       text-decoration: none;
       padding: 1rem;
-      //display: block;
       color: var(--lightText);
       display: flex;
       align-items: center;
       cursor: pointer;
-      /*
-      background-color: transparent;
-      width: 100%;
-      border:  none; */
-
       transition: all 0.4s ease-in-out;
-
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-
-      //width: 100%;
       p {
         flex: 1;
         white-space: nowrap;
@@ -6038,12 +6029,12 @@ body {
 
 
   .c-openchat__box__info {
-    margin-bottom: 61.2px;
+    // margin-bottom: 61.2px;
   }
 
   .typingBox {
-    position: fixed;
-    bottom: 0;
+    // position: fixed;
+    // bottom: 0;
 
   }
 
@@ -6379,4 +6370,26 @@ body {
   .list-option:hover {
     background-color: var(--focusAreaBackgroundColor);
   }
+}
+
+:host{
+  border-radius: 0px !important;
+}
+
+#preview{
+  height: 3rem !important;
+  font-size: small;
+}
+em-emoji-picker{
+  // display: none;
+  width: 100%;
+  border-radius: 0% !important;
+}
+
+.emojiPickerBoxOpen{
+  display: block;
+}
+
+#root{
+  display: none !important;
 }

@@ -2649,34 +2649,53 @@ let functionalityOptionsArray = [
     inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
     let sendMessageButton = createElement({ elementType: 'button', title: 'Send message', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
     typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [emojiButton, /*attachButton, */ inputContainer, sendMessageButton] })
-    
-    emojiPickerOptions.onEmojiSelect = (selectedEmoji)=>{
+
+    emojiPickerOptions.onEmojiSelect = (selectedEmoji) => {
       let textcontent = document.createTextNode(selectedEmoji.native);
       inputText.appendChild(textcontent)
       console.log(inputText);
     }
-    
+
+    let emojiPicherIsOpen = false;
+
     let emojiPickerBox = new EmojiMart.Picker(emojiPickerOptions)
     emojiPickerBox.style.width = '100%'; // emojiPickerBox.style.height = '50px';
-    function makeithappen(){
+    function createNewEmijiPickerBox() {
       console.log(typingBox.offsetWidth);
       console.log(typingBox.offsetHeight);
-      emojiPickerOptions.perLine = Math.round(typingBox.offsetWidth / 37.68); 
+      emojiPickerOptions.perLine = Math.round(typingBox.offsetWidth / 37.68);
       let newEmojiPickerBox = new EmojiMart.Picker(emojiPickerOptions);
       emojiPickerBox.replaceWith(newEmojiPickerBox);
       emojiPickerBox = newEmojiPickerBox;
     }
-    new ResizeObserver(makeithappen).observe(typingBox);
+    new ResizeObserver(createNewEmijiPickerBox).observe(typingBox);
+
     emojiPickerOptions.onClickOutside = () => {
-      emojiPickerBox.style.display = 'none';
+      // emojiPickerBox.classList.remove('emojiPickerBoxOpen')
+      // emojiPickerBox.remove()
+      // console.log(emojiPickerBox)
     }
 
-    emojiButton.addEventListener('click', ()=>{
-      emojiPickerBox.classList.contains('emojiPickerBox')
-      emojiPickerBox.style.display = 'none';
+
+
+    let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox] })
+
+
+    emojiButton.addEventListener('click', () => {
+      if (emojiPicherIsOpen == true) {
+        emojiPickerBox.remove();
+        emojiPicherIsOpen = false;
+      }
+      else {
+        typingBox.after(emojiPickerBox)
+        emojiPicherIsOpen = true;
+      }
+      console.log('emojibutton clicked', 'emojiPicherIsOpen :', emojiPicherIsOpen)
     })
 
-    let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox, emojiPickerBox] })
+
+
+
     open_chat_box.textContent = '';
     open_chat_box.append(chatBox)
     openchat__box__info.textContent = '' // ensure that no element is inside the message container

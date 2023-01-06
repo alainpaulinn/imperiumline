@@ -208,10 +208,6 @@ body {
   display: flex;
   align-items: center;
   cursor: pointer;
-  /*
-  background-color: transparent;
-  width: 100%;
-  border:  none; */
   transition: all 0.4s ease-in-out;
   white-space: nowrap;
   overflow: hidden;
@@ -4852,13 +4848,6 @@ body {
   .c-app .inScreenPanel {
     min-width: 90%;
   }
-  .c-openchat__box__info {
-    margin-bottom: 61.2px;
-  }
-  .typingBox {
-    position: fixed;
-    bottom: 0;
-  }
   .notifications {
     right: -50%;
     transform: translateX(-50%);
@@ -5115,4 +5104,26 @@ body {
 }
 .goodselect .list-option:hover {
   background-color: var(--focusAreaBackgroundColor);
+}
+
+:host {
+  border-radius: 0px !important;
+}
+
+#preview {
+  height: 3rem !important;
+  font-size: small;
+}
+
+em-emoji-picker {
+  width: 100%;
+  border-radius: 0% !important;
+}
+
+.emojiPickerBoxOpen {
+  display: block;
+}
+
+#root {
+  display: none !important;
 }/*# sourceMappingURL=style.css.map */

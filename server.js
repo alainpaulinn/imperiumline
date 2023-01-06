@@ -1,7 +1,7 @@
 const scriptSrcUrls = [] // here we keep a list of our external scripts
 const styleSrcUrls = ["'unsafe-inline'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"] // here we keep a list of our external styles
 const fontSrcUrls = ["https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://fonts.gstatic.com"] // here we keep a list of our external fonts
-const connectSrcUrls = ["wss://*.imperiumline.com", "https://*.imperiumline.com"] // here we keep a list of our external connections
+const connectSrcUrls = ["wss://*.imperiumline.com", "https://*.imperiumline.com", "https://cdn.jsdelivr.net"] // here we keep a list of our external connections
 
 const selfLink = "'self'"
 
