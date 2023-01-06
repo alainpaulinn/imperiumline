@@ -2663,7 +2663,7 @@ let functionalityOptionsArray = [
     function createNewEmijiPickerBox() {
       console.log(typingBox.offsetWidth);
       console.log(typingBox.offsetHeight);
-      emojiPickerOptions.perLine = Math.round(typingBox.offsetWidth / 37.68);
+      emojiPickerOptions.perLine = Math.floor(typingBox.offsetWidth / 37.68);
       let newEmojiPickerBox = new EmojiMart.Picker(emojiPickerOptions);
       emojiPickerBox.replaceWith(newEmojiPickerBox);
       emojiPickerBox = newEmojiPickerBox;
