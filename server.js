@@ -237,11 +237,13 @@ io.on('connection', (socket) => {
       console.log("Error from uploader", event);
       socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while Uploading the file.' }])
     });
-    socket.on("deleteCoverPicture", () => {
+    socket.on("deleteCoverPicture", async () => {
       deleteCoverPicture(id)
+      sendNewCoverPicture(await getDBCoverPicture(id))
     })
-    socket.on("deleteProfilePicture", () => {
+    socket.on("deleteProfilePicture", async () => {
       deleteProfilePicture(id)
+      sendNewProfilePicture(await getDBProfilePicture(id))
     })
 
     socket.on("setOnlineStatus", (status) => {

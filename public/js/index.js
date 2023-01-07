@@ -35,6 +35,13 @@ let emojiPickerOptions = {
   skinTonePosition: 'preview',
 }
 
+let emojiPickerIsOpen = false;
+
+let emojiPickerBoxStorage = {
+  createNewEmojiPickerBox: null,
+  emojiPickerBox: null
+};
+
 let openChatInfo;
 let availableChats = [];
 let searchedChats = [];
@@ -132,18 +139,25 @@ let functionalityOptionsArray = [
       c_app.classList.remove(darkClass);
       c_app.classList.add(lightClass);
       localStorage.setItem('imperiumLine_theme', lightClass)
+      emojiPickerOptions.theme = lightClass;
     }
     else {
       c_app.classList.add(darkClass);
       c_app.classList.remove(lightClass);
       localStorage.setItem('imperiumLine_theme', darkClass)
+      emojiPickerOptions.theme = darkClass;
+    }
+    try {
+      emojiPickerBoxStorage.createNewEmojiPickerBox()
+    } catch (error) {
+      console.log(error, emojiPickerBoxStorage);
     }
   })
   let darkmodeActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [darkModeCheckBox, createElement({ elementType: 'label', for: 'toggle1' })] })
   let previousThemeSetting = localStorage.getItem('imperiumLine_theme')
   if (previousThemeSetting) appTheme = previousThemeSetting
-  if (previousThemeSetting == 'dark') { darkModeCheckBox.checked = false; c_app.classList.add('dark'); c_app.classList.remove('light'); }
-  if (previousThemeSetting == 'light') { darkModeCheckBox.checked = true; c_app.classList.add('light'); c_app.classList.remove('dark') }
+  if (previousThemeSetting == 'dark') { darkModeCheckBox.checked = false; c_app.classList.add('dark'); c_app.classList.remove('light'); emojiPickerOptions.theme = 'dark' }
+  if (previousThemeSetting == 'light') { darkModeCheckBox.checked = true; c_app.classList.add('light'); c_app.classList.remove('dark'); emojiPickerOptions.theme = 'light' }
 
   // silence audio switch
   let silenceCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle2' })
@@ -590,9 +604,7 @@ let functionalityOptionsArray = [
       let callogClass = "";
       let callDirection;
       if (logUpdate.participantsOnCall.length > 0) callogClass = "ongoing";
-      let profilePicture;
-      if (logUpdate.initiator.profilePicture == null) profilePicture = createElement({ elementType: 'div', textContent: logUpdate.initiator.name.charAt(0) + logUpdate.initiator.surname.charAt(0) })
-      else profilePicture = createElement({ elementType: 'img', src: logUpdate.initiator.profilePicture })
+      let profilePicture = makeProfilePicture(logUpdate.initiator)
 
       if (logUpdate.missed == 1) {
         callDirection = createElement({ elementType: 'div', class: 'callType red', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Missed' })] })
@@ -615,7 +627,7 @@ let functionalityOptionsArray = [
         }
       })
 
-      let moreButton = createElement({
+      /* let moreButton = createElement({
         elementType: 'button', title: 'View more information about this call', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
           callDetailsPanel.textContent = ''
           let callDirectionIcon;
@@ -674,13 +686,13 @@ let functionalityOptionsArray = [
           })
           showCallDetailsSection();
         }
-      })
+      }) */
 
       let call_log = createElement({
         elementType: 'div', class: 'call-log ' + callogClass, childrenArray: [
           createElement({
             elementType: 'div', class: 'line1', childrenArray: [
-              createElement({ elementType: 'div', class: 'picture', childrenArray: [profilePicture] }),
+              profilePicture,
               createElement({
                 elementType: 'div', class: 'nameAndType', childrenArray: [
                   createElement({ elementType: 'div', class: 'callMembers', textContent: logUpdate.initiator.name + ' ' + logUpdate.initiator.surname }),
@@ -688,16 +700,17 @@ let functionalityOptionsArray = [
                 ]
               }),
               createElement({ elementType: 'div', class: 'dateTime', textContent: new Date(logUpdate.startDate).toString('YYYY-MM-dd').substring(0, 24) }),
-              createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [audioAgainButton, videoAgainButton, moreButton] })
+              createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [audioAgainButton, videoAgainButton, /* moreButton */] })
             ]
+          }),
+          createElement({
+            elementType: 'div', class: 'line2', childrenArray: logUpdate.participantsOnCall.map(user => makeProfilePicture(user)).concat(logUpdate.participantsOffCall.map(user => makeProfilePicture(user)))
           })
         ]
       })
       list_call_section_content.append(call_log)
     })
   })
-  // document.querySelectorAll(".pill").forEach( pill => pill.toggleClass("selectedPill"))
-  // })()
   // initial important events to listen to
   socket.on('redirect', function (destination) {
     window.location.href = destination;
@@ -2649,54 +2662,39 @@ let functionalityOptionsArray = [
     inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
     let sendMessageButton = createElement({ elementType: 'button', title: 'Send message', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
     typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [emojiButton, /*attachButton, */ inputContainer, sendMessageButton] })
-
     emojiPickerOptions.onEmojiSelect = (selectedEmoji) => {
       let textcontent = document.createTextNode(selectedEmoji.native);
       inputText.appendChild(textcontent)
       console.log(inputText);
     }
-
-    let emojiPicherIsOpen = false;
-
-    let emojiPickerBox = new EmojiMart.Picker(emojiPickerOptions)
-    emojiPickerBox.style.width = '100%'; // emojiPickerBox.style.height = '50px';
-    function createNewEmijiPickerBox() {
+    emojiPickerIsOpen = false
+    emojiPickerBoxStorage.emojiPickerBox = new EmojiMart.Picker(emojiPickerOptions)
+    emojiPickerBoxStorage.emojiPickerBox.style.width = '100%'; // emojiPickerBox.style.height = '50px';
+    function createNewEmojiPickerBox() {
       console.log(typingBox.offsetWidth);
       console.log(typingBox.offsetHeight);
       emojiPickerOptions.perLine = Math.floor(typingBox.offsetWidth / 37.68);
       let newEmojiPickerBox = new EmojiMart.Picker(emojiPickerOptions);
-      emojiPickerBox.replaceWith(newEmojiPickerBox);
-      emojiPickerBox = newEmojiPickerBox;
+      emojiPickerBoxStorage.emojiPickerBox.replaceWith(newEmojiPickerBox);
+      emojiPickerBoxStorage.emojiPickerBox = newEmojiPickerBox;
     }
-    new ResizeObserver(createNewEmijiPickerBox).observe(typingBox);
-
-    emojiPickerOptions.onClickOutside = () => {
-      // emojiPickerBox.classList.remove('emojiPickerBoxOpen')
-      // emojiPickerBox.remove()
-      // console.log(emojiPickerBox)
-    }
-
-
+    emojiPickerBoxStorage.createNewEmojiPickerBox = createNewEmojiPickerBox
+    new ResizeObserver(emojiPickerBoxStorage.createNewEmojiPickerBox).observe(typingBox);
 
     let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox] })
 
-
     emojiButton.addEventListener('click', () => {
-      if (emojiPicherIsOpen == true) {
-        emojiPickerBox.remove();
-        emojiPicherIsOpen = false;
+      if (emojiPickerIsOpen == true) {
+        emojiPickerBoxStorage.emojiPickerBox.remove();
+        emojiPickerIsOpen = false;
       }
       else {
-        createNewEmijiPickerBox()
-        typingBox.after(emojiPickerBox)
-        emojiPicherIsOpen = true;
+        emojiPickerBoxStorage.createNewEmojiPickerBox()
+        typingBox.after(emojiPickerBoxStorage.emojiPickerBox)
+        emojiPickerIsOpen = true;
       }
-      console.log('emojibutton clicked', 'emojiPicherIsOpen :', emojiPicherIsOpen)
+      console.log('emojibutton clicked', 'emojiPickerIsOpen :', emojiPickerIsOpen)
     })
-
-
-
-
     open_chat_box.textContent = '';
     open_chat_box.append(chatBox)
     openchat__box__info.textContent = '' // ensure that no element is inside the message container
@@ -3712,6 +3710,8 @@ let functionalityOptionsArray = [
     }
   }
   let myPeer = new Peer(undefined, peerOptions)
+  let isOnCall = false;
+  let _globalLeavecall
 
   function createNewPeer() {
     myPeer = new Peer(undefined, peerOptions)
@@ -3789,6 +3789,8 @@ let functionalityOptionsArray = [
 
 
     socket.on('prepareCallingOthers', initiatedCallInfo => {
+      // if (isOnCall == true) leaveCall() //leave the first call before entering another
+      isOnCall = true
       navigator.getUserMedia({ video: { deviceId: chosenDevices?.videoInput?.deviceId }, audio: true }, stream => {
         let { callUniqueId, callType, caller, groupMembersToCall_fullInfo, allUsers, callTitle } = initiatedCallInfo
         let { userID, name, surname, profilePicture, role } = caller
@@ -3850,6 +3852,7 @@ let functionalityOptionsArray = [
           return
         };
         videoCoverDiv = videoConnectingScreen(videoCoverPrepObj)
+        console.log('mainVideoDiv', mainVideoDiv)
         mainVideoDiv.prepend(videoCoverDiv.videoCoverDiv)
 
         let { closeVideoBtn, HangUpBtn, muteMicrophoneBtn } = videoCoverDiv.controls
@@ -4077,8 +4080,11 @@ let functionalityOptionsArray = [
     })
 
     function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage) {
+      leaveAndJoinCallPrompt()
       navigator.getUserMedia({ video: { deviceId: chosenDevices?.videoInput?.deviceId }, audio: true }, stream => {
         responded = true
+
+        isOnCall = true
         _callTitle = callTitle
         allUsersArray = allUsers
         myStream = stream // store our stream globally so that to access it whenever needed
@@ -4523,10 +4529,14 @@ let functionalityOptionsArray = [
       }
       //call controls
       //let alwaysVisibleControls = createElement({ elementType: 'button', class: 'alwaysVisibleControls' })
-      let fitToFrame = createElement({
+      let fitToFrame;
+      fitToFrame = createElement({
         elementType: 'button', class: 'callControl', title: "Fit video to frame", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-collapse' })],
-        onClick: () => {
+        onclick: () => {
           mainVideoElement.classList.toggle('fitVideoToWindow');
+          mainVideoDiv.classList.toggle('squareCorners');
+          console.log('happenned')
+          fitToFrame.classList.toggle('active')
         }
       })
       let closeVideoBtn = createElement({
@@ -4791,28 +4801,36 @@ let functionalityOptionsArray = [
     }
 
     function leaveCall() {
-      socket.emit('leaveCall', { callUniqueId: _callUniqueId })
-      if (screenSharing == true) stopScreenSharing()
-      if (myStream) myStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
-      if (myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all screen stream tracks are closed
-      for (let i = 0; i < participants.length; i++) { removePeer(participants[i].userInfo.userID) }
-      mySideVideoDiv.remove();
-      rightPanel.participantsBox.textContent = '';
-      if (globalMainVideoDiv) globalMainVideoDiv.textContent = '';
-      awaitedUserDivs = [];
-      topBar.callScreenHeader.textContent = '';
-      bottomPanel.textContent = '';
-      allUsersArray = [];
-      participants = [];
-      rightPanel.clearAllMessages();
-      leftPanel.clearAttendanceList()
-      sidepanelElements[2].triggerButton.parentElement.parentElement.remove(); // remove the ongoing call button
-      if (displayedScreen == 2) displayAppSection(previousDisplayedSreen) // if the call hang up while we are on the screen call, jump to the previous screen
-      else { } // else, remain on the same screen
+      try {
+        socket.emit('leaveCall', { callUniqueId: _callUniqueId })
+        if (screenSharing == true) stopScreenSharing()
+        if (myStream) myStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
+        if (myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all screen stream tracks are closed
+        for (let i = 0; i < participants.length; i++) { removePeer(participants[i].userInfo.userID) }
+        mySideVideoDiv.remove();
+        rightPanel.participantsBox.textContent = '';
+        if (mainVideoDiv) mainVideoDiv.textContent = '';
+        if (globalMainVideoDiv) globalMainVideoDiv.textContent = '';
+        awaitedUserDivs = [];
+        topBar.callScreenHeader.textContent = '';
+        bottomPanel.textContent = '';
+        allUsersArray = [];
+        participants = [];
+        rightPanel.clearAllMessages();
+        leftPanel.clearAttendanceList();
 
-      socket.emit("setOnlineStatus") // reset the online status
-      stopWaitingTone()
+        sidepanelElements[2].triggerButton.parentElement.parentElement.remove(); // remove the ongoing call button
+        if (displayedScreen == 2) displayAppSection(previousDisplayedSreen) // if the call hang up while we are on the screen call, jump to the previous screen
+        else { } // else, remain on the same screen
+
+        socket.emit("setOnlineStatus") // reset the online status
+        stopWaitingTone()
+        isOnCall = false;
+      } catch (error) {
+        console.log(error)
+      }
     }
+    _globalLeavecall = leaveCall
     function createRightPartPanel() {
       let participantsCount = 0;
       let unreadmessagesCount = 0;
@@ -5311,8 +5329,9 @@ let functionalityOptionsArray = [
       let availableScreensDiv = document.getElementById('availableScreensDiv')
       availableScreensDiv.textContent = '';
       function createBottomBubble(callType, stream, userInfo, callMediaType, audioState) {
+
         let bubble = createElement({
-          elementType: 'div', class: 'screenItem', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0),
+          elementType: 'div', class: 'screenItem', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0), title: makeBubbleTitle(userInfo, callMediaType),
           onclick: () => {
             let maindiv = document.getElementById('mainVideoDiv')
             maindiv.textContent = '' //empty the mainDiv
@@ -5339,6 +5358,23 @@ let functionalityOptionsArray = [
         createBubble: createBottomBubble, // it accepts : callType, stream, userInfo, callMediaType, audioState
         availableScreensDiv: availableScreensDiv
       }
+    }
+
+    function makeBubbleTitle(userInfo, callMediaType) {
+      let bubbleTitle
+      let userNameSurname = userInfo.name + " " + userInfo.surname + "'s "
+      switch (callMediaType) {
+        case 'userMedia':
+          bubbleTitle = userNameSurname + 'media bubble'
+          break;
+        case 'screenMedia':
+          bubbleTitle = userNameSurname + 'screen bubble'
+          break;
+        default:
+          bubbleTitle = userNameSurname
+          break;
+      }
+      return bubbleTitle;
     }
 
     socket.on('searchPeopleToInviteToCall', (searchPeople) => {
@@ -5371,7 +5407,47 @@ let functionalityOptionsArray = [
       }
 
     }
+
+
   })
+  function leaveAndJoinCallPrompt() {
+    return new Promise(function (resolve, reject) {
+      if (isOnCall == false) resolve(true);
+      else {
+        let messageline1 = createElement({ elementType: 'div', class: 'editBlock', textContent: 'You are about to leave your current call and join another one.' })
+        let messageline2 = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Click on the "Leave this call and Join another" confirm leaving the current call, or' })
+        let messageline3 = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Click on the "Stay on this call" confirm staying on the current call and decline the new call.' })
+
+        let icon = 'bx bxs-phone'
+        let title = 'Leave and join new call'
+        let contentElementsArray = [messageline1, messageline2, messageline3]
+        let leaveAndJoinButton = createElement({ elementType: 'button', title: 'Leave this call and Join another', textContent: 'Leave this call and Join another' })
+        let stayOnCallButton = createElement({ elementType: 'button', title: 'Stay on this call', textContent: 'Stay on this call' })
+        let actions = [
+          {
+            element: leaveAndJoinButton, functionCall: () => {
+              console.log('leaveAndJoinButton')
+              resolve(true)
+            }
+          },
+          {
+            element: stayOnCallButton, functionCall: () => {
+              console.log('stayOnCallButton')
+              resolve(false);
+            }
+          }
+        ]
+        let constraints = { icon, title, contentElementsArray, actions }
+        createInScreenPopup(constraints).then(editPopup => {
+          leaveAndJoinButton.addEventListener('click', editPopup.closePopup)
+          stayOnCallButton.addEventListener('click', editPopup.closePopup)
+        })
+      }
+
+    })
+  }
+
+  // function 
 
   function isNumeric(num) { return !isNaN(num) }
   function isNegative(num) { if (Math.sign(num) === -1) { return true; } return false; }
@@ -5494,12 +5570,21 @@ let functionalityOptionsArray = [
     }
   }
 
-  function call(callTo, audio, video, group, fromChat, previousCallId) {
+  async function call(callTo, audio, video, group, fromChat, previousCallId) {
     if (window.navigator.onLine == false) {
       stopWaitingTone()
       return showOfflineError();
     }
-    initiateCall({ callTo, audio, video, group, fromChat, previousCallId })
+    if (isOnCall == false) initiateCall({ callTo, audio, video, group, fromChat, previousCallId })
+    else {
+      let leavingIfAlreadyOnCall = await leaveAndJoinCallPrompt()
+      console.log(leavingIfAlreadyOnCall)
+      if (leavingIfAlreadyOnCall == false) { } //action is already taken in the leaveAndJoinCallPrompt() function
+      else {
+        try { _globalLeavecall() } catch (error) { console.log }
+        initiateCall({ callTo, audio, video, group, fromChat, previousCallId })
+      }
+    }
   }
   function initiateChat(corespondantId) {
     console.log('corespondantId', corespondantId)
@@ -5516,6 +5601,7 @@ let functionalityOptionsArray = [
       startWaitingTone() // start the waiting tone
       stream.getTracks().forEach(track => { track.stop(); stream.removeTrack(track); })  //stop media tracks
       sidepanelElements[1].triggerButton.parentElement.parentElement.after(sidepanelElements[2].triggerButton.parentElement.parentElement); // display the button to access the ongoing call
+
     }, (err) => { alert('Failed to get local media stream', err); });
   }
 
@@ -5813,13 +5899,8 @@ let functionalityOptionsArray = [
       });
       // Do something when a file is uploaded:
       coverPictureUploader.addEventListener("complete", function (event) {
-        // console.log("complete", event.detail.name);
         coverPicProgressBar.classList.remove('visible');
         console.log("file upload done", event);
-        /* let newCoverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: 'private/cover/' + event.detail.name })
-        coverPhoto.after(newCoverPhoto);
-        coverPhoto.remove();
-        coverPhoto = newCoverPhoto; */
       });
 
 
@@ -5860,31 +5941,16 @@ let functionalityOptionsArray = [
       });
       // Do something when a file is uploaded:
       profilePictureUploader.addEventListener("complete", function (event) {
-        // console.log("complete", event.detail.name);
         circleLoader.classList.remove('visible');
         console.log("file upload done", event);
-        /*
-        let newProfilePhoto = createElement({ elementType: 'img', class: 'profilePicture', src: 'private/profiles/' + event.detail.name })
-        profilePicture.after(newProfilePhoto);
-        profilePicture.remove();
-        profilePicture = newProfilePhoto;*/
       });
 
       coverDeleteBtn.addEventListener('click', () => {
         socket.emit('deleteCoverPicture')
-        let newCoverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' })
-        coverPhoto.after(newCoverPhoto);
-        coverPhoto.remove();
-        coverPhoto = newCoverPhoto;
-
       })
 
       profileDeleteBtn.addEventListener('click', () => {
         socket.emit('deleteProfilePicture');
-        let newProfilePhoto = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-        profilePicture.after(newProfilePhoto);
-        profilePicture.remove();
-        profilePicture = newProfilePhoto;
       })
 
     } else {
@@ -5949,6 +6015,7 @@ let functionalityOptionsArray = [
     mainCentralProfileDiv.updateProfilePicture = updateProfilePicture
     mainCentralProfileDiv.updateCoverPicture = updateCoverPicture
     openProfileDiv = mainCentralProfileDiv;
+    openPopupDiv = mainCentralProfileDiv
     return mainCentralProfileDiv
   }
 
