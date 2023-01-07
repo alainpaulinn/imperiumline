@@ -384,7 +384,7 @@ io.on('connection', (socket) => {
       let access_roomId = await checkMessageOwnership(messageId, id)
       if (access_roomId == false) return console.log('user cannot delete a message that does not belong to him')
       let deleteResult = await deleteMessage(messageId)
-      if (deleteResult.type == 'positive') io.sockets.in(messageId + '').emit('deletedMessage', { roomId: access_roomId, messageId: messageId });
+      if (deleteResult.type == 'positive') io.sockets.in(access_roomId + '').emit('deletedMessage', { roomId: access_roomId, messageId: messageId });
       socket.emit('serverFeedback', [deleteResult])
     })
     socket.on('searchPeople', async (searchPeople) => {
