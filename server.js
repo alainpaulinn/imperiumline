@@ -335,28 +335,15 @@ io.on('connection', (socket) => {
 
       let fDate = formatDate(new Date())
       if (expectedUser && message.message != "") {
-        db.query('INSERT INTO `message`(`message`, `roomID`, `userID`, `timeStamp`) VALUES (?,?,?,?)', [message.message, message.toRoom, id, fDate || message.timeStamp], async (err, participantResult) => {
+        db.query('INSERT INTO `message`(`message`, `roomID`, `userID`, `timeStamp`) VALUES (?,?,?,?)', [message.message, message.toRoom, id, fDate || message.timeStamp], async (err, messageInsertResult) => {
           if (err) return console.log(err)
           db.query('UPDATE `room` SET `lastActionDate` = ? WHERE `room`.`chatID` = ?;', [fDate || message.timeStamp, message.toRoom], async (err, updateLastAction) => {
             if (err) return console.log(err)
-            db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id`= ?', [participantResult.insertId], async (err, messageResult) => {
+            db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id`= ?', [messageInsertResult.insertId], async (err, messageResult) => {
               if (err) return console.log(err)
-              message.taggedMessages.forEach(taggedMessage => {
-                db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id` = ?', [taggedMessage], async (err, referencedMessageResult) => {
-                  if (err) return console.log(err)
-                  if (referencedMessageResult.length > 0) {
-                    if (referencedMessageResult[0].roomID == message.toRoom) {
-                      db.query("INSERT INTO `messagetags`(`messageId`, `tagMessageId`) VALUES ('?','?')", [participantResult.insertId, taggedMessage], async (err, insertedTag) => {
-                        if (err) return console.log(err)
-                        console.log(`Tag ${insertedTag.insertId} is inserted`)
-                      })
-                    }
-                    else console.log(`User ${id} tried to tag Message ${participantResult.insertId} which is not from group ${message.toRoom} it is from ${referencedMessageResult[0].roomID}`)
-                  }
-                })
+              registerMessageTags(messageInsertResult.insertId, message) // register
 
-              });
-              let insertedMessage = {
+              /*let insertedMessage = {
                 id: messageResult[0].id,
                 roomID: messageResult[0].roomID,
                 message: messageResult[0].message,
@@ -370,8 +357,9 @@ io.on('connection', (socket) => {
                 },
                 tagContent: await getMessageTags(messageResult[0].id),
                 userInfo: await getUserInfo(id)
-              }
-              console.log("Last inserted ID", participantResult.insertId)
+              }*/
+              let insertedMessage = { userInfo: await getUserInfo(id), ... await getMessageFullInfo(messageInsertResult.insertId) }
+              console.log("Last inserted ID", messageInsertResult.insertId)
               let chatInfo = await getRoomInfo(message.toRoom, id)
               io.sockets.in(message.toRoom + '').emit('newMessage', { chatInfo, expectedUser, insertedMessage });
             })
@@ -384,7 +372,16 @@ io.on('connection', (socket) => {
       let access_roomId = await checkMessageOwnership(messageId, id)
       if (access_roomId == false) return console.log('user cannot delete a message that does not belong to him')
       let deleteResult = await deleteMessage(messageId)
-      if (deleteResult.type == 'positive') io.sockets.in(access_roomId + '').emit('deletedMessage', { roomId: access_roomId, messageId: messageId });
+      if (deleteResult.type == 'positive') {
+        io.sockets.in(access_roomId + '').emit('deletedMessage', { roomId: access_roomId, messageId: messageId });
+        let chatInfo = await getRoomInfo(access_roomId, id)
+        console.log('chatInfo', chatInfo, chatInfo.lastmessage.id == messageId)
+
+        if (chatInfo.lastmessage.id == messageId) {
+          io.sockets.in(access_roomId + '').emit('lastMessageDeleted', chatInfo);
+        }
+
+      }
       socket.emit('serverFeedback', [deleteResult])
     })
     socket.on('searchPeople', async (searchPeople) => {
@@ -468,11 +465,11 @@ io.on('connection', (socket) => {
           socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while changing the group name.' }])
         }
         else {
-          if(roomName == null || roomName == ''){
-            changeDetails.roomName = groupMembers.map(user => user.name + ' ' + user.surname).join(', '); 
+          if (roomName == null || roomName == '') {
+            changeDetails.roomName = groupMembers.map(user => user.name + ' ' + user.surname).join(', ');
             changeDetails.madeUp = true; // indicates that we sent a list of users as group name
           }
-          else{
+          else {
             changeDetails.madeUp = false; // indicates that we sent the real group name
           }
           io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
@@ -506,7 +503,7 @@ io.on('connection', (socket) => {
       let usersToPassOn = []
       console.log("found users", foundUsers)
       for (let i = 0; i < foundUsers.length; i++) {
-        if(groupMembers.filter(user => user.userID == foundUsers[i].userID).length == 0){
+        if (groupMembers.filter(user => user.userID == foundUsers[i].userID).length == 0) {
           usersToPassOn.push(foundUsers[i])
         }
       }
@@ -637,12 +634,25 @@ io.on('connection', (socket) => {
                         console.log('reaction has updated successfully')
                         io.sockets.in(reactionIdentifiers.selectedChatId + '').emit('updateReaction',
                           {
-                            chat: reactionIdentifiers.selectedChatId,
+                            /* chat: reactionIdentifiers.selectedChatId,
                             message: reactionIdentifiers.messageId,
                             messageOwner: await getUserInfo(messageCheck[0].userID),
                             details: await getMessageReactions(reactionIdentifiers.messageId),
-                            available: await getAvailableMessageReactions(),
-                            performer: await getUserInfo(id)
+                            available: await getAvailableMessageReactions(), */
+                            userInfo: await getUserInfo(id), ... await getMessageFullInfo(reactionIdentifiers.messageId)
+                            /*id: messageResult[0].id,
+                            roomID: messageResult[0].roomID,
+                            message: messageResult[0].message,
+                            userID: messageResult[0].userID,
+                            timeStamp: messageResult[0].timeStamp,
+                            reactions: {
+                              chat: messageResult[0].roomID,
+                              message: messageResult[0].id,
+                              details: await getMessageReactions(messageResult[0].id),
+                              available: await getAvailableMessageReactions()
+                            },
+                            tagContent: await getMessageTags(messageResult[0].id),
+                            userInfo: await getUserInfo(id)*/
                           }
                         );
                       }
@@ -2125,6 +2135,46 @@ function getMessageReactions(messageId) {
       });
   })
 }
+
+function getMessageFullInfo(messageId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id`= ?', [messageId], async (err, messageResult) => {
+      if (err) return console.log(err)
+      resolve({
+        id: messageResult[0].id,
+        roomID: messageResult[0].roomID,
+        message: messageResult[0].message,
+        userID: messageResult[0].userID,
+        timeStamp: messageResult[0].timeStamp,
+        reactions: {
+          chat: messageResult[0].roomID,
+          message: messageResult[0].id,
+          details: await getMessageReactions(messageResult[0].id),
+          available: await getAvailableMessageReactions()
+        },
+        tagContent: await getMessageTags(messageResult[0].id),
+      })
+    })
+  })
+}
+
+function registerMessageTags(messageID, message) {
+  message.taggedMessages.forEach(taggedMessage => {
+    db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id` = ?', [taggedMessage], async (err, referencedMessageResult) => {
+      if (err) return console.log(err)
+      if (referencedMessageResult.length > 0) {
+        if (referencedMessageResult[0].roomID == message.toRoom) {
+          db.query("INSERT INTO `messagetags`(`messageId`, `tagMessageId`) VALUES ('?','?')", [messageID, taggedMessage], async (err, insertedTag) => {
+            if (err) return console.log(err)
+            console.log(`Tag ${insertedTag.insertId} is inserted`)
+          })
+        }
+        else console.log(`User ${id} tried to tag Message ${participantResult.insertId} which is not from group ${message.toRoom} it is from ${referencedMessageResult[0].roomID}`)
+      }
+    })
+  });
+}
+
 function getAvailableMessageReactions() {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `icon`, `name`, `description` FROM `reactionoptions`',

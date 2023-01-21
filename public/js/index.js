@@ -2227,7 +2227,7 @@ let functionalityOptionsArray = [
     markChatAsOpened(chatContent.roomInfo.roomID) // march the chat as opened
     displayChatOnChatArea(openChatInfo)
   });
-  socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
+  function updateVailableChats(chatInfo){
     let chatContainerDiv = showOnChatList(chatInfo);
     let existingChat = availableChats.find(chat => chat.roomID == chatInfo.roomID)
     if (!existingChat) {
@@ -2239,10 +2239,16 @@ let functionalityOptionsArray = [
       existingChat.conversationButton.remove()
       existingChat.conversationButton = chatContainerDiv
     }
-    if (selectedChatId == chatInfo.roomID && displayedScreen == 0) { // if this chat is currently opened
+  }
+  socket.on('lastMessageDeleted', function (chatInfo) {
+    updateVailableChats(chatInfo)
+  });
+  socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
+    updateVailableChats(chatInfo)
+    if (selectedChatId == chatInfo.roomID) { // if this chat is currently opened
       addMessageToChat(insertedMessage, mySavedID)
     }
-    else { // if this is not the displayed chat, give  notification
+    if (displayedScreen != 0) { // if this is not the displayed chat, give  notification
       let shortOrImagType, shortOrImagContent;
       if (chatInfo.type == 0) {
         if (expectedUser.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = expectedUser.name.charAt(0) + expectedUser.surname.charAt(0); }
@@ -2281,27 +2287,31 @@ let functionalityOptionsArray = [
     displayAppSection(0)
   }
   socket.on('updateReaction', function (receivedReactionsInfo) {
-    console.log('updateReaction', receivedReactionsInfo, mySavedID, selectedChatId)
-    if (selectedChatId == receivedReactionsInfo.chat && displayedScreen == 0) { // update reaction in case it is on the open chat
-      let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
+    console.log('updateReaction', receivedReactionsInfo)
+    if (selectedChatId == receivedReactionsInfo.roomID) { // update reaction in case it is on the open chat
+      // let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
+      
       for (let i = 0; i < displayedMessages.length; i++) {
-        if (displayedMessages[i].object.id == receivedReactionsInfo.message) {
+        if (displayedMessages[i].object.id == receivedReactionsInfo.id) {
+          let messageTextDiv = displayedMessages[i].messageElement.messageTextDiv
+          let msgReactions = buildOptions(receivedReactionsInfo, mySavedID, displayedMessages[i].messageAndTagDiv)
+          console.log('displayedMessages[i]', displayedMessages[i], receivedReactionsInfo)
           displayedMessages[i].reactionsDiv.replaceWith(msgReactions)
           displayedMessages[i].reactionsDiv = msgReactions
         }
       }
     }
-    else {
+    if((displayedScreen != 0 || selectedChatId != receivedReactionsInfo.id) && receivedReactionsInfo.userInfo.userID != mySavedID) {
       // if (mySavedID == receivedReactionsInfo.messageOwner.userID) { // show reaction if it is done on my message in chat // descativated because it was causing trouble
       let shortOrImagType, shortOrImagContent;
-      if (receivedReactionsInfo.performer.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = receivedReactionsInfo.performer.name.charAt(0) + receivedReactionsInfo.performer.surname.charAt(0); }
-      else { shortOrImagType = 'image'; shortOrImagContent = receivedReactionsInfo.performer.profilePicture; }
+      if (receivedReactionsInfo.userInfo.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = receivedReactionsInfo.userInfo.name.charAt(0) + receivedReactionsInfo.userInfo.surname.charAt(0); }
+      else { shortOrImagType = 'image'; shortOrImagContent = receivedReactionsInfo.userInfo.profilePicture; }
 
       let notification = displayNotification({
         title: { iconClass: 'bx bxs-wink-smile', titleText: 'Message reaction' },
         body: {
           shortOrImage: { shortOrImagType: shortOrImagType, shortOrImagContent: shortOrImagContent },
-          bodyContent: receivedReactionsInfo.performer.name + ' ' + receivedReactionsInfo.performer.surname + ' reacted to a message in one of your chats'
+          bodyContent: receivedReactionsInfo.userInfo.name + ' ' + receivedReactionsInfo.userInfo.surname + ' reacted to a message in one of your chats'
         },
         actions: [ // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
           {
@@ -2741,8 +2751,6 @@ let functionalityOptionsArray = [
 
     function requestChatDetails(chatID) {
       socket.emit('requestChatDetails', chatID)
-
-
       chatDetails_panel.textContent = '';
       let backButton = createElement({
         elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
@@ -2757,7 +2765,6 @@ let functionalityOptionsArray = [
     }
 
     socket.on('requestChatDetails', (chatDetails) => {
-
       console.log(chatDetails)
       let backButton = createElement({
         elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
@@ -2774,10 +2781,8 @@ let functionalityOptionsArray = [
       }
       if (!chatDetails.roomInfo) return;
       if (chatDetails.roomInfo.roomID != selectedChatId) return;
-
       chatDetails_panel.textContent = '';
       // messagesArray, roomInfo
-
       function makeChatname(realValue) {
         let chatName = realValue == null ? '(No name)' : realValue;
         return chatName
@@ -2791,18 +2796,14 @@ let functionalityOptionsArray = [
         chatName = changeDetails.madeUp == true ? '(No name)' : changeDetails.roomName
         detailsChatNameTitle.textContent = chatDetails.roomInfo.type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName
       })
-
       let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton, detailsChatNameTitle] })
-
       let detailsArray = []
-
       let participantsDivWrapper = createElement({
         elementType: 'div', class: 'detailBlock', childrenArray: [
           createElement({ elementType: 'div', textContent: 'Chat Participants' }),
           createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(chatDetails.roomInfo.users, chatDetails.roomInfo.roomID, chatDetails.roomInfo.type == 1) })
         ]
       })
-
       // updateCurrentUsers //and users in the conversation
       socket.on('chatUsersChange', changeDetails => {
         if (changeDetails.roomID != chatDetails.roomInfo.roomID) return;
@@ -2823,9 +2824,7 @@ let functionalityOptionsArray = [
         selectedChat_details_userCountDiv = newUsersCount
         // it will also trigger chat name change for group chats without names on the server side
       })
-
       detailsArray.push(participantsDivWrapper)
-
       if (chatDetails.roomInfo.type == 1) {
         let userSearchInput = createElement({ elementType: 'input', placeHolder: 'Search person' })
         let popupBody = createElement({
@@ -3007,218 +3006,26 @@ let functionalityOptionsArray = [
       chatDetails_panel.appendChild(openedChatDetailsTopSection)
       chatDetails_panel.appendChild(openChatDetailsContenDiv)
     })
-
-    // function fillInChatDetails(chatID) {
-    //   socket.emit('requestChatDetails', chatID)
-    //   chatDetails_panel.textContent = '';
-
-    //   let backButton = createElement({
-    //     elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
-    //     onclick: showChatContent
-    //   })
-    //   selectedChat_details_HeaderTitle = createSpinner()
-
-
-    //   let chatName = selectedChat_name == null ? '(No name)' : selectedChat_name;
-    //   createElement({ elementType: 'div', class: 'chatType', textContent: type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName })
-    //   let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton, selectedChat_details_HeaderTitle] })
-
-    //   let detailsArray = []
-
-    //   selectedChat_details_participantsDivWrapper = createElement({
-    //     elementType: 'div', class: 'detailBlock', childrenArray: [
-    //       createElement({ elementType: 'div', textContent: 'Chat Participants' }),
-    //       createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(selectedChat_usersArray, roomID, type == 1) })
-    //     ]
-    //   })
-    //   detailsArray.push(selectedChat_details_participantsDivWrapper)
-
-    //   if (type == 1) {
-    //     let userSearchInput = createElement({ elementType: 'input', placeHolder: 'Search person' })
-    //     let popupBody = createElement({
-    //       elementType: 'div', class: 'popupBody', childrenArray: [
-    //         createDummyElement('Type to search for users to add to the conversation')
-    //       ]
-    //     })
-    //     let addParticipantPopupDiv = createElement({
-    //       elementType: 'div', class: 'detailsPopupDiv', childrenArray: [
-    //         createElement({
-    //           elementType: 'div', class: 'popupHeader', childrenArray: [
-    //             userSearchInput,
-    //             createElement({ elementType: 'button', textContent: 'Done', onclick: hideSearchBoxToggle })
-    //           ]
-    //         }),
-    //         popupBody
-    //       ]
-    //     })
-    //     userSearchInput.addEventListener('input', () => {
-    //       socket.emit('addRoomParticipantsSearch', { roomID: roomID, searchText: userSearchInput.value })
-    //       console.log('addRoomParticipantsSearch', { roomID: roomID, searchText: userSearchInput.value })
-    //     })
-    //     socket.on('addRoomParticipantsSearch', (foundUsers) => {
-    //       popupBody.textContent = ''
-    //       console.log(foundUsers)
-    //       if (foundUsers.length < 1) {
-    //         popupBody.appendChild(createDummyElement('No user found with such criteria'))
-    //       }
-    //       else {
-    //         let foundPantsDivs = foundUsers.map(user => {
-    //           let addButton = createElement({ elementType: 'button', title: 'Add user', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-plus' })] })
-    //           let actions = [
-    //             {
-    //               element: addButton, functionCall: () => {
-    //                 socket.emit('addUserToRoom', { userID: user.userID, roomID: roomID })
-    //                 console.log('addUserToRoom', { userID: user.userID, roomID: roomID })
-    //                 removeUserDiv()
-    //               }
-    //             }
-    //           ]
-    //           let userdiv = userForAttendanceList(user, actions)
-    //           function removeUserDiv() {
-    //             userdiv.remove()
-    //           }
-    //           return userdiv
-    //         })
-    //         popupBody.appendChild(
-    //           createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: foundPantsDivs })
-    //         )
-    //       }
-    //     })
-
-    //     selectedChat_details_userCountDiv = createElement({ elementType: 'div', class: '', textContent: selectedChat_usersArray.length + ' Particiants' })
-    //     let addParticipantsButton = createElement({
-    //       elementType: 'div', class: 'detailBlock', childrenArray: [
-    //         createElement({ elementType: 'div', textContent: 'Chat Participants' }),
-    //         createElement({
-    //           elementType: 'button', class: 'subDetailBlock', childrenArray: [
-    //             selectedChat_details_userCountDiv,
-    //             createElement({
-    //               elementType: 'button', textContent: 'Add Participants', onclick: () => {
-    //                 hideSearchBoxToggle()
-    //                 userSearchInput.focus()
-    //               }
-    //             })
-    //           ]
-    //         }),
-    //         addParticipantPopupDiv
-    //       ]
-    //     })
-    //     function hideSearchBoxToggle() {
-    //       addParticipantPopupDiv.classList.toggle('visible');
-    //     }
-    //     detailsArray.push(addParticipantsButton)
-
-
-
-    //     //
-
-    //     selectedChat_details_changeTitle = createElement({ elementType: 'div', class: 'conversationName', textContent: chatName })
-    //     let chatnameBlock = createElement({
-    //       elementType: 'div', class: 'detailBlock', childrenArray: [
-    //         createElement({ elementType: 'div', textContent: 'Group Name:' }),
-    //         createElement({
-    //           elementType: 'div', class: 'subDetailBlock', childrenArray: [
-    //             selectedChat_details_changeTitle,
-    //             createElement({
-    //               elementType: 'button', textContent: 'Change', onclick: () => {
-    //                 let icon, title, contentElementsArray, actions;
-    //                 let notificationBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: '*Leave the field empty if you want to delete the donversation name' })
-    //                 let chatNameLabel = createElement({ elementType: 'label', for: 'chatName', textContent: 'Chat name' })
-    //                 let chatNameInput = createElement({ elementType: 'input', id: 'chatName' + 'chooseNew', placeHolder: 'Chat name', value: selectedChat_name == null ? '' : selectedChat_name })
-    //                 let chatNameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chatNameLabel, chatNameInput] })
-    //                 icon = 'bx bxs-edit-alt'
-    //                 title = 'Change chat name'
-    //                 contentElementsArray = [chatNameBlock, notificationBlock]
-    //                 let cancelButton = createElement({ elementType: 'button', textContent: 'Cancel' })
-    //                 let confirmButton = createElement({ elementType: 'button', textContent: 'Save' })
-    //                 actions = [
-    //                   {
-    //                     element: confirmButton, functionCall: () => {
-    //                       let sendvalue = chatNameInput.value.trim()
-    //                       if (sendvalue == '') sendvalue = null
-    //                       socket.emit('changeRoomName', { roomName: sendvalue, roomID: roomID })
-    //                     }
-    //                   },
-    //                   { element: cancelButton, functionCall: () => { } }
-    //                 ]
-    //                 let constraints = { icon, title, contentElementsArray, actions }
-    //                 // actions is an array of a button and a function of what it does
-    //                 createInScreenPopup(constraints).then(editPopup => {
-    //                   cancelButton.addEventListener('click', editPopup.closePopup);
-    //                   confirmButton.addEventListener('click', editPopup.closePopup);
-    //                 })
-
-    //               }
-    //             })
-    //           ]
-    //         })
-    //       ]
-    //     })
-    //     detailsArray.push(chatnameBlock)
-    //     // change picture
-
-    //     let srclink = selectedChat_profilePic_src == null ? '/private/profiles/group.jpeg' : selectedChat_profilePic_src
-    //     selectedChat_details_profilePic_changeDiv = createElement({ elementType: 'img', class: 'largeImage', src: srclink })
-    //     let groupPictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'groupPictureInputElement', class: 'hidden', accept: "image/*" })
-    //     let selectgroupPictureBtn = createElement({ elementType: 'label', for: 'groupPictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
-
-    //     let defaultButton = createElement({ elementType: 'button', textContent: 'Default', onclick: () => { socket.emit('chatProfilePictureDelete', roomID) } })
-    //     let groupPicProgressBar = createBarLoader()
-    //     let progressBarBlock = createElement({ elementType: 'div', class: 'subDetailBlock hidden', childrenArray: [groupPicProgressBar] })
-    //     let changePicBlock = createElement({
-    //       elementType: 'div', class: 'detailBlock', childrenArray: [
-    //         createElement({ elementType: 'div', textContent: 'Group profile Picture:' }),
-    //         createElement({ elementType: 'div', class: 'subDetailBlock', childrenArray: [createElement({ elementType: 'div', childrenArray: [selectedChat_details_profilePic_changeDiv] }), groupPictureInputElement, selectgroupPictureBtn, defaultButton] }),
-    //         progressBarBlock,
-    //       ]
-    //     })
-
-    //     // listen to coverPhotoUpload
-    //     var groupProfilePictureUploader = new SocketIOFileUpload(socket);
-    //     groupProfilePictureUploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
-    //     groupProfilePictureUploader.listenOnInput(groupPictureInputElement);
-    //     // Do something on start progress:
-    //     groupProfilePictureUploader.addEventListener("start", function (event) {
-    //       event.file.meta.fileRole = "groupProfilePicture";
-    //       event.file.meta.roomID = roomID;
-    //       groupPicProgressBar.classList.add('visible');
-    //       progressBarBlock.classList.remove('hidden');
-    //     });
-    //     // Do something on upload progress:
-    //     groupProfilePictureUploader.addEventListener("progress", function (event) {
-    //       var percent = (event.bytesLoaded / event.file.size) * 100;
-    //       groupPicProgressBar.setPercentage(percent.toFixed(2))
-    //       console.log("File is", percent.toFixed(2), "percent loaded");
-    //     });
-    //     // Do something when a file is uploaded:
-    //     groupProfilePictureUploader.addEventListener("complete", function (event) {
-    //       // console.log("complete", event.detail.name);
-    //       groupPicProgressBar.classList.remove('visible');
-    //       selectedChat_details_profilePic_changeDiv.src = 'private/profiles/' + event.detail.name
-    //       profilePicture = 'private/profiles/' + event.detail.name
-    //       selectedChat_profilePic_src = 'private/profiles/' + event.detail.name
-    //       progressBarBlock.classList.add('hidden');
-
-    //     });
-
-    //     socket.once('groupPictureChange', changeInfo => {
-    //       // roomID, path
-    //       if (changeInfo.roomID == roomInfo.roomID) {
-    //         roomInfo.profilePicture = changeInfo.path
-    //         profilePicture = changeInfo.path
-    //         selectedChat_details_profilePic_changeDiv.src = roomInfo.profilePicture
-    //         selectedChat_details_profilePic_changeDiv.src = profilePicture
-    //       }
-    //     })
-
-    //     detailsArray.push(changePicBlock);
-    //   }
-    //   let openChatDetailsContenDiv = createElement({ elementType: 'div', class: 'openChatDetailsContenDiv', childrenArray: detailsArray })
-    //   chatDetails_panel.appendChild(openedChatDetailsTopSection)
-    //   chatDetails_panel.appendChild(openChatDetailsContenDiv)
-
-    // }
   }
+  
+  socket.on('deletedMessage', deleteMessage => {
+    console.log('deleteMessage', deleteMessage)
+    for (let i = 0; i < displayedMessages.length; i++) {
+      // const displayedMessage = displayedMessages[i];
+      console.log('displayedMessage', displayedMessages[i])
+
+      if(displayedMessages[i].object.roomID == selectedChatId && displayedMessages[i].object.id == deleteMessage.messageId){
+        displayedMessages[i].messageElement.messageTextDiv.textContent = '__deleted message__';
+      }
+
+      for (let j = 0; j < displayedMessages[i].messageElement.tags.length; j++) {
+        // const tagdiv = displayedMessages[i].tagDivs[j];
+        if(displayedMessages[i].messageElement.tags[j].id == deleteMessage.messageId){
+          displayedMessages[i].messageElement.tags[j].tagDiv.textContent = '__deleted message__';
+        }
+      }
+    }
+  })
 
   function addMessageToChat(message, myID) {
     let messageElement
@@ -3228,12 +3035,12 @@ let functionalityOptionsArray = [
       let groupMessages;
       if (message.userID == myID) {
         messageElement = createSentMessage(message, myID, 'bx bxs-check-circle')
-        groupMessages = createSentGroup(messageElement)
+        groupMessages = createSentGroup(messageElement.messageDiv)
       }
       else {
         let profilePic = makeProfilePicture(message.userInfo)
         messageElement = createReceivedMessage(message, myID, true)
-        groupMessages = createReceivedGroup(profilePic, messageElement)
+        groupMessages = createReceivedGroup(profilePic, messageElement.messageDiv)
       }
       openchat__box__info.textContent = '' // clear the textBox
       openchat__box__info.appendChild(createElement({ elementType: 'div', class: 'push-down' })) // push down all contents
@@ -3258,68 +3065,95 @@ let functionalityOptionsArray = [
           - if the message is not from the same day
           - the message is coming from a different user, 
           */
-          groupMessages = createSentGroup(messageElement)
+          groupMessages = createSentGroup(messageElement.messageDiv)
           openchat__box__info.append(groupMessages)
         }
         else {
-          lastMessage.messageElement.after(messageElement)
+          lastMessage.messageElement.messageDiv.after(messageElement.messageDiv)
         }
       }
       else { // if it is a received message
         if ((thisDate - prevDate) > 60000 || !sameDay(prevDate, thisDate) || message.userID != lastMessage.object.userID) {
           messageElement = createReceivedMessage(message, myID, true)
           let profilePic = makeProfilePicture(message.userInfo)
-          groupMessages = createReceivedGroup(profilePic, messageElement)
+          groupMessages = createReceivedGroup(profilePic, messageElement.messageDiv)
           openchat__box__info.append(groupMessages)
         }
         else {
           messageElement = createReceivedMessage(message, myID, false)
-          lastMessage.messageElement.after(messageElement)
+          lastMessage.messageElement.messageDiv.after(messageElement.messageDiv)
         }
       }
     }
-    displayedMessages.push({ object: message, messageElement: messageElement, reactionsDiv: messageElement.reactionOptions.reactionOptionsDiv });
+    displayedMessages.push({ object: message, messageElement: messageElement, reactionsDiv: messageElement.reactionOptionsDiv, messageAndTagDiv: messageElement.messageAndTagsDiv });
     console.log('displayedMessages', displayedMessages)
     scrollToBottom(openchat__box__info) // scroll to bottom
   }
 
   function createReceivedMessage(message, myID, showSenderName) {
     // senserName: true / false allows the message to have the senders name attached
+    let tagIdTagDivs = []
     let tagTemplate = message.tagContent.map(tag => {
-      return createElement({
+      let tagDiv = createElement({
         elementType: 'div', class: 'message-tag-text', textContent: tag.message, onclick: () => {
           let taggedMessage = displayedMessages.find(displayedMessage => displayedMessage.object.id == tag.id)
-          taggedMessage.messageElement.scrollIntoView({ behavior: "smooth", block: "center" });
+          taggedMessage.messageElement.messageDiv.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       })
+      tagIdTagDivs.push({id: tag.id, tagDiv: tagDiv})
+      return tagDiv
     })
-    let messageReceivedText = createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
+    let messageTextDiv = createElement({ elementType: 'p', textContent: message.message })
+    let messageReceivedText = createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([messageTextDiv]) })
     let sendersName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
     let reactionOptions = buildOptions(message, myID, messageReceivedText)
     // reactionOptions.reactionOptionsDiv is the element
     let messageElements = [messageReceivedText, reactionOptions]
     if (showSenderName == true) messageElements.push(sendersName)
     let receivedMessage = createElement({ elementType: 'div', class: 'message-received', childrenArray: messageElements })
-    receivedMessage.reactionOptions = reactionOptions
-    return receivedMessage
+    // receivedMessage.reactionOptions = reactionOptions
+    // receivedMessage.messageTextDiv = messageReceivedText
+    // receivedMessage.tagDivs = tagIdTagDivs
+    // // return receivedMessage
+
+    return {
+      messageDiv: receivedMessage,
+      messageAndTagsDiv: messageReceivedText,
+      messageTextDiv: messageTextDiv,
+      reactionOptionsDiv: reactionOptions,
+      tags: tagIdTagDivs
+    }
   }
 
   function createSentMessage(message, myID, statusIcon) {
+    let tagIdTagDivs = []
     let tagTemplate = message.tagContent.map(tag => {
-      return createElement({
+      let tagDiv = createElement({
         elementType: 'div', class: 'message-tag-text', textContent: tag.message, onclick: () => {
           let taggedMessage = displayedMessages.find(displayedMessage => displayedMessage.object.id == tag.id)
-          taggedMessage.messageElement.scrollIntoView({ behavior: "smooth", block: "center" });
+          taggedMessage.messageElement.messageDiv.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       })
+      tagIdTagDivs.push({id: tag.id, tagDiv: tagDiv})
+      return tagDiv
     })
-    let messageSentText = createElement({ elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
+    let messageTextDiv = createElement({ elementType: 'p', textContent: message.message })
+    let messageSentText = createElement({ elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([messageTextDiv]) })
     let messageStatus = createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [createElement({ elementType: 'i', class: statusIcon })] })
     let reactionOptions = buildOptions(message, myID, messageSentText)
     let messageElements = [reactionOptions, messageSentText, messageStatus]
     let sentMessage = createElement({ elementType: 'div', class: 'message-sent', childrenArray: messageElements })
-    sentMessage.reactionOptions = reactionOptions
-    return sentMessage
+    // sentMessage.reactionOptions = reactionOptions
+    // sentMessage.messageTextDiv = messageSentText
+    // sentMessage.tagDivs = tagIdTagDivs
+    // return sentMessage
+    return {
+      messageDiv: sentMessage,
+      messageAndTagsDiv: messageSentText,
+      messageTextDiv: messageTextDiv,
+      reactionOptionsDiv: reactionOptions,
+      tags: tagIdTagDivs
+    }
   }
 
   function createReceivedGroup(profilePic, firstMessage) {
@@ -3569,6 +3403,7 @@ let functionalityOptionsArray = [
 
 
   function buildOptions(message, myID, messageTextDiv) {
+    console.log('message', message)
     let referenceBtn = createElement({
       elementType: 'button', class: 'expandOptions', title: 'Reply to this message', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })], onclick: () => {
         messageReference(message.id, messageTextDiv, inputContainer)
@@ -3588,7 +3423,6 @@ let functionalityOptionsArray = [
             element: confirmButton,
             functionCall: () => {
               socket.emit('deleteMessage', message.id);
-              messageTextDiv.textContent = '__deleted message__'
             }
           },
           {
@@ -3620,9 +3454,9 @@ let functionalityOptionsArray = [
     ]
     if (message.userID == myID) time_reactions_options.reverse()
     else deleteBtn.remove()
-    if (messageTextDiv.textContent == '__deleted message__') {
-      deleteBtn.remove();
-    }
+    // if (messageTextDiv.textContent == '__deleted message__') {
+    //   deleteBtn.remove();
+    // }
     let timeReactionOptions = createElement({ elementType: 'div', class: 'time_reactions_options', childrenArray: time_reactions_options })
     timeReactionOptions.reactionOptionsDiv = msgReactions;
     return timeReactionOptions
