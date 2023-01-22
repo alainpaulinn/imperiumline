@@ -2227,7 +2227,7 @@ let functionalityOptionsArray = [
     markChatAsOpened(chatContent.roomInfo.roomID) // march the chat as opened
     displayChatOnChatArea(openChatInfo)
   });
-  function updateVailableChats(chatInfo){
+  function updateVailableChats(chatInfo) {
     let chatContainerDiv = showOnChatList(chatInfo);
     let existingChat = availableChats.find(chat => chat.roomID == chatInfo.roomID)
     if (!existingChat) {
@@ -2290,7 +2290,7 @@ let functionalityOptionsArray = [
     console.log('updateReaction', receivedReactionsInfo)
     if (selectedChatId == receivedReactionsInfo.roomID) { // update reaction in case it is on the open chat
       // let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
-      
+
       for (let i = 0; i < displayedMessages.length; i++) {
         if (displayedMessages[i].object.id == receivedReactionsInfo.id) {
           let messageTextDiv = displayedMessages[i].messageElement.messageTextDiv
@@ -2301,7 +2301,7 @@ let functionalityOptionsArray = [
         }
       }
     }
-    if((displayedScreen != 0 || selectedChatId != receivedReactionsInfo.id) && receivedReactionsInfo.userInfo.userID != mySavedID) {
+    if ((displayedScreen != 0 || selectedChatId != receivedReactionsInfo.id) && receivedReactionsInfo.userInfo.userID != mySavedID) {
       // if (mySavedID == receivedReactionsInfo.messageOwner.userID) { // show reaction if it is done on my message in chat // descativated because it was causing trouble
       let shortOrImagType, shortOrImagContent;
       if (receivedReactionsInfo.userInfo.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = receivedReactionsInfo.userInfo.name.charAt(0) + receivedReactionsInfo.userInfo.surname.charAt(0); }
@@ -3007,20 +3007,20 @@ let functionalityOptionsArray = [
       chatDetails_panel.appendChild(openChatDetailsContenDiv)
     })
   }
-  
+
   socket.on('deletedMessage', deleteMessage => {
     console.log('deleteMessage', deleteMessage)
     for (let i = 0; i < displayedMessages.length; i++) {
       // const displayedMessage = displayedMessages[i];
       console.log('displayedMessage', displayedMessages[i])
 
-      if(displayedMessages[i].object.roomID == selectedChatId && displayedMessages[i].object.id == deleteMessage.messageId){
+      if (displayedMessages[i].object.roomID == selectedChatId && displayedMessages[i].object.id == deleteMessage.messageId) {
         displayedMessages[i].messageElement.messageTextDiv.textContent = '__deleted message__';
       }
 
       for (let j = 0; j < displayedMessages[i].messageElement.tags.length; j++) {
         // const tagdiv = displayedMessages[i].tagDivs[j];
-        if(displayedMessages[i].messageElement.tags[j].id == deleteMessage.messageId){
+        if (displayedMessages[i].messageElement.tags[j].id == deleteMessage.messageId) {
           displayedMessages[i].messageElement.tags[j].tagDiv.textContent = '__deleted message__';
         }
       }
@@ -3100,7 +3100,7 @@ let functionalityOptionsArray = [
           taggedMessage.messageElement.messageDiv.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       })
-      tagIdTagDivs.push({id: tag.id, tagDiv: tagDiv})
+      tagIdTagDivs.push({ id: tag.id, tagDiv: tagDiv })
       return tagDiv
     })
     let messageTextDiv = createElement({ elementType: 'p', textContent: message.message })
@@ -3134,7 +3134,7 @@ let functionalityOptionsArray = [
           taggedMessage.messageElement.messageDiv.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       })
-      tagIdTagDivs.push({id: tag.id, tagDiv: tagDiv})
+      tagIdTagDivs.push({ id: tag.id, tagDiv: tagDiv })
       return tagDiv
     })
     let messageTextDiv = createElement({ elementType: 'p', textContent: message.message })
@@ -3691,13 +3691,8 @@ let functionalityOptionsArray = [
 
         let { closeVideoBtn, HangUpBtn, muteMicrophoneBtn } = videoCoverDiv.controls
         HangUpBtn.addEventListener('click', () => {
-          socket.emit('cancelCall', callUniqueId)
-          mySideVideoDiv.remove();
-          stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
-          videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
-          topBar.callScreenHeader.textContent = ''
+          exitcallBeforeOthersJoin(callUniqueId)
           stream.getTracks().forEach((track) => { console.log('track', track); track.stop(); stream.removeTrack(track); })
-          myStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); myStream.removeTrack(track); })
           leaveCall();
         })
 
@@ -3855,6 +3850,9 @@ let functionalityOptionsArray = [
       let { name, profilePicture, surname, userID } = caller
 
       let responded = false;
+      function rejectIncomingCall() {
+        socket.emit("callRejected", callUniqueId); responded = true
+      }
       let notification = displayNotification({
         title: { iconClass: 'bx bxs-phone-call', titleText: 'Incoming call' },
         body: {
@@ -3865,22 +3863,24 @@ let functionalityOptionsArray = [
           bodyContent: 'Incoming ' + callType + ' call from' + name + ' ' + surname //+ (allUsers.length <= 2 ? '.' : ' with ' + (groupMembersToCall_fullInfo.length - 1) + ' other' + ((groupMembersToCall_fullInfo.length - 1) > 1 ? 's.' : '.'))
         },
         actions: [
-          { type: 'normal', displayText: 'Reject', actionFunction: () => { socket.emit("callRejected", callUniqueId); responded = true } },
+          { type: 'normal', displayText: 'Reject', actionFunction: rejectIncomingCall },
           {
-            type: 'confirm', displayText: 'Audio', actionFunction: () => {
+            type: 'confirm', displayText: 'Audio', actionFunction: async () => {
+              let callAccepted = await callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage);
+              if (callAccepted == false) return rejectIncomingCall(); // if a call was refused in order to stay on an ongoing call, stop here and refuse the incoming call
               caller_me = myInfo;
               _callUniqueId = callUniqueId;
-              callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage);
               responded = true;
               sidepanelElements[1].triggerButton.parentElement.parentElement.after(sidepanelElements[2].triggerButton.parentElement.parentElement); // display the button to access the ongoing call
             }
           },
 
           {
-            type: 'confirm', displayText: 'Video', actionFunction: () => {
+            type: 'confirm', displayText: 'Video', actionFunction: async () => {
+              let callAccepted = await callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage);
+              if (callAccepted == false) return rejectIncomingCall(); // if a call was refused in order to stay on an ongoing call, stop here and refuse the incoming call
               caller_me = myInfo;
               _callUniqueId = callUniqueId;
-              callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage);
               responded = true;
               sidepanelElements[1].triggerButton.parentElement.parentElement.after(sidepanelElements[2].triggerButton.parentElement.parentElement); // display the button to access the ongoing call
             }
@@ -3913,30 +3913,47 @@ let functionalityOptionsArray = [
       }
     })
 
-    function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage) {
-      leaveAndJoinCallPrompt()
-      navigator.getUserMedia({ video: { deviceId: chosenDevices?.videoInput?.deviceId }, audio: true }, stream => {
-        responded = true
+    async function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage) {
+      let leavingIfAlreadyOnCall = await leaveAndJoinCallPrompt()
+      if (leavingIfAlreadyOnCall == false) { // true: accept thi call, false: rmain on the current call and refuse the new call
+        return false
+      }
+      else {
+        if (isOnCall == true && leavingIfAlreadyOnCall == true) { leaveCall(); exitcallBeforeOthersJoin(_callUniqueId); } // if you chose to continue with the new call, we will hag up automatically the previous call
+        navigator.getUserMedia({ video: { deviceId: chosenDevices?.videoInput?.deviceId }, audio: true }, stream => {
+          responded = true
 
-        isOnCall = true
-        _callTitle = callTitle
-        allUsersArray = allUsers
-        myStream = stream // store our stream globally so that to access it whenever needed
-        // store the call type fpr incoming videos and sending our stream
-        saveLocalMediaStream(answertype, stream)
+          isOnCall = true
+          _callTitle = callTitle
+          allUsersArray = allUsers
+          myStream = stream // store our stream globally so that to access it whenever needed
+          // store the call type fpr incoming videos and sending our stream
+          saveLocalMediaStream(answertype, stream)
 
-        callInfo = { callUniqueId, callType: globalCallType, callTitle: callTitle ? callTitle : 'Untitled Call', isTeam: false }
-        socket.emit("answerCall", { myPeerId, callUniqueId, callType: answertype, callStage })
-        topBar = createTopBar(callInfo, myInfo) // create top bar
-        rightPanel = createRightPartPanel()
-        bottomPanel = createBottomPart()
-        // ut create and append my sidevideo
-        mySideVideoDiv = createSideVideo(answertype, myStream, myInfo, 'userMedia', globalAudioState)
-        rightPanel.participantsBox.textContent = ''
-        rightPanel.participantsBox.append(mySideVideoDiv)
-        leftPanel = createLeftPanel()
-        displayAppSection(2) // display the ongoing call panel
-      }, (err) => { alert('Failed to get local media stream', err); });
+          callInfo = { callUniqueId, callType: globalCallType, callTitle: callTitle ? callTitle : 'Untitled Call', isTeam: false }
+          socket.emit("answerCall", { myPeerId, callUniqueId, callType: answertype, callStage })
+          topBar = createTopBar(callInfo, myInfo) // create top bar
+          rightPanel = createRightPartPanel()
+          bottomPanel = createBottomPart()
+          // ut create and append my sidevideo
+          mySideVideoDiv = createSideVideo(answertype, myStream, myInfo, 'userMedia', globalAudioState)
+          rightPanel.participantsBox.textContent = ''
+          rightPanel.participantsBox.append(mySideVideoDiv)
+          leftPanel = createLeftPanel()
+          displayAppSection(2) // display the ongoing call panel
+        }, (err) => { alert('Failed to get local media stream', err); });
+        return true;
+      }
+
+    }
+
+    function exitcallBeforeOthersJoin(callUniqueId) {
+      socket.emit('cancelCall', callUniqueId)
+      mySideVideoDiv.remove();
+      stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
+      videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
+      topBar.callScreenHeader.textContent = ''
+      myStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); myStream.removeTrack(track); })
     }
     socket.on('updateAllParticipantsList', allUsers => {
       console.log('allUsersArray', allUsersArray, 'allUsers', allUsers)
@@ -4634,6 +4651,10 @@ let functionalityOptionsArray = [
       }
     }
 
+    socket.on('forceLeaveCall', () => {
+      leaveCall()
+    })
+
     function leaveCall() {
       try {
         socket.emit('leaveCall', { callUniqueId: _callUniqueId })
@@ -5244,6 +5265,12 @@ let functionalityOptionsArray = [
 
 
   })
+
+  myPeer.on('error', function (err) {
+    let feedback = [{ type: 'negative', message: 'Sorry, Your browser could not connect to the peer server due to the following reasons: ' + err }]
+    displayServerError(feedback)
+  })
+
   function leaveAndJoinCallPrompt() {
     return new Promise(function (resolve, reject) {
       if (isOnCall == false) resolve(true);

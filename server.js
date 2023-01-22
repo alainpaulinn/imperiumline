@@ -832,8 +832,7 @@ io.on('connection', (socket) => {
         let _calltype = videoPresentation == 1 ? "video" : "audio"
         let callInitiationInfo = { callUniqueId, callType: _calltype, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall, callTitle: callTitle, callStage: 'initial' }
         socket.emit('prepareCallingOthers', callInitiationInfo);
-        console.log('callInitiationInfo2', callInitiationInfo)
-
+        socket.emit('updateCallLog', await getCallLog(id));
       }
 
       async function rejoinCall(groupMembersToCall, previousCallId) {
@@ -914,6 +913,13 @@ io.on('connection', (socket) => {
 
       leaveAllPreviousCalls()// make sure that the user is not on another call
 
+      let stillOnCallUsers = await getOnCallPeopleByStatus(callUniqueId, 1)
+      if(stillOnCallUsers.length < 1) { 
+        socket.emit('forceLeaveCall')
+        socket.emit('serverFeedback', [{ type: 'negative', message: 'You cannot answer this call because there is no longer anyone on the call' }])
+        return; 
+      }
+
       socket.emit('updateAllParticipantsList', thisCallparticipants) // this is because if someone answers this call, while the called has added other users, the caller will not have a list
       socket.to(callUniqueId + '-allAnswered-sockets').emit('updateAllParticipantsList', thisCallparticipants)
       //inform all users who accepted the call- to call me
@@ -927,8 +933,7 @@ io.on('connection', (socket) => {
           if (connectedUsers[i].id == thisCallparticipants[j].userID) {
             // connectedUsers[i].socket.emit
             socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
-            // socket.to(connectedUsers[i].socket.id).emit('confirmStatus', 'onCall');
-
+            socket.to(connectedUsers[i].socket.id).emit('removeCallNotification', callUniqueId);
           }
         }
       }
@@ -1527,7 +1532,7 @@ io.on('connection', (socket) => {
             socket.to(room + '').emit('userDisconnectedFromCall', { userInfo: await getUserInfo(id), room: room })
             let callUniqueId = room.replace('-allAnswered-sockets', '');
             setUserCallStatus(id, callUniqueId, 'offCall')
-
+            console.log('callUniqueId', callUniqueId)
             let consernedMembers = await getCallParticipants(callUniqueId)
             let memberIDArray = consernedMembers.map(member => member.userID)
             for (let j = 0; j < connectedUsers.length; j++) {
