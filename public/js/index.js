@@ -3093,6 +3093,7 @@ let functionalityOptionsArray = [
   }
 
   function createReceivedMessage(message, myID, showSenderName) {
+    if(message.userInfo = null) message.userInfo = deletedUser //put deleted user if there is no actual user
     // senserName: true / false allows the message to have the senders name attached
     let tagIdTagDivs = []
     let tagTemplate = message.tagContent.map(tag => {
