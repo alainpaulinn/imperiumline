@@ -23,6 +23,7 @@ let deletedUser = {
   surname: 'User',
   role: 'Deleted User',
   profilePicture: null,
+  cover: null,
   status: 'offline'
 }// to be used in case we have a deleted user
 
@@ -2420,21 +2421,21 @@ let functionalityOptionsArray = [
     return chatListItem;
   }
   function makeProfilePicture(userInfo) {
-    let { userID, name, surname, role, profilePicture, status } = userInfo || deletedUser
-    let onlineStatus = createElement({ elementType: 'div', class: 'onlineStatus ' + userInfo.status })
-    let profilePicContent = createProfilePicContent(userInfo.profilePicture)
+    let { userID, name, surname, role, profilePicture, cover, status } = userInfo || deletedUser
+    let onlineStatus = createElement({ elementType: 'div', class: 'onlineStatus ' + status })
+    let profilePicContent = createProfilePicContent(profilePicture)
     let areaContent = [profilePicContent, onlineStatus]
     let memberProfilePicture = createElement({ elementType: 'div', class: 'identifier', childrenArray: areaContent })
 
     let openedProfile
     memberProfilePicture.addEventListener('click', async () => {
-      openedProfile = await createProfilePopup(userInfo);
+      openedProfile = await createProfilePopup(userInfo || deletedUser);
     })
 
     socket.on('userProfilePictureChange', changeInfo => {
-      if (changeInfo.userID == userInfo.userID) {
-        userInfo.profilePicture = changeInfo.path
-        let newPP = createProfilePicContent(userInfo.profilePicture)
+      if (changeInfo.userID == userID) {
+        profilePicture = changeInfo.path
+        let newPP = createProfilePicContent(profilePicture)
         profilePicContent.replaceWith(newPP)
         profilePicContent = newPP;
 
@@ -2443,16 +2444,16 @@ let functionalityOptionsArray = [
     })
 
     socket.on('userCoverPictureChange', changeInfo => {
-      if (changeInfo.userID == userInfo.userID) {
-        userInfo.cover = changeInfo.path
+      if (changeInfo.userID == userID) {
+        cover = changeInfo.path
         if (openedProfile) openedProfile.updateCoverPicture(changeInfo.path)
       }
     })
 
     socket.on('onlineStatusChange', changeInfo => {
-      if (changeInfo.userID == userInfo.userID) {
-        userInfo.status = changeInfo.status
-        let newOnlineStatus = createElement({ elementType: 'div', class: 'onlineStatus ' + userInfo.status })
+      if (changeInfo.userID == userID) {
+        status = changeInfo.status
+        let newOnlineStatus = createElement({ elementType: 'div', class: 'onlineStatus ' + status })
         onlineStatus.replaceWith(newOnlineStatus)
         onlineStatus = newOnlineStatus;
         if (openedProfile) openedProfile.updateStatus(changeInfo.status)
@@ -2461,7 +2462,7 @@ let functionalityOptionsArray = [
 
     function createProfilePicContent(path) {
       let profilePicContent;
-      if (path == null) profilePicContent = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
+      if (path == null) profilePicContent = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
       else profilePicContent = createElement({ elementType: 'img', class: 'memberProfilePicture', src: path })
       return profilePicContent;
     }
