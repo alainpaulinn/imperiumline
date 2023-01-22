@@ -3038,6 +3038,7 @@ let functionalityOptionsArray = [
         groupMessages = createSentGroup(messageElement.messageDiv)
       }
       else {
+        console.log('message', message)
         let profilePic = makeProfilePicture(message.userInfo)
         messageElement = createReceivedMessage(message, myID, true)
         groupMessages = createReceivedGroup(profilePic, messageElement.messageDiv)
