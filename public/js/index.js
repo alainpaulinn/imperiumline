@@ -2420,7 +2420,7 @@ let functionalityOptionsArray = [
     return chatListItem;
   }
   function makeProfilePicture(userInfo) {
-    let { userID, name, surname, role, profilePicture, status } = userInfo
+    let { userID, name, surname, role, profilePicture, status } = userInfo || deletedUser
     let onlineStatus = createElement({ elementType: 'div', class: 'onlineStatus ' + userInfo.status })
     let profilePicContent = createProfilePicContent(userInfo.profilePicture)
     let areaContent = [profilePicContent, onlineStatus]
