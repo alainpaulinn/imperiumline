@@ -603,6 +603,7 @@ let functionalityOptionsArray = [
     console.log('updateCallLog', calls)
     list_call_section_content.textContent = ''
     calls.forEach(logUpdate => {
+      if(logUpdate == null) logUpdate = deletedUser
       let callogClass = "";
       let callDirection;
       if (logUpdate.participantsOnCall.length > 0) callogClass = "ongoing";
