@@ -16,6 +16,7 @@ let chats = [];
 let mySavedID;
 let myName, Mysurname;
 let silentNotifications = false;
+let userFirstInteractionDone =  false; //turns true on first mouse move to be able to play any sounds
 let appTheme = 'dark';
 let deletedUser = {
   userID: 0,
@@ -5464,7 +5465,7 @@ let functionalityOptionsArray = [
   }
 
   function startWaitingTone() {
-    if (silentNotifications == false) waitingTone.play()
+    if (silentNotifications == false && userFirstInteractionDone == true) waitingTone.play()
   }
   function stopWaitingTone() { waitingTone.currentTime = 0; waitingTone.pause() }
 
@@ -5529,8 +5530,8 @@ let functionalityOptionsArray = [
     // run the On display event
     onDisplay()
     let notificationTone;
-    if (tone == 'notification' && silentNotifications == false) { notificationTone = new Audio('/private/audio/imperiumLineNotification.mp3'); notificationTone.play() }
-    if (tone == 'call' && silentNotifications == false) {
+    if (tone == 'notification' && silentNotifications == false && userFirstInteractionDone == true) { notificationTone = new Audio('/private/audio/imperiumLineNotification.mp3'); notificationTone.play() }
+    if (tone == 'call' && silentNotifications == false && userFirstInteractionDone == true) {
       notificationTone = new Audio('/private/audio/imperiumLineCall.mp3'); notificationTone.play()
       notificationTone.addEventListener('ended', function () { this.currentTime = 0; this.play(); }, false);
     }
@@ -6782,6 +6783,10 @@ let functionalityOptionsArray = [
   }
 
 })(functionalityOptionsArray);
+
+document.body.addEventListener("mousemove", function () {
+  if(userFirstInteractionDone == false) userFirstInteractionDone =  true; // set this to true in order to be able to play the initial tones (limitation introduced from HTML5)
+})
 
 
 /*
