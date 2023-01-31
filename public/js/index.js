@@ -16,7 +16,7 @@ let chats = [];
 let mySavedID;
 let myName, Mysurname;
 let silentNotifications = false;
-let userFirstInteractionDone =  false; //turns true on first mouse move to be able to play any sounds
+let userFirstInteractionDone = false; //turns true on first mouse move to be able to play any sounds
 let appTheme = 'dark';
 let deletedUser = {
   userID: 0,
@@ -486,7 +486,7 @@ let functionalityOptionsArray = [
       const subMenuElement = subMenu[i];
       let submenuText = createElement({ elementType: 'p', textContent: subMenuElement.text })
       let subMenuIcon = createElement({ elementType: 'i', class: subMenuElement.icon })
-      let submenuLink = createElement({ elementType: 'a', class: 'c-sidepanel__nav__link', title: subMenuElement.text, childrenArray: [subMenuIcon, submenuText], href:'javascript:void(0);' })
+      let submenuLink = createElement({ elementType: 'a', class: 'c-sidepanel__nav__link', title: subMenuElement.text, childrenArray: [subMenuIcon, submenuText], href: 'javascript:void(0);' })
       subMenuElement.actions.forEach(action => { submenuLink.append(action.element); })
       let listitems = createElement({ elementType: 'li', class: 'c-sidepanel__nav__li left-spacer', childrenArray: [submenuLink] })
       subMenuDiv.append(listitems)
@@ -2403,7 +2403,7 @@ let functionalityOptionsArray = [
       }
       chatListItem.updateGroupProfilePicture = (_profilePicture) => {
         let newImageCOntainter;
-        if (_profilePicture == null) { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg', alt: 'group profile picture'}) }
+        if (_profilePicture == null) { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg', alt: 'group profile picture' }) }
         else { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: _profilePicture, alt: _profilePicture }) }
         imageContainer.replaceWith(newImageCOntainter)
         imageContainer = newImageCOntainter
@@ -3094,7 +3094,7 @@ let functionalityOptionsArray = [
   }
 
   function createReceivedMessage(message, myID, showSenderName) {
-    if(message.userInfo == null) message.userInfo = deletedUser //put deleted user if there is no actual user
+    if (message.userInfo == null) message.userInfo = deletedUser //put deleted user if there is no actual user
     // senserName: true / false allows the message to have the senders name attached
     let tagIdTagDivs = []
     let tagTemplate = message.tagContent.map(tag => {
@@ -5526,7 +5526,7 @@ let functionalityOptionsArray = [
     let notificationProgressBar = createElement({ elementType: 'div', class: 'notificationProgressBar' })
     //notification Element
     notification = createElement({ elementType: 'div', class: 'notification', childrenArray: [notificationTitle, notificationBody, notificationActions, notificationProgressBar] })
-    notificationsDiv.append(notification)
+    notificationsDiv.appendChild(notification)
     // run the On display event
     onDisplay()
     let notificationTone;
@@ -5535,7 +5535,14 @@ let functionalityOptionsArray = [
       notificationTone = new Audio('/private/audio/imperiumLineCall.mp3'); notificationTone.play()
       notificationTone.addEventListener('ended', function () { this.currentTime = 0; this.play(); }, false);
     }
-    const notificationStop = () => { if (notificationTone) { notificationTone.currentTime = 0; notificationTone.pause(); notification.remove(); } }
+    const notificationStop = () => {
+      if (notificationTone) {
+        notificationTone.currentTime = 0;
+        notificationTone.pause();
+      }
+      console.log(notification);
+      notification.remove();
+    }
 
     dismissbutton.addEventListener('click', () => { notificationStop(); onHide(); })
     setTimeout(() => { notificationStop(); onEnd(); }, delay);
@@ -6785,7 +6792,7 @@ let functionalityOptionsArray = [
 })(functionalityOptionsArray);
 
 document.body.addEventListener("mousemove", function () {
-  if(userFirstInteractionDone == false) userFirstInteractionDone =  true; // set this to true in order to be able to play the initial tones (limitation introduced from HTML5)
+  if (userFirstInteractionDone == false) userFirstInteractionDone = true; // set this to true in order to be able to play the initial tones (limitation introduced from HTML5)
 })
 
 
