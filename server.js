@@ -294,16 +294,24 @@ io.on('connection', (socket) => {
       let serverFeedback = await addFavourite(id, favoriteID)
       if (serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while Adding the favorite.' }])
       //fill favorites and friends
-      socket.emit('favoriteUsers', await getUserFavorites(id))
-      socket.emit('allUsers', await getCompanyUsers(company_id))
+      for (let i = 0; i < connectedUsers.length; i++) {
+        if(connectedUsers[i].id == id){
+          connectedUsers[i].socket.emit('favoriteUsers', await getUserFavorites(id))
+          connectedUsers[i].socket.emit('allUsers', await getCompanyUsers(company_id))
+        }
+      }
     })
     socket.on('removeFavourite', async (favoriteID) => {
       let serverFeedback = await removeFavourite(id, favoriteID)
       if (serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while removing the favorite.' }])
       //fill favorites and friends
       console.log('Removing favorite', serverFeedback)
-      socket.emit('favoriteUsers', await getUserFavorites(id))
-      socket.emit('allUsers', await getCompanyUsers(company_id))
+      for (let i = 0; i < connectedUsers.length; i++) {
+        if(connectedUsers[i].id == id){
+          connectedUsers[i].socket.emit('favoriteUsers', await getUserFavorites(id))
+          connectedUsers[i].socket.emit('allUsers', await getCompanyUsers(company_id))
+        }
+      }
     })
     socket.on('searchAllUsersFavorites', async (searchterm) => {
       let users = await searchUsers(searchterm, id, company_id, true, 15)

@@ -485,7 +485,7 @@ let functionalityOptionsArray = [
       const subMenuElement = subMenu[i];
       let submenuText = createElement({ elementType: 'p', textContent: subMenuElement.text })
       let subMenuIcon = createElement({ elementType: 'i', class: subMenuElement.icon })
-      let submenuLink = createElement({ elementType: 'a', class: 'c-sidepanel__nav__link', title: subMenuElement.text, childrenArray: [subMenuIcon, submenuText] })
+      let submenuLink = createElement({ elementType: 'a', class: 'c-sidepanel__nav__link', title: subMenuElement.text, childrenArray: [subMenuIcon, submenuText], href:'javascript:void(0);' })
       subMenuElement.actions.forEach(action => { submenuLink.append(action.element); })
       let listitems = createElement({ elementType: 'li', class: 'c-sidepanel__nav__li left-spacer', childrenArray: [submenuLink] })
       subMenuDiv.append(listitems)
@@ -825,7 +825,7 @@ let functionalityOptionsArray = [
           // early define the numbers Div
           let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createSpinner()] })
 
-          let companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: 'favicon.ico' })
+          let companyProfilePic = createElement({ elementType: 'img', alt: 'favicon.ico', class: 'companyProfilePic', src: 'favicon.ico' })
           let backButton = createElement({
             elementType: 'button', class: 'mobileButton', title: 'Go back', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showResponsibilitiesPanel
           })
@@ -2046,7 +2046,7 @@ let functionalityOptionsArray = [
               if (option == null) {
                 contentPanel.append(createElement({
                   elementType: 'div', class: 'adminWelcomeDiv', childrenArray: [
-                    createElement({ elementType: 'img', class: 'adminWelcomeImage', src: 'images/adminKeys.png' }),
+                    createElement({ elementType: 'img', alt: 'adminKeys.png', class: 'adminWelcomeImage', src: 'images/adminKeys.png' }),
                     createElement({ elementType: 'p', textContent: 'Click on the menu to choose Groups to manage' })
                   ]
                 }))
@@ -2055,7 +2055,7 @@ let functionalityOptionsArray = [
                 selectedCompanyID = option.id;
                 let companyProfilePic
                 if (option.logo == null) companyProfilePic = createElement({ elementType: 'div', class: 'companyProfilePic', textContent: option.name.substring(0, 2) })
-                else companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: option.logo })
+                else companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: option.logo, alt: option.logo })
                 let backButton = createElement({
                   elementType: 'button', title: 'Back', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showResponsibilitiesPanel
                 })
@@ -2169,7 +2169,7 @@ let functionalityOptionsArray = [
       elementType: 'div', class: 'c-openchat', childrenArray: [
         createElement({
           elementType: 'div', class: 'c-openchat__selectConversation', childrenArray: [
-            createElement({ elementType: 'img', src: '/images/yourMessagesWillAppearHere.png' }),
+            createElement({ elementType: 'img', src: '/images/yourMessagesWillAppearHere.png', alt: 'yourMessagesWillAppearHere.png' }),
             createElement({ elementType: 'h3', textContent: 'Select any chat or create a new chat to get started with chat' })
           ]
         })
@@ -2402,8 +2402,8 @@ let functionalityOptionsArray = [
       }
       chatListItem.updateGroupProfilePicture = (_profilePicture) => {
         let newImageCOntainter;
-        if (_profilePicture == null) { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
-        else { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: _profilePicture }) }
+        if (_profilePicture == null) { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg', alt: 'group profile picture'}) }
+        else { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: _profilePicture, alt: _profilePicture }) }
         imageContainer.replaceWith(newImageCOntainter)
         imageContainer = newImageCOntainter
       }
@@ -2463,7 +2463,7 @@ let functionalityOptionsArray = [
     function createProfilePicContent(path) {
       let profilePicContent;
       if (path == null) profilePicContent = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-      else profilePicContent = createElement({ elementType: 'img', class: 'memberProfilePicture', src: path })
+      else profilePicContent = createElement({ elementType: 'img', class: 'memberProfilePicture', src: path, alt: path })
       return profilePicContent;
     }
     return memberProfilePicture;
@@ -2483,7 +2483,7 @@ let functionalityOptionsArray = [
     })
 
     function createProfilePicContent(path) {
-      return createElement({ elementType: 'img', class: 'memberProfilePicture', src: path == null ? '/private/profiles/group.jpeg' : path })
+      return createElement({ elementType: 'img', class: 'memberProfilePicture', src: path == null ? '/private/profiles/group.jpeg' : path, alt: path == null ? '/private/profiles/group.jpeg' : path })
     }
     return imageContainer;
   }
@@ -2718,7 +2718,7 @@ let functionalityOptionsArray = [
       openchat__box__info.append(
         createElement({
           elementType: 'div', class: 'c-openchat__selectConversation', childrenArray: [
-            createElement({ elementType: 'img', src: '/images/createChat.png' }),
+            createElement({ elementType: 'img', src: '/images/createChat.png', alt: '/images/createChat.png' }),
             createElement({
               elementType: 'h3', childrenArray: [
                 'Start typing',
@@ -2960,7 +2960,7 @@ let functionalityOptionsArray = [
         // change picture
 
         let srclink = chatDetails.roomInfo.profilePicture == null ? '/private/profiles/group.jpeg' : chatDetails.roomInfo.profilePicture
-        let detailsProfilePicture = createElement({ elementType: 'img', class: 'largeImage', src: srclink })
+        let detailsProfilePicture = createElement({ elementType: 'img', class: 'largeImage', src: srclink, alt: srclink })
         socket.on('groupPictureChange', changeInfo => {
           // roomID, path
           if (changeInfo.roomID != chatDetails.roomInfo.roomID) return;
@@ -3114,10 +3114,6 @@ let functionalityOptionsArray = [
     let messageElements = [messageReceivedText, reactionOptions]
     if (showSenderName == true) messageElements.push(sendersName)
     let receivedMessage = createElement({ elementType: 'div', class: 'message-received', childrenArray: messageElements })
-    // receivedMessage.reactionOptions = reactionOptions
-    // receivedMessage.messageTextDiv = messageReceivedText
-    // receivedMessage.tagDivs = tagIdTagDivs
-    // // return receivedMessage
 
     return {
       messageDiv: receivedMessage,
@@ -3146,10 +3142,6 @@ let functionalityOptionsArray = [
     let reactionOptions = buildOptions(message, myID, messageSentText)
     let messageElements = [reactionOptions, messageSentText, messageStatus]
     let sentMessage = createElement({ elementType: 'div', class: 'message-sent', childrenArray: messageElements })
-    // sentMessage.reactionOptions = reactionOptions
-    // sentMessage.messageTextDiv = messageSentText
-    // sentMessage.tagDivs = tagIdTagDivs
-    // return sentMessage
     return {
       messageDiv: sentMessage,
       messageAndTagsDiv: messageSentText,
@@ -3734,7 +3726,7 @@ let functionalityOptionsArray = [
 
           let memberProfilePicture;
           if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-          else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+          else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture, alt: userInfo.profilePicture })
 
           let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
           let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
@@ -3775,7 +3767,7 @@ let functionalityOptionsArray = [
 
           let memberProfilePicture;
           if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-          else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+          else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture, alt: userInfo.profilePicture })
 
           let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
           let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
@@ -3814,7 +3806,7 @@ let functionalityOptionsArray = [
       console.log('additionDetails', additionDetails)
       let memberProfilePicture;
       if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-      else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+      else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture, alt: userInfo.profilePicture })
 
       let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
       let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
@@ -4340,7 +4332,7 @@ let functionalityOptionsArray = [
       //topBar
       let mainVideoOwnerProfilePicture;
       if (profilePicture == null) mainVideoOwnerProfilePicture = createElement({ elementType: 'div', class: 'mainVideoOwnerProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-      else mainVideoOwnerProfilePicture = createElement({ elementType: 'img', class: 'mainVideoOwnerProfilePicture', src: profilePicture })
+      else mainVideoOwnerProfilePicture = createElement({ elementType: 'img', class: 'mainVideoOwnerProfilePicture', src: profilePicture, alt: profilePicture })
       let videoOwnerName = createElement({ elementType: 'div', class: 'videoOwnerName', textContent: name + ' ' + surname + statement })
       let videoOwnerPosition = createElement({ elementType: 'div', class: 'videoOwnerPosition', textContent: role })
       let mainVideoOwnerProfileNamePosition = createElement({ elementType: 'div', class: 'mainVideoOwnerProfileNamePosition', childrenArray: [videoOwnerName, videoOwnerPosition] })
@@ -4433,7 +4425,7 @@ let functionalityOptionsArray = [
       // AudioCall Cover Div
       let audioCallprofilePicture
       if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-      else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
+      else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture, alt: profilePicture })
       let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
       let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
 
@@ -4472,7 +4464,7 @@ let functionalityOptionsArray = [
       // AudioCall Cover Div
       let audioCallprofilePicture
       if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-      else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
+      else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture, alt: profilePicture })
       let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
       let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
 
@@ -4833,7 +4825,7 @@ let functionalityOptionsArray = [
         function createNewReceivedGroup(firstMessage) {
           let receivedMessageProfile;
           if (message.userInfo.profilePicture == null) receivedMessageProfile = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
-          else receivedMessageProfile = createElement({ elementType: 'img', class: 'memberProfilePicture', src: message.userInfo.profilePicture })
+          else receivedMessageProfile = createElement({ elementType: 'img', class: 'memberProfilePicture', src: message.userInfo.profilePicture, alt: message.userInfo.profilePicture })
           let receivedMessageProfileContainter = createElement({ elementType: 'div', childrenArray: [receivedMessageProfile] })
           let senderOriginName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
           let receivedMessagesHolder = createElement({ elementType: 'div', childrenArray: [firstMessage, senderOriginName] })
@@ -4844,7 +4836,7 @@ let functionalityOptionsArray = [
         function createSentMessage(message) {
           let profileP;
           if (message.userInfo.profilePicture == null) profileP = createElement({ elementType: 'div', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
-          else profileP = createElement({ elementType: 'img', src: message.userInfo.profilePicture })
+          else profileP = createElement({ elementType: 'img', src: message.userInfo.profilePicture, alt: message.userInfo.profilePicture })
           let message_sent = createElement({
             elementType: 'div', class: 'message-sent', childrenArray: [
               createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24) }),
@@ -5272,6 +5264,7 @@ let functionalityOptionsArray = [
   myPeer.on('error', function (err) {
     let feedback = [{ type: 'negative', message: 'Sorry, Your browser could not connect to the peer server due to the following reasons: ' + err }]
     displayServerError(feedback)
+    myPeer.reconnect();
   })
 
   function leaveAndJoinCallPrompt() {
@@ -5351,6 +5344,7 @@ let functionalityOptionsArray = [
     if (configuration.accept) elementToReturn.setAttribute('accept', configuration.accept)
     if (configuration.required) elementToReturn.required = configuration.required
     if (configuration.autocomplete) elementToReturn.setAttribute('autocomplete', configuration.autocomplete)
+    if (configuration.alt) elementToReturn.alt = configuration.alt
     return elementToReturn
   }
 
@@ -5384,7 +5378,7 @@ let functionalityOptionsArray = [
     // actions is an array of buttons where on item is {element, functionCall}
     let memberProfilePicture;
     if (logo == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.slice(0, 2) })
-    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: logo })
+    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', alt: logo, src: logo })
 
     let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: name })
     let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: description })
@@ -5478,7 +5472,7 @@ let functionalityOptionsArray = [
     let { isGroup, awaitedUserDivs, displayInitials, profilePicture, screenMessage, spinner } = constraints
     // isGroup: isGroup, awaitedUserDivs: awaitedUserDivs, displayInitials: displayInitials, profilePicture: profilePicture, screenMessage: reason, spinner: true,
     let caleeProfilePicture;
-    if (constraints.profilePicture != null) { caleeProfilePicture = createElement({ elementType: 'img', class: 'caleeProfilePicture', src: constraints.profilePicture }) }
+    if (constraints.profilePicture != null) { caleeProfilePicture = createElement({ elementType: 'img', class: 'caleeProfilePicture', src: constraints.profilePicture, alt: constraints.profilePicture }) }
     else caleeProfilePicture = createElement({ elementType: 'div', class: 'caleeProfilePicture', textContent: constraints.displayInitials })
     let activity = createElement({ elementType: 'div', class: 'activity', textContent: constraints.screenMessage })
     let spinnerDiv = createSpinner()
@@ -5512,7 +5506,7 @@ let functionalityOptionsArray = [
     //Body
     let profilePicture;
     if (shortOrImagType == 'short') { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: shortOrImagContent }) }
-    if (shortOrImagType == 'image') { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: shortOrImagContent }) }
+    if (shortOrImagType == 'image') { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: shortOrImagContent, alt: shortOrImagContent }) }
     let notificationContent = createElement({ elementType: 'div', class: 'notificationContent', textContent: bodyContent })
     let notificationBody = createElement({ elementType: 'div', class: 'notificationBody', childrenArray: [profilePicture, notificationContent] })
     let notification;
@@ -5710,7 +5704,7 @@ let functionalityOptionsArray = [
     // organization
     let memberProfilePicture
     if (userInfo.company.logo == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.company.name.substring(0, 2) })
-    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.company.logo })
+    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.company.logo, alt: userInfo.company.logo })
     let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.company.name })
     let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.company.description })
     let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
@@ -5861,14 +5855,14 @@ let functionalityOptionsArray = [
     function createProfilePictureElement(picturePath) {
       let profilePicture;
       if (picturePath == null) { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) }) }
-      else { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: picturePath }) }
+      else { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: picturePath, alt: picturePath }) }
       return profilePicture;
     }
 
     function createCoverPictureElement(picturePath) {
       let coverPhoto;
       if (picturePath == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' }) }
-      else { coverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: picturePath }) }
+      else { coverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: picturePath, alt: picturePath }) }
       return coverPhoto;
     }
 
@@ -6730,8 +6724,8 @@ let functionalityOptionsArray = [
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
       let messageButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-      let callButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-      let videoButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let callButton = createElement({ elementType: 'button', class: 'desktopButton tabletHiddenElement', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', class: 'desktopButton tabletHiddenElement', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
       let favButton = createElement({ elementType: 'button', title: 'Remove from favorites', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
 
       let actions = [
@@ -6758,8 +6752,8 @@ let functionalityOptionsArray = [
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
       let messageButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-      let callButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-      let videoButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let callButton = createElement({ elementType: 'button', class: 'desktopButton tabletHiddenElement', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', class: 'desktopButton tabletHiddenElement', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
       let favButton = createElement({ elementType: 'button', title: 'Add to favorites', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-star' })] })
 
       let actions = [
