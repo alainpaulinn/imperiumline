@@ -2251,7 +2251,7 @@ let functionalityOptionsArray = [
     if (selectedChatId == chatInfo.roomID) { // if this chat is currently opened
       addMessageToChat(insertedMessage, mySavedID)
     }
-    if (displayedScreen != 0) { // if this is not the displayed chat, give  notification
+    if (displayedScreen != 0 || selectedChatId != chatInfo.roomID) { // if this is not the displayed chat, give  notification
       let shortOrImagType, shortOrImagContent;
       if (chatInfo.type == 0) {
         if (expectedUser.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = expectedUser.name.charAt(0) + expectedUser.surname.charAt(0); }
