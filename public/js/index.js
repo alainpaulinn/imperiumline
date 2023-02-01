@@ -2530,6 +2530,9 @@ let functionalityOptionsArray = [
 
   function generateParticipantsDiv(givenUsers, roomID, removeButtonBool) {
     let participantsDivs = givenUsers.map(user => {
+      
+      
+      
       let removeButton = createElement({ elementType: 'button', title: 'Remove user from conversation', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-x' })] })
       let callButton = createElement({ elementType: 'button', title: 'Call user', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
       let messageButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
@@ -2548,6 +2551,8 @@ let functionalityOptionsArray = [
         ]
       }
       if (user.userID == mySavedID) {
+        removeButton.textContent = 'Leave';
+        removeButton.title =  'Leave conversation';
         actions = [
           { element: removeButton, functionCall: () => { socket.emit('removeRoomParticipant', { roomID: roomID, userID: user.userID }) } },
         ]
