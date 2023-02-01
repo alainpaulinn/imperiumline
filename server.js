@@ -593,7 +593,8 @@ io.on('connection', (socket) => {
             if (connectedUsers[i].id == userID) {
               connectedUsers[i].socket.leave(roomID + '')
               console.log('removeChatAccessElements', { roomID, userID });
-              socket.to(connectedUsers[i].socket.id).emit('removeChatAccessElements', { roomID, userID });
+              // socket.to(connectedUsers[i].socket.id).emit('removeChatAccessElements', { roomID, userID });
+              connectedUsers[i].socket.emit('removeChatAccessElements', { roomID, userID });
             }
           }
           let chatDetails = await getChatRoomBasicInfo(roomID)
