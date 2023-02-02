@@ -5270,7 +5270,7 @@ let functionalityOptionsArray = [
 
   myPeer.on('error', function (err) {
     let feedback = [{ type: 'negative', message: 'Sorry, Your browser could not connect to the peer server due to the following reasons: ' + err }]
-    displayServerError(feedback)
+    // displayServerError(feedback)
     myPeer.reconnect();
   })
 
