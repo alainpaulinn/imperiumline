@@ -208,10 +208,6 @@ body {
   display: flex;
   align-items: center;
   cursor: pointer;
-  /*
-  background-color: transparent;
-  width: 100%;
-  border:  none; */
   transition: all 0.4s ease-in-out;
   white-space: nowrap;
   overflow: hidden;
@@ -794,42 +790,6 @@ body {
   left: -5px;
   opacity: 1;
 }
-.c-chats__link div:first-of-type {
-  flex-basis: 10%;
-}
-.c-chats__link div:first-of-type img {
-  -o-object-fit: cover;
-     object-fit: cover;
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-}
-.c-chats__link div:first-of-type div {
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
-}
-.c-chats__link div:last-of-type {
-  flex-basis: 75%;
-}
 .c-chats__title {
   font-size: 14px;
   color: var(--lightText);
@@ -939,6 +899,7 @@ body {
   background-color: var(--secondaryBackground);
   border-radius: 15px;
   overflow: hidden;
+  z-index: 2;
 }
 .c-openchat-details .openedChatDetailsTopSection {
   display: flex;
@@ -1234,21 +1195,6 @@ body {
 
 .message-group-received > div:last-child {
   flex-grow: 1;
-}
-
-.message-group-received > div:first-child > .memberProfilePicture {
-  border-radius: 15px;
-  width: 25px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  background: var(--notification);
-  color: var(--lightText);
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
 }
 
 .message-received {
@@ -1609,7 +1555,7 @@ body {
   font-size: 18px;
 }
 .typingBox .chat-options:hover {
-  color: var(--hoverColor);
+  color: var(--lightText);
 }
 /** This is the css of the input **/
 .w-input-container {
@@ -1977,7 +1923,8 @@ body {
   box-shadow: 3px 3px 10px -2px rgba(0, 0, 0, 0.5);
   gap: 1rem;
 }
-.c-all_users_panel .header p, .c-all_users_panel .header i {
+.c-all_users_panel .header p,
+.c-all_users_panel .header i {
   font-size: 2rem;
   font-weight: bold;
 }
@@ -2052,24 +1999,6 @@ body {
   padding: 0.5rem;
   align-items: center;
   height: 100%;
-}
-.c-call_log_panel .callSearchSection .searchResultsDiv .listMember .memberProfilePicture {
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  transition: all 0.4s;
-  flex-shrink: 0;
-  -o-object-fit: cover;
-     object-fit: cover;
-  cursor: pointer;
 }
 .c-call_log_panel .callSearchSection .searchResultsDiv .listMember .memberNameRole {
   display: flex;
@@ -2167,6 +2096,7 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
+  gap: 1rem;
   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
   border-radius: 15px;
   background-color: var(--primaryBackground);
@@ -2179,29 +2109,6 @@ body {
   display: flex;
   gap: 0.5rem;
   align-items: center;
-}
-.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture {
-  background-color: var(--notification);
-  height: 40px;
-  width: 40px;
-  border-radius: 15px;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-}
-.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture img,
-.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .picture div {
-  height: 38px;
-  width: 38px;
-  border-radius: 15px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-transform: uppercase;
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line1 .nameAndType {
   flex: 1;
@@ -2229,27 +2136,7 @@ body {
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 {
   display: flex;
   flex-wrap: wrap;
-}
-.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 .picture {
-  height: 40px;
-  width: 40px;
-  border-radius: 15px;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 .picture img,
-.c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log .line2 .picture div {
-  height: 38px;
-  width: 38px;
-  border-radius: 15px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--notification);
+  gap: 0.5rem;
 }
 .c-call_log_panel .callHistoryPage .callHistoryPageBody .list-call-section .list-call-section-content .call-log:hover {
   background-color: var(--focusAreaBackgroundColor);
@@ -2535,25 +2422,6 @@ body {
   height: 100%;
   color: var(--lightText);
 }
-.c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberProfilePicture {
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  transition: all 0.4s;
-  flex-shrink: 0;
-  -o-object-fit: cover;
-     object-fit: cover;
-  cursor: pointer;
-}
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .presentMembersDiv .listMember .memberNameRole {
   display: flex;
   flex-direction: column;
@@ -2609,25 +2477,6 @@ body {
   gap: 1rem;
   align-items: center;
   height: 100%;
-}
-.c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberProfilePicture {
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  transition: all 0.4s;
-  flex-shrink: 0;
-  -o-object-fit: cover;
-     object-fit: cover;
-  cursor: pointer;
 }
 .c-ongoing_call_panel .leftPart .attendanceContentDiv .absentMembersDiv .listMember .memberNameRole {
   display: flex;
@@ -2824,25 +2673,6 @@ body {
   border-radius: 15px;
   margin-bottom: 0.5rem;
 }
-.c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberProfilePicture {
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  transition: all 0.4s;
-  flex-shrink: 0;
-  -o-object-fit: cover;
-     object-fit: cover;
-  cursor: pointer;
-}
 .c-ongoing_call_panel .call-container .callScreenHeader .headerRightPart .popdown .invitedDiv .listMember .memberNameRole {
   display: flex;
   flex-direction: column;
@@ -2976,8 +2806,9 @@ body {
 .c-ongoing_call_panel .call-container .mainVideoDiv .mainVideoElement.fitVideoToWindow {
   width: 100%;
   height: unset;
-  -o-object-fit: none;
-     object-fit: none;
+  -o-object-fit: contain;
+     object-fit: contain;
+  border-radius: 0;
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv .audioCallCover {
   display: flex;
@@ -3030,7 +2861,7 @@ body {
   border: none;
   outline: none;
   background: var(--transparentBg);
-  color: var(--lightText);
+  color: white;
   cursor: pointer;
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv .callControls .alwaysVisibleControls .callControl:hover {
@@ -3051,7 +2882,7 @@ body {
   border: none;
   outline: none;
   background: rgba(0, 0, 0, 0.5);
-  color: var(--lightText);
+  color: white;
   cursor: pointer;
 }
 .c-ongoing_call_panel .call-container .mainVideoDiv .callControls .hiddableControls .callControl:hover {
@@ -3703,25 +3534,6 @@ body {
   border-radius: 15px;
   color: var(--lightText);
 }
-.videoCoverDiv .calleesDiv .listMember .memberProfilePicture {
-  border: 1px solid var(--notification);
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 15px;
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--lightText);
-  background-color: var(--notification);
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-  transition: all 0.4s;
-  flex-shrink: 0;
-  -o-object-fit: cover;
-     object-fit: cover;
-  cursor: pointer;
-}
 .videoCoverDiv .calleesDiv .listMember .memberNameRole {
   display: flex;
   flex-direction: column;
@@ -3775,7 +3587,7 @@ body {
   border: none;
   outline: none;
   background: rgba(0, 0, 0, 0.5);
-  color: var(--lightText);
+  color: white;
   cursor: pointer;
 }
 .videoCoverDiv .waitingCallControls .callControl:hover {
@@ -3994,8 +3806,13 @@ body {
        user-select: none;
 }
 .schedule-container .selectionPanel .card .selected-day {
-  border: 1px solid var(--lightText);
   border-radius: 15px;
+  background-color: var(--primaryBackground);
+  color: var(--hoverColor);
+  border-radius: 15px;
+  transition: 0.1s;
+  cursor: pointer;
+  box-shadow: inset 0px 0px 0px 1.5px var(--notification);
 }
 .schedule-container .selectionPanel .card .calendar-toolbar > [class$=month-btn]:hover,
 .schedule-container .selectionPanel .card .month-day:hover,
@@ -4345,6 +4162,28 @@ body {
   border-radius: 15px;
   border: 3px solid var(--tertiaryBackground);
 }
+.mainCentralProfileDiv .userDataDiv .userProfileDiv .offlineIndicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 30px;
+  width: 30px;
+  aspect-ratio: 1;
+  background-color: grey;
+  border-radius: 15px;
+  border: 3px solid var(--tertiaryBackground);
+}
+.mainCentralProfileDiv .userDataDiv .userProfileDiv .onCallIndicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 30px;
+  width: 30px;
+  aspect-ratio: 1;
+  background-color: red;
+  border-radius: 15px;
+  border: 3px solid var(--tertiaryBackground);
+}
 .mainCentralProfileDiv .userDataDiv .userProfileDiv .photoActions {
   position: absolute;
   bottom: 0;
@@ -4364,7 +4203,6 @@ body {
 }
 .mainCentralProfileDiv .userDataDiv .userPrimaryInfo .email {
   cursor: pointer;
-  color: var(--notification);
   text-decoration: none;
   font-size: 1.2rem;
 }
@@ -4858,6 +4696,37 @@ body {
   border-radius: 15px;
 }
 
+.identifier {
+  border: 1px solid var(--notification);
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  height: 40px;
+  border-radius: 15px;
+  text-transform: uppercase;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.identifier .onlineStatus {
+  width: 10px;
+  height: 10px;
+  border-radius: 15px;
+  position: absolute;
+  right: -1px;
+  top: -1px;
+}
+.identifier .onlineStatus.online {
+  background-color: green;
+}
+.identifier .onlineStatus.onCall {
+  background-color: red;
+}
+.identifier .onlineStatus.offline {
+  background-color: gray;
+}
+
 .memberProfilePicture {
   border: 1px solid var(--notification);
   width: 40px;
@@ -4893,7 +4762,7 @@ body {
     padding: 1rem;
     min-width: 100%;
     height: 100%;
-    z-index: 2;
+    z-index: 3;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
   }
   .c-app .c-application .c-sidepanel.expanded {
@@ -4938,13 +4807,6 @@ body {
   }
   .c-app .inScreenPanel {
     min-width: 90%;
-  }
-  .c-openchat__box__info {
-    margin-bottom: 61.2px;
-  }
-  .typingBox {
-    position: fixed;
-    bottom: 0;
   }
   .notifications {
     right: -50%;
@@ -5112,7 +4974,7 @@ body {
     box-shadow: 0px 0px 20px -7px rgb(0, 0, 0);
     box-shadow: 0px 0px 20px -7px rgb(0, 0, 0);
     height: calc(100% - 2rem);
-    z-index: 2;
+    z-index: 4;
   }
   .c-ongoing_call_panel .call-container {
     flex-basis: 60%;
@@ -5134,7 +4996,7 @@ body {
     top: 0;
     padding: 1rem;
     min-width: 350px;
-    z-index: 2;
+    z-index: 4;
     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.836);
   }
   .c-app .c-application .c-sidepanel.expanded {
@@ -5202,4 +5064,30 @@ body {
 }
 .goodselect .list-option:hover {
   background-color: var(--focusAreaBackgroundColor);
+}
+
+.squareCorners {
+  border-radius: 0% !important;
+}
+
+:host {
+  border-radius: 0px !important;
+}
+
+#preview {
+  height: 3rem !important;
+  font-size: small;
+}
+
+em-emoji-picker {
+  width: 100%;
+  border-radius: 0% !important;
+}
+
+.emojiPickerBoxOpen {
+  display: block;
+}
+
+#root {
+  display: none !important;
 }/*# sourceMappingURL=style.css.map */

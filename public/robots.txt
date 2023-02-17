@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /login/
+Disallow: /audio/
+Disallow: /icons/
+Disallow: /images/
+Disallow: /js/
+Disallow: /*.pdf$
+
+Sitemap: https://www.imperiumline.com/sitemap.xml

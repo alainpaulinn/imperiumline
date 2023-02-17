@@ -16,6 +16,7 @@ let chats = [];
 let mySavedID;
 let myName, Mysurname;
 let silentNotifications = false;
+let userFirstInteractionDone = false; //turns true on first mouse move to be able to play any sounds
 let appTheme = 'dark';
 let deletedUser = {
   userID: 0,
@@ -23,8 +24,26 @@ let deletedUser = {
   surname: 'User',
   role: 'Deleted User',
   profilePicture: null,
+  cover: null,
   status: 'offline'
 }// to be used in case we have a deleted user
+
+let emojiPickerOptions = {
+  // onEmojiSelect: console.log,
+  skin: 6,
+  perLine: 40,
+  onClickOutside: () => { },
+  theme: 'auto', //light, dark
+  skinTonePosition: 'preview',
+}
+
+let emojiPickerIsOpen = false;
+
+let emojiPickerBoxStorage = {
+  createNewEmojiPickerBox: null,
+  emojiPickerBox: null
+};
+
 let openChatInfo;
 let availableChats = [];
 let searchedChats = [];
@@ -122,18 +141,25 @@ let functionalityOptionsArray = [
       c_app.classList.remove(darkClass);
       c_app.classList.add(lightClass);
       localStorage.setItem('imperiumLine_theme', lightClass)
+      emojiPickerOptions.theme = lightClass;
     }
     else {
       c_app.classList.add(darkClass);
       c_app.classList.remove(lightClass);
       localStorage.setItem('imperiumLine_theme', darkClass)
+      emojiPickerOptions.theme = darkClass;
+    }
+    try {
+      emojiPickerBoxStorage.createNewEmojiPickerBox()
+    } catch (error) {
+      console.log(error, emojiPickerBoxStorage);
     }
   })
   let darkmodeActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [darkModeCheckBox, createElement({ elementType: 'label', for: 'toggle1' })] })
   let previousThemeSetting = localStorage.getItem('imperiumLine_theme')
   if (previousThemeSetting) appTheme = previousThemeSetting
-  if (previousThemeSetting == 'dark') { darkModeCheckBox.checked = false; c_app.classList.add('dark'); c_app.classList.remove('light'); }
-  if (previousThemeSetting == 'light') { darkModeCheckBox.checked = true; c_app.classList.add('light'); c_app.classList.remove('dark') }
+  if (previousThemeSetting == 'dark') { darkModeCheckBox.checked = false; c_app.classList.add('dark'); c_app.classList.remove('light'); emojiPickerOptions.theme = 'dark' }
+  if (previousThemeSetting == 'light') { darkModeCheckBox.checked = true; c_app.classList.add('light'); c_app.classList.remove('dark'); emojiPickerOptions.theme = 'light' }
 
   // silence audio switch
   let silenceCheckBox = createElement({ elementType: 'input', type: 'checkbox', id: 'toggle2' })
@@ -152,16 +178,6 @@ let functionalityOptionsArray = [
   let silenceActionSwitch = createElement({ elementType: 'div', class: 'switch', childrenArray: [silenceCheckBox, createElement({ elementType: 'label', for: 'toggle2' })] })
 
   // choose Audio/video output
-  let cameraLabel = createElement({ elementType: 'p', textContent: "Cameras: " })
-  let videoInputSelection = createElement({ elementType: 'div' })
-  let microphoneLabel = createElement({ elementType: 'p', textContent: "Microphone: " })
-  let audioInputSelection = createElement({ elementType: 'div' })
-  let speakerLabel = createElement({ elementType: 'p', textContent: "Speaker: " })
-  let audioOutputSelection = createElement({ elementType: 'div' })
-  let importantInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions is required to access available devices" })
-  let importantInfoMore = createElement({ elementType: 'div', textContent: "*After the changes are savec, click on the 'Done button, or the 'x' button' and refresh the page" })
-
-  let doneButton = createElement({ elementType: 'button', textContent: 'Done', title: 'Close' })
 
   let availableDevices = { videoInput: [], audioInput: [], audioOutput: [] }
   let chosenDevices = { videoInput: null, audioInput: null, audioOutput: null }
@@ -170,95 +186,139 @@ let functionalityOptionsArray = [
     localStorage.setItem('chosenDevices', JSON.stringify(chosenDevices));
     console.log('chosenDevices', JSON.parse(localStorage.getItem('chosenDevices')));
   }
-  navigator.mediaDevices.enumerateDevices().then(devices => {
-    console.log(devices)
-    devices.forEach(device => {
-      if (device.kind == 'videoinput') { availableDevices.videoInput.push(device) }
-      if (device.kind == 'audioinput') { availableDevices.audioInput.push(device) }
-      if (device.kind == 'audiooutput') { availableDevices.audioOutput.push(device) }
+
+  function launchsuccessfull() {
+    let cameraLabel = createElement({ elementType: 'p', textContent: "Cameras: " })
+    let videoInputSelection = createElement({ elementType: 'div' })
+    let microphoneLabel = createElement({ elementType: 'p', textContent: "Microphone: " })
+    let audioInputSelection = createElement({ elementType: 'div' })
+    let speakerLabel = createElement({ elementType: 'p', textContent: "Speaker: " })
+    let audioOutputSelection = createElement({ elementType: 'div' })
+    let unsupportedInfo = createElement({ elementType: 'div', textContent: "*No browser yet supports microphone and speaker choice. This means that the application will use the microphone and speaker chosen by your operating system. \n This functionality will work as soon as the browsers suport this feature." })
+    let importantInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions is required to access available devices" })
+    let importantInfoMore = createElement({ elementType: 'div', textContent: "*After the changes are saved, click on the 'Done button, or the 'x' button' and refresh the page" })
+
+    let doneButton = createElement({ elementType: 'button', textContent: 'Done', title: 'Close' })
+
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      console.log(devices)
+      availableDevices = { videoInput: [], audioInput: [], audioOutput: [] } //reset all the saved media devices
+      devices.forEach(device => {
+        if (device.kind == 'videoinput') { availableDevices.videoInput.push(device) }
+        if (device.kind == 'audioinput') { availableDevices.audioInput.push(device) }
+        if (device.kind == 'audiooutput') { availableDevices.audioOutput.push(device) }
+      });
+      function chooseSelection(deviceType) {
+        let foundDevice
+        switch (deviceType) {
+          case 'videoinput':
+            // choose which videoinput to use
+            let videoInputDeviceChoice1 = chosenDevices.videoInput;
+            let videoInputDeviceChoice2 = availableDevices.videoInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
+            let videoInputDeviceChoice3 = availableDevices.videoInput[0]
+            foundDevice = findNonNullNonUndefined([videoInputDeviceChoice1, videoInputDeviceChoice2, videoInputDeviceChoice3]);
+            break;
+          case 'audioinput':
+            // choose which audioinput to use
+            let audioInputDeviceChoice1 = chosenDevices.audioInput;
+            let audioInputDeviceChoice2 = availableDevices.audioInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
+            let audioInputDeviceChoice3 = availableDevices.audioInput[0]
+            foundDevice = findNonNullNonUndefined([audioInputDeviceChoice1, audioInputDeviceChoice2, audioInputDeviceChoice3]);
+            break;
+          case 'audiooutput':
+            // choose which audioOutput to use
+            let audioOutputDeviceChoice1 = chosenDevices.audioOutput;
+            let audioOutputDeviceChoice2 = availableDevices.audioOutput.find(device => { return device.deviceId.toLowerCase().includes('default') })
+            let audioOutputDeviceChoice3 = availableDevices.audioOutput[0]
+            foundDevice = findNonNullNonUndefined([audioOutputDeviceChoice1, audioOutputDeviceChoice2, audioOutputDeviceChoice3]);
+            break;
+        }
+        if (foundDevice == null) foundDevice = { id: null, name: null, deviceId: null, groupId: null, kind: null, label: null }
+        return foundDevice;
+      }
+
+      console.log('chooseSelection(videoinput)', chooseSelection('videoinput'))
+      console.log('chooseSelection(audioinput)', chooseSelection('audioinput'))
+      console.log('chooseSelection(audiooutput)', chooseSelection('audiooutput'))
+      function populateDropDowns() {
+        let availableVideoInputOptions = addIndexAndLabelAsName(availableDevices.videoInput)
+        goodselect(videoInputSelection, {
+          availableOptions: availableVideoInputOptions,
+          placeHolder: "Select Camera",
+          selectorWidth: "100%",
+          marginRight: '0rem',
+          selectedOptionId: availableVideoInputOptions.findIndex(device => device.deviceId == chooseSelection('videoinput').deviceId),
+          onOptionChange: (option) => {
+            chosenDevices.videoInput = option
+            savePreferedDevices()
+          }
+        })
+        let availableAudioInputOptions = addIndexAndLabelAsName(availableDevices.audioInput)
+        goodselect(audioInputSelection, {
+          availableOptions: availableAudioInputOptions,
+          placeHolder: "Select Microphone",
+          selectorWidth: "100%",
+          marginRight: '0rem',
+          selectedOptionId: availableAudioInputOptions.findIndex(device => device.deviceId == chooseSelection('audioinput').deviceId),
+          onOptionChange: (option) => {
+            chosenDevices.audioInput = option
+            savePreferedDevices()
+          }
+        })
+
+        let availableAudioOutputOptions = addIndexAndLabelAsName(availableDevices.audioOutput)
+        goodselect(audioOutputSelection, {
+          availableOptions: availableAudioOutputOptions,
+          placeHolder: "Select Speaker",
+          selectorWidth: "100%",
+          marginRight: '0rem',
+          selectedOptionId: availableAudioOutputOptions.findIndex(device => device.deviceId == chooseSelection('audiooutput').deviceId),
+          onOptionChange: (option) => {
+            chosenDevices.audioOutput = option
+            savePreferedDevices()
+          }
+        })
+      }
+      populateDropDowns()
     });
-    function chooseSelection(deviceType) {
-      let foundDevice
-      switch (deviceType) {
-        case 'videoinput':
-          // choose which videoinput to use
-          let videoInputDeviceChoice1 = chosenDevices.videoInput;
-          let videoInputDeviceChoice2 = availableDevices.videoInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
-          let videoInputDeviceChoice3 = availableDevices.videoInput[0]
-          foundDevice = findNonNullNonUndefined([videoInputDeviceChoice1, videoInputDeviceChoice2, videoInputDeviceChoice3]);
-          break;
-        case 'audioinput':
-          // choose which audioinput to use
-          let audioInputDeviceChoice1 = chosenDevices.audioInput;
-          let audioInputDeviceChoice2 = availableDevices.audioInput.find(device => { return device.deviceId.toLowerCase().includes('default') })
-          let audioInputDeviceChoice3 = availableDevices.audioInput[0]
-          foundDevice = findNonNullNonUndefined([audioInputDeviceChoice1, audioInputDeviceChoice2, audioInputDeviceChoice3]);
-          break;
-        case 'audiooutput':
-          // choose which audioOutput to use
-          let audioOutputDeviceChoice1 = chosenDevices.audioOutput;
-          let audioOutputDeviceChoice2 = availableDevices.audioOutput.find(device => { return device.deviceId.toLowerCase().includes('default') })
-          let audioOutputDeviceChoice3 = availableDevices.audioOutput[0]
-          foundDevice = findNonNullNonUndefined([audioOutputDeviceChoice1, audioOutputDeviceChoice2, audioOutputDeviceChoice3]);
-          break;
-      }
-      if (foundDevice == null) foundDevice = { id: null, name: null, deviceId: null, groupId: null, kind: null, label: null }
-      return foundDevice;
+
+    createInScreenPopup({
+      icon: 'bx bx-devices',
+      title: "Choose Media Devices",
+      contentElementsArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, unsupportedInfo, importantInfo, importantInfoMore],
+      actions: [{ element: doneButton, functionCall: () => { console.log("Done") } }]
+    }).then(devicePopForm => { doneButton.addEventListener("click", devicePopForm.closePopup) })
+  }
+
+  async function launchMediaDeviceChoice() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      /* use the stream */
+      launchsuccessfull()
+      stream.getVideoTracks().forEach(track => track.stop()); //immediately close all trseams// the objective was to get media devices and the list
+    } catch (err) {
+      /* handle the error */
+      console.log(err)
+      launchfail()
     }
+  }
 
-    console.log('chooseSelection(videoinput)', chooseSelection('videoinput'))
-    console.log('chooseSelection(audioinput)', chooseSelection('audioinput'))
-    console.log('chooseSelection(audiooutput)', chooseSelection('audiooutput'))
+  function launchfail() {
+    let mediaRefusedInfo = createElement({ elementType: 'div', textContent: "*Media access Permissions were refused or there is no media devices available. Media access Permissions are required to access available devices. Please give manually the permissions in your browser, or resolve the media devices issue and press the following button to try again." })
+    let tryagainButton = createElement({ elementType: 'button', class: 'editBlockButtons', textContent: 'Try again.', title: 'Try again', onclick: launchMediaDeviceChoice })
+    let retrySetion = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [tryagainButton] })
+    let closeButton = createElement({ elementType: 'button', textContent: 'Cancel', title: 'Cancel' })
 
-    let availableVideoInputOptions = addIndexAndLabelAsName(availableDevices.videoInput)
-    goodselect(videoInputSelection, {
-      availableOptions: availableVideoInputOptions,
-      placeHolder: "Select Camera",
-      selectorWidth: "100%",
-      marginRight: '0rem',
-      selectedOptionId: availableVideoInputOptions.findIndex(device => device.deviceId == chooseSelection('videoinput').deviceId),
-      onOptionChange: (option) => {
-        chosenDevices.videoInput = option
-        savePreferedDevices()
-      }
-    })
-    let availableAudioInputOptions = addIndexAndLabelAsName(availableDevices.audioInput)
-    goodselect(audioInputSelection, {
-      availableOptions: availableAudioInputOptions,
-      placeHolder: "Select Microphone",
-      selectorWidth: "100%",
-      marginRight: '0rem',
-      selectedOptionId: availableAudioInputOptions.findIndex(device => device.deviceId == chooseSelection('audioinput').deviceId),
-      onOptionChange: (option) => {
-        chosenDevices.audioInput = option
-        savePreferedDevices()
-      }
-    })
+    createInScreenPopup({
+      icon: 'bx bx-devices',
+      title: "Choose Media Devices",
+      contentElementsArray: [mediaRefusedInfo, retrySetion],
+      actions: [{ element: closeButton, functionCall: () => { console.log("Done") } }]
+    }).then(devicePopForm => { closeButton.addEventListener("click", devicePopForm.closePopup) })
+  }
 
-    let availableAudioOutputOptions = addIndexAndLabelAsName(availableDevices.audioOutput)
-    goodselect(audioOutputSelection, {
-      availableOptions: availableAudioOutputOptions,
-      placeHolder: "Select Speaker",
-      selectorWidth: "100%",
-      marginRight: '0rem',
-      selectedOptionId: availableAudioOutputOptions.findIndex(device => device.deviceId == chooseSelection('audiooutput').deviceId),
-      onOptionChange: (option) => {
-        chosenDevices.audioOutput = option
-        savePreferedDevices()
-      }
-    })
-  });
-  let audioVideoInOutBtn = createElement({
-    elementType: 'button', class: 'importantButton', textContent: 'Choose', title: 'Choose', onclick: () => {
-      createInScreenPopup({
-        icon: 'bx bx-devices',
-        title: "Choose Media Devices",
-        contentElementsArray: [cameraLabel, videoInputSelection, microphoneLabel, audioInputSelection, speakerLabel, audioOutputSelection, importantInfo, importantInfoMore],
-        actions: [{ element: doneButton, functionCall: () => { console.log("Done") } }]
-      })
-        .then(devicePopForm => { doneButton.addEventListener("click", devicePopForm.closePopup) })
-    }
-  })
+
+  let audioVideoInOutBtn = createElement({ elementType: 'button', class: 'importantButton', textContent: 'Choose', title: 'Choose', onclick: launchMediaDeviceChoice })
   // logout form
   let logoutForm = createElement({ elementType: 'form', action: "/auth/logout", method: "post", childrenArray: [createElement({ elementType: 'input', type: 'text', name: 'logout', hidden: "true" })] })
   let logoutButton = createElement({ elementType: 'button', class: 'importantButton', title: 'Logout', textContent: 'Logout', onclick: () => { logoutForm.submit(); } })
@@ -337,11 +397,6 @@ let functionalityOptionsArray = [
       icon: "bx bxs-user-circle",
       subMenu: [
         {
-          text: "Quit the app",
-          icon: "bx bx-log-out-circle",
-          actions: [{ element: logoutButton }, { element: logoutForm }]
-        },
-        {
           text: "View profile",
           icon: "bx bxs-user-detail",
           actions: [{ element: viewProfileButton }]
@@ -351,6 +406,11 @@ let functionalityOptionsArray = [
           icon: "bx bxs-edit-alt",
           actions: [{ element: changePasswordButton }]
         },
+        {
+          text: "Quit the app",
+          icon: "bx bx-log-out-circle",
+          actions: [{ element: logoutButton }, { element: logoutForm }]
+        }
       ]
     },
   ];
@@ -426,7 +486,7 @@ let functionalityOptionsArray = [
       const subMenuElement = subMenu[i];
       let submenuText = createElement({ elementType: 'p', textContent: subMenuElement.text })
       let subMenuIcon = createElement({ elementType: 'i', class: subMenuElement.icon })
-      let submenuLink = createElement({ elementType: 'a', class: 'c-sidepanel__nav__link', title: subMenuElement.text, childrenArray: [subMenuIcon, submenuText] })
+      let submenuLink = createElement({ elementType: 'a', class: 'c-sidepanel__nav__link', title: subMenuElement.text, childrenArray: [subMenuIcon, submenuText], href: 'javascript:void(0);' })
       subMenuElement.actions.forEach(action => { submenuLink.append(action.element); })
       let listitems = createElement({ elementType: 'li', class: 'c-sidepanel__nav__li left-spacer', childrenArray: [submenuLink] })
       subMenuDiv.append(listitems)
@@ -543,12 +603,11 @@ let functionalityOptionsArray = [
     console.log('updateCallLog', calls)
     list_call_section_content.textContent = ''
     calls.forEach(logUpdate => {
+      if(logUpdate.initiator == null) logUpdate.initiator = deletedUser
       let callogClass = "";
       let callDirection;
       if (logUpdate.participantsOnCall.length > 0) callogClass = "ongoing";
-      let profilePicture;
-      if (logUpdate.initiator.profilePicture == null) profilePicture = createElement({ elementType: 'div', textContent: logUpdate.initiator.name.charAt(0) + logUpdate.initiator.surname.charAt(0) })
-      else profilePicture = createElement({ elementType: 'img', src: logUpdate.initiator.profilePicture })
+      let profilePicture = makeProfilePicture(logUpdate.initiator)
 
       if (logUpdate.missed == 1) {
         callDirection = createElement({ elementType: 'div', class: 'callType red', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Missed' })] })
@@ -571,7 +630,7 @@ let functionalityOptionsArray = [
         }
       })
 
-      let moreButton = createElement({
+      /* let moreButton = createElement({
         elementType: 'button', title: 'View more information about this call', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
           callDetailsPanel.textContent = ''
           let callDirectionIcon;
@@ -630,13 +689,13 @@ let functionalityOptionsArray = [
           })
           showCallDetailsSection();
         }
-      })
+      }) */
 
       let call_log = createElement({
         elementType: 'div', class: 'call-log ' + callogClass, childrenArray: [
           createElement({
             elementType: 'div', class: 'line1', childrenArray: [
-              createElement({ elementType: 'div', class: 'picture', childrenArray: [profilePicture] }),
+              profilePicture,
               createElement({
                 elementType: 'div', class: 'nameAndType', childrenArray: [
                   createElement({ elementType: 'div', class: 'callMembers', textContent: logUpdate.initiator.name + ' ' + logUpdate.initiator.surname }),
@@ -644,16 +703,17 @@ let functionalityOptionsArray = [
                 ]
               }),
               createElement({ elementType: 'div', class: 'dateTime', textContent: new Date(logUpdate.startDate).toString('YYYY-MM-dd').substring(0, 24) }),
-              createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [audioAgainButton, videoAgainButton, moreButton] })
+              createElement({ elementType: 'div', class: 'universalCallButtons', childrenArray: [audioAgainButton, videoAgainButton, /* moreButton */] })
             ]
+          }),
+          createElement({
+            elementType: 'div', class: 'line2', childrenArray: logUpdate.participantsOnCall.map(user => makeProfilePicture(user)).concat(logUpdate.participantsOffCall.map(user => makeProfilePicture(user)))
           })
         ]
       })
       list_call_section_content.append(call_log)
     })
   })
-  $(".pill").click(function () { $(this).toggleClass("selectedPill"); });
-  // })()
   // initial important events to listen to
   socket.on('redirect', function (destination) {
     window.location.href = destination;
@@ -694,7 +754,10 @@ let functionalityOptionsArray = [
     mySavedID = userInfo.userID;
     myName = userInfo.name;
     Mysurname = userInfo.surname;
-    viewProfileButton.addEventListener('click', function () { createProfilePopup(userInfo) })
+    // viewProfileButton.addEventListener('click', function () { createProfilePopup(userInfo) })
+    let newViewProfileButton = makeProfilePicture(userInfo)
+    viewProfileButton.replaceWith(newViewProfileButton)
+    viewProfileButton = newViewProfileButton;
 
     if (superAdmin.isSuperAdmin == true || admin.isAdmin == true) {
       let adminPanel = createElement({ elementType: 'section', class: 'c-time-admin_panel' })
@@ -762,9 +825,9 @@ let functionalityOptionsArray = [
           })
 
           // early define the numbers Div
-          let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })] })
+          let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createSpinner()] })
 
-          let companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: 'favicon.ico' })
+          let companyProfilePic = createElement({ elementType: 'img', alt: 'favicon.ico', class: 'companyProfilePic', src: 'favicon.ico' })
           let backButton = createElement({
             elementType: 'button', class: 'mobileButton', title: 'Go back', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showResponsibilitiesPanel
           })
@@ -791,7 +854,7 @@ let functionalityOptionsArray = [
                 manageButton.addEventListener('click', () => {
                   socket.emit('superManageCompanies')
                   managementDiv.textContent = '';
-                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                  managementDiv.append(createSpinner()) // create Spinner
                 })
 
               }
@@ -801,7 +864,7 @@ let functionalityOptionsArray = [
                 manageButton.addEventListener('click', () => {
                   socket.emit('superManageAdmins')
                   managementDiv.textContent = '';
-                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                  managementDiv.append(createSpinner()) // create Spinner
                 })
               }
               if (number.title == 'Super Admins') {
@@ -810,7 +873,7 @@ let functionalityOptionsArray = [
                 manageButton.addEventListener('click', () => {
                   socket.emit('superManageSuperAdmins')
                   managementDiv.textContent = '';
-                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                  managementDiv.append(createSpinner()) // create Spinner
                 })
               }
 
@@ -825,7 +888,7 @@ let functionalityOptionsArray = [
             contentPanel.textContent = ''
             contentPanel.append(Header, adminPanelMainContent)
             numbersDiv.textContent = ''
-            numbersDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+            numbersDiv.append(createSpinner()) // create Spinner
             socket.emit('requestSuperAdminNumbers')
             showControlPanel();
           })
@@ -1070,7 +1133,7 @@ let functionalityOptionsArray = [
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('superManageSearchCreateCompany', { searchTerm: headerSearchDiv.value });
               managementDivBodyStored.textContent = ''
-              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+              managementDivBodyStored.append(createSpinner()) // create Spinner  
             })
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
@@ -1241,7 +1304,7 @@ let functionalityOptionsArray = [
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('superManageAdminsSearch', { searchTerm: headerSearchDiv.value });
               managementDivBodyStored.textContent = ''
-              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+              managementDivBodyStored.append(createSpinner()) // create Spinner  
             })
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
@@ -1385,7 +1448,7 @@ let functionalityOptionsArray = [
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('superManageSuperAdminsSearch', { searchTerm: headerSearchDiv.value });
               managementDivBodyStored.textContent = ''
-              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+              managementDivBodyStored.append(createSpinner()) // create Spinner  
             })
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
@@ -1463,7 +1526,7 @@ let functionalityOptionsArray = [
           let companyAdmins;
           let managementDivBodyStored // store the di in order to update it in case of a change
           let companyAdminButton = createElement({ elementType: 'button', class: 'responsibilityOptionDropDown', })
-          let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })] }) // create Spinner
+          let numbersDiv = createElement({ elementType: 'div', class: 'numbersDiv', childrenArray: [createSpinner()] }) // create Spinner
           let managementDiv = createElement({
             elementType: 'div', class: 'managementDiv', childrenArray: [
               createElement({ elementType: 'div', class: 'managementDivTemporary', textContent: "Select any of the above clickable options to manage" })
@@ -1483,7 +1546,7 @@ let functionalityOptionsArray = [
                 manageButton.addEventListener('click', () => {
                   socket.emit('manageUsers', selectedCompanyID)
                   managementDiv.textContent = '';
-                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                  managementDiv.append(createSpinner()) // create Spinner
                 })
               }
               if (number.title == 'Admins') {
@@ -1492,7 +1555,7 @@ let functionalityOptionsArray = [
                 manageButton.addEventListener('click', () => {
                   socket.emit('manageAdmins', selectedCompanyID)
                   managementDiv.textContent = '';
-                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                  managementDiv.append(createSpinner()) // create Spinner
                 })
               }
               if (number.title == 'Positions') {
@@ -1501,7 +1564,7 @@ let functionalityOptionsArray = [
                 manageButton.addEventListener('click', () => {
                   socket.emit('managePositions', selectedCompanyID)
                   managementDiv.textContent = '';
-                  managementDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                  managementDiv.append(createSpinner()) // create Spinner
                 })
               }
               let numberOption = createElement({ elementType: 'div', class: 'numberOption', childrenArray: childrenArray })
@@ -1805,7 +1868,7 @@ let functionalityOptionsArray = [
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('manageUsersSearch', { searchTerm: headerSearchDiv.value, companyId: selectedCompanyID });
               managementDivBodyStored.textContent = ''
-              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+              managementDivBodyStored.append(createSpinner()) // create Spinner  
             })
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
@@ -1873,7 +1936,7 @@ let functionalityOptionsArray = [
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('manageAdminsSearch', { searchTerm: headerSearchDiv.value, companyId: selectedCompanyID });
               managementDivBodyStored.textContent = ''
-              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+              managementDivBodyStored.append(createSpinner()) // create Spinner  
             })
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
             createmgtPanel(ConfigObj)
@@ -1924,7 +1987,7 @@ let functionalityOptionsArray = [
             headerSearchDiv.addEventListener('input', () => {
               socket.emit('managePositionSearch', { searchTerm: headerSearchDiv.value, companyId: selectedCompanyID });
               managementDivBodyStored.textContent = ''
-              managementDivBodyStored.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner  
+              managementDivBodyStored.append(createSpinner()) // create Spinner  
             })
 
             let ConfigObj = { icon, title, headerSearchDiv, actionsPerItem, contentElements }
@@ -1985,7 +2048,7 @@ let functionalityOptionsArray = [
               if (option == null) {
                 contentPanel.append(createElement({
                   elementType: 'div', class: 'adminWelcomeDiv', childrenArray: [
-                    createElement({ elementType: 'img', class: 'adminWelcomeImage', src: 'images/adminKeys.png' }),
+                    createElement({ elementType: 'img', alt: 'adminKeys.png', class: 'adminWelcomeImage', src: 'images/adminKeys.png' }),
                     createElement({ elementType: 'p', textContent: 'Click on the menu to choose Groups to manage' })
                   ]
                 }))
@@ -1994,7 +2057,7 @@ let functionalityOptionsArray = [
                 selectedCompanyID = option.id;
                 let companyProfilePic
                 if (option.logo == null) companyProfilePic = createElement({ elementType: 'div', class: 'companyProfilePic', textContent: option.name.substring(0, 2) })
-                else companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: option.logo })
+                else companyProfilePic = createElement({ elementType: 'img', class: 'companyProfilePic', src: option.logo, alt: option.logo })
                 let backButton = createElement({
                   elementType: 'button', title: 'Back', class: 'mobileButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })], onclick: showResponsibilitiesPanel
                 })
@@ -2007,7 +2070,7 @@ let functionalityOptionsArray = [
                 let Header = createElement({ elementType: 'div', class: 'centralHeader', childrenArray: [companyInfoDiv, universalButtons] })
                 socket.emit('requestAdminNumbers', option.id)
                 numbersDiv.textContent = '';
-                numbersDiv.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // create Spinner
+                numbersDiv.append(createSpinner()) // create Spinner
                 let adminPanelMainContent = createElement({ elementType: 'div', class: 'adminPanelMainContent', childrenArray: [numbersDiv, managementDiv] })
                 contentPanel.append(Header, adminPanelMainContent);
                 showControlPanel();
@@ -2021,20 +2084,10 @@ let functionalityOptionsArray = [
       }
     }
   });
-  // })(functionalityOptionsArray);
-  // function showMessagesPanel() {
-  //   displayAppSection(0);
-  //   displayedScreen = 0
-  // }
+
   function showCallHistoryPanel() {
     displayAppSection(1);
   }
-  // function displayAppSection(2) {
-  //   displayAppSection(2);
-  // }
-  // function displayAppSection(3) {
-  //   displayAppSection(3);
-  // }
 
   function displayAppSection(sectionIndex) {
     if (sectionIndex != displayedScreen) { // if there is a change in screens displayed
@@ -2068,7 +2121,7 @@ let functionalityOptionsArray = [
 
   chatDetails_panel.clearPanel = () => {
     chatDetails_panel.textContent = '';
-    chatDetails_panel.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any Convesation to see its more details here' }));
+    chatDetails_panel.appendChild(createDummyElement('Select > button on any Convesation to see its more details here'));
   }
 
   function showChatList() {
@@ -2082,6 +2135,7 @@ let functionalityOptionsArray = [
     chatContent_panel.classList.remove('mobileHiddenElement')
     chatDetails_panel.classList.add('mobileHiddenElement')
     chatDetails_panel.classList.add('tabletHiddenElement')
+
   }
 
   function showChatDetails() {
@@ -2117,7 +2171,7 @@ let functionalityOptionsArray = [
       elementType: 'div', class: 'c-openchat', childrenArray: [
         createElement({
           elementType: 'div', class: 'c-openchat__selectConversation', childrenArray: [
-            createElement({ elementType: 'img', src: '/images/yourMessagesWillAppearHere.png' }),
+            createElement({ elementType: 'img', src: '/images/yourMessagesWillAppearHere.png', alt: 'yourMessagesWillAppearHere.png' }),
             createElement({ elementType: 'h3', textContent: 'Select any chat or create a new chat to get started with chat' })
           ]
         })
@@ -2176,7 +2230,7 @@ let functionalityOptionsArray = [
     markChatAsOpened(chatContent.roomInfo.roomID) // march the chat as opened
     displayChatOnChatArea(openChatInfo)
   });
-  socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
+  function updateVailableChats(chatInfo) {
     let chatContainerDiv = showOnChatList(chatInfo);
     let existingChat = availableChats.find(chat => chat.roomID == chatInfo.roomID)
     if (!existingChat) {
@@ -2188,10 +2242,16 @@ let functionalityOptionsArray = [
       existingChat.conversationButton.remove()
       existingChat.conversationButton = chatContainerDiv
     }
-    if (selectedChatId == chatInfo.roomID && displayedScreen == 0) { // if this chat is currently opened
+  }
+  socket.on('lastMessageDeleted', function (chatInfo) {
+    updateVailableChats(chatInfo)
+  });
+  socket.on('newMessage', ({ chatInfo, expectedUser, insertedMessage }) => {
+    updateVailableChats(chatInfo)
+    if (selectedChatId == chatInfo.roomID) { // if this chat is currently opened
       addMessageToChat(insertedMessage, mySavedID)
     }
-    else { // if this is not the displayed chat, give  notification
+    if (displayedScreen != 0 || selectedChatId != chatInfo.roomID) { // if this is not the displayed chat, give  notification
       let shortOrImagType, shortOrImagContent;
       if (chatInfo.type == 0) {
         if (expectedUser.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = expectedUser.name.charAt(0) + expectedUser.surname.charAt(0); }
@@ -2230,27 +2290,31 @@ let functionalityOptionsArray = [
     displayAppSection(0)
   }
   socket.on('updateReaction', function (receivedReactionsInfo) {
-    console.log('updateReaction', receivedReactionsInfo, mySavedID, selectedChatId)
-    if (selectedChatId == receivedReactionsInfo.chat && displayedScreen == 0) { // update reaction in case it is on the open chat
-      let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
+    console.log('updateReaction', receivedReactionsInfo)
+    if (selectedChatId == receivedReactionsInfo.roomID) { // update reaction in case it is on the open chat
+      // let msgReactions = createElement({ elementType: 'div', class: 'messageReactions', childrenArray: buildReaction(receivedReactionsInfo.details, mySavedID) })
+
       for (let i = 0; i < displayedMessages.length; i++) {
-        if (displayedMessages[i].object.id == receivedReactionsInfo.message) {
+        if (displayedMessages[i].object.id == receivedReactionsInfo.id) {
+          let messageTextDiv = displayedMessages[i].messageElement.messageTextDiv
+          let msgReactions = buildOptions(receivedReactionsInfo, mySavedID, displayedMessages[i].messageAndTagDiv)
+          console.log('displayedMessages[i]', displayedMessages[i], receivedReactionsInfo)
           displayedMessages[i].reactionsDiv.replaceWith(msgReactions)
           displayedMessages[i].reactionsDiv = msgReactions
         }
       }
     }
-    else {
+    if ((displayedScreen != 0 || selectedChatId != receivedReactionsInfo.id) && receivedReactionsInfo.userInfo.userID != mySavedID) {
       // if (mySavedID == receivedReactionsInfo.messageOwner.userID) { // show reaction if it is done on my message in chat // descativated because it was causing trouble
       let shortOrImagType, shortOrImagContent;
-      if (receivedReactionsInfo.performer.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = receivedReactionsInfo.performer.name.charAt(0) + receivedReactionsInfo.performer.surname.charAt(0); }
-      else { shortOrImagType = 'image'; shortOrImagContent = receivedReactionsInfo.performer.profilePicture; }
+      if (receivedReactionsInfo.userInfo.profilePicture == null) { shortOrImagType = 'short'; shortOrImagContent = receivedReactionsInfo.userInfo.name.charAt(0) + receivedReactionsInfo.userInfo.surname.charAt(0); }
+      else { shortOrImagType = 'image'; shortOrImagContent = receivedReactionsInfo.userInfo.profilePicture; }
 
       let notification = displayNotification({
         title: { iconClass: 'bx bxs-wink-smile', titleText: 'Message reaction' },
         body: {
           shortOrImage: { shortOrImagType: shortOrImagType, shortOrImagContent: shortOrImagContent },
-          bodyContent: receivedReactionsInfo.performer.name + ' ' + receivedReactionsInfo.performer.surname + ' reacted to a message in one of your chats'
+          bodyContent: receivedReactionsInfo.userInfo.name + ' ' + receivedReactionsInfo.userInfo.surname + ' reacted to a message in one of your chats'
         },
         actions: [ // { type: 'confirm', displayText: 'Answer', actionFunction: () => { console.log('call answered') } }
           {
@@ -2310,8 +2374,7 @@ let functionalityOptionsArray = [
         if (mySavedID == lastmessage.from.userID) { writenBy = "Me: "; }
         else if (mySavedID == lastmessage.from.id == 0) { writenBy = '' }
         else { writenBy = lastmessage.from.name + ": "; }
-        if (profilePicture == null) { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
-        else { imageContainer = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture }) }
+        imageContainer = makeGroupPicture(chat)
         if (roomName == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
         else chatTitleText = roomName;
         break;
@@ -2326,14 +2389,13 @@ let functionalityOptionsArray = [
     let chatListItem = createElement({ elementType: 'li', class: 'c-chats__list', childrenArray: [chatListButton] })
     chatListItem.addEventListener('click', () => {
       open_chat_box.textContent = ''
-      open_chat_box.append(createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })) // append spinner for waiting server response
+      open_chat_box.append(createSpinner()) // append spinner for waiting server response
       requestChatContent(roomID)
       markChatAsOpened(roomID)
     })
     if (type == 1) {
       chatListItem.updatetitle = (_title) => {
-        let _titleText = _title == null ? users.map(user => user.name + ' ' + user.surname).join(', ') : _title;
-        let _chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: _titleText });
+        let _chatTitle = createElement({ elementType: 'p', class: 'c-chats__title', textContent: _title });
         chatTitle.replaceWith(_chatTitle);
         chatTitle = _chatTitle;
       }
@@ -2342,8 +2404,8 @@ let functionalityOptionsArray = [
       }
       chatListItem.updateGroupProfilePicture = (_profilePicture) => {
         let newImageCOntainter;
-        if (_profilePicture == null) { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
-        else { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: _profilePicture }) }
+        if (_profilePicture == null) { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg', alt: 'group profile picture' }) }
+        else { newImageCOntainter = createElement({ elementType: 'img', class: 'memberProfilePicture', src: _profilePicture, alt: _profilePicture }) }
         imageContainer.replaceWith(newImageCOntainter)
         imageContainer = newImageCOntainter
       }
@@ -2361,15 +2423,71 @@ let functionalityOptionsArray = [
     return chatListItem;
   }
   function makeProfilePicture(userInfo) {
-    let { userID, name, surname, role, profilePicture, status } = userInfo
-    let memberProfilePicture;
-    if (profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: profilePicture })
+    let { userID, name, surname, role, profilePicture, cover, status } = userInfo || deletedUser
+    let onlineStatus = createElement({ elementType: 'div', class: 'onlineStatus ' + status })
+    let profilePicContent = createProfilePicContent(profilePicture)
+    let areaContent = [profilePicContent, onlineStatus]
+    let memberProfilePicture = createElement({ elementType: 'div', class: 'identifier', childrenArray: areaContent })
 
-    memberProfilePicture.addEventListener('click', () => {
-      createProfilePopup(userInfo);
+    let openedProfile
+    memberProfilePicture.addEventListener('click', async () => {
+      openedProfile = await createProfilePopup(userInfo || deletedUser);
     })
+
+    socket.on('userProfilePictureChange', changeInfo => {
+      if (changeInfo.userID == userID) {
+        profilePicture = changeInfo.path
+        let newPP = createProfilePicContent(profilePicture)
+        profilePicContent.replaceWith(newPP)
+        profilePicContent = newPP;
+
+        if (openedProfile) openedProfile.updateProfilePicture(changeInfo.path)
+      }
+    })
+
+    socket.on('userCoverPictureChange', changeInfo => {
+      if (changeInfo.userID == userID) {
+        cover = changeInfo.path
+        if (openedProfile) openedProfile.updateCoverPicture(changeInfo.path)
+      }
+    })
+
+    socket.on('onlineStatusChange', changeInfo => {
+      if (changeInfo.userID == userID) {
+        status = changeInfo.status
+        let newOnlineStatus = createElement({ elementType: 'div', class: 'onlineStatus ' + status })
+        onlineStatus.replaceWith(newOnlineStatus)
+        onlineStatus = newOnlineStatus;
+        if (openedProfile) openedProfile.updateStatus(changeInfo.status)
+      }
+    })
+
+    function createProfilePicContent(path) {
+      let profilePicContent;
+      if (path == null) profilePicContent = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
+      else profilePicContent = createElement({ elementType: 'img', class: 'memberProfilePicture', src: path, alt: path })
+      return profilePicContent;
+    }
     return memberProfilePicture;
+  }
+
+  function makeGroupPicture(groupInfo) {
+    //profilePicture, roomID
+    let imageContainer = createProfilePicContent(groupInfo.profilePicture)
+    socket.on('groupPictureChange', changeInfo => {
+      // roomID, path
+      if (changeInfo.roomID == groupInfo.roomID) {
+        groupInfo.profilePicture = changeInfo.path
+        let newImgContainer = createProfilePicContent(groupInfo.profilePicture)
+        imageContainer.replaceWith(newImgContainer)
+        imageContainer = newImgContainer
+      }
+    })
+
+    function createProfilePicContent(path) {
+      return createElement({ elementType: 'img', class: 'memberProfilePicture', src: path == null ? '/private/profiles/group.jpeg' : path, alt: path == null ? '/private/profiles/group.jpeg' : path })
+    }
+    return imageContainer;
   }
 
   document.getElementById("newChat").addEventListener("click", () => {
@@ -2377,6 +2495,7 @@ let functionalityOptionsArray = [
     var searchField = document.getElementById('searchField')
     searchField.focus();
   })
+
   let typingBox
   let selectedChat_TitleDiv;
   let selectedChat_profilePicture;
@@ -2409,20 +2528,11 @@ let functionalityOptionsArray = [
     }
   });
 
-  socket.on('chatProfilePictureChange', function ({ profilePicture, roomID }) {
-    for (let i = 0; i < availableChats.length; i++) {
-      if (availableChats[i].roomID == roomID) {
-        availableChats[i].conversationButton.updateGroupProfilePicture(profilePicture)
-      }
-    }
-    if (selectedChatId != roomID) return; // escape if this is happening to a non displayed chat
-    console.log("happenned")
-    if (selectedChat_profilePicture) selectedChat_profilePicture.src = profilePicture
-    if (selectedChat_details_profilePic_changeDiv) selectedChat_details_profilePic_changeDiv.src = profilePicture
-  });
-
   function generateParticipantsDiv(givenUsers, roomID, removeButtonBool) {
     let participantsDivs = givenUsers.map(user => {
+      
+      
+      
       let removeButton = createElement({ elementType: 'button', title: 'Remove user from conversation', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-user-x' })] })
       let callButton = createElement({ elementType: 'button', title: 'Call user', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
       let messageButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
@@ -2441,6 +2551,8 @@ let functionalityOptionsArray = [
         ]
       }
       if (user.userID == mySavedID) {
+        removeButton.textContent = 'Leave';
+        removeButton.title =  'Leave conversation';
         actions = [
           { element: removeButton, functionCall: () => { socket.emit('removeRoomParticipant', { roomID: roomID, userID: user.userID }) } },
         ]
@@ -2480,7 +2592,10 @@ let functionalityOptionsArray = [
     let { roomID, userID } = changeDetails
     for (let i = 0; i < availableChats.length; i++) {
       if (availableChats[i].roomID == roomID) {
-        availableChats[i].conversationButton.kickedOut()
+        try {
+          showChatContent()
+          availableChats[i]?.conversationButton?.kickedOut()
+        } catch (error) { console.log(error) }
       }
     }
     if (selectedChatId != roomID) return; // escape if this is happening to a non displayed chat
@@ -2494,7 +2609,7 @@ let functionalityOptionsArray = [
     let { roomID, users, roomName, profilePicture, type, lastmessage, myID, unreadCount } = roomInfo
     selectedChat_usersArray = users
     selectedChat_name = roomName
-    selectedChat_profilePic_src = profilePicture
+
     chatDetails_panel.clearPanel();
     displayedMessages = []
     selectedChatId = roomID
@@ -2516,7 +2631,7 @@ let functionalityOptionsArray = [
           {
             element: moreButton, functionCall: () => {
               showChatDetails();
-              fillInChatDetails();
+              requestChatDetails(roomID);
             }
           }
         ]
@@ -2532,8 +2647,7 @@ let functionalityOptionsArray = [
         }
         break;
       case 1:
-        if (profilePicture == null) { selectedChat_profilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: '/private/profiles/group.jpeg' }) }
-        else { selectedChat_profilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: selectedChat_profilePic_src }) }
+        selectedChat_profilePicture = makeGroupPicture(roomInfo)
         if (selectedChat_name == null) chatTitleText = users.map(user => user.name + ' ' + user.surname).join(', ');
         else chatTitleText = selectedChat_name;
         let groupCallButton = createElement({ elementType: 'button', title: 'Call conversation members by audio', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })], onclick: () => { call(roomID, true, false, false, true, null) } })
@@ -2541,7 +2655,7 @@ let functionalityOptionsArray = [
         let groupMoreButton = createElement({
           elementType: 'button', title: 'Show more about the conversation', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-right' })], onclick: () => {
             showChatDetails();
-            fillInChatDetails();
+            requestChatDetails(roomID);
           }
         })
         selectedChat_TitleDiv = createElement({ elementType: 'p', class: 'c-openchat__box__name', textContent: chatTitleText })
@@ -2565,8 +2679,40 @@ let functionalityOptionsArray = [
     let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
     inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
     let sendMessageButton = createElement({ elementType: 'button', title: 'Send message', class: 'chat-options', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
-    typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [/* emojiButton, attachButton, */ inputContainer, sendMessageButton] })
+    typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [emojiButton, /*attachButton, */ inputContainer, sendMessageButton] })
+    emojiPickerOptions.onEmojiSelect = (selectedEmoji) => {
+      let textcontent = document.createTextNode(selectedEmoji.native);
+      inputText.appendChild(textcontent)
+      console.log(inputText);
+    }
+    emojiPickerIsOpen = false
+    emojiPickerBoxStorage.emojiPickerBox = new EmojiMart.Picker(emojiPickerOptions)
+    emojiPickerBoxStorage.emojiPickerBox.style.width = '100%'; // emojiPickerBox.style.height = '50px';
+    function createNewEmojiPickerBox() {
+      console.log(typingBox.offsetWidth);
+      console.log(typingBox.offsetHeight);
+      emojiPickerOptions.perLine = Math.floor(typingBox.offsetWidth / 37.68);
+      let newEmojiPickerBox = new EmojiMart.Picker(emojiPickerOptions);
+      emojiPickerBoxStorage.emojiPickerBox.replaceWith(newEmojiPickerBox);
+      emojiPickerBoxStorage.emojiPickerBox = newEmojiPickerBox;
+    }
+    emojiPickerBoxStorage.createNewEmojiPickerBox = createNewEmojiPickerBox
+    new ResizeObserver(emojiPickerBoxStorage.createNewEmojiPickerBox).observe(typingBox);
+
     let chatBox = createElement({ elementType: 'div', class: 'c-openchat__box', childrenArray: [openchat__box__header, openchat__box__info, typingBox] })
+
+    emojiButton.addEventListener('click', () => {
+      if (emojiPickerIsOpen == true) {
+        emojiPickerBoxStorage.emojiPickerBox.remove();
+        emojiPickerIsOpen = false;
+      }
+      else {
+        emojiPickerBoxStorage.createNewEmojiPickerBox()
+        typingBox.after(emojiPickerBoxStorage.emojiPickerBox)
+        emojiPickerIsOpen = true;
+      }
+      console.log('emojibutton clicked', 'emojiPickerIsOpen :', emojiPickerIsOpen)
+    })
     open_chat_box.textContent = '';
     open_chat_box.append(chatBox)
     openchat__box__info.textContent = '' // ensure that no element is inside the message container
@@ -2579,7 +2725,7 @@ let functionalityOptionsArray = [
       openchat__box__info.append(
         createElement({
           elementType: 'div', class: 'c-openchat__selectConversation', childrenArray: [
-            createElement({ elementType: 'img', src: '/images/createChat.png' }),
+            createElement({ elementType: 'img', src: '/images/createChat.png', alt: '/images/createChat.png' }),
             createElement({
               elementType: 'h3', childrenArray: [
                 'Start typing',
@@ -2611,31 +2757,87 @@ let functionalityOptionsArray = [
       taggedMessages = [];
     }
 
-    function fillInChatDetails() {
+    function requestChatDetails(chatID) {
+      socket.emit('requestChatDetails', chatID)
       chatDetails_panel.textContent = '';
       let backButton = createElement({
         elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
         onclick: showChatContent
       })
-      let chatName = selectedChat_name == null ? '(No name)' : selectedChat_name;
-      selectedChat_details_HeaderTitle = createElement({ elementType: 'div', class: 'chatType', textContent: type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName })
-      let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton, selectedChat_details_HeaderTitle] })
+      let detailsChatNameTitle = createElement({ elementType: 'div', class: 'chatType', childrenArray: [createSpinner()] })
+      let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton, detailsChatNameTitle] })
+      let openChatDetailsContenDiv = createElement({ elementType: 'div', class: 'openChatDetailsContenDiv', childrenArray: [createSpinner()] })
+      chatDetails_panel.appendChild(openedChatDetailsTopSection)
+      chatDetails_panel.appendChild(openChatDetailsContenDiv)
 
+    }
+
+    socket.on('requestChatDetails', (chatDetails) => {
+      console.log(chatDetails)
+      let backButton = createElement({
+        elementType: 'button', title: 'Back', class: 'mobileButton tabletButton', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-chevron-left' })],
+        onclick: showChatContent
+      })
+      if (chatDetails.allowed == false) {
+        chatDetails_panel.textContent = '';
+        let warning = createDummyElement('You are not allowed to view this informtion because you are no longer part of the conversation')
+        let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton] })
+        let openChatDetailsContenDiv = createElement({ elementType: 'div', class: 'openChatDetailsContenDiv', childrenArray: [warning] })
+        chatDetails_panel.appendChild(openedChatDetailsTopSection)
+        chatDetails_panel.appendChild(openChatDetailsContenDiv)
+        return;
+      }
+      if (!chatDetails.roomInfo) return;
+      if (chatDetails.roomInfo.roomID != selectedChatId) return;
+      chatDetails_panel.textContent = '';
+      // messagesArray, roomInfo
+      function makeChatname(realValue) {
+        let chatName = realValue == null ? '(No name)' : realValue;
+        return chatName
+      }
+      let chatName = makeChatname(chatDetails.roomInfo.roomName)
+      let detailsChatNameTitle = createElement({ elementType: 'div', class: 'chatType', textContent: chatDetails.roomInfo.type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName })
+
+      socket.on('chatNameChange', (changeDetails) => {
+        //{roomID, roomName, madeUp}
+        if (changeDetails.roomID != chatDetails.roomInfo.roomID) return;
+        chatName = changeDetails.madeUp == true ? '(No name)' : changeDetails.roomName
+        detailsChatNameTitle.textContent = chatDetails.roomInfo.type == 0 ? 'Private chat: ' + chatName : 'Group chat: ' + chatName
+      })
+      let openedChatDetailsTopSection = createElement({ elementType: 'div', class: 'openedChatDetailsTopSection', childrenArray: [backButton, detailsChatNameTitle] })
       let detailsArray = []
-
-      selectedChat_details_participantsDivWrapper = createElement({
+      let participantsDivWrapper = createElement({
         elementType: 'div', class: 'detailBlock', childrenArray: [
           createElement({ elementType: 'div', textContent: 'Chat Participants' }),
-          createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(selectedChat_usersArray, roomID, type == 1) })
+          createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(chatDetails.roomInfo.users, chatDetails.roomInfo.roomID, chatDetails.roomInfo.type == 1) })
         ]
       })
-      detailsArray.push(selectedChat_details_participantsDivWrapper)
-
-      if (type == 1) {
+      // updateCurrentUsers //and users in the conversation
+      socket.on('chatUsersChange', changeDetails => {
+        if (changeDetails.roomID != chatDetails.roomInfo.roomID) return;
+        // let { chatUsers, roomID } = changeDetails
+        if (selectedChatId != changeDetails.roomID) return; // escape if this is happening to a non displayed chat
+        let newParticipantsBlock = createElement({
+          elementType: 'div', class: 'detailBlock', childrenArray: [
+            createElement({ elementType: 'div', textContent: 'Chat Participants' }),
+            createElement({ elementType: 'div', class: 'listMemberWrapper', childrenArray: generateParticipantsDiv(changeDetails.chatUsers, chatDetails.roomInfo.roomID, true) })
+          ]
+        })
+        participantsDivWrapper.replaceWith(newParticipantsBlock)
+        participantsDivWrapper = newParticipantsBlock
+        chatDetails.roomInfo.users = changeDetails.chatUsers
+        // update usersCount on details screen
+        let newUsersCount = createElement({ elementType: 'div', class: '', textContent: changeDetails.chatUsers.length + ' Particiants' })
+        selectedChat_details_userCountDiv?.replaceWith(newUsersCount)
+        selectedChat_details_userCountDiv = newUsersCount
+        // it will also trigger chat name change for group chats without names on the server side
+      })
+      detailsArray.push(participantsDivWrapper)
+      if (chatDetails.roomInfo.type == 1) {
         let userSearchInput = createElement({ elementType: 'input', placeHolder: 'Search person' })
         let popupBody = createElement({
           elementType: 'div', class: 'popupBody', childrenArray: [
-            createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Type to search for users to add to the conversation' })
+            createDummyElement('Type to search for users to add to the conversation')
           ]
         })
         let addParticipantPopupDiv = createElement({
@@ -2650,14 +2852,14 @@ let functionalityOptionsArray = [
           ]
         })
         userSearchInput.addEventListener('input', () => {
-          socket.emit('addRoomParticipantsSearch', { roomID: roomID, searchText: userSearchInput.value })
-          console.log('addRoomParticipantsSearch', { roomID: roomID, searchText: userSearchInput.value })
+          socket.emit('addRoomParticipantsSearch', { roomID: chatDetails.roomInfo.roomID, searchText: userSearchInput.value })
+          console.log('addRoomParticipantsSearch', { roomID: chatDetails.roomInfo.roomID, searchText: userSearchInput.value })
         })
         socket.on('addRoomParticipantsSearch', (foundUsers) => {
           popupBody.textContent = ''
           console.log(foundUsers)
           if (foundUsers.length < 1) {
-            popupBody.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No user found with such criteria' }))
+            popupBody.appendChild(createDummyElement('No user found with such criteria'))
           }
           else {
             let foundPantsDivs = foundUsers.map(user => {
@@ -2683,13 +2885,21 @@ let functionalityOptionsArray = [
           }
         })
 
-        selectedChat_details_userCountDiv = createElement({ elementType: 'div', class: '', textContent: selectedChat_usersArray.length + ' Particiants' })
+        let userCountDiv = createElement({ elementType: 'div', class: '', textContent: chatDetails.roomInfo.users.length + ' Particiants' })
+        socket.on('chatUsersChange', changeDetails => {
+          if (changeDetails.roomID != chatDetails.roomInfo.roomID) return;
+          // let { chatUsers, roomID } = changeDetails
+          if (selectedChatId != changeDetails.roomID) return; // escape if this is happening to a non displayed chat
+          // update usersCount on details screen
+          userCountDiv.textContent = changeDetails.chatUsers.length + ' Particiants'
+        })
+
         let addParticipantsButton = createElement({
           elementType: 'div', class: 'detailBlock', childrenArray: [
             createElement({ elementType: 'div', textContent: 'Chat Participants' }),
             createElement({
               elementType: 'button', class: 'subDetailBlock', childrenArray: [
-                selectedChat_details_userCountDiv,
+                userCountDiv,
                 createElement({
                   elementType: 'button', textContent: 'Add Participants', onclick: () => {
                     hideSearchBoxToggle()
@@ -2706,23 +2916,24 @@ let functionalityOptionsArray = [
         }
         detailsArray.push(addParticipantsButton)
 
-
-
-        //
-
-        selectedChat_details_changeTitle = createElement({ elementType: 'div', class: 'conversationName', textContent: chatName })
+        let chatNameDiv = createElement({ elementType: 'div', class: 'conversationName', textContent: chatName })
+        socket.on('chatNameChange', (changeDetails) => {
+          if (changeDetails.roomID != chatDetails.roomInfo.roomID) return;
+          chatNameDiv.textContent = changeDetails.madeUp == true ? '(No name)' : changeDetails.roomName
+          chatDetails.roomInfo.roomName = changeDetails.madeUp == true ? null : changeDetails.roomName
+        })
         let chatnameBlock = createElement({
           elementType: 'div', class: 'detailBlock', childrenArray: [
             createElement({ elementType: 'div', textContent: 'Group Name:' }),
             createElement({
               elementType: 'div', class: 'subDetailBlock', childrenArray: [
-                selectedChat_details_changeTitle,
+                chatNameDiv,
                 createElement({
                   elementType: 'button', textContent: 'Change', onclick: () => {
                     let icon, title, contentElementsArray, actions;
-                    let notificationBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: '*Leave the field empty if you want to delete the donversation name' })
+                    let notificationBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: '*Leave the field empty if you want to delete the conversation name' })
                     let chatNameLabel = createElement({ elementType: 'label', for: 'chatName', textContent: 'Chat name' })
-                    let chatNameInput = createElement({ elementType: 'input', id: 'chatName' + 'chooseNew', placeHolder: 'Chat name', value: selectedChat_name == null ? '' : selectedChat_name })
+                    let chatNameInput = createElement({ elementType: 'input', id: 'chatName' + 'chooseNew', placeHolder: 'Chat name', value: chatDetails.roomInfo.roomName == null ? '' : chatDetails.roomInfo.roomName })
                     let chatNameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [chatNameLabel, chatNameInput] })
                     icon = 'bx bxs-edit-alt'
                     title = 'Change chat name'
@@ -2755,8 +2966,15 @@ let functionalityOptionsArray = [
         detailsArray.push(chatnameBlock)
         // change picture
 
-        let srclink = selectedChat_profilePic_src == null ? '/private/profiles/group.jpeg' : selectedChat_profilePic_src
-        selectedChat_details_profilePic_changeDiv = createElement({ elementType: 'img', class: 'largeImage', src: srclink })
+        let srclink = chatDetails.roomInfo.profilePicture == null ? '/private/profiles/group.jpeg' : chatDetails.roomInfo.profilePicture
+        let detailsProfilePicture = createElement({ elementType: 'img', class: 'largeImage', src: srclink, alt: srclink })
+        socket.on('groupPictureChange', changeInfo => {
+          // roomID, path
+          if (changeInfo.roomID != chatDetails.roomInfo.roomID) return;
+          chatDetails.roomInfo.profilePicture = changeInfo.path
+          detailsProfilePicture.src = changeInfo.path == null ? '/private/profiles/group.jpeg' : changeInfo.path
+        })
+
         let groupPictureInputElement = createElement({ elementType: 'input', type: 'file', id: 'groupPictureInputElement', class: 'hidden', accept: "image/*" })
         let selectgroupPictureBtn = createElement({ elementType: 'label', for: 'groupPictureInputElement', class: 'uploadIcon', tabIndex: "0", childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-edit-alt' })] })
 
@@ -2766,7 +2984,7 @@ let functionalityOptionsArray = [
         let changePicBlock = createElement({
           elementType: 'div', class: 'detailBlock', childrenArray: [
             createElement({ elementType: 'div', textContent: 'Group profile Picture:' }),
-            createElement({ elementType: 'div', class: 'subDetailBlock', childrenArray: [createElement({ elementType: 'div', childrenArray: [selectedChat_details_profilePic_changeDiv] }), groupPictureInputElement, selectgroupPictureBtn, defaultButton] }),
+            createElement({ elementType: 'div', class: 'subDetailBlock', childrenArray: [createElement({ elementType: 'div', childrenArray: [detailsProfilePicture] }), groupPictureInputElement, selectgroupPictureBtn, defaultButton] }),
             progressBarBlock,
           ]
         })
@@ -2775,33 +2993,19 @@ let functionalityOptionsArray = [
         var groupProfilePictureUploader = new SocketIOFileUpload(socket);
         groupProfilePictureUploader.maxFileSize = 1024 * 1024 * 1024; // 10 MB limit
         groupProfilePictureUploader.listenOnInput(groupPictureInputElement);
-        // Do something on start progress:
         groupProfilePictureUploader.addEventListener("start", function (event) {
           event.file.meta.fileRole = "groupProfilePicture";
           event.file.meta.roomID = roomID;
           groupPicProgressBar.classList.add('visible');
           progressBarBlock.classList.remove('hidden');
         });
-        // Do something on upload progress:
         groupProfilePictureUploader.addEventListener("progress", function (event) {
           var percent = (event.bytesLoaded / event.file.size) * 100;
           groupPicProgressBar.setPercentage(percent.toFixed(2))
-          console.log("File is", percent.toFixed(2), "percent loaded");
         });
-        // Do something when a file is uploaded:
         groupProfilePictureUploader.addEventListener("complete", function (event) {
-          // console.log("complete", event.detail.name);
           groupPicProgressBar.classList.remove('visible');
-          console.log("profilePhoto", event);
-          selectedChat_details_profilePic_changeDiv.src = 'private/profiles/' + event.detail.name
-          profilePicture = 'private/profiles/' + event.detail.name
-          selectedChat_profilePic_src = 'private/profiles/' + event.detail.name
           progressBarBlock.classList.add('hidden');
-          for (let i = 0; i < availableChats.length; i++) {
-            if (availableChats[i].roomID == roomID) {
-              availableChats[i].conversationButton.updateGroupProfilePicture('private/profiles/' + event.detail.name)
-            }
-          }
         });
 
         detailsArray.push(changePicBlock);
@@ -2809,9 +3013,27 @@ let functionalityOptionsArray = [
       let openChatDetailsContenDiv = createElement({ elementType: 'div', class: 'openChatDetailsContenDiv', childrenArray: detailsArray })
       chatDetails_panel.appendChild(openedChatDetailsTopSection)
       chatDetails_panel.appendChild(openChatDetailsContenDiv)
-
-    }
+    })
   }
+
+  socket.on('deletedMessage', deleteMessage => {
+    console.log('deleteMessage', deleteMessage)
+    for (let i = 0; i < displayedMessages.length; i++) {
+      // const displayedMessage = displayedMessages[i];
+      console.log('displayedMessage', displayedMessages[i])
+
+      if (displayedMessages[i].object.roomID == selectedChatId && displayedMessages[i].object.id == deleteMessage.messageId) {
+        displayedMessages[i].messageElement.messageTextDiv.textContent = '__deleted message__';
+      }
+
+      for (let j = 0; j < displayedMessages[i].messageElement.tags.length; j++) {
+        // const tagdiv = displayedMessages[i].tagDivs[j];
+        if (displayedMessages[i].messageElement.tags[j].id == deleteMessage.messageId) {
+          displayedMessages[i].messageElement.tags[j].tagDiv.textContent = '__deleted message__';
+        }
+      }
+    }
+  })
 
   function addMessageToChat(message, myID) {
     let messageElement
@@ -2821,12 +3043,13 @@ let functionalityOptionsArray = [
       let groupMessages;
       if (message.userID == myID) {
         messageElement = createSentMessage(message, myID, 'bx bxs-check-circle')
-        groupMessages = createSentGroup(messageElement)
+        groupMessages = createSentGroup(messageElement.messageDiv)
       }
       else {
+        console.log('message', message)
         let profilePic = makeProfilePicture(message.userInfo)
         messageElement = createReceivedMessage(message, myID, true)
-        groupMessages = createReceivedGroup(profilePic, messageElement)
+        groupMessages = createReceivedGroup(profilePic, messageElement.messageDiv)
       }
       openchat__box__info.textContent = '' // clear the textBox
       openchat__box__info.appendChild(createElement({ elementType: 'div', class: 'push-down' })) // push down all contents
@@ -2851,68 +3074,88 @@ let functionalityOptionsArray = [
           - if the message is not from the same day
           - the message is coming from a different user, 
           */
-          groupMessages = createSentGroup(messageElement)
+          groupMessages = createSentGroup(messageElement.messageDiv)
           openchat__box__info.append(groupMessages)
         }
         else {
-          lastMessage.messageElement.after(messageElement)
+          lastMessage.messageElement.messageDiv.after(messageElement.messageDiv)
         }
       }
       else { // if it is a received message
         if ((thisDate - prevDate) > 60000 || !sameDay(prevDate, thisDate) || message.userID != lastMessage.object.userID) {
           messageElement = createReceivedMessage(message, myID, true)
           let profilePic = makeProfilePicture(message.userInfo)
-          groupMessages = createReceivedGroup(profilePic, messageElement)
+          groupMessages = createReceivedGroup(profilePic, messageElement.messageDiv)
           openchat__box__info.append(groupMessages)
         }
         else {
           messageElement = createReceivedMessage(message, myID, false)
-          lastMessage.messageElement.after(messageElement)
+          lastMessage.messageElement.messageDiv.after(messageElement.messageDiv)
         }
       }
     }
-    displayedMessages.push({ object: message, messageElement: messageElement, reactionsDiv: messageElement.reactionOptions.reactionOptionsDiv });
+    displayedMessages.push({ object: message, messageElement: messageElement, reactionsDiv: messageElement.reactionOptionsDiv, messageAndTagDiv: messageElement.messageAndTagsDiv });
     console.log('displayedMessages', displayedMessages)
     scrollToBottom(openchat__box__info) // scroll to bottom
   }
 
   function createReceivedMessage(message, myID, showSenderName) {
+    if (message.userInfo == null) message.userInfo = deletedUser //put deleted user if there is no actual user
     // senserName: true / false allows the message to have the senders name attached
+    let tagIdTagDivs = []
     let tagTemplate = message.tagContent.map(tag => {
-      return createElement({
+      let tagDiv = createElement({
         elementType: 'div', class: 'message-tag-text', textContent: tag.message, onclick: () => {
           let taggedMessage = displayedMessages.find(displayedMessage => displayedMessage.object.id == tag.id)
-          taggedMessage.messageElement.scrollIntoView({ behavior: "smooth", block: "center" });
+          taggedMessage.messageElement.messageDiv.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       })
+      tagIdTagDivs.push({ id: tag.id, tagDiv: tagDiv })
+      return tagDiv
     })
-    let messageReceivedText = createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
+    let messageTextDiv = createElement({ elementType: 'p', textContent: message.message })
+    let messageReceivedText = createElement({ elementType: 'div', class: 'message-received-text', childrenArray: tagTemplate.concat([messageTextDiv]) })
     let sendersName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
     let reactionOptions = buildOptions(message, myID, messageReceivedText)
     // reactionOptions.reactionOptionsDiv is the element
     let messageElements = [messageReceivedText, reactionOptions]
     if (showSenderName == true) messageElements.push(sendersName)
     let receivedMessage = createElement({ elementType: 'div', class: 'message-received', childrenArray: messageElements })
-    receivedMessage.reactionOptions = reactionOptions
-    return receivedMessage
+
+    return {
+      messageDiv: receivedMessage,
+      messageAndTagsDiv: messageReceivedText,
+      messageTextDiv: messageTextDiv,
+      reactionOptionsDiv: reactionOptions,
+      tags: tagIdTagDivs
+    }
   }
 
   function createSentMessage(message, myID, statusIcon) {
+    let tagIdTagDivs = []
     let tagTemplate = message.tagContent.map(tag => {
-      return createElement({
+      let tagDiv = createElement({
         elementType: 'div', class: 'message-tag-text', textContent: tag.message, onclick: () => {
           let taggedMessage = displayedMessages.find(displayedMessage => displayedMessage.object.id == tag.id)
-          taggedMessage.messageElement.scrollIntoView({ behavior: "smooth", block: "center" });
+          taggedMessage.messageElement.messageDiv.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       })
+      tagIdTagDivs.push({ id: tag.id, tagDiv: tagDiv })
+      return tagDiv
     })
-    let messageSentText = createElement({ elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([createElement({ elementType: 'p', textContent: message.message })]) })
+    let messageTextDiv = createElement({ elementType: 'p', textContent: message.message })
+    let messageSentText = createElement({ elementType: 'div', class: 'message-sent-text', childrenArray: tagTemplate.concat([messageTextDiv]) })
     let messageStatus = createElement({ elementType: 'div', class: 'message-sent-status', childrenArray: [createElement({ elementType: 'i', class: statusIcon })] })
     let reactionOptions = buildOptions(message, myID, messageSentText)
     let messageElements = [reactionOptions, messageSentText, messageStatus]
     let sentMessage = createElement({ elementType: 'div', class: 'message-sent', childrenArray: messageElements })
-    sentMessage.reactionOptions = reactionOptions
-    return sentMessage
+    return {
+      messageDiv: sentMessage,
+      messageAndTagsDiv: messageSentText,
+      messageTextDiv: messageTextDiv,
+      reactionOptionsDiv: reactionOptions,
+      tags: tagIdTagDivs
+    }
   }
 
   function createReceivedGroup(profilePic, firstMessage) {
@@ -2976,7 +3219,7 @@ let functionalityOptionsArray = [
       chatContainer.textContent = ''
       chatContainer.append(createElement({
         elementType: 'div', class: 'flex flex-center-y flex-center-x full-height', childrenArray: [
-          createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No conversations found with given criteria.' })
+          createDummyElement('No conversations found with given criteria.')
         ]
       }))
     }
@@ -3075,10 +3318,11 @@ let functionalityOptionsArray = [
   let selectedUsersDiv = createElement({ elementType: 'div', class: 'editBlock flex-column' })
   let resultsUsersDiv = createElement({
     elementType: 'div', class: 'editBlock flex-column', childrenArray: [
-      createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Search for users to add in the box above, the results will appear here.' })
+      createDummyElement('Search for users to add in the box above, the results will appear here.')
     ]
   })
   newGroupChatBtn.addEventListener("click", () => {
+    createNewPeer();
     let groupNameInputLabel = createElement({ elementType: 'div', for: 'groupNameInput', class: 'editBlock', textContent: 'Type Here the name of the group conversation, and leave it empty if you do not want to set the name. the name and profile picture can be set later' })
     let groupNameInput = createElement({ elementType: 'input', id: 'groupNameInput', class: 'textField', name: 'groupName', type: 'text', placeHolder: 'Group Name' })
     let groupNameBlock = createElement({ elementType: 'div', class: 'editBlock', childrenArray: [groupNameInput] })
@@ -3127,7 +3371,7 @@ let functionalityOptionsArray = [
     if (!resultsUsersDiv) return
     resultsUsersDiv.textContent = ''
     if (users.length < 1) {
-      return resultsUsersDiv.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users found with the given criteria' }))
+      return resultsUsersDiv.appendChild(createDummyElement('No users found with the given criteria'))
     }
 
     users.forEach(user => {
@@ -3161,6 +3405,7 @@ let functionalityOptionsArray = [
 
 
   function buildOptions(message, myID, messageTextDiv) {
+    console.log('message', message)
     let referenceBtn = createElement({
       elementType: 'button', class: 'expandOptions', title: 'Reply to this message', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-paperclip' })], onclick: () => {
         messageReference(message.id, messageTextDiv, inputContainer)
@@ -3180,7 +3425,6 @@ let functionalityOptionsArray = [
             element: confirmButton,
             functionCall: () => {
               socket.emit('deleteMessage', message.id);
-              messageTextDiv.textContent = '__deleted message__'
             }
           },
           {
@@ -3212,9 +3456,9 @@ let functionalityOptionsArray = [
     ]
     if (message.userID == myID) time_reactions_options.reverse()
     else deleteBtn.remove()
-    if (messageTextDiv.textContent == '__deleted message__') {
-      deleteBtn.remove();
-    }
+    // if (messageTextDiv.textContent == '__deleted message__') {
+    //   deleteBtn.remove();
+    // }
     let timeReactionOptions = createElement({ elementType: 'div', class: 'time_reactions_options', childrenArray: time_reactions_options })
     timeReactionOptions.reactionOptionsDiv = msgReactions;
     return timeReactionOptions
@@ -3273,7 +3517,7 @@ let functionalityOptionsArray = [
   /////////////////////////////////CALL LOG END//////////////////////
 
   let secondaryVideosDiv = document.getElementById('secondaryVideosDiv')
-  const myPeer = new Peer(undefined, {
+  let peerOptions = {
     host: 'peer.imperiumline.com',
     secure: true,
     config: {
@@ -3300,7 +3544,14 @@ let functionalityOptionsArray = [
       ],
       sdpSemantics: "unified-plan"
     }
-  })
+  }
+  let myPeer = new Peer(undefined, peerOptions)
+  let isOnCall = false;
+  let _globalLeavecall
+
+  function createNewPeer() {
+    myPeer = new Peer(undefined, peerOptions)
+  }
 
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
   //ringtone preparation
@@ -3374,6 +3625,8 @@ let functionalityOptionsArray = [
 
 
     socket.on('prepareCallingOthers', initiatedCallInfo => {
+      // if (isOnCall == true) leaveCall() //leave the first call before entering another
+      isOnCall = true
       navigator.getUserMedia({ video: { deviceId: chosenDevices?.videoInput?.deviceId }, audio: true }, stream => {
         let { callUniqueId, callType, caller, groupMembersToCall_fullInfo, allUsers, callTitle } = initiatedCallInfo
         let { userID, name, surname, profilePicture, role } = caller
@@ -3430,22 +3683,18 @@ let functionalityOptionsArray = [
         })
         //create Cover waiting
         let videoCoverPrepObj = prepareVideoCoverDiv(allUsers, caller, 'Dialling...', awaitedUserDivs)
-        if(videoCoverPrepObj.isSuccess == false) {
+        if (videoCoverPrepObj.isSuccess == false) {
           stopWaitingTone()
           return
         };
         videoCoverDiv = videoConnectingScreen(videoCoverPrepObj)
+        console.log('mainVideoDiv', mainVideoDiv)
         mainVideoDiv.prepend(videoCoverDiv.videoCoverDiv)
 
         let { closeVideoBtn, HangUpBtn, muteMicrophoneBtn } = videoCoverDiv.controls
         HangUpBtn.addEventListener('click', () => {
-          socket.emit('cancelCall', callUniqueId)
-          mySideVideoDiv.remove();
-          stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
-          videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
-          topBar.callScreenHeader.textContent = ''
+          exitcallBeforeOthersJoin(callUniqueId)
           stream.getTracks().forEach((track) => { console.log('track', track); track.stop(); stream.removeTrack(track); })
-          myStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); myStream.removeTrack(track); })
           leaveCall();
         })
 
@@ -3471,6 +3720,7 @@ let functionalityOptionsArray = [
         determineAudioVideoState(myStream, muteMicrophoneBtn, closeVideoBtn)
 
         if (initiatedCallInfo.callStage == 'rejoin') socket.emit('readyForRejoin', { ...initiatedCallInfo, peerId: myPeerId });
+        // socket.emit("setOnlineStatus", "onCall")
       }, (err) => { alert('Failed to get local media stream', err); });
     })
     // -------------------------------------
@@ -3483,7 +3733,7 @@ let functionalityOptionsArray = [
 
           let memberProfilePicture;
           if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-          else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+          else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture, alt: userInfo.profilePicture })
 
           let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
           let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
@@ -3524,7 +3774,7 @@ let functionalityOptionsArray = [
 
           let memberProfilePicture;
           if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-          else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+          else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture, alt: userInfo.profilePicture })
 
           let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
           let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
@@ -3563,7 +3813,7 @@ let functionalityOptionsArray = [
       console.log('additionDetails', additionDetails)
       let memberProfilePicture;
       if (userInfo.profilePicture == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-      else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture })
+      else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.profilePicture, alt: userInfo.profilePicture })
 
       let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.name + ' ' + userInfo.surname })
       let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.role })
@@ -3602,6 +3852,9 @@ let functionalityOptionsArray = [
       let { name, profilePicture, surname, userID } = caller
 
       let responded = false;
+      function rejectIncomingCall() {
+        socket.emit("callRejected", callUniqueId); responded = true
+      }
       let notification = displayNotification({
         title: { iconClass: 'bx bxs-phone-call', titleText: 'Incoming call' },
         body: {
@@ -3612,22 +3865,24 @@ let functionalityOptionsArray = [
           bodyContent: 'Incoming ' + callType + ' call from' + name + ' ' + surname //+ (allUsers.length <= 2 ? '.' : ' with ' + (groupMembersToCall_fullInfo.length - 1) + ' other' + ((groupMembersToCall_fullInfo.length - 1) > 1 ? 's.' : '.'))
         },
         actions: [
-          { type: 'normal', displayText: 'Reject', actionFunction: () => { socket.emit("callRejected", callUniqueId); responded = true } },
+          { type: 'normal', displayText: 'Reject', actionFunction: rejectIncomingCall },
           {
-            type: 'confirm', displayText: 'Audio', actionFunction: () => {
+            type: 'confirm', displayText: 'Audio', actionFunction: async () => {
+              let callAccepted = await callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage);
+              if (callAccepted == false) return rejectIncomingCall(); // if a call was refused in order to stay on an ongoing call, stop here and refuse the incoming call
               caller_me = myInfo;
               _callUniqueId = callUniqueId;
-              callAnswerByType("audio", myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage);
               responded = true;
               sidepanelElements[1].triggerButton.parentElement.parentElement.after(sidepanelElements[2].triggerButton.parentElement.parentElement); // display the button to access the ongoing call
             }
           },
 
           {
-            type: 'confirm', displayText: 'Video', actionFunction: () => {
+            type: 'confirm', displayText: 'Video', actionFunction: async () => {
+              let callAccepted = await callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage);
+              if (callAccepted == false) return rejectIncomingCall(); // if a call was refused in order to stay on an ongoing call, stop here and refuse the incoming call
               caller_me = myInfo;
               _callUniqueId = callUniqueId;
-              callAnswerByType("video", myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage);
               responded = true;
               sidepanelElements[1].triggerButton.parentElement.parentElement.after(sidepanelElements[2].triggerButton.parentElement.parentElement); // display the button to access the ongoing call
             }
@@ -3660,29 +3915,50 @@ let functionalityOptionsArray = [
       }
     })
 
-    function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage) {
-      navigator.getUserMedia({ video: { deviceId: chosenDevices?.videoInput?.deviceId }, audio: true }, stream => {
-        responded = true
-        _callTitle = callTitle
-        allUsersArray = allUsers
-        myStream = stream // store our stream globally so that to access it whenever needed
-        // store the call type fpr incoming videos and sending our stream
-        saveLocalMediaStream(answertype, stream)
+    async function callAnswerByType(answertype, myPeerId, callUniqueId, myInfo, allUsers, callTitle, callStage) {
+      let leavingIfAlreadyOnCall = await leaveAndJoinCallPrompt()
+      if (leavingIfAlreadyOnCall == false) { // true: accept thi call, false: rmain on the current call and refuse the new call
+        return false
+      }
+      else {
+        if (isOnCall == true && leavingIfAlreadyOnCall == true) { leaveCall(); exitcallBeforeOthersJoin(_callUniqueId); } // if you chose to continue with the new call, we will hag up automatically the previous call
+        navigator.getUserMedia({ video: { deviceId: chosenDevices?.videoInput?.deviceId }, audio: true }, stream => {
+          responded = true
 
-        callInfo = { callUniqueId, callType: globalCallType, callTitle: callTitle ? callTitle : 'Untitled Call', isTeam: false }
-        socket.emit("answerCall", { myPeerId, callUniqueId, callType: answertype, callStage })
-        topBar = createTopBar(callInfo, myInfo) // create top bar
-        rightPanel = createRightPartPanel()
-        bottomPanel = createBottomPart()
-        // ut create and append my sidevideo
-        mySideVideoDiv = createSideVideo(answertype, myStream, myInfo, 'userMedia', globalAudioState)
-        rightPanel.participantsBox.textContent = ''
-        rightPanel.participantsBox.append(mySideVideoDiv)
-        leftPanel = createLeftPanel()
-        displayAppSection(2) // display the ongoing call panel
-      }, (err) => { alert('Failed to get local media stream', err); });
+          isOnCall = true
+          _callTitle = callTitle
+          allUsersArray = allUsers
+          myStream = stream // store our stream globally so that to access it whenever needed
+          // store the call type fpr incoming videos and sending our stream
+          saveLocalMediaStream(answertype, stream)
+
+          callInfo = { callUniqueId, callType: globalCallType, callTitle: callTitle ? callTitle : 'Untitled Call', isTeam: false }
+          socket.emit("answerCall", { myPeerId, callUniqueId, callType: answertype, callStage })
+          topBar = createTopBar(callInfo, myInfo) // create top bar
+          rightPanel = createRightPartPanel()
+          bottomPanel = createBottomPart()
+          // ut create and append my sidevideo
+          mySideVideoDiv = createSideVideo(answertype, myStream, myInfo, 'userMedia', globalAudioState)
+          rightPanel.participantsBox.textContent = ''
+          rightPanel.participantsBox.append(mySideVideoDiv)
+          leftPanel = createLeftPanel()
+          displayAppSection(2) // display the ongoing call panel
+        }, (err) => { alert('Failed to get local media stream', err); });
+        return true;
+      }
+
+    }
+
+    function exitcallBeforeOthersJoin(callUniqueId) {
+      socket.emit('cancelCall', callUniqueId)
+      mySideVideoDiv.remove();
+      stopWaitingTone() //on the first call of event 'connectUser' if we are the caller: close the waiting tone
+      videoCoverDiv.videoCoverDiv.remove() //on the first call of event 'connectUser' if we are the caller: remove waiting div
+      topBar.callScreenHeader.textContent = ''
+      myStream.getTracks().forEach((track) => { console.log('track', track); track.stop(); myStream.removeTrack(track); })
     }
     socket.on('updateAllParticipantsList', allUsers => {
+      console.log('allUsersArray', allUsersArray, 'allUsers', allUsers)
       allUsersArray = allUsers
       leftPanel.updateComponentsArray()
     })
@@ -3759,6 +4035,9 @@ let functionalityOptionsArray = [
         removePeer(userInfo.userID)
         leftPanel.updateUserStatus(userInfo, 'absent')
       })
+      call.on('error', (err) => {
+        console.log('Peer connection Error', err);
+      });
       participants.push(participant) // push the participant to the Array
       rightPanel.setParticipantsCount(participants.length)
       rightPanel.messagesBox.addMessage({ userInfo: participant.userInfo, content: '', time: new Date() }, 'join')
@@ -3878,7 +4157,7 @@ let functionalityOptionsArray = [
       callees = allUsers.filter(user => { return user.userID != caller.userID })
       console.log(allUsers)
       firstCallee = callees[0]
-      if (firstCallee == undefined){
+      if (firstCallee == undefined) {
         let feedback = [{ type: 'negative', message: 'Sorry, you cannot make a call where you are the only participant' }]
         displayServerError(feedback);
         leaveCall();
@@ -4060,7 +4339,7 @@ let functionalityOptionsArray = [
       //topBar
       let mainVideoOwnerProfilePicture;
       if (profilePicture == null) mainVideoOwnerProfilePicture = createElement({ elementType: 'div', class: 'mainVideoOwnerProfilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-      else mainVideoOwnerProfilePicture = createElement({ elementType: 'img', class: 'mainVideoOwnerProfilePicture', src: profilePicture })
+      else mainVideoOwnerProfilePicture = createElement({ elementType: 'img', class: 'mainVideoOwnerProfilePicture', src: profilePicture, alt: profilePicture })
       let videoOwnerName = createElement({ elementType: 'div', class: 'videoOwnerName', textContent: name + ' ' + surname + statement })
       let videoOwnerPosition = createElement({ elementType: 'div', class: 'videoOwnerPosition', textContent: role })
       let mainVideoOwnerProfileNamePosition = createElement({ elementType: 'div', class: 'mainVideoOwnerProfileNamePosition', childrenArray: [videoOwnerName, videoOwnerPosition] })
@@ -4103,10 +4382,14 @@ let functionalityOptionsArray = [
       }
       //call controls
       //let alwaysVisibleControls = createElement({ elementType: 'button', class: 'alwaysVisibleControls' })
-      let fitToFrame = createElement({
+      let fitToFrame;
+      fitToFrame = createElement({
         elementType: 'button', class: 'callControl', title: "Fit video to frame", childrenArray: [createElement({ elementType: 'i', class: 'bx bx-collapse' })],
-        onClick: () => {
+        onclick: () => {
           mainVideoElement.classList.toggle('fitVideoToWindow');
+          mainVideoDiv.classList.toggle('squareCorners');
+          console.log('happenned')
+          fitToFrame.classList.toggle('active')
         }
       })
       let closeVideoBtn = createElement({
@@ -4149,7 +4432,7 @@ let functionalityOptionsArray = [
       // AudioCall Cover Div
       let audioCallprofilePicture
       if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-      else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
+      else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture, alt: profilePicture })
       let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
       let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
 
@@ -4188,7 +4471,7 @@ let functionalityOptionsArray = [
       // AudioCall Cover Div
       let audioCallprofilePicture
       if (profilePicture == null) audioCallprofilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: name.charAt(0) + surname.charAt(0) })
-      else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture })
+      else audioCallprofilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: profilePicture, alt: profilePicture })
       let audioCallCoverName = createElement({ elementType: 'div', class: 'audioCallCoverName', textContent: name + " " + surname })
       let audioCallCover = createElement({ elementType: 'div', class: 'audioCallCover', childrenArray: [audioCallprofilePicture, audioCallCoverName] })
 
@@ -4266,9 +4549,17 @@ let functionalityOptionsArray = [
     })
 
     socket.on('userLeftCall', userInfo => {
+      if (userInfo.userID == mySavedID) leaveCall()
       removePeer(userInfo.userID)
       console.log('userLeftCall', userInfo.userID)
       leftPanel.updateUserStatus(userInfo, 'absent')
+      stopWaitingTone()
+    })
+
+    socket.on('exitAllCalls', () => {
+      leaveCall()
+      console.log('exitAllCalls')
+      stopWaitingTone()
     })
 
     socket.on('stoppedScreenSharing', disconnectionInfo => {
@@ -4362,26 +4653,41 @@ let functionalityOptionsArray = [
       }
     }
 
+    socket.on('forceLeaveCall', () => {
+      leaveCall()
+    })
+
     function leaveCall() {
-      socket.emit('leaveCall', { callUniqueId: _callUniqueId })
-      if (screenSharing == true) stopScreenSharing()
-      if (myStream) myStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
-      if (myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all screen stream tracks are closed
-      for (let i = 0; i < participants.length; i++) { removePeer(participants[i].userInfo.userID) }
-      mySideVideoDiv.remove();
-      rightPanel.participantsBox.textContent = '';
-      if (globalMainVideoDiv) globalMainVideoDiv.textContent = '';
-      awaitedUserDivs = [];
-      topBar.callScreenHeader.textContent = '';
-      bottomPanel.textContent = '';
-      allUsersArray = [];
-      participants = [];
-      rightPanel.clearAllMessages();
-      leftPanel.clearAttendanceList()
-      sidepanelElements[2].triggerButton.parentElement.parentElement.remove(); // remove the ongoing call button
-      if (displayedScreen == 2) displayAppSection(previousDisplayedSreen) // if the call hang up while we are on the screen call, jump to the previous screen
-      else { } // else, remain on the same screen
+      try {
+        socket.emit('leaveCall', { callUniqueId: _callUniqueId })
+        if (screenSharing == true) stopScreenSharing()
+        if (myStream) myStream.getTracks().forEach(track => track.stop()) // ensure that all tracks are closed
+        if (myScreenStream) myScreenStream.getTracks().forEach(track => track.stop()) // ensure that all screen stream tracks are closed
+        for (let i = 0; i < participants.length; i++) { removePeer(participants[i].userInfo.userID) }
+        mySideVideoDiv.remove();
+        rightPanel.participantsBox.textContent = '';
+        if (mainVideoDiv) mainVideoDiv.textContent = '';
+        if (globalMainVideoDiv) globalMainVideoDiv.textContent = '';
+        awaitedUserDivs = [];
+        topBar.callScreenHeader.textContent = '';
+        bottomPanel.textContent = '';
+        allUsersArray = [];
+        participants = [];
+        rightPanel.clearAllMessages();
+        leftPanel.clearAttendanceList();
+
+        sidepanelElements[2].triggerButton.parentElement.parentElement.remove(); // remove the ongoing call button
+        if (displayedScreen == 2) displayAppSection(previousDisplayedSreen) // if the call hang up while we are on the screen call, jump to the previous screen
+        else { } // else, remain on the same screen
+
+        socket.emit("setOnlineStatus") // reset the online status
+        stopWaitingTone()
+        isOnCall = false;
+      } catch (error) {
+        console.log(error)
+      }
     }
+    _globalLeavecall = leaveCall
     function createRightPartPanel() {
       let participantsCount = 0;
       let unreadmessagesCount = 0;
@@ -4409,7 +4715,7 @@ let functionalityOptionsArray = [
       let inputTextGroup = createElement({ elementType: 'div', class: 'w-input-text-group', childrenArray: [inputText, inputPlaceHolder] })
       let inputContainer = createElement({ elementType: 'div', class: 'w-input-container', childrenArray: [inputTextGroup], onclick: (e) => inputText.focus() })
       let Message = createElement({ elementType: 'button', class: 'chat-options', title: 'Send Message', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-send' })] })
-      let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [iconButton, inputContainer, Message] })
+      let typingBox = createElement({ elementType: 'div', class: 'typingBox', childrenArray: [inputContainer, Message] })
 
       let callMessagingDiv = createElement({ elementType: 'div', class: 'callMessagingDiv hideDivAside', childrenArray: [c_openchat__box__info, typingBox] })
 
@@ -4526,7 +4832,7 @@ let functionalityOptionsArray = [
         function createNewReceivedGroup(firstMessage) {
           let receivedMessageProfile;
           if (message.userInfo.profilePicture == null) receivedMessageProfile = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
-          else receivedMessageProfile = createElement({ elementType: 'img', class: 'memberProfilePicture', src: message.userInfo.profilePicture })
+          else receivedMessageProfile = createElement({ elementType: 'img', class: 'memberProfilePicture', src: message.userInfo.profilePicture, alt: message.userInfo.profilePicture })
           let receivedMessageProfileContainter = createElement({ elementType: 'div', childrenArray: [receivedMessageProfile] })
           let senderOriginName = createElement({ elementType: 'div', class: 'senderOriginName', textContent: message.userInfo.name + ' ' + message.userInfo.surname })
           let receivedMessagesHolder = createElement({ elementType: 'div', childrenArray: [firstMessage, senderOriginName] })
@@ -4537,7 +4843,7 @@ let functionalityOptionsArray = [
         function createSentMessage(message) {
           let profileP;
           if (message.userInfo.profilePicture == null) profileP = createElement({ elementType: 'div', textContent: message.userInfo.name.charAt(0) + message.userInfo.surname.charAt(0) })
-          else profileP = createElement({ elementType: 'img', src: message.userInfo.profilePicture })
+          else profileP = createElement({ elementType: 'img', src: message.userInfo.profilePicture, alt: message.userInfo.profilePicture })
           let message_sent = createElement({
             elementType: 'div', class: 'message-sent', childrenArray: [
               createElement({ elementType: 'div', class: 'time_reactions_options', textContent: new Date(message.time).toString('YYYY-MM-dd').substring(16, 24) }),
@@ -4600,6 +4906,7 @@ let functionalityOptionsArray = [
       }
 
       let componentsArray = allUsersArray.map(user => generateUserActions(user))
+
       refreshAttendaceList()
       updateNumbers()
 
@@ -4607,7 +4914,52 @@ let functionalityOptionsArray = [
         let currentUsers = componentsArray.map(component => { return component.userInfo.userID })
         for (let i = 0; i < allUsersArray.length; i++) {
           if (!currentUsers.includes(allUsersArray[i].userID)) {
+
+            let statusButton;
+
+            let presenceDiv;
+
             if (allUsersArray[i].status == 'offline') {
+              // let 
+              presenceDiv = createOfflineElement()
+              componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
+            }
+            else {
+              // let 
+              presenceDiv = createOnlineElement()
+              componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'ringing' })
+            }
+            socket.on('onlineStatusChange', changeInfo => {
+              console.log('happened')
+              // if (allUsersArray[i].userID == changeInfo.userID) {
+
+              //   allUsersArray[i].status = changeInfo.userID // keep and save the ne value
+              //   if (changeInfo.status == 'online') {
+
+              //     let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
+              //     let ringButton = createElement({ elementType: 'button', title: 'The user is now online, you can ring now.', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ring now' })] })
+              //     let actions = [
+              //       {
+              //         element: ringButton, functionCall: () => {
+              //           console.log('Ring user', allUsersArray[i].userID);
+              //           socket.emit('ringAgain', { userID: allUsersArray[i].userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
+              //         }
+              //       },
+              //       { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
+              //     ]
+              //     let newpresenceDiv = userForAttendanceList(allUsersArray[i], actions)
+              //     presenceDiv.replaceWith(newpresenceDiv)
+              //     updateComponentsArrayItem(allUsersArray[i].userID, { userInfo: allUsersArray[i], presenceDiv: newpresenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'online' })
+              //   }
+              //   if (changeInfo.status == 'offline') {
+              //     let newpresenceDiv = createOfflineElement()
+              //     presenceDiv.replaceWith(newpresenceDiv)
+              //     updateComponentsArrayItem(allUsersArray[i].userID, { userInfo: allUsersArray[i], presenceDiv: newpresenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
+              //   }
+              // }
+            })
+
+            function createOfflineElement() {
               let offlineButton = createElement({ elementType: 'button', title: 'User is offline', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone-off' }), createElement({ elementType: 'p', textContent: 'Offline' })] })
               let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
               let actions = [
@@ -4615,9 +4967,10 @@ let functionalityOptionsArray = [
                 { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
               ]
               let presenceDiv = userForAttendanceList(allUsersArray[i], actions)
-              componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'offline' })
+              return presenceDiv
             }
-            else {
+
+            function createOnlineElement() {
               let chatButton = createElement({ elementType: 'button', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-detail' })] })
               let ringButton = createElement({ elementType: 'button', title: 'Phone is ringing', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-bell-ring' }), createElement({ elementType: 'p', textContent: 'Ringing...' })] })
               let actions = [
@@ -4625,7 +4978,14 @@ let functionalityOptionsArray = [
                 { element: chatButton, functionCall: () => { initiateChat(allUsersArray[i].userID) } }
               ]
               let presenceDiv = userForAttendanceList(allUsersArray[i], actions)
-              componentsArray.push({ userInfo: allUsersArray[i], presenceDiv: presenceDiv, onlineStatus: allUsersArray[i].status, onCallStatus: 'ringing' })
+              return presenceDiv
+            }
+
+            function updateComponentsArrayItem(userIdToChange, itemValue) {
+              for (let i = 0; i < componentsArray.length; i++) {
+                if (componentsArray[i].userInfo.userID = userIdToChange) componentsArray[i] = itemValue
+
+              }
             }
           }
         }
@@ -4635,6 +4995,7 @@ let functionalityOptionsArray = [
       function refreshAttendaceList() {
         absentMembersDiv.textContent = ''
         presentMembersDiv.textContent = ''
+
         for (let i = 0; i < componentsArray.length; i++) {
           switch (componentsArray[i].onCallStatus) {
             case 'present':
@@ -4705,7 +5066,7 @@ let functionalityOptionsArray = [
                   { element: offlineButton, functionCall: () => { } },
                   {
                     element: callAgainButton, functionCall: () => {
-                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
+                      ringAgain()
                       updateButtonContent(callAgainButton, 'ringing')
                       console.log('ring again user', userInfo.userID)
                     }
@@ -4721,7 +5082,7 @@ let functionalityOptionsArray = [
                 actions = [
                   {
                     element: callAgainButton, functionCall: () => {
-                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
+                      ringAgain()
                       updateButtonContent(callAgainButton, 'ringing')
                       console.log('ring again user', userInfo.userID)
                     }
@@ -4739,7 +5100,7 @@ let functionalityOptionsArray = [
                   { element: notAnsweredButton, functionCall: () => { } },
                   {
                     element: callAgainButton, functionCall: () => {
-                      socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
+                      ringAgain()
                       updateButtonContent(callAgainButton, 'ringing')
                       console.log('ring again user', userInfo.userID)
                     }
@@ -4751,6 +5112,9 @@ let functionalityOptionsArray = [
                 break;
               default:
                 break;
+            }
+            function ringAgain() {
+              socket.emit('ringAgain', { userID: userInfo.userID, callUniqueId: _callUniqueId, callType: globalCallType, callTitle: _callTitle })
             }
           }
         }
@@ -4822,8 +5186,9 @@ let functionalityOptionsArray = [
       let availableScreensDiv = document.getElementById('availableScreensDiv')
       availableScreensDiv.textContent = '';
       function createBottomBubble(callType, stream, userInfo, callMediaType, audioState) {
+
         let bubble = createElement({
-          elementType: 'div', class: 'screenItem', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0),
+          elementType: 'div', class: 'screenItem', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0), title: makeBubbleTitle(userInfo, callMediaType),
           onclick: () => {
             let maindiv = document.getElementById('mainVideoDiv')
             maindiv.textContent = '' //empty the mainDiv
@@ -4850,6 +5215,23 @@ let functionalityOptionsArray = [
         createBubble: createBottomBubble, // it accepts : callType, stream, userInfo, callMediaType, audioState
         availableScreensDiv: availableScreensDiv
       }
+    }
+
+    function makeBubbleTitle(userInfo, callMediaType) {
+      let bubbleTitle
+      let userNameSurname = userInfo.name + " " + userInfo.surname + "'s "
+      switch (callMediaType) {
+        case 'userMedia':
+          bubbleTitle = userNameSurname + 'media bubble'
+          break;
+        case 'screenMedia':
+          bubbleTitle = userNameSurname + 'screen bubble'
+          break;
+        default:
+          bubbleTitle = userNameSurname
+          break;
+      }
+      return bubbleTitle;
     }
 
     socket.on('searchPeopleToInviteToCall', (searchPeople) => {
@@ -4882,7 +5264,54 @@ let functionalityOptionsArray = [
       }
 
     }
+
+
   })
+
+  myPeer.on('error', function (err) {
+    let feedback = [{ type: 'negative', message: 'Sorry, Your browser could not connect to the peer server due to the following reasons: ' + err }]
+    // displayServerError(feedback)
+    myPeer.reconnect();
+  })
+
+  function leaveAndJoinCallPrompt() {
+    return new Promise(function (resolve, reject) {
+      if (isOnCall == false) resolve(true);
+      else {
+        let messageline1 = createElement({ elementType: 'div', class: 'editBlock', textContent: 'You are about to leave your current call and join another one.' })
+        let messageline2 = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Click on the "Leave this call and Join another" confirm leaving the current call, or' })
+        let messageline3 = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Click on the "Stay on this call" confirm staying on the current call and decline the new call.' })
+
+        let icon = 'bx bxs-phone'
+        let title = 'Leave and join new call'
+        let contentElementsArray = [messageline1, messageline2, messageline3]
+        let leaveAndJoinButton = createElement({ elementType: 'button', title: 'Leave this call and Join another', textContent: 'Leave this call and Join another' })
+        let stayOnCallButton = createElement({ elementType: 'button', title: 'Stay on this call', textContent: 'Stay on this call' })
+        let actions = [
+          {
+            element: leaveAndJoinButton, functionCall: () => {
+              console.log('leaveAndJoinButton')
+              resolve(true)
+            }
+          },
+          {
+            element: stayOnCallButton, functionCall: () => {
+              console.log('stayOnCallButton')
+              resolve(false);
+            }
+          }
+        ]
+        let constraints = { icon, title, contentElementsArray, actions }
+        createInScreenPopup(constraints).then(editPopup => {
+          leaveAndJoinButton.addEventListener('click', editPopup.closePopup)
+          stayOnCallButton.addEventListener('click', editPopup.closePopup)
+        })
+      }
+
+    })
+  }
+
+  // function 
 
   function isNumeric(num) { return !isNaN(num) }
   function isNegative(num) { if (Math.sign(num) === -1) { return true; } return false; }
@@ -4922,6 +5351,7 @@ let functionalityOptionsArray = [
     if (configuration.accept) elementToReturn.setAttribute('accept', configuration.accept)
     if (configuration.required) elementToReturn.required = configuration.required
     if (configuration.autocomplete) elementToReturn.setAttribute('autocomplete', configuration.autocomplete)
+    if (configuration.alt) elementToReturn.alt = configuration.alt
     return elementToReturn
   }
 
@@ -4955,7 +5385,7 @@ let functionalityOptionsArray = [
     // actions is an array of buttons where on item is {element, functionCall}
     let memberProfilePicture;
     if (logo == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: name.slice(0, 2) })
-    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: logo })
+    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', alt: logo, src: logo })
 
     let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: name })
     let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: description })
@@ -5005,12 +5435,21 @@ let functionalityOptionsArray = [
     }
   }
 
-  function call(callTo, audio, video, group, fromChat, previousCallId) {
-    if(window.navigator.onLine == false) {
+  async function call(callTo, audio, video, group, fromChat, previousCallId) {
+    if (window.navigator.onLine == false) {
       stopWaitingTone()
       return showOfflineError();
     }
-    initiateCall({ callTo, audio, video, group, fromChat, previousCallId })
+    if (isOnCall == false) initiateCall({ callTo, audio, video, group, fromChat, previousCallId })
+    else {
+      let leavingIfAlreadyOnCall = await leaveAndJoinCallPrompt()
+      console.log(leavingIfAlreadyOnCall)
+      if (leavingIfAlreadyOnCall == false) { } //action is already taken in the leaveAndJoinCallPrompt() function
+      else {
+        try { _globalLeavecall() } catch (error) { console.log }
+        initiateCall({ callTo, audio, video, group, fromChat, previousCallId })
+      }
+    }
   }
   function initiateChat(corespondantId) {
     console.log('corespondantId', corespondantId)
@@ -5027,11 +5466,12 @@ let functionalityOptionsArray = [
       startWaitingTone() // start the waiting tone
       stream.getTracks().forEach(track => { track.stop(); stream.removeTrack(track); })  //stop media tracks
       sidepanelElements[1].triggerButton.parentElement.parentElement.after(sidepanelElements[2].triggerButton.parentElement.parentElement); // display the button to access the ongoing call
+
     }, (err) => { alert('Failed to get local media stream', err); });
   }
 
   function startWaitingTone() {
-    if (silentNotifications == false) waitingTone.play()
+    if (silentNotifications == false && userFirstInteractionDone == true) waitingTone.play()
   }
   function stopWaitingTone() { waitingTone.currentTime = 0; waitingTone.pause() }
 
@@ -5039,10 +5479,10 @@ let functionalityOptionsArray = [
     let { isGroup, awaitedUserDivs, displayInitials, profilePicture, screenMessage, spinner } = constraints
     // isGroup: isGroup, awaitedUserDivs: awaitedUserDivs, displayInitials: displayInitials, profilePicture: profilePicture, screenMessage: reason, spinner: true,
     let caleeProfilePicture;
-    if (constraints.profilePicture != null) { caleeProfilePicture = createElement({ elementType: 'img', class: 'caleeProfilePicture', src: constraints.profilePicture }) }
+    if (constraints.profilePicture != null) { caleeProfilePicture = createElement({ elementType: 'img', class: 'caleeProfilePicture', src: constraints.profilePicture, alt: constraints.profilePicture }) }
     else caleeProfilePicture = createElement({ elementType: 'div', class: 'caleeProfilePicture', textContent: constraints.displayInitials })
     let activity = createElement({ elementType: 'div', class: 'activity', textContent: constraints.screenMessage })
-    let spinnerDiv = createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })
+    let spinnerDiv = createSpinner()
     let calleesDiv = createElement({ elementType: 'div', class: 'calleesDiv', childrenArray: awaitedUserDivs.map(awaitedUserDiv => awaitedUserDiv.div) })
     let videoCoverDiv
     if (spinner == true) videoCoverDiv = createElement({ elementType: 'div', class: 'videoCoverDiv', childrenArray: [caleeProfilePicture, activity, spinnerDiv, calleesDiv] })
@@ -5073,7 +5513,7 @@ let functionalityOptionsArray = [
     //Body
     let profilePicture;
     if (shortOrImagType == 'short') { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: shortOrImagContent }) }
-    if (shortOrImagType == 'image') { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: shortOrImagContent }) }
+    if (shortOrImagType == 'image') { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: shortOrImagContent, alt: shortOrImagContent }) }
     let notificationContent = createElement({ elementType: 'div', class: 'notificationContent', textContent: bodyContent })
     let notificationBody = createElement({ elementType: 'div', class: 'notificationBody', childrenArray: [profilePicture, notificationContent] })
     let notification;
@@ -5092,16 +5532,23 @@ let functionalityOptionsArray = [
     let notificationProgressBar = createElement({ elementType: 'div', class: 'notificationProgressBar' })
     //notification Element
     notification = createElement({ elementType: 'div', class: 'notification', childrenArray: [notificationTitle, notificationBody, notificationActions, notificationProgressBar] })
-    notificationsDiv.append(notification)
+    notificationsDiv.appendChild(notification)
     // run the On display event
     onDisplay()
     let notificationTone;
-    if (tone == 'notification' && silentNotifications == false) { notificationTone = new Audio('/private/audio/imperiumLineNotification.mp3'); notificationTone.play() }
-    if (tone == 'call' && silentNotifications == false) {
+    if (tone == 'notification' && silentNotifications == false && userFirstInteractionDone == true) { notificationTone = new Audio('/private/audio/imperiumLineNotification.mp3'); notificationTone.play() }
+    if (tone == 'call' && silentNotifications == false && userFirstInteractionDone == true) {
       notificationTone = new Audio('/private/audio/imperiumLineCall.mp3'); notificationTone.play()
       notificationTone.addEventListener('ended', function () { this.currentTime = 0; this.play(); }, false);
     }
-    const notificationStop = () => { if (notificationTone) { notificationTone.currentTime = 0; notificationTone.pause(); notification.remove() } }
+    const notificationStop = () => {
+      if (notificationTone) {
+        notificationTone.currentTime = 0;
+        notificationTone.pause();
+      }
+      console.log(notification);
+      notification.remove();
+    }
 
     dismissbutton.addEventListener('click', () => { notificationStop(); onHide(); })
     setTimeout(() => { notificationStop(); onEnd(); }, delay);
@@ -5234,25 +5681,33 @@ let functionalityOptionsArray = [
     // delete the existing Div
     if (openProfileDiv) openProfileDiv.closePopup()
     //coverPhotoDiv
-    let coverPhoto;
-    if (userInfo.cover == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' }) }
-    else { coverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: userInfo.cover }) }
+    let coverPhoto = createCoverPictureElement(userInfo.cover)
     // close div button
     let closeButton = createElement({ elementType: 'button', title: 'Close', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
     let photoActionClose = createElement({ elementType: 'div', class: 'photoAction', childrenArray: [closeButton] })
     let coverPhotoActions = createElement({ elementType: 'div', class: 'photoActions', childrenArray: [photoActionClose] })
     let coverPhotoDiv = createElement({ elementType: 'div', class: 'coverPhotoDiv', childrenArray: [coverPhoto, coverPhotoActions] })
 
-    let profilePicture;
-    if (userInfo.profilePicture == null) { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) }) }
-    else { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: userInfo.profilePicture }) }
-
+    let profilePicture = createProfilePictureElement(userInfo.profilePicture)
     let userProfileDiv = createElement({ elementType: 'div', class: 'userProfileDiv', childrenArray: [profilePicture] })
-    // if user is online
-    if (userInfo.status != 'offline') {
-      let onlineIndicator = createElement({ elementType: 'div', class: 'onlineIndicator' })
-      userProfileDiv.append(onlineIndicator)
+
+    let statusIndicator = createIndicator(userInfo.status)
+    function createIndicator(status) {
+      let _indicator
+      switch (status) {
+        case 'online':
+          _indicator = createElement({ elementType: 'div', class: 'onlineIndicator' })
+          break;
+        case 'offline':
+          _indicator = createElement({ elementType: 'div', class: 'offlineIndicator' })
+          break;
+        default:
+          _indicator = createElement({ elementType: 'div', class: 'offlineIndicator' })
+          break;
+      }
+      return _indicator
     }
+    userProfileDiv.append(statusIndicator)
 
     // userPrimaryInfo
     let name = createElement({ elementType: 'div', class: 'name', textContent: userInfo.name + ' ' + userInfo.surname })
@@ -5263,7 +5718,7 @@ let functionalityOptionsArray = [
     // organization
     let memberProfilePicture
     if (userInfo.company.logo == null) memberProfilePicture = createElement({ elementType: 'div', class: 'memberProfilePicture', textContent: userInfo.company.name.substring(0, 2) })
-    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.company.logo })
+    else memberProfilePicture = createElement({ elementType: 'img', class: 'memberProfilePicture', src: userInfo.company.logo, alt: userInfo.company.logo })
     let memberName = createElement({ elementType: 'div', class: 'memberName', textContent: userInfo.company.name })
     let memberRole = createElement({ elementType: 'div', class: 'memberRole', textContent: userInfo.company.description })
     let memberNameRole = createElement({ elementType: 'div', class: 'memberNameRole', childrenArray: [memberName, memberRole] })
@@ -5316,13 +5771,8 @@ let functionalityOptionsArray = [
       });
       // Do something when a file is uploaded:
       coverPictureUploader.addEventListener("complete", function (event) {
-        // console.log("complete", event.detail.name);
         coverPicProgressBar.classList.remove('visible');
-        console.log("coverPhoto", event);
-        let newCoverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: 'private/cover/' + event.detail.name })
-        coverPhoto.after(newCoverPhoto);
-        coverPhoto.remove();
-        coverPhoto = newCoverPhoto;
+        console.log("file upload done", event);
       });
 
 
@@ -5359,35 +5809,20 @@ let functionalityOptionsArray = [
       profilePictureUploader.addEventListener("progress", function (event) {
         var percent = (event.bytesLoaded / event.file.size) * 100;
         circleLoader.setPercentage(percent.toFixed(2))
-        console.log("File is", percent.toFixed(2), "percent loaded");
+        console.log("File is", percent.toFixed(2), "percent uploaded");
       });
       // Do something when a file is uploaded:
       profilePictureUploader.addEventListener("complete", function (event) {
-        // console.log("complete", event.detail.name);
         circleLoader.classList.remove('visible');
-        console.log("profilePhoto", event);
-        let newProfilePhoto = createElement({ elementType: 'img', class: 'profilePicture', src: 'private/profiles/' + event.detail.name })
-
-        profilePicture.after(newProfilePhoto);
-        profilePicture.remove();
-        profilePicture = newProfilePhoto;
+        console.log("file upload done", event);
       });
 
       coverDeleteBtn.addEventListener('click', () => {
         socket.emit('deleteCoverPicture')
-        let newCoverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' })
-        coverPhoto.after(newCoverPhoto);
-        coverPhoto.remove();
-        coverPhoto = newCoverPhoto;
-
       })
 
       profileDeleteBtn.addEventListener('click', () => {
         socket.emit('deleteProfilePicture');
-        let newProfilePhoto = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) })
-        profilePicture.after(newProfilePhoto);
-        profilePicture.remove();
-        profilePicture = newProfilePhoto;
       })
 
     } else {
@@ -5413,9 +5848,46 @@ let functionalityOptionsArray = [
       await new Promise(resolve => setTimeout(resolve, 3000))
       mainCentralProfileDiv.remove()
     }
+
+    function updateStatus(status) {
+      let newStatusIndicator = createIndicator(status)
+      statusIndicator.replaceWith(newStatusIndicator)
+      statusIndicator = newStatusIndicator
+    }
+
+    function updateProfilePicture(picturePath) {
+      let newProfilePicture = createProfilePictureElement(picturePath)
+      profilePicture.replaceWith(newProfilePicture)
+      profilePicture = newProfilePicture
+    }
+    function updateCoverPicture(picturePath) {
+      let newCoverPicture = createCoverPictureElement(picturePath)
+      coverPhoto.replaceWith(newCoverPicture)
+      newCoverPicture = newCoverPicture
+    }
+
+    function createProfilePictureElement(picturePath) {
+      let profilePicture;
+      if (picturePath == null) { profilePicture = createElement({ elementType: 'div', class: 'profilePicture', textContent: userInfo.name.charAt(0) + userInfo.surname.charAt(0) }) }
+      else { profilePicture = createElement({ elementType: 'img', class: 'profilePicture', src: picturePath, alt: picturePath }) }
+      return profilePicture;
+    }
+
+    function createCoverPictureElement(picturePath) {
+      let coverPhoto;
+      if (picturePath == null) { coverPhoto = createElement({ elementType: 'div', class: 'coverPhoto', textContent: userInfo.name + ' ' + userInfo.surname.charAt(0) + '.' }) }
+      else { coverPhoto = createElement({ elementType: 'img', class: 'coverPhoto', src: picturePath, alt: picturePath }) }
+      return coverPhoto;
+    }
+
+
     closeButton.addEventListener('click', closePopup)
     mainCentralProfileDiv.closePopup = closePopup
+    mainCentralProfileDiv.updateStatus = updateStatus
+    mainCentralProfileDiv.updateProfilePicture = updateProfilePicture
+    mainCentralProfileDiv.updateCoverPicture = updateCoverPicture
     openProfileDiv = mainCentralProfileDiv;
+    openPopupDiv = mainCentralProfileDiv
     return mainCentralProfileDiv
   }
 
@@ -5450,12 +5922,22 @@ let functionalityOptionsArray = [
     return progress
   }
 
+  function createSpinner() {
+    let spinner = createElement({ elementType: 'div', class: 'spinner', childrenArray: [createElement({ elementType: 'div' }), createElement({ elementType: 'div' }), createElement({ elementType: 'div' })] })
+    return spinner
+  }
+
+  function createDummyElement(message) {
+    let dummyElement = createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: message })
+    return dummyElement;
+  }
+
   // this deletes the cookie on exit if the user has chosed one time connection
   // this also preents ome from disconnecting
-  window.onbeforeunload = function () {
-    deleteAllCookies()
-    return 'Are you sure you want to leave?';
-  };
+  // window.onbeforeunload = function () {
+  //   deleteAllCookies()
+  //   return 'Are you sure you want to leave?';
+  // };
   function deleteAllCookies() {
     var cookies = document.cookie.split(";");
 
@@ -5497,15 +5979,17 @@ let functionalityOptionsArray = [
   }))
   socket.on('updateCalendarWithSelectedDay', (calendarEventObj => {
     calendarObject = calendarEventObj
+    console.log('selectedCalendarDate', selectedCalendarDate)
     if (selectedCalendarDate != null) { // if we are on an all events screen
       for (const key in calendarEventObj) {
         if (Object.hasOwnProperty.call(calendarEventObj, key)) {
           const dayEventsArray = calendarEventObj[key];
           if (key + '' == selectedCalendarDate) {
-            if (dayEventsArray.length > 0) {
-              eventSectionObject.displayDayOnlyOnSchedule(key, dayEventsArray)
+            // if (dayEventsArray.length > 0) {
+            console.log('happened', dayEventsArray)
+            eventSectionObject.displayDayOnlyOnSchedule(key, dayEventsArray)
 
-            }
+            // }
           }
         }
       }
@@ -5722,7 +6206,7 @@ let functionalityOptionsArray = [
         let searchresultIntroBlock = createElement({ elementType: 'div', class: 'editBlock', textContent: 'Search results:' })
         let resultsUsersDiv = createElement({
           elementType: 'div', class: 'editBlock flex-column', childrenArray: [
-            createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Search for users to invite in the box above, the results will appear here.' })
+            createDummyElement('Search for users to invite in the box above, the results will appear here.')
           ]
         })
 
@@ -5762,7 +6246,7 @@ let functionalityOptionsArray = [
             return userDiv
           }
           for (let i = 0; i < usersResult.length; i++) if (newEventCreation.inviteList.includes(usersResult[i].userID)) usersResult.splice(i, 1)
-          if (usersResult.length < 1) return resultsUsersDiv.append(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users found with given criteria.' }))
+          if (usersResult.length < 1) return resultsUsersDiv.append(createDummyElement('No users found with given criteria.'))
           for (let i = 0; i < usersResult.length; i++) resultsUsersDiv.appendChild(createSearchResutDiv(usersResult[i]))
         })
 
@@ -5880,7 +6364,7 @@ let functionalityOptionsArray = [
     let mainScheduleList = createElement({ elementType: 'div', class: 'mainScheduleList', childrenArray: [ListHeader, eventsContainer] })
     let scheduleDetailsSection = createElement({
       elementType: 'div', class: 'scheduleDetailsSection mobileHiddenElement tabletHiddenElement',
-      childrenArray: [createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any event to see its more details here' })]
+      childrenArray: [createDummyElement('Select > button on any event to see its more details here')]
     })
     let schedule_container = createElement({ elementType: 'div', class: 'schedule-container', childrenArray: [selectionPanel, mainScheduleList, scheduleDetailsSection] })
     time_scheduling_panel.append(schedule_container)
@@ -5913,6 +6397,7 @@ let functionalityOptionsArray = [
       const prevLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
       const totalMonthDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
       const startWeekDay = new Date(date.getFullYear(), date.getMonth(), 0).getDay();
+      let displayedMonthDates = []
       calendarDays.textContent = '';
       let totalCalendarDay = 6 * 7;
       for (let i = 0; i < totalCalendarDay; i++) {
@@ -5928,16 +6413,32 @@ let functionalityOptionsArray = [
           let dateYYYYMMDD_ISO = formatDate(date).substring(0, 10)
           console.log('dateYYYYMMDD_ISO', dateYYYYMMDD_ISO)
           let contentClass = 'noMeaning';
+          let selectedDayClass = selectedCalendarDate == dateYYYYMMDD_ISO ? 'selected-day' : '';
           if (calendarObject[dateYYYYMMDD_ISO]) contentClass = calendarObject[dateYYYYMMDD_ISO].length > 0 ? 'contentDay' : 'noMeaning';
+
+          let loadedDayClasses = [contentClass, dayClass];
+          if (selectedDayClass != '') loadedDayClasses.push(selectedDayClass)
+          console.log('loadedDayClasses', loadedDayClasses)
           let dayDiv = createElement({
-            elementType: 'div', class: contentClass + ' ' + dayClass, textContent: day + '', onclick: () => {
+            elementType: 'div', class: loadedDayClasses.join(" "), textContent: day + '', onclick: () => {
               let ckickDateCheck = date;
               ckickDateCheck.setDate(day);
               socket.emit('dayEvents', dateYYYYMMDD_ISO)
               selectedCalendarDate = dateYYYYMMDD_ISO
               showMainScheduleList()
+
+              for (let i = 0; i < displayedMonthDates.length; i++) {
+                const displayedMonthDate = displayedMonthDates[i];
+                displayedMonthDate.dayElement.classList.remove('selected-day')
+                let clickedDate = new Date(displayedMonthDate.date)
+                if (
+                  formatDate(clickedDate).substring(0, 10) != formatDate(new Date).substring(0, 10)
+                  && dateYYYYMMDD_ISO == formatDate(clickedDate).substring(0, 10)
+                ) displayedMonthDate.dayElement.classList.add('selected-day')
+              }
             }
           })
+          displayedMonthDates.push({ date: dateYYYYMMDD_ISO, dayElement: dayDiv })
           calendarDays.appendChild(dayDiv)
         } else { // adding next month days
           let dayDiv = createElement({ elementType: 'div', class: 'padding-day', textContent: (day - totalMonthDay) + "" })
@@ -5967,12 +6468,11 @@ let functionalityOptionsArray = [
       selectedCalendarDate = key
       mainScheduleListTitle.textContent = 'Scheduled Events on ' + new Date(key).toString('YYYY-MM-dd').substring(0, 16)
       if (dayEventsArray.length > 0) eventsContainer.appendChild(makeDay(key, dayEventsArray))
-      else eventsContainer.appendChild(
-        createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No Event scheduled on ' + new Date(key).toString('YYYY-MM-dd').substring(0, 16) })
+      else eventsContainer.appendChild(createDummyElement('No Event scheduled on ' + new Date(key).toString('YYYY-MM-dd').substring(0, 16))
       )
       showMainScheduleList() // display the main schedule list if we are on tablet or mobile
       scheduleDetailsSection.textContent = '' // clear the already displayed event
-      scheduleDetailsSection.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'Select > button on any event to see its more details here' }))
+      scheduleDetailsSection.appendChild(createDummyElement('Select > button on any event to see its more details here'))
     }
 
     function makeDay(dayKey, dayEventsArray) {
@@ -6125,7 +6625,7 @@ let functionalityOptionsArray = [
                   if (participant.attending == 1) { attendanceClass = 'bx bxs-user-minus'; attendanceTitle = 'Attendance not sure' }
                   if (participant.attending == 2) { attendanceClass = 'bx bxs-user-check'; attendanceTitle = 'Attending' }
                   return userForAttendanceList(participant.userInfo, [
-                    { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: attendanceClass })], title: attendanceTitle }), functionCall: () => { } },
+                    // { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: attendanceClass })], title: attendanceTitle }), functionCall: () => { } },
                     { element: createElement({ elementType: 'button', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] }), title: 'Initiate call with user', functionCall: () => { call(participant.userInfo.userID, true, false, false, false, null) } }
                   ])
                 })
@@ -6234,12 +6734,12 @@ let functionalityOptionsArray = [
 
   socket.on('favoriteUsers', (users) => {
     favContent.textContent = ''
-    if (users.length < 1) return favContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'You have not created any favorites yet \n Select ✰ button on any user in All users section to add them here' }));
+    if (users.length < 1) return favContent.appendChild(createDummyElement('You have not created any favorites yet \n Select ✰ button on any user in All users section to add them here'));
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
       let messageButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-      let callButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-      let videoButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let callButton = createElement({ elementType: 'button', class: 'desktopButton tabletHiddenElement', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', class: 'desktopButton tabletHiddenElement', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
       let favButton = createElement({ elementType: 'button', title: 'Remove from favorites', childrenArray: [createElement({ elementType: 'i', class: 'bx bx-x' })] })
 
       let actions = [
@@ -6261,13 +6761,13 @@ let functionalityOptionsArray = [
   })
   function displayAllUsers(users, fromSearch) {
     mainContent.textContent = ''
-    if (users.length < 1 && fromSearch == false) return mainContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No users in your organization' }));
-    if (users.length < 1 && fromSearch == true) return mainContent.appendChild(createElement({ elementType: 'div', class: 'dummyTemplateElement', textContent: 'No such users found in your organization' }));
+    if (users.length < 1 && fromSearch == false) return mainContent.appendChild(createDummyElement('No users in your organization'));
+    if (users.length < 1 && fromSearch == true) return mainContent.appendChild(createDummyElement('No such users found in your organization'));
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
       let messageButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Open chat', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-message-square-dots' })] })
-      let callButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
-      let videoButton = createElement({ elementType: 'button', class: 'desktopButton', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
+      let callButton = createElement({ elementType: 'button', class: 'desktopButton tabletHiddenElement', title: 'Initiate Audio call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-phone' })] })
+      let videoButton = createElement({ elementType: 'button', class: 'desktopButton tabletHiddenElement', title: 'Initiate Video call', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-video' })] })
       let favButton = createElement({ elementType: 'button', title: 'Add to favorites', childrenArray: [createElement({ elementType: 'i', class: 'bx bxs-star' })] })
 
       let actions = [
@@ -6285,16 +6785,21 @@ let functionalityOptionsArray = [
   window.addEventListener('online', showBackOnlineSuccess);
   window.addEventListener('offline', showOfflineError);
 
-  function showOfflineError(){
+  function showOfflineError() {
     // leaveCall();
     let feedback = [{ type: 'negative', message: 'Sorry, Your navigator is offline. in this situation you can neither make calls, send messages nor join meetins. Please try to solve the internet issue in order to continue enjoying Imperium Line.' }]
     displayServerError(feedback)
   }
-  function showBackOnlineSuccess(){
+  function showBackOnlineSuccess() {
     let feedback = [{ type: 'positive', message: 'You are back online! You can now perform calls, send messages and call on Imperium Line ' }]
-    displayServerError(feedback)  }
+    displayServerError(feedback)
+  }
 
 })(functionalityOptionsArray);
+
+document.body.addEventListener("mousemove", function () {
+  if (userFirstInteractionDone == false) userFirstInteractionDone = true; // set this to true in order to be able to play the initial tones (limitation introduced from HTML5)
+})
 
 
 /*
@@ -6414,3 +6919,10 @@ let functionalityOptionsArray = [
   ]
 }
 */
+// let button = document.createElement('button')
+// button = new EmojiMart.Picker(emojiPickerOptions)
+// button.style.width = '100%';
+// // button.style.height = '50px';
+// button.style.backgroundColor = 'red';
+// document.body.appendChild(button)
+// console.log(button)

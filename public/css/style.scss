@@ -270,23 +270,15 @@ body {
     &__link {
       text-decoration: none;
       padding: 1rem;
-      //display: block;
       color: var(--lightText);
       display: flex;
       align-items: center;
       cursor: pointer;
-      /*
-      background-color: transparent;
-      width: 100%;
-      border:  none; */
-
       transition: all 0.4s ease-in-out;
-
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
 
-      //width: 100%;
       p {
         flex: 1;
         white-space: nowrap;
@@ -995,47 +987,47 @@ body {
 
     }
 
-    div:first-of-type {
-      flex-basis: 10%;
+    // div:first-of-type {
+    //   flex-basis: 10%;
 
-      img {
-        object-fit: cover;
-        border: 1px solid var(--notification);
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
-        //display: block;
-        border-radius: $borderRadius;
+    //   img {
+    //     object-fit: cover;
+    //     border: 1px solid var(--notification);
+    //     width: 40px;
+    //     height: 40px;
+    //     margin-right: 10px;
+    //     //display: block;
+    //     border-radius: $borderRadius;
 
-        text-transform: uppercase;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: var(--lightText);
-        background-color: var(--notification);
+    //     text-transform: uppercase;
+    //     display: flex;
+    //     justify-content: center;
+    //     align-items: center;
+    //     color: var(--lightText);
+    //     background-color: var(--notification);
 
-        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-      }
+    //     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+    //   }
 
-      div {
-        border: 1px solid var(--notification);
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
-        border-radius: $borderRadius;
-        text-transform: uppercase;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: var(--lightText);
-        background-color: var(--notification);
-        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
-      }
-    }
+    //   div {
+    //     border: 1px solid var(--notification);
+    //     width: 40px;
+    //     height: 40px;
+    //     margin-right: 10px;
+    //     border-radius: $borderRadius;
+    //     text-transform: uppercase;
+    //     display: flex;
+    //     justify-content: center;
+    //     align-items: center;
+    //     color: var(--lightText);
+    //     background-color: var(--notification);
+    //     box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.897);
+    //   }
+    // }
 
-    div:last-of-type {
-      flex-basis: 75%;
-    }
+    // div:last-of-type {
+    //   flex-basis: 75%;
+    // }
   }
 
   &__title {
@@ -1170,6 +1162,7 @@ body {
   background-color: var(--secondaryBackground);
   border-radius: 15px;
   overflow: hidden;
+  z-index: 2;
 
   .openedChatDetailsTopSection {
     display: flex;
@@ -1526,20 +1519,20 @@ body {
   flex-grow: 1;
 }
 
-.message-group-received>div:first-child>.memberProfilePicture {
-  border-radius: $borderRadius;
-  // height: 25px;
-  width: 25px;
-  object-fit: cover;
-  background: var(--notification);
-  color: var(--lightText);
-  text-transform: uppercase;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
-}
+// .message-group-received>div:first-child>.memberProfilePicture {
+//   border-radius: $borderRadius;
+//   // height: 25px;
+//   width: 25px;
+//   object-fit: cover;
+//   background: var(--notification);
+//   color: var(--lightText);
+//   text-transform: uppercase;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   cursor: pointer;
+//   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.753);
+// }
 
 
 .message-received {
@@ -1976,7 +1969,7 @@ body {
     }
 
     &:hover {
-      color: var(--hoverColor);
+      color: var(--lightText);
 
       svg,
       i {}
@@ -2394,7 +2387,8 @@ body {
     box-shadow: 3px 3px 10px -2px rgba(0, 0, 0, 0.5);
     gap: 1rem;
 
-    p,i{
+    p,
+    i {
       font-size: 2rem;
       font-weight: bold;
     }
@@ -2422,7 +2416,7 @@ body {
     overflow: hidden;
   }
 
-  .allUsersSearch{
+  .allUsersSearch {
     padding: 1rem;
     margin: 1rem;
     background-color: var(--tertiaryBackground);
@@ -2432,7 +2426,7 @@ body {
     border: none;
   }
 
-  .content{
+  .content {
     overflow-y: auto;
     margin: 1rem;
   }
@@ -2478,25 +2472,25 @@ body {
         height: 100%;
 
 
-        .memberProfilePicture {
-          border: 1px solid var(--notification);
-          width: 40px;
-          height: 40px;
-          border-radius: $borderRadius;
-          text-transform: uppercase;
-          display: -webkit-box;
-          display: -ms-flexbox;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          color: var(--lightText);
-          background-color: var(--notification);
-          box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-          transition: all 0.4s;
-          flex-shrink: 0;
-          object-fit: cover;
-          cursor: pointer;
-        }
+        // .memberProfilePicture {
+        //   border: 1px solid var(--notification);
+        //   width: 40px;
+        //   height: 40px;
+        //   border-radius: $borderRadius;
+        //   text-transform: uppercase;
+        //   display: -webkit-box;
+        //   display: -ms-flexbox;
+        //   display: flex;
+        //   justify-content: center;
+        //   align-items: center;
+        //   color: var(--lightText);
+        //   background-color: var(--notification);
+        //   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+        //   transition: all 0.4s;
+        //   flex-shrink: 0;
+        //   object-fit: cover;
+        //   cursor: pointer;
+        // }
 
         .memberNameRole {
           display: flex;
@@ -2626,7 +2620,7 @@ body {
             width: 100%;
             display: flex;
             flex-direction: column;
-
+            gap: 1rem;
             box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
             border-radius: $borderRadius;
             background-color: var(--primaryBackground);
@@ -2640,31 +2634,6 @@ body {
               display: flex;
               gap: 0.5rem;
               align-items: center;
-
-              .picture {
-                background-color: var(--notification);
-                height: 40px;
-                width: 40px;
-                border-radius: $borderRadius;
-                box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: var(--lightText);
-
-                img,
-                div {
-                  height: 38px;
-                  width: 38px;
-                  border-radius: $borderRadius;
-                  object-fit: cover;
-
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  text-transform: uppercase;
-                }
-              }
 
               .nameAndType {
                 flex: 1;
@@ -2701,30 +2670,7 @@ body {
             .line2 {
               display: flex;
               flex-wrap: wrap;
-
-              .picture {
-
-                height: 40px;
-                width: 40px;
-                border-radius: $borderRadius;
-                box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.75);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-
-                img,
-                div {
-                  height: 38px;
-                  width: 38px;
-                  border-radius: $borderRadius;
-                  object-fit: cover;
-
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  background-color: var(--notification);
-                }
-              }
+              gap: 0.5rem;
             }
 
             &:hover {
@@ -3075,24 +3021,24 @@ body {
           height: 100%;
           color: var(--lightText);
 
-          .memberProfilePicture {
-            border: 1px solid var(--notification);
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
-            border-radius: $borderRadius;
-            text-transform: uppercase;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--lightText);
-            background-color: var(--notification);
-            box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-            transition: all 0.4s;
-            flex-shrink: 0;
-            object-fit: cover;
-            cursor: pointer;
-          }
+          // .memberProfilePicture {
+          //   border: 1px solid var(--notification);
+          //   width: 40px;
+          //   height: 40px;
+          //   margin-right: 10px;
+          //   border-radius: $borderRadius;
+          //   text-transform: uppercase;
+          //   display: flex;
+          //   justify-content: center;
+          //   align-items: center;
+          //   color: var(--lightText);
+          //   background-color: var(--notification);
+          //   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          //   transition: all 0.4s;
+          //   flex-shrink: 0;
+          //   object-fit: cover;
+          //   cursor: pointer;
+          // }
 
           .memberNameRole {
             display: flex;
@@ -3163,26 +3109,26 @@ body {
           height: 100%;
 
 
-          .memberProfilePicture {
-            border: 1px solid var(--notification);
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
-            border-radius: $borderRadius;
-            text-transform: uppercase;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--lightText);
-            background-color: var(--notification);
-            box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-            transition: all 0.4s;
-            flex-shrink: 0;
-            object-fit: cover;
-            cursor: pointer;
-          }
+          // .memberProfilePicture {
+          //   border: 1px solid var(--notification);
+          //   width: 40px;
+          //   height: 40px;
+          //   margin-right: 10px;
+          //   border-radius: $borderRadius;
+          //   text-transform: uppercase;
+          //   display: -webkit-box;
+          //   display: -ms-flexbox;
+          //   display: flex;
+          //   justify-content: center;
+          //   align-items: center;
+          //   color: var(--lightText);
+          //   background-color: var(--notification);
+          //   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+          //   transition: all 0.4s;
+          //   flex-shrink: 0;
+          //   object-fit: cover;
+          //   cursor: pointer;
+          // }
 
           .memberNameRole {
             display: flex;
@@ -3411,24 +3357,24 @@ body {
               border-radius: $borderRadius;
               margin-bottom: .5rem;
 
-              .memberProfilePicture {
-                border: 1px solid var(--notification);
-                width: 40px;
-                height: 40px;
-                margin-right: 10px;
-                border-radius: $borderRadius;
-                text-transform: uppercase;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: var(--lightText);
-                background-color: var(--notification);
-                box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-                transition: all 0.4s;
-                flex-shrink: 0;
-                object-fit: cover;
-                cursor: pointer;
-              }
+              // .memberProfilePicture {
+              //   border: 1px solid var(--notification);
+              //   width: 40px;
+              //   height: 40px;
+              //   margin-right: 10px;
+              //   border-radius: $borderRadius;
+              //   text-transform: uppercase;
+              //   display: flex;
+              //   justify-content: center;
+              //   align-items: center;
+              //   color: var(--lightText);
+              //   background-color: var(--notification);
+              //   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+              //   transition: all 0.4s;
+              //   flex-shrink: 0;
+              //   object-fit: cover;
+              //   cursor: pointer;
+              // }
 
               .memberNameRole {
                 display: flex;
@@ -3595,7 +3541,8 @@ body {
         &.fitVideoToWindow {
           width: 100%;
           height: unset;
-          object-fit: none;
+          object-fit: contain;
+          border-radius: 0;
         }
       }
 
@@ -3657,7 +3604,8 @@ body {
             border: none;
             outline: none;
             background: var(--transparentBg);
-            color: var(--lightText);
+            // color: var(--lightText);
+            color: white;
             cursor: pointer;
 
             &:hover {
@@ -3683,9 +3631,9 @@ body {
             border: none;
             outline: none;
             background: rgba(0, 0, 0, 0.5);
-            color: var(--lightText);
+            // color: var(--lightText);
+            color: white;
             cursor: pointer;
-            //backdrop-filter: blur(5px);
 
             &:hover {
               background: rgba(0, 0, 0, 0.795);
@@ -4463,24 +4411,24 @@ body {
       color: var(--lightText);
       // margin-bottom: .5rem;
 
-      .memberProfilePicture {
-        border: 1px solid var(--notification);
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
-        border-radius: $borderRadius;
-        text-transform: uppercase;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: var(--lightText);
-        background-color: var(--notification);
-        box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
-        transition: all 0.4s;
-        flex-shrink: 0;
-        object-fit: cover;
-        cursor: pointer;
-      }
+      // .memberProfilePicture {
+      //   border: 1px solid var(--notification);
+      //   width: 40px;
+      //   height: 40px;
+      //   margin-right: 10px;
+      //   border-radius: $borderRadius;
+      //   text-transform: uppercase;
+      //   display: flex;
+      //   justify-content: center;
+      //   align-items: center;
+      //   color: var(--lightText);
+      //   background-color: var(--notification);
+      //   box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.9);
+      //   transition: all 0.4s;
+      //   flex-shrink: 0;
+      //   object-fit: cover;
+      //   cursor: pointer;
+      // }
 
       .memberNameRole {
         display: flex;
@@ -4547,7 +4495,8 @@ body {
       border: none;
       outline: none;
       background: rgba(0, 0, 0, 0.5);
-      color: var(--lightText);
+      // color: var(--lightText);
+      color: white;
       cursor: pointer;
       //backdrop-filter: blur(5px);
 
@@ -4821,8 +4770,13 @@ body {
       }
 
       .selected-day {
-        border: 1px solid var(--lightText);
         border-radius: $borderRadius;
+        background-color: var(--primaryBackground);
+        color: var(--hoverColor);
+        border-radius: $borderRadius;
+        transition: 0.1s;
+        cursor: pointer;
+        box-shadow: inset 0px 0px 0px 1.5px var(--notification);
       }
 
       .calendar-toolbar>[class$="month-btn"]:hover,
@@ -5260,6 +5214,30 @@ body {
         border: 3px solid var(--tertiaryBackground);
       }
 
+      .offlineIndicator {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 30px;
+        width: 30px;
+        aspect-ratio: 1;
+        background-color: grey;
+        border-radius: $borderRadius;
+        border: 3px solid var(--tertiaryBackground);
+      }
+
+      .onCallIndicator {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 30px;
+        width: 30px;
+        aspect-ratio: 1;
+        background-color: red;
+        border-radius: $borderRadius;
+        border: 3px solid var(--tertiaryBackground);
+      }
+
       .photoActions {
         position: absolute;
         bottom: 0;
@@ -5282,7 +5260,6 @@ body {
 
       .email {
         cursor: pointer;
-        color: var(--notification);
         text-decoration: none;
         font-size: 1.2rem;
       }
@@ -5831,7 +5808,7 @@ body {
               }
             }
 
-            .delegatedByText{
+            .delegatedByText {
               padding: 0 1rem;
             }
 
@@ -5877,6 +5854,43 @@ body {
   }
 }
 
+.identifier {
+  border: 1px solid var(--notification);
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  height: 40px;
+  border-radius: $borderRadius;
+  text-transform: uppercase;
+
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .onlineStatus {
+    width: 10px;
+    height: 10px;
+    border-radius: $borderRadius;
+
+    position: absolute;
+    right: -1px;
+    top: -1px;
+
+    &.online {
+      background-color: green;
+    }
+
+    &.onCall {
+      background-color: red;
+    }
+
+    &.offline {
+      background-color: gray;
+    }
+  }
+}
+
 .memberProfilePicture {
   border: 1px solid var(--notification);
   width: 40px;
@@ -5915,7 +5929,7 @@ body {
         padding: 1rem;
         min-width: 100%;
         height: 100%;
-        z-index: 2;
+        z-index: 3;
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.164);
 
         &.expanded {
@@ -5977,12 +5991,12 @@ body {
 
 
   .c-openchat__box__info {
-    margin-bottom: 61.2px;
+    // margin-bottom: 61.2px;
   }
 
   .typingBox {
-    position: fixed;
-    bottom: 0;
+    // position: fixed;
+    // bottom: 0;
 
   }
 
@@ -6115,7 +6129,7 @@ body {
     display: flex !important;
   }
 
-  .desktopButton{
+  .desktopButton {
     display: none !important;
   }
 
@@ -6127,15 +6141,17 @@ body {
     width: 100%;
   }
 
-  .c-all_users_panel{
+  .c-all_users_panel {
     flex-direction: column;
     padding-top: calc(30px + 3rem);
     width: 100%;
-    .allUsersFavourites{
+
+    .allUsersFavourites {
       height: none;
       margin: 1rem;
     }
-    .allUsersMain{
+
+    .allUsersMain {
       height: none;
       margin: 1rem;
     }
@@ -6199,7 +6215,7 @@ body {
 
       box-shadow: 0px 0px 20px -7px rgb(0 0 0);
       height: calc(100% - 2rem);
-      z-index: 2;
+      z-index: 4;
     }
 
     .call-container {
@@ -6234,7 +6250,7 @@ body {
         top: 0;
         padding: 1rem;
         min-width: 350px;
-        z-index: 2;
+        z-index: 4;
         box-shadow: 0px 0px 17px -7px rgba(0, 0, 0, 0.836);
 
         &.expanded {
@@ -6318,4 +6334,31 @@ body {
   .list-option:hover {
     background-color: var(--focusAreaBackgroundColor);
   }
+}
+
+.squareCorners{
+  border-radius: 0% !important;
+}
+
+:host {
+  border-radius: 0px !important;
+}
+
+#preview {
+  height: 3rem !important;
+  font-size: small;
+}
+
+em-emoji-picker {
+  // display: none;
+  width: 100%;
+  border-radius: 0% !important;
+}
+
+.emojiPickerBoxOpen {
+  display: block;
+}
+
+#root {
+  display: none !important;
 }

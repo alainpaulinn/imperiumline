@@ -129,14 +129,27 @@ visibleLabels.forEach(visibleLabel => {
   })
 })
 
+
+function toogleTheme() {
+  if (themeToggler.checked) setDarkTheme()
+  else setLightTheme()
+}
+
+function setDarkTheme() {
+  document.body.classList.add('dark')
+  document.body.classList.remove('light')
+  localStorage.setItem('imperiumLine_theme', 'dark')
+}
+function setLightTheme() {
+  document.body.classList.add('light')
+  document.body.classList.remove('dark')
+  localStorage.setItem('imperiumLine_theme', 'light')
+}
 let themeToggler = document.getElementById('themeToggler')
-themeToggler.addEventListener('change', () => {
-  if (themeToggler.checked) {
-    document.body.classList.add('light')
-    document.body.classList.remove('dark')
-  }
-  else {
-    document.body.classList.add('dark')
-    document.body.classList.remove('light')
-  }
-})
+themeToggler.addEventListener('change', toogleTheme)
+
+let previousThemeSetting = localStorage.getItem('imperiumLine_theme')
+if (previousThemeSetting) {
+  if (previousThemeSetting == 'dark') { themeToggler.checked = true; setDarkTheme(); }
+  if (previousThemeSetting == 'light') { themeToggler.checked = false; setLightTheme() }
+}

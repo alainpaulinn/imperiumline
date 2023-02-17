@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "Node Chat application and shift management in an organisation created on occasion of graduation project by Alain Paulin Niyonkuru",
+  "description": "Node Video, audio and text Chat application and time management in an organisation created on occasion of graduation project by Alain Paulin Niyonkuru",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -19,8 +19,10 @@
     "express-handlebars": "^6.0.2",
     "express-session": "^1.17.2",
     "hbs": "^4.1.2",
+    "helmet": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
+    "nodemailer": "^6.8.0",
     "nodemon": "^2.0.17",
     "password-validator": "^5.3.0",
     "path": "^0.12.7",
@@ -28,6 +30,7 @@
     "socket.io": "^4.2.0",
     "socketio-file-upload": "^0.7.3",
     "uuid": "^8.3.2",
-    "uuidv4": "^6.2.12"
+    "uuidv4": "^6.2.12",
+    "x-xss-protection": "^2.0.0"
   }
 }

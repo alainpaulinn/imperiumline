@@ -56,6 +56,16 @@ CREATE TABLE `user` (
   FOREIGN KEY (`company_id`) REFERENCES companies(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `pwrecoverylinks` ( 
+  `id` INT NOT NULL AUTO_INCREMENT , 
+  `userID` INT NOT NULL , 
+  `link` text NOT NULL ,
+  `creationdate` datetime NOT NULL DEFAULT current_timestamp(),
+  `isexpired` INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`userID`) REFERENCES user(`id`) ON DELETE CASCADE
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `favouriteusers` ( 
   `id` INT NOT NULL AUTO_INCREMENT , 
   `favOwner` INT NOT NULL , 

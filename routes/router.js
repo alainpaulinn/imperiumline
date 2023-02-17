@@ -25,7 +25,13 @@ const redirectToLogin = (req, res, next) => {
 router.get('/', redirectToHome, (req, res) => { res.render('index') });
 router.get('/connect', redirectToLogin, (req, res) => { res.render('connect') });
 router.get('/signUp', redirectToLogin, (req, res) => { res.render('signUp') });
+router.get('/recovery', redirectToLogin, (req, res) => { res.render('recovery') });
 router.get('/admin', redirectToHome, (req, res) => { res.render('admin') });
+
+
+router.get('/sitemap.xml', (req, res) => { res.send('sitemap.xml') }); // allow google and search engines to check and map my site for easy discoverability
+// router.get('/robots.txt', (req, res) => { res.send('robots.txt') }); // allow google and search engines to check and map my site for easy discoverability
+router.get('/.well-known/security.txt', (req, res) => { res.send('/.well-known/security.txt') }); // allow ethical hackers to be able to reach out to me if they find any security issues
 
 router.get('/profiles*', function (req, res) {
   console.log(req.session.userId)

@@ -1,0 +1,3 @@
+If you find any security vulnerabilities in this application,
+Please reach out to me via alainpaulinn@gmail.com
+Your help will be much appreciated.

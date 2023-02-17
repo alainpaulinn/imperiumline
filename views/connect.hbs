@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/connect.css">
     <link rel="stylesheet" href="/css/connectBackground.css">
-    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script src="/js/handlebars.js"></script>
     <title>Imperium Line</title>
 </head>
 
@@ -76,7 +76,7 @@
                             </div> --}}
                         </div>
                         <div class="input-control">
-                            <a href="#" class="text text-links">Forgot Password <i class='bx bx-shield-quarter'></i></a>
+                            <a href="/recovery" class="text text-links">Forgot Password <i class='bx bx-shield-quarter'></i></a>
                             <input type="submit" name="submit" class="input-submit" value="Login">
                         </div>
                     </form>
@@ -134,20 +134,11 @@
         </section>
     </div>
     <div class="footer">
-        <a href="mailto:alainpaulinn@gmail.com">Contact Us</a>
-        <a href="/download/windows">
-            <p>Windows</p><i class='bx bxl-windows'></i>
-        </a>
-        <a href="/download/mac">
-            <p>Mac</p><i class='bx bxl-apple'></i>
-        </a>
-        <a href="/download/linux">
-            <p>Linux</p><i class='bx bxl-tux'></i>
-        </a>
+        {{>landingFooter}}
     </div>
     <div class="notifications" id="notificationsDiv">
     </div>
-    <script src="/js/jquery.min.js"></script>
+    {{!-- <script src="/js/jquery.min.js"></script> --}}
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/connect.js"></script>
 </body>

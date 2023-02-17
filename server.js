@@ -1,6 +1,45 @@
+const scriptSrcUrls = [] // here we keep a list of our external scripts
+const styleSrcUrls = ["'unsafe-inline'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"] // here we keep a list of our external styles
+const fontSrcUrls = ["https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://fonts.gstatic.com"] // here we keep a list of our external fonts
+const connectSrcUrls = ["wss://*.imperiumline.com", "https://*.imperiumline.com", "https://cdn.jsdelivr.net"] // here we keep a list of our external connections
+
+const selfLink = "'self'"
+
 const path = require('path');
 const express = require('express');
-const app = express();
+const helmet = require('helmet');
+const app = express(); // app.use(helmet())
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: [selfLink],
+      connectSrc: [selfLink, ...connectSrcUrls],
+      scriptSrc: [selfLink, ...scriptSrcUrls],
+      styleSrc: [selfLink, ...styleSrcUrls],
+      workerSrc: [selfLink],
+      objectSrc: [selfLink],
+      imgSrc: [selfLink],
+      fontSrc: [selfLink, ...fontSrcUrls],
+    },
+    referrerPolicy: { policy: "no-referrer" }
+  })
+);
+const ninetyDaysInSeconds = 5184000 // 90 * 24 * 60 * 60
+app.use(helmet.hsts({
+  maxAge: ninetyDaysInSeconds,
+  includeSubDomains: true,
+  preload: true
+})) //Strict Transport Security tells the browser to never again visit our website on http during the period mentioned
+app.use(helmet.frameguard({ action: 'deny' })); // X Frame Options http header prevents our website to be framed into another or vice versa
+app.use(helmet.noSniff());
+app.use(helmet.ieNoOpen());
+app.use(helmet.xssFilter());
+app.use(helmet.hidePoweredBy()); // Removes the X-Powered-By header if it was set.
+
+
+// const xXssProtection = require("x-xss-protection");
+// app.use(xXssProtection()); // Set "X-XSS-Protection: 0"
+
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
@@ -126,6 +165,11 @@ io.on('connection', (socket) => {
       socket.emit('favoriteUsers', await getUserFavorites(id))
       socket.emit('allUsers', await getCompanyUsers(company_id))
 
+      let oncallUserFound = false
+      for (let i = 0; i < connectedUsers.length; i++) {
+        if (connectedUsers[i].id == id && connectedUsers[i].status == 'onCall') oncallUserFound = true
+      }
+      if (!oncallUserFound) saveAndSendStatus(id, 'online')
     })
     // prepare to receive files
     // Make an instance of SocketIOFileUpload and listen on this socket:
@@ -162,24 +206,26 @@ io.on('connection', (socket) => {
     });
 
     // Do something when a file is saved:
-    uploader.on("saved", (event) => {
+    uploader.on("saved", async (event) => {
       // event.file.clientDetail.name = event.file.name;
       let fileName = makeid(25)
       switch (event.file.meta.fileRole) {
         case 'profilePicture':
           fs.renameSync('private/profiles/' + event.file.name, 'private/profiles/' + fileName);
           updateDBProfilePicture(id, 'private/profiles/' + fileName)
+          sendNewProfilePicture(await getDBProfilePicture(id))
           break;
         case 'coverPicture':
           fs.renameSync('private/cover/' + event.file.name, 'private/cover/' + fileName);
           updateDBCoverPicture(id, 'private/cover/' + fileName)
+          sendNewCoverPicture(await getDBCoverPicture(id))
           break;
         case 'groupProfilePicture':
           let picturePath = 'private/profiles/' + fileName
           let roomID = event.file.meta.roomID
           fs.renameSync('private/profiles/' + event.file.name, picturePath);
           updateDBGroupPicture(roomID, picturePath)
-          io.sockets.in(roomID + '').emit('chatProfilePictureChange', { profilePicture: picturePath, roomID: roomID });
+          io.sockets.in(roomID + '').emit('groupPictureChange', { path: picturePath, roomID: roomID });
           socket.emit('serverFeedback', [{ type: 'positive', message: 'the group profile picture was changed successfully.' }])
           break;
       }
@@ -191,27 +237,81 @@ io.on('connection', (socket) => {
       console.log("Error from uploader", event);
       socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while Uploading the file.' }])
     });
-    socket.on("deleteCoverPicture", () => {
+    socket.on("deleteCoverPicture", async () => {
       deleteCoverPicture(id)
+      sendNewCoverPicture(await getDBCoverPicture(id))
     })
-    socket.on("deleteProfilePicture", () => {
+    socket.on("deleteProfilePicture", async () => {
       deleteProfilePicture(id)
+      sendNewProfilePicture(await getDBProfilePicture(id))
     })
+
+    socket.on("setOnlineStatus", (status) => {
+      switch (status) {
+        case 'offline':
+          saveAndSendStatus(id, status)
+          break;
+        case 'online':
+          saveAndSendStatus(id, status)
+          break;
+        // case 'onCall':
+        //   saveAndSendStatus(id, status)
+        //   break;
+
+        default:
+          let resultantStatus = 'offline';
+          for (let i = 0; i < connectedUsers.length; i++) {
+            if (connectedUsers[i].id == id) resultantStatus = 'online';
+          }
+          saveAndSendStatus(id, resultantStatus)
+          break;
+      }
+    })
+
+    function registeStatus(userID, newStatus) {
+      for (let i = 0; i < connectedUsers.length; i++) {
+        if (connectedUsers[i].id == userID) connectedUsers[i].status = newStatus;
+      }
+    }
+
+    function myStatusToAll(status) {
+      io.emit('onlineStatusChange', { userID: id, status: status });
+    }
+
+    function saveAndSendStatus(id, status) {
+      registeStatus(id, status)
+      myStatusToAll(status)
+    }
+
+    function sendNewProfilePicture(profilePicture) {
+      io.emit('userProfilePictureChange', { userID: id, path: profilePicture });
+    }
+    function sendNewCoverPicture(coverPicture) {
+      io.emit('userCoverPictureChange', { userID: id, path: coverPicture });
+    }
 
     socket.on('addFavourite', async (favoriteID) => {
       let serverFeedback = await addFavourite(id, favoriteID)
       if (serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while Adding the favorite.' }])
       //fill favorites and friends
-      socket.emit('favoriteUsers', await getUserFavorites(id))
-      socket.emit('allUsers', await getCompanyUsers(company_id))
+      for (let i = 0; i < connectedUsers.length; i++) {
+        if(connectedUsers[i].id == id){
+          connectedUsers[i].socket.emit('favoriteUsers', await getUserFavorites(id))
+          connectedUsers[i].socket.emit('allUsers', await getCompanyUsers(company_id))
+        }
+      }
     })
     socket.on('removeFavourite', async (favoriteID) => {
       let serverFeedback = await removeFavourite(id, favoriteID)
       if (serverFeedback.type == 'negative') return socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while removing the favorite.' }])
       //fill favorites and friends
       console.log('Removing favorite', serverFeedback)
-      socket.emit('favoriteUsers', await getUserFavorites(id))
-      socket.emit('allUsers', await getCompanyUsers(company_id))
+      for (let i = 0; i < connectedUsers.length; i++) {
+        if(connectedUsers[i].id == id){
+          connectedUsers[i].socket.emit('favoriteUsers', await getUserFavorites(id))
+          connectedUsers[i].socket.emit('allUsers', await getCompanyUsers(company_id))
+        }
+      }
     })
     socket.on('searchAllUsersFavorites', async (searchterm) => {
       let users = await searchUsers(searchterm, id, company_id, true, 15)
@@ -224,7 +324,7 @@ io.on('connection', (socket) => {
       if (thisParticipant == undefined) return console.log('this user cannot delete conversation profile picture because he is not part of the group')
 
       deleteGroupProfilePicture(roomID)
-      io.sockets.in(roomID + '').emit('chatProfilePictureChange', { profilePicture: 'private/profiles/group.jpeg', roomID: roomID })
+      io.sockets.in(roomID + '').emit('groupPictureChange', { profilePicture: 'private/profiles/group.jpeg', roomID: roomID })
       socket.emit('serverFeedback', [{ type: 'positive', message: 'Group chat profile picture removed successfully.' }])
     })
     //-----------------------------------
@@ -243,28 +343,15 @@ io.on('connection', (socket) => {
 
       let fDate = formatDate(new Date())
       if (expectedUser && message.message != "") {
-        db.query('INSERT INTO `message`(`message`, `roomID`, `userID`, `timeStamp`) VALUES (?,?,?,?)', [message.message, message.toRoom, id, fDate || message.timeStamp], async (err, participantResult) => {
+        db.query('INSERT INTO `message`(`message`, `roomID`, `userID`, `timeStamp`) VALUES (?,?,?,?)', [message.message, message.toRoom, id, fDate || message.timeStamp], async (err, messageInsertResult) => {
           if (err) return console.log(err)
           db.query('UPDATE `room` SET `lastActionDate` = ? WHERE `room`.`chatID` = ?;', [fDate || message.timeStamp, message.toRoom], async (err, updateLastAction) => {
             if (err) return console.log(err)
-            db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id`= ?', [participantResult.insertId], async (err, messageResult) => {
+            db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id`= ?', [messageInsertResult.insertId], async (err, messageResult) => {
               if (err) return console.log(err)
-              message.taggedMessages.forEach(taggedMessage => {
-                db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id` = ?', [taggedMessage], async (err, referencedMessageResult) => {
-                  if (err) return console.log(err)
-                  if (referencedMessageResult.length > 0) {
-                    if (referencedMessageResult[0].roomID == message.toRoom) {
-                      db.query("INSERT INTO `messagetags`(`messageId`, `tagMessageId`) VALUES ('?','?')", [participantResult.insertId, taggedMessage], async (err, insertedTag) => {
-                        if (err) return console.log(err)
-                        console.log(`Tag ${insertedTag.insertId} is inserted`)
-                      })
-                    }
-                    else console.log(`User ${id} tried to tag Message ${participantResult.insertId} which is not from group ${message.toRoom} it is from ${referencedMessageResult[0].roomID}`)
-                  }
-                })
+              registerMessageTags(messageInsertResult.insertId, message) // register
 
-              });
-              let insertedMessage = {
+              /*let insertedMessage = {
                 id: messageResult[0].id,
                 roomID: messageResult[0].roomID,
                 message: messageResult[0].message,
@@ -278,8 +365,9 @@ io.on('connection', (socket) => {
                 },
                 tagContent: await getMessageTags(messageResult[0].id),
                 userInfo: await getUserInfo(id)
-              }
-              console.log("Last inserted ID", participantResult.insertId)
+              }*/
+              let insertedMessage = { userInfo: await getUserInfo(id), ... await getMessageFullInfo(messageInsertResult.insertId) }
+              console.log("Last inserted ID", messageInsertResult.insertId)
               let chatInfo = await getRoomInfo(message.toRoom, id)
               io.sockets.in(message.toRoom + '').emit('newMessage', { chatInfo, expectedUser, insertedMessage });
             })
@@ -292,7 +380,16 @@ io.on('connection', (socket) => {
       let access_roomId = await checkMessageOwnership(messageId, id)
       if (access_roomId == false) return console.log('user cannot delete a message that does not belong to him')
       let deleteResult = await deleteMessage(messageId)
-      if (deleteResult.type == 'positive') io.sockets.in(messageId + '').emit('deletedMessage', { roomId: access_roomId, messageId: messageId });
+      if (deleteResult.type == 'positive') {
+        io.sockets.in(access_roomId + '').emit('deletedMessage', { roomId: access_roomId, messageId: messageId });
+        let chatInfo = await getRoomInfo(access_roomId, id)
+        console.log('chatInfo', chatInfo, chatInfo.lastmessage.id == messageId)
+
+        if (chatInfo.lastmessage.id == messageId) {
+          io.sockets.in(access_roomId + '').emit('lastMessageDeleted', chatInfo);
+        }
+
+      }
       socket.emit('serverFeedback', [deleteResult])
     })
     socket.on('searchPeople', async (searchPeople) => {
@@ -376,9 +473,13 @@ io.on('connection', (socket) => {
           socket.emit('serverFeedback', [{ type: 'negative', message: 'An error occurred while changing the group name.' }])
         }
         else {
-          // if(roomName == null || roomName?.trim == ''){
-          //   changeDetails.roomName = groupMembers.map(user => user.name + ' ' + user.surname).join();
-          // }
+          if (roomName == null || roomName == '') {
+            changeDetails.roomName = groupMembers.map(user => user.name + ' ' + user.surname).join(', ');
+            changeDetails.madeUp = true; // indicates that we sent a list of users as group name
+          }
+          else {
+            changeDetails.madeUp = false; // indicates that we sent the real group name
+          }
           io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
           socket.emit('serverFeedback', [{ type: 'positive', message: 'the group name was changed successfully.' }])
         }
@@ -405,14 +506,16 @@ io.on('connection', (socket) => {
     socket.on('addRoomParticipantsSearch', async (changeDetails) => {
       let { roomID, searchText } = changeDetails
       let groupMembers = await getRoomParticipantArray(roomID)
+      console.log(searchText, id, company_id, false, 15)
       let foundUsers = await searchUsers(searchText, id, company_id, false, 15)
+      let usersToPassOn = []
       console.log("found users", foundUsers)
       for (let i = 0; i < foundUsers.length; i++) {
-        for (let j = 0; j < groupMembers.length; j++) {
-          if (foundUsers[i]?.userID === groupMembers[j].userID) foundUsers.splice(i, 1);
+        if (groupMembers.filter(user => user.userID == foundUsers[i].userID).length == 0) {
+          usersToPassOn.push(foundUsers[i])
         }
       }
-      socket.emit('addRoomParticipantsSearch', foundUsers)
+      socket.emit('addRoomParticipantsSearch', usersToPassOn)
     })
 
     socket.on('createNewGroupChatSearch', async (searchText) => {
@@ -469,8 +572,8 @@ io.on('connection', (socket) => {
           }
         }
         let chatDetails = await getChatRoomBasicInfo(roomID)
-        let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(), roomID: roomID }
-        if (chatDetails.type == 1 && chatDetails.name == null) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
+        let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(', '), roomID: roomID, madeUp: true } // madeup = true indicates that we sent a list of users as group name
+        if (chatDetails.type == 1 && (chatDetails.name == null || chatDetails.name == '')) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
       }
     })
 
@@ -490,16 +593,33 @@ io.on('connection', (socket) => {
             if (connectedUsers[i].id == userID) {
               connectedUsers[i].socket.leave(roomID + '')
               console.log('removeChatAccessElements', { roomID, userID });
-              socket.to(connectedUsers[i].socket.id).emit('removeChatAccessElements', { roomID, userID });
+              // socket.to(connectedUsers[i].socket.id).emit('removeChatAccessElements', { roomID, userID });
+              connectedUsers[i].socket.emit('removeChatAccessElements', { roomID, userID });
             }
           }
           let chatDetails = await getChatRoomBasicInfo(roomID)
-          let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(), roomID: roomID }
-          if (chatDetails.type == 1 && chatDetails.name == null) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
+          let changeDetails = { roomName: updatedRoomMembers.map(user => user.name + ' ' + user.surname).join(', '), roomID: roomID, madeUp: true } // madeup = true indicates that we sent a list of users as group name
+          if (chatDetails.type == 1 && (chatDetails.name == null || chatDetails.name == '')) io.sockets.in(roomID + '').emit('chatNameChange', changeDetails);
         }
       })
     })
 
+    socket.on('requestChatDetails', async roomID => {
+      let groupMembers = await getRoomParticipantArray(roomID)
+      let thisParticipant = groupMembers.find(participant => participant.userID === id)
+      if (thisParticipant == undefined) {
+        socket.emit('requestChatDetails', {
+          allowed: false
+        })
+        return console.log('this user cannot view chat detaails of the conversation because he is not part of the group')
+      }
+      else {
+        socket.emit('requestChatDetails', {
+          allowed: true, ...await getChatFullInfo(roomID, id)
+        })
+      }
+
+    })
 
 
     socket.on('messageReaction', (reactionIdentifiers) => {
@@ -523,12 +643,25 @@ io.on('connection', (socket) => {
                         console.log('reaction has updated successfully')
                         io.sockets.in(reactionIdentifiers.selectedChatId + '').emit('updateReaction',
                           {
-                            chat: reactionIdentifiers.selectedChatId,
+                            /* chat: reactionIdentifiers.selectedChatId,
                             message: reactionIdentifiers.messageId,
                             messageOwner: await getUserInfo(messageCheck[0].userID),
                             details: await getMessageReactions(reactionIdentifiers.messageId),
-                            available: await getAvailableMessageReactions(),
-                            performer: await getUserInfo(id)
+                            available: await getAvailableMessageReactions(), */
+                            userInfo: await getUserInfo(id), ... await getMessageFullInfo(reactionIdentifiers.messageId)
+                            /*id: messageResult[0].id,
+                            roomID: messageResult[0].roomID,
+                            message: messageResult[0].message,
+                            userID: messageResult[0].userID,
+                            timeStamp: messageResult[0].timeStamp,
+                            reactions: {
+                              chat: messageResult[0].roomID,
+                              message: messageResult[0].id,
+                              details: await getMessageReactions(messageResult[0].id),
+                              available: await getAvailableMessageReactions()
+                            },
+                            tagContent: await getMessageTags(messageResult[0].id),
+                            userInfo: await getUserInfo(id)*/
                           }
                         );
                       }
@@ -569,6 +702,7 @@ io.on('connection', (socket) => {
     })
 
     async function leaveAllPreviousCalls() {
+
       // check if this user is already on another call, and end that call before starting a new one
       let currentOngoingCalls = await getStillParticipatingCalls(id)
       for (let c = 0; c < currentOngoingCalls.length; c++) {
@@ -584,6 +718,10 @@ io.on('connection', (socket) => {
             if (connectedUsers[i].id == thisCallparticipants[j].userID) {
               // connectedUsers[i].socket.emit
               socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
+
+            }
+            if (connectedUsers[i].id == id) {
+              socket.to(connectedUsers[i].socket.id).emit('exitAllCalls')
             }
           }
         }
@@ -703,7 +841,7 @@ io.on('connection', (socket) => {
         let _calltype = videoPresentation == 1 ? "video" : "audio"
         let callInitiationInfo = { callUniqueId, callType: _calltype, groupMembersToCall_fullInfo, caller: await getUserInfo(id), allUsers: groupMembersToCall, callTitle: callTitle, callStage: 'initial' }
         socket.emit('prepareCallingOthers', callInitiationInfo);
-        console.log('callInitiationInfo2', callInitiationInfo)
+        socket.emit('updateCallLog', await getCallLog(id));
       }
 
       async function rejoinCall(groupMembersToCall, previousCallId) {
@@ -773,6 +911,8 @@ io.on('connection', (socket) => {
       let { myPeerId, callUniqueId, callType, callStage } = data;
       console.log('user ', id, ' has joined the call ', callUniqueId, ' and requests to be called')
 
+      // saveAndSendStatus(id, 'onCall')
+
       let thisCallparticipants = await getCallParticipants(callUniqueId) //get all people who are allowed in this call
       let thisUsershouldbeinthiscall = false
       for (var i = 0; i < thisCallparticipants.length; i++) { //For security purposes check if the answered person should be able to answer this call
@@ -782,8 +922,15 @@ io.on('connection', (socket) => {
 
       leaveAllPreviousCalls()// make sure that the user is not on another call
 
-      socket.emit('updateAllParticipantsList', thisCallparticipants) // this is because if someone answers this call, while the called has added other users, the caller will not have a list
+      let stillOnCallUsers = await getOnCallPeopleByStatus(callUniqueId, 1)
+      if(stillOnCallUsers.length < 1) { 
+        socket.emit('forceLeaveCall')
+        socket.emit('serverFeedback', [{ type: 'negative', message: 'You cannot answer this call because there is no longer anyone on the call' }])
+        return; 
+      }
 
+      socket.emit('updateAllParticipantsList', thisCallparticipants) // this is because if someone answers this call, while the called has added other users, the caller will not have a list
+      socket.to(callUniqueId + '-allAnswered-sockets').emit('updateAllParticipantsList', thisCallparticipants)
       //inform all users who accepted the call- to call me
       socket.to(callUniqueId + '-allAnswered-sockets').emit('connectUser', { peerId: myPeerId, userInfo: await getUserInfo(id), callType, callStage });
       setUserCallStatus(id, callUniqueId, 'onCall') // set this user to in-call status
@@ -795,9 +942,12 @@ io.on('connection', (socket) => {
           if (connectedUsers[i].id == thisCallparticipants[j].userID) {
             // connectedUsers[i].socket.emit
             socket.to(connectedUsers[i].socket.id).emit('updateCallLog', await getCallLog(connectedUsers[i].id));
+            socket.to(connectedUsers[i].socket.id).emit('removeCallNotification', callUniqueId);
           }
         }
       }
+
+      // saveAndSendStatus(id, 'onCall')
     })
 
     socket.on('callNotAnswered', async callUniqueId => {
@@ -839,6 +989,8 @@ io.on('connection', (socket) => {
         }
       }
       socket.emit('updateCallLog', await getCallLog(id));
+
+      saveAndSendStatus(id, 'online')
 
     })
     // search to add new users to call
@@ -978,36 +1130,39 @@ io.on('connection', (socket) => {
         return;
       }
       if (foundEvent.owner.userID == id) {
-        db.query("DELETE FROM `events` where eventId = ?", [eventId], async (err, result) => { })
-        socket.emit('serverFeedback', [{ type: 'positive', message: 'the event was deleted successfully' }])
         console.log('event found')
+        db.query("DELETE FROM `events` where eventId = ?", [eventId], async (err, result) => {
+          if (!err) socket.emit('serverFeedback', [{ type: 'positive', message: 'the event was deleted successfully' }])
+          else (console.log('An error occurred while deleting the event'))
 
-        let today = new Date()
-        let todayYear = today.getFullYear()
-        let lastYear = new Date(); lastYear.setFullYear(todayYear - 1)
-        let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)
-        let eventsToSend = await getEvents(id, lastYear, nextYear);
-        socket.emit('notificationUpdateCalendar', eventsToSend)
-        socket.emit('updateCalendarWithSelectedDay', eventsToSend)
+          let today = new Date()
+          let todayYear = today.getFullYear()
+          let lastYear = new Date(); lastYear.setFullYear(todayYear - 1)
+          let nextYear = new Date(); nextYear.setFullYear(todayYear + 1)
+          let eventsToSend = await getEvents(id, lastYear, nextYear);
+          socket.emit('notificationUpdateCalendar', eventsToSend)
+          socket.emit('updateCalendarWithSelectedDay', eventsToSend)
 
-        // foundEvent.Participants.forEach(async (participant) => {})
-        for (let i = 0; i < foundEvent.Participants.length; i++) {
-          const participant = foundEvent.Participants[i];
-          for (let j = 0; j < connectedUsers.length; j++) {
-            const connectedUser = connectedUsers[j];
-            if (connectedUser.id == participant.userInfo.userID) {
-              let _today = new Date()
-              let _todayYear = _today.getFullYear()
-              let _lastYear = new Date(); _lastYear.setFullYear(_todayYear - 1)
-              let _nextYear = new Date(); _nextYear.setFullYear(_todayYear + 1)
-              let _eventsToSend = await getEvents(connectedUser.id, _lastYear, _nextYear)
-              socket.to(connectedUser.socket.id).emit('notificationUpdateCalendar', _eventsToSend);
-              socket.to(connectedUser.socket.id).emit('updateCalendarWithSelectedDay', _eventsToSend)
+          // foundEvent.Participants.forEach(async (participant) => {})
+          for (let i = 0; i < foundEvent.Participants.length; i++) {
+            const participant = foundEvent.Participants[i];
+            for (let j = 0; j < connectedUsers.length; j++) {
+              const connectedUser = connectedUsers[j];
+              if (connectedUser.id == participant.userInfo.userID) {
+                let _today = new Date()
+                let _todayYear = _today.getFullYear()
+                let _lastYear = new Date(); _lastYear.setFullYear(_todayYear - 1)
+                let _nextYear = new Date(); _nextYear.setFullYear(_todayYear + 1)
+                let _eventsToSend = await getEvents(connectedUser.id, _lastYear, _nextYear)
+                socket.to(connectedUser.socket.id).emit('notificationUpdateCalendar', _eventsToSend);
+                socket.to(connectedUser.socket.id).emit('updateCalendarWithSelectedDay', _eventsToSend)
 
-              console.log('event object', _eventsToSend, _todayYear, connectedUser.id, _lastYear, _nextYear)
+                console.log('event object', _eventsToSend, _todayYear, connectedUser.id, _lastYear, _nextYear)
+              }
             }
           }
-        }
+        })
+
 
       }
       else {
@@ -1386,7 +1541,7 @@ io.on('connection', (socket) => {
             socket.to(room + '').emit('userDisconnectedFromCall', { userInfo: await getUserInfo(id), room: room })
             let callUniqueId = room.replace('-allAnswered-sockets', '');
             setUserCallStatus(id, callUniqueId, 'offCall')
-
+            console.log('callUniqueId', callUniqueId)
             let consernedMembers = await getCallParticipants(callUniqueId)
             let memberIDArray = consernedMembers.map(member => member.userID)
             for (let j = 0; j < connectedUsers.length; j++) {
@@ -1408,7 +1563,13 @@ io.on('connection', (socket) => {
       });
       connectedUsers = _connectedUsers;
       console.log("connectedUsers", connectedUsers)
+
+      let currentConnections = connectedUsers.filter(({ id }) => id === id).length
+      console.log("currentConnections", currentConnections)
+      io.emit('onlineStatusChange', { userID: id, status: 'offline' });
     });
+
+    // function checkifOnCall
 
     function informAllUserLeft(leftUser, callUniqueId) { }
   }
@@ -1437,6 +1598,29 @@ function formatDate(unfDate) {
   return fDate;
 }
 
+//receives arrays and makes union of them based on a defined property and its value
+// function xorOperationOnArrays(property, value, ...args) {
+//   let resultantArray = [];
+//   let resultValues = []
+//   for (var i = 0; i < args.length; i++) { //allarrays = args
+//     console.log('args............................................', property, args[i]);
+//     for (let j = 0; j < args[i].length; j++) { //1 array = args[i][j]
+//       const array = args[i][j];
+//       for (let k = 0; k < args[i][j].length; k++) { //object = args[i][j][k];
+//         const object = args[i][j][k];
+//         if(object[property] === value && !resultValues.contains(object[property])) {
+//           resultValues.push(object[property])
+//           resultantArray.push(object)
+//         } 
+//       }
+//     }
+//   }
+//   return resultantArray
+// }
+// xorOperationOnArrays(
+//   'userID', 3
+// )
+
 function addUserToRoom(userID, roomID) {
   return new Promise(function (resolve, reject) {
     db.query("INSERT IGNORE INTO `participants`(`userID`, `roomID`) VALUES (?,?)", [userID, roomID], async (err, result) => {
@@ -1453,6 +1637,42 @@ function createNewGroupChat(groupName) {
     })
   })
 }
+
+function getDBCoverPicture(userID) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `coverPicture` FROM `user` WHERE  `user`.`id` = ?', [userID], async (err, _myEvents) => {
+      if (err) {
+        resolve(null)
+        return console.log(err)
+      }
+      else if (_myEvents.length < 1) {
+        resolve(null)
+        return console.log("Unable to find cover picture for user: " + userID + " user does not exist")
+      }
+      else {
+        resolve(_myEvents[0].coverPicture)
+      }
+    })
+  })
+}
+function getDBProfilePicture(userID) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `profilePicture` FROM `user` WHERE  `user`.`id` = ?', [userID], async (err, _myEvents) => {
+      if (err) {
+        resolve(null)
+        return console.log(err)
+      }
+      else if (_myEvents.length < 1) {
+        resolve(null)
+        return console.log("Unable to find profile picture for user: " + userID + " user does not exist")
+      }
+      else {
+        resolve(_myEvents[0].profilePicture)
+      }
+    })
+  })
+}
+
 function updateDBCoverPicture(userID, fileName) {
   db.query('UPDATE `user` SET `coverPicture` = ? WHERE `user`.`id` = ?', [fileName, userID], async (err, _myEvents) => {
     if (err) return console.log(err)
@@ -1483,12 +1703,12 @@ function deleteGroupProfilePicture(roomID) {
     if (err) return console.log(err)
   })
 }
-let today = new Date()
-let lastYear = new Date()
-lastYear.setFullYear(today.getFullYear() - 1)
-let nextYear = new Date()
-nextYear.setFullYear(today.getFullYear() + 1)
-getEvents(3, lastYear, nextYear).then(console.log)
+// let today = new Date()
+// let lastYear = new Date()
+// lastYear.setFullYear(today.getFullYear() - 1)
+// let nextYear = new Date()
+// nextYear.setFullYear(today.getFullYear() + 1)
+// getEvents(3, lastYear, nextYear).then(console.log)
 // console.log(_events)
 function getEvents(userId, initalDate, endDate) {
   return new Promise(function (resolve, reject) {
@@ -1929,6 +2149,46 @@ function getMessageReactions(messageId) {
       });
   })
 }
+
+function getMessageFullInfo(messageId) {
+  return new Promise(function (resolve, reject) {
+    db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id`= ?', [messageId], async (err, messageResult) => {
+      if (err) return console.log(err)
+      resolve({
+        id: messageResult[0].id,
+        roomID: messageResult[0].roomID,
+        message: messageResult[0].message,
+        userID: messageResult[0].userID,
+        timeStamp: messageResult[0].timeStamp,
+        reactions: {
+          chat: messageResult[0].roomID,
+          message: messageResult[0].id,
+          details: await getMessageReactions(messageResult[0].id),
+          available: await getAvailableMessageReactions()
+        },
+        tagContent: await getMessageTags(messageResult[0].id),
+      })
+    })
+  })
+}
+
+function registerMessageTags(messageID, message) {
+  message.taggedMessages.forEach(taggedMessage => {
+    db.query('SELECT `id`, `message`, `roomID`, `userID`, `timeStamp` FROM `message` WHERE `id` = ?', [taggedMessage], async (err, referencedMessageResult) => {
+      if (err) return console.log(err)
+      if (referencedMessageResult.length > 0) {
+        if (referencedMessageResult[0].roomID == message.toRoom) {
+          db.query("INSERT INTO `messagetags`(`messageId`, `tagMessageId`) VALUES ('?','?')", [messageID, taggedMessage], async (err, insertedTag) => {
+            if (err) return console.log(err)
+            console.log(`Tag ${insertedTag.insertId} is inserted`)
+          })
+        }
+        else console.log(`User ${id} tried to tag Message ${participantResult.insertId} which is not from group ${message.toRoom} it is from ${referencedMessageResult[0].roomID}`)
+      }
+    })
+  });
+}
+
 function getAvailableMessageReactions() {
   return new Promise(function (resolve, reject) {
     db.query('SELECT `id`, `icon`, `name`, `description` FROM `reactionoptions`',
