@@ -92,6 +92,8 @@ CREATE TABLE `admins` (
   UNIQUE KEY `company_id` (`company_id`,`admin_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `admins` (`id`, `company_id`, `admin_id`, `done_by`, `registration_date`, `isPirmary`) VALUES (NULL, '1', '1', '1', CURRENT_TIMESTAMP, '1'); -- insert first user as admin
+
 CREATE TABLE `superadmins` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `admin_id` int(11) NOT NULL,
