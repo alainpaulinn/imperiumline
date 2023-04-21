@@ -3518,7 +3518,7 @@ let functionalityOptionsArray = [
 
   let secondaryVideosDiv = document.getElementById('secondaryVideosDiv')
   let peerOptions = {
-    host: 'peer.imperiumline.com',
+    host: 'peer.imperiumline.alainpaulin.com',
     secure: true,
     config: {
       iceServers: [
@@ -3536,7 +3536,7 @@ let functionalityOptionsArray = [
           username: 'webrtc@live.com'
         },
         {
-          "url": "turn:stun.imperiumline.com:5349",
+          "url": "turn:stun.imperiumline.alainpaulin.com:5349",
           credential: 'guest',
           username: 'somepassword'
         }

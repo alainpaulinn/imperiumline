@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "peer": "peerjs --port 3001 --key peerjs --path /"
   },
   "author": "Alain Paulin Niyonkuru",
   "license": "ISC",
@@ -27,6 +28,7 @@
     "password-validator": "^5.3.0",
     "path": "^0.12.7",
     "peer": "^0.6.1",
+    "peerjs": "^1.4.7",
     "socket.io": "^4.2.0",
     "socketio-file-upload": "^0.7.3",
     "uuid": "^8.3.2",
