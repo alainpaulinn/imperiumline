@@ -20,6 +20,7 @@ var newEventBtn = document.getElementById("CreateNewEvent")
 var prevMonthBtn = document.getElementById("prevMonthBtn")
 var nextMonthBtn = document.getElementById("nextMonthBtn")
 
+
 var scheduleDetailsSectionDiv = document.getElementById("scheduleDetailsSectionDiv")
 var newScheduleDetailsSection = document.getElementById("newScheduleDetailsSection")
 
