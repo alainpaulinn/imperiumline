@@ -2847,6 +2847,7 @@ function deleteCompany(companyId) {
     })
   })
 }
+
 function searchCompany(searchTerm) {
   console.log('superManageDeleteCompanies', searchTerm)
   return new Promise(function (resolve, reject) {
