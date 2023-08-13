@@ -2801,6 +2801,7 @@ function getAllimperiumlineUsers() {
     })
   })
 }
+
 function getAllSuperAdmins() {
   return new Promise((resolve, reject) => {
     db.query('SELECT `id`, `admin_id`, `done_by`, `registration_date` FROM `superadmins`', [], async (err, rows) => {
