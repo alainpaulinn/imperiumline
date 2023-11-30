@@ -17,7 +17,7 @@
     "dotenv": "^10.0.0",
     "ejs": "^3.0.2",
     "express": "^4.17.1",
-    "express-handlebars": "^6.0.2",
+    "express-handlebars": "^7.0.0",
     "express-session": "^1.17.2",
     "hbs": "^4.1.2",
     "helmet": "^6.0.0",
